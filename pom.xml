@@ -11,10 +11,10 @@
 
     <inceptionYear>2015</inceptionYear>
     <description>
-        DESC
+        Lightweight framework for creating small standalone Java EE applications in a micro service way.
     </description>
 
-    <url>https://github.com/TFaga/KumuluzEE</url>
+    <url>https://ee.kumuluz.com</url>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
