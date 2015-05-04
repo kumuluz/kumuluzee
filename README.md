@@ -16,22 +16,22 @@ TODO
 Ensure you have JDK 8 (or newer), Maven 3.2.1 (or newer) and Git installed
 
 ```bash
-    java -version
-    mvn -version
-    git --version
+java -version
+mvn -version
+git --version
 ```
 
 First clone the KumuluzEE repository:
 
 ```bash
-    git clone https://github.com/TFaga/KumuluzEE.git
-    cd KumuluzEE
+git clone https://github.com/TFaga/KumuluzEE.git
+cd KumuluzEE
 ```
     
 To build KumuluzEE run:
 
 ```bash
-    mvn install
+mvn install
 ```
 
 This will build all modules and run the testsuite. 
