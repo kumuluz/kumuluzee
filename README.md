@@ -3,31 +3,26 @@
 
 > Lightweight framework for creating small standalone Java EE applications in a micro service way.
 
-The Standard approach for deploying Java EE applications is packing all components into single EAR/WAR archive and deploying the archive on a application server.
-Although this approach has several advantages, particularly from the ease-of-development perspective,
-it leads to monolithic architecture, makes applications difficult to maintain, and – particularly important – makes such applications more difficult to scale,
-especially in PaaS (cloud) and Docker-like environments.
+KumuluzEE allows you to simply with minimal or no configuration create a standalone lightweight Java EE application
+that can be started as any other JAR app.
 
-Microservice architecture addresses these shortcomings by decomposing an application into a set of microservices.
-Each microservice has well-defined functionalities and an interface for communication with other services (such as REST, WSDL, or even RMI).
-However the former approach makes it increasingly difficult to use and follow the microservice pattern
-as either you are highly dependent on an application server and its configuration (HA, clustering, ...)
-or have to include along a separate application server with each instance that you then have to separately manage.
-
-KumuluzEE automates the tasks, related to the deployment and configuration and makes it seamless,
-thus overcoming the major drawback of microservice architecture and eliminating the need for an application server. 
+The framework automates the tasks, related to the deployment and configuration of Java EE applications and makes it seamless,
+thus overcoming the major drawback of the microservice architecture and eliminating the need for an application server. 
 
 KumuluzEE has been designed to use the standard Java EE technologies and APIs. 
 Therefore, it is particularly suitable for existing enterprise Java EE developers,
-who would like to leverage their skills, but progressively move from monolithic to microservice architecture.
+who would like to leverage their skills, but progressively move from monolithic to microservice
+design patterns.
 
-The framework collects together the various Java EE components into a simple standalone package that
-can be run as any other JAR. Apart from the core bootstrap functionality, the framework is completely
-modular and as such allows the developer, with the help of Maven, Gradle or plain old jar files,
-to handpick the components that he needs for his application. Whether it be only JAX-RS and JPA or
-a bigger stack with EJB, JAX-WS, JSF, JMS and many more. After the desired components are selected
-they are automatically included and you can start building your app as you would any other Java EE
-app with an application server.
+Primary features:
+
+- No need for a traditional application server. Run your app anywhere Java runs as well as in PaaS
+and Docker-like environments
+- Complete control over what Java EE components are included. Only include what you need and make
+your app lightweight.
+- Minimal to no configuration settings up the base server. Develop like any other Java EE application
+- Quick startup time, low resource consumption and stateless scalability accelerates development
+- Simplified unit and integration testing
 
 The goal is to support as many Java EE components as possible. Currently the following components are
 supported with more being added over time:
