@@ -88,4 +88,4 @@ When submitting a new feature, add tests that cover the feature.
 
 ## License
 
-MIT
+GPLv3
