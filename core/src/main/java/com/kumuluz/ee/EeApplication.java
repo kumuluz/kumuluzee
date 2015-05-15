@@ -1,5 +1,7 @@
 package com.kumuluz.ee;
 
+import com.kumuluz.ee.common.ServletServer;
+
 import java.util.logging.Logger;
 
 /**
@@ -10,11 +12,18 @@ public class EeApplication {
 
     private Logger log = Logger.getLogger(EeApplication.class.getSimpleName());
 
+    private ServletServer server;
+
     public EeApplication() {
 
+        initialize();
     }
 
     public void initialize() {
+
+        log.info("Initializing KumuluzEE...");
+
+
 
     }
 }

@@ -1,4 +1,4 @@
-package com.kumuluz.ee.server;
+package com.kumuluz.ee.common;
 
 /**
  * @author Tilen

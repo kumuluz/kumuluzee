@@ -19,7 +19,7 @@
     <dependencies>
         <dependency>
             <groupId>com.kumuluz.ee</groupId>
-            <artifactId>kumuluzee-core</artifactId>
+            <artifactId>kumuluzee-common</artifactId>
             <scope>provided</scope>
         </dependency>
 

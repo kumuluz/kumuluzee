@@ -1,7 +1,7 @@
 package com.kumuluz.ee.jetty;
 
-import com.kumuluz.ee.exceptions.ServerException;
-import com.kumuluz.ee.server.ServletServer;
+import com.kumuluz.ee.common.ServletServer;
+import com.kumuluz.ee.common.exceptions.ServletServerException;
 
 import org.eclipse.jetty.server.Server;
 
@@ -17,7 +17,6 @@ public class JettyServer implements ServletServer {
     private Server server;
 
     public JettyServer() {
-
     }
 
     @Override
@@ -53,7 +52,7 @@ public class JettyServer implements ServletServer {
 
             log.severe(e.getMessage());
 
-            throw new ServerException(e.getMessage(), e.getCause());
+            throw new ServletServerException(e.getMessage(), e.getCause());
         }
     }
 
@@ -84,7 +83,7 @@ public class JettyServer implements ServletServer {
 
             log.severe(e.getMessage());
 
-            throw new ServerException(e.getMessage(), e.getCause());
+            throw new ServletServerException(e.getMessage(), e.getCause());
         }
     }
 }
