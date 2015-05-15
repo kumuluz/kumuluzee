@@ -5,5 +5,9 @@ package com.kumuluz.ee.server;
  */
 public interface ServletServer {
 
+    void initServer();
+
     void startServer();
+
+    void stopServer();
 }
