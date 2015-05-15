@@ -23,7 +23,10 @@ public class EeApplication {
 
         log.info("Initializing KumuluzEE...");
 
+        ServerLoader sl = new ServerLoader();
 
+        server = sl.loadServletServer();
 
+        server.startServer();
     }
 }
