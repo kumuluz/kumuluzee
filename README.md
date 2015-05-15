@@ -27,7 +27,7 @@ your app lightweight.
 The goal is to support as many Java EE components as possible. Currently the following components are
 supported with more being added over time:
 
-- Servlet 3.1 (Grizzly)
+- Servlet 3.1 (Jetty)
 - CDI 1.1 (RI Weld)
 - JPA 2.1 (RI EclipseLink)
 - Bean Validation 1.1 (RI Hibernate validator)
