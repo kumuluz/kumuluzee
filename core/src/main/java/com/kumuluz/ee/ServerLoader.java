@@ -29,7 +29,7 @@ public class ServerLoader {
 
             String msg = "No supported servers were found. Please add one of them to the class " +
                     "path. For example to add Jetty add the 'kumuluzee-servlet-jetty' module as a" +
-                    " dependency. For additional servers view documentation";
+                    " dependency. For additional servers refer to the documentation";
 
             log.severe(msg);
 

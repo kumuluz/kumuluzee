@@ -23,6 +23,8 @@ public class JettyServer implements ServletServer {
     public void initServer() {
 
         server = new Server(8080);
+
+        log.info(getServerName() + " initiated");
     }
 
     @Override
@@ -54,6 +56,8 @@ public class JettyServer implements ServletServer {
 
             throw new ServletServerException(e.getMessage(), e.getCause());
         }
+
+        log.info(getServerName() + " started");
     }
 
     @Override
@@ -85,5 +89,13 @@ public class JettyServer implements ServletServer {
 
             throw new ServletServerException(e.getMessage(), e.getCause());
         }
+
+        log.info(getServerName() + " stopped");
+    }
+
+    @Override
+    public String getServerName() {
+
+        return "Jetty";
     }
 }

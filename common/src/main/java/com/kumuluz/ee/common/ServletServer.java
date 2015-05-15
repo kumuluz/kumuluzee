@@ -10,4 +10,6 @@ public interface ServletServer {
     void startServer();
 
     void stopServer();
+
+    String getServerName();
 }

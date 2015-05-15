@@ -27,6 +27,9 @@ public class EeApplication {
 
         server = sl.loadServletServer();
 
+        server.initServer();
         server.startServer();
+
+        log.info("KumuluzEE started successfully");
     }
 }
