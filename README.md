@@ -235,6 +235,9 @@ package com.acme.app
 public class RestApplication() extends Application {
 
 }
+```
+
+And a rest resource.
 
 ```java
 package com.acme.app;
