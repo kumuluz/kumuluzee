@@ -253,7 +253,7 @@ And thats it. Lets now add an application.
 package com.acme.app
 
 @ApplicationPath("/")
-public class RestApplication() extends Application {
+public class RestApplication extends Application {
 
 }
 ```
