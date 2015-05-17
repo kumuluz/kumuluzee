@@ -9,9 +9,9 @@
     <packaging>pom</packaging>
     <version>1.0.0-SNAPSHOT</version>
     <modules>
+        <module>common</module>
         <module>core</module>
         <module>servlet-jetty</module>
-        <module>common</module>
         <module>jsp-jetty</module>
         <module>jax-rs</module>
     </modules>
@@ -79,6 +79,16 @@
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-servlet-jetty</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-jsp-jetty</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-jax-rs</artifactId>
                 <version>1.0.0-SNAPSHOT</version>
             </dependency>
 
