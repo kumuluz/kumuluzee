@@ -12,6 +12,7 @@
         <module>core</module>
         <module>servlet-jetty</module>
         <module>common</module>
+        <module>jsp-jetty</module>
     </modules>
     <name>KumuluzEE</name>
 
