@@ -13,6 +13,7 @@
         <module>servlet-jetty</module>
         <module>common</module>
         <module>jsp-jetty</module>
+        <module>jax-rs</module>
     </modules>
     <name>KumuluzEE</name>
 
