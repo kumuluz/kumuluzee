@@ -39,6 +39,27 @@ Java EE app in 5 minutes.
 
 ## Usage
 
+Add the core module of the library as a dependency to your project.
+ 
+Maven:
+
+```xml
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-core</artifactId>
+    <version>1.0.0-alpha.1</version>
+</dependency>
+```
+
+Gradle:
+
+```groovy
+runtime 'com.kumuluz.ee:kumuluzee-core:1.0.0-alpha.1'
+```
+
+To choose your Java EE components include them as your dependencies. To view whats you can include
+please refer to the documentation.
+
 You can download the binaries from the [releases page](https://github.com/TFaga/KumuluzEE/releases).
 
 ## Getting started
