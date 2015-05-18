@@ -5,7 +5,6 @@ package com.kumuluz.ee.common.utils;
  */
 public class ClassUtils {
 
-
     public static boolean isPresent(String className) {
 
         return loadClass(className) != null;

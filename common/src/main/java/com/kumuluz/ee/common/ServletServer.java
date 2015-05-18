@@ -11,5 +11,7 @@ public interface ServletServer {
 
     void stopServer();
 
+    void initWebContext();
+
     String getServerName();
 }
