@@ -12,5 +12,16 @@
 
     <artifactId>kumuluzee-jsp-jetty</artifactId>
 
+    <properties>
+        <jetty.version>9.2.10.v20150310</jetty.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-jsp</artifactId>
+            <version>${jetty.version}</version>
+        </dependency>
+    </dependencies>
 
 </project>
