@@ -25,7 +25,6 @@ public class JettyServletServer implements ServletServer {
     Logger log = Logger.getLogger(JettyServletServer.class.getSimpleName());
 
     private Server server;
-    private WebAppContext appContext;
 
     public JettyServletServer() {
     }
@@ -107,19 +106,7 @@ public class JettyServletServer implements ServletServer {
     @Override
     public void initWebContext() {
 
-        appContext = new WebAppContext();
-
-        appContext.setConfigurations(new Configuration[]
-                {
-                        new AnnotationConfiguration(),
-                        new WebInfConfiguration(),
-                        new WebXmlConfiguration(),
-                        new MetaInfConfiguration(),
-                        new FragmentConfiguration(),
-                        new EnvConfiguration(),
-                        new PlusConfiguration(),
-                        new JettyWebXmlConfiguration()
-                });
+        WebAppContext appContext = new WebAppContext();
 
         appContext.setAttribute("org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern",
                 ".*/classes/.*");
