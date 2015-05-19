@@ -49,7 +49,7 @@ public class ServerLoader {
 
         log.info("Found " + serversClasses.get(0).getSimpleName());
 
-        ServletServer server = null;
+        ServletServer server;
 
         try {
             server = (ServletServer) serversClasses.get(0).newInstance();

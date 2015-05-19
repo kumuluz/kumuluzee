@@ -77,14 +77,4 @@ public class JettyFactory {
         classList.add(JettyWebXmlConfiguration.class.getName());
         return classList;
     }
-
-    protected Handler createWebAppContext() {
-
-        WebAppContext context = new WebAppContext();
-
-        context.setContextPath("/");
-        //context.setBaseResource("src/main/resources");
-
-        return context;
-    }
 }
