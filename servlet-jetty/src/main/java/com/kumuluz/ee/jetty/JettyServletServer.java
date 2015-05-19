@@ -20,14 +20,14 @@ import java.util.logging.Logger;
 /**
  * @author Tilen
  */
-public class JettyServer implements ServletServer {
+public class JettyServletServer implements ServletServer {
 
-    Logger log = Logger.getLogger(JettyServer.class.getSimpleName());
+    Logger log = Logger.getLogger(JettyServletServer.class.getSimpleName());
 
     private Server server;
     private WebAppContext appContext;
 
-    public JettyServer() {
+    public JettyServletServer() {
     }
 
     @Override

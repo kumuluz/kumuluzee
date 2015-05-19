@@ -16,7 +16,7 @@ public class ServerLoader {
     Logger log = Logger.getLogger(ServerLoader.class.getSimpleName());
 
     private static final String[] availableServers = {
-            "com.kumuluz.ee.jetty.JettyServer"
+            "com.kumuluz.ee.jetty.JettyServletServer"
     };
 
     public ServletServer loadServletServer() {
