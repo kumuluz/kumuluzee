@@ -5,5 +5,5 @@ package com.kumuluz.ee.common.attributes;
  */
 public class ClasspathAttributes {
 
-    public static final String classes = ".*/test-classes/.*,.*/classes/.*";
+    public static final String exploded = ".*/classes/.*";
 }
