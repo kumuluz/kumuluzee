@@ -33,7 +33,7 @@ public class JettyServletServer implements ServletServer {
     @Override
     public void initServer() {
 
-        server = new Server(8080);
+        server = createJettyFactory().create();
 
         log.info(getServerName() + " initiated");
     }
@@ -136,5 +136,10 @@ public class JettyServletServer implements ServletServer {
     public String getServerName() {
 
         return "Jetty";
+    }
+
+    private JettyFactory createJettyFactory() {
+
+        return new JettyFactory();
     }
 }
