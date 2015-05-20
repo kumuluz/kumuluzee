@@ -8,8 +8,6 @@ import com.kumuluz.ee.common.utils.ResourcesUtils;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.logging.Logger;
 
 /**
