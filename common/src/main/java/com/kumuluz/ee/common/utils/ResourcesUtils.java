@@ -14,11 +14,19 @@ public class ResourcesUtils {
         if (webapp != null) {
 
             return webapp.toString();
-        } else {
-
-            throw new IllegalStateException("No 'webapp' directory found in the projects " +
-                    "resources folder. Please add it to your resources even if it will be empty " +
-                    "so that the servlet server can bind to it.");
         }
+
+        return null;
+    }
+
+    public static boolean isRunningInJar() {
+
+        URL jar = ResourcesUtils.class.getClassLoader().getResource("webapp");
+
+        if (jar == null)
+            throw new IllegalStateException("Base resource folder does not exists. Please check " +
+                    "your project configuration and make sure you are using maven");
+
+        return jar.toString().toLowerCase().startsWith("jar:");
     }
 }

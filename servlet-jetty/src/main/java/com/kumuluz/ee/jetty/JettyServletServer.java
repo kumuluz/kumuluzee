@@ -110,6 +110,7 @@ public class JettyServletServer implements ServletServer {
         appContext.setParentLoaderPriority(true);
 
         appContext.setContextPath("/");
+
         appContext.setResourceBase(ResourcesUtils.getProjectWebResources());
 
         server.setHandler(appContext);
