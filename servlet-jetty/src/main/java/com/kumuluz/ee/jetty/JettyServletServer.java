@@ -3,10 +3,13 @@ package com.kumuluz.ee.jetty;
 import com.kumuluz.ee.common.ServletServer;
 import com.kumuluz.ee.common.attributes.ClasspathAttributes;
 import com.kumuluz.ee.common.exceptions.ServletServerException;
+import com.kumuluz.ee.common.utils.ResourcesUtils;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.logging.Logger;
 
 /**
@@ -98,6 +101,8 @@ public class JettyServletServer implements ServletServer {
     @Override
     public void initWebContext() {
 
+        System.out.println(System.getProperty("java.class.path"));
+
         WebAppContext appContext = new WebAppContext();
 
         appContext.setAttribute(JettyAttributes.jarPattern, ClasspathAttributes.exploded);
@@ -105,7 +110,7 @@ public class JettyServletServer implements ServletServer {
         appContext.setParentLoaderPriority(true);
 
         appContext.setContextPath("/");
-        appContext.setResourceBase("src/main/resources");
+        appContext.setResourceBase(ResourcesUtils.getProjectWebResources());
 
         server.setHandler(appContext);
     }
