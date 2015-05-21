@@ -20,6 +20,11 @@ public class EeApplication {
         initialize();
     }
 
+    public static void main(String args[]) {
+
+        EeApplication app = new EeApplication();
+    }
+
     public void initialize() {
 
         log.info("Initializing KumuluzEE...");

@@ -145,26 +145,13 @@ public class SimpleServlet extends HttpServlet {
 }
 ```
 
-Now all that remains is a class with a `main` method and a single line of code to start the app.
-Remember the goal is to run the app as a standalone Java application which requires an entry point.
-
-```java
-package com.acme.app;
-
-import com.kumuluz.ee.EeApplication;
-
-public class Run {
-
-    public static void main(String args[]) throws Exception {
-
-        EeApplication app = new EeApplication();
-    }
-}
-```
+If you want to use the default settings this is all you need to do. The `kumuluzee-core` package
+provides the class `com.kumuluz.ee.EeApplication` with a `main` method that will bootstrap your app.
 
 If you have your project opened in an IDE (IntelliJ, Eclipse, ..) you can now start the app by
 running the above class. If however you are looking to run it from the terminal (as will be the
-case on a server) then you run it directly from the class files in the `target` directory.
+case on a server and various PaaS environments) then you run it directly from the class files in
+the `target` directory.
 
 ### Run from the target directory
 
