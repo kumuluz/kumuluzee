@@ -177,7 +177,7 @@ file which will copy all your dependencies together with your classes.
 Run `maven install` and then you can start your app using the following command:
 
 ```bash
-$ java -cp target/classes:target/dependency/* com.acme.app.Run
+$ java -cp target/classes:target/dependency/* com.kumuluz.ee.EeApplication
 ```
 
 Go to `http://localhost:8080/servlet` in your browser and you should see `"Simple servlet"` written.
