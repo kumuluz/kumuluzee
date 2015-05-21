@@ -164,8 +164,7 @@ public class Run {
 
 If you have your project opened in an IDE (IntelliJ, Eclipse, ..) you can now start the app by
 running the above class. If however you are looking to run it from the terminal (as will be the
-case on a server) then you have one of two options; either run it directly from the class files in
-the `target` directory or build a fat ja.
+case on a server) then you run it directly from the class files in the `target` directory.
 
 ### Run from the target directory
 
@@ -192,44 +191,6 @@ Run `maven install` and then you can start your app using the following command:
 
 ```bash
 $ java -cp target/classes:target/dependency/* com.acme.app.Run
-```
-
-Go to `http://localhost:8080/servlet` in your browser and you should see `"Simple servlet"` written.
-
-
-### Build a fat jar
-
-To build a fat jar you must include the `maven-shade-plugin` to your `pom.xml` file.
-
-```xml
-<plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-shade-plugin</artifactId>
-    <version>2.3</version>
-    <executions>
-        <!-- Run shade goal on package phase -->
-        <execution>
-            <phase>package</phase>
-            <goals>
-                <goal>shade</goal>
-            </goals>
-            <configuration>
-                <transformers>
-                    <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                        <!-- Add your main class here -->
-                        <mainClass>com.acme.app.Run</mainClass>
-                    </transformer>
-                </transformers>
-            </configuration>
-        </execution>
-    </executions>
-</plugin>
-```
-
-Run `maven install` and your jar will be available in the `target` directory. Then run it.
-
-```bash
-$ java -jar target/app-1.0.0-SNAPSHOT.jar
 ```
 
 Go to `http://localhost:8080/servlet` in your browser and you should see `"Simple servlet"` written.

@@ -99,8 +99,6 @@ public class JettyServletServer implements ServletServer {
     @Override
     public void initWebContext() {
 
-        System.out.println(System.getProperty("java.class.path"));
-
         WebAppContext appContext = new WebAppContext();
 
         appContext.setAttribute(JettyAttributes.jarPattern, ClasspathAttributes.exploded);
