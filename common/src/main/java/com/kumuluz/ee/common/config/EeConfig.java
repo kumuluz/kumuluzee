@@ -7,7 +7,7 @@ import java.util.Optional;
  */
 public class EeConfig {
 
-    private ServerConfig serverConfig;
+    private ServerConfig serverConfig = new ServerConfig();
 
     public ServerConfig getServerConfig() {
         return serverConfig;

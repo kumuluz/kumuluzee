@@ -1,6 +1,7 @@
 package com.kumuluz.ee.jetty;
 
 import com.kumuluz.ee.common.config.ServerConfig;
+import com.kumuluz.ee.common.exceptions.ServletServerException;
 
 import org.eclipse.jetty.annotations.AnnotationConfiguration;
 import org.eclipse.jetty.server.Connector;
@@ -17,6 +18,8 @@ import org.eclipse.jetty.webapp.MetaInfConfiguration;
 import org.eclipse.jetty.webapp.WebInfConfiguration;
 import org.eclipse.jetty.webapp.WebXmlConfiguration;
 
+import java.util.Optional;
+
 /**
  * @author Tilen
  */
@@ -25,6 +28,8 @@ public class JettyFactory {
     private ServerConfig serverConfig;
 
     public JettyFactory() {
+
+        this.serverConfig = new ServerConfig();
     }
 
     public JettyFactory(ServerConfig serverConfig) {
@@ -48,8 +53,24 @@ public class JettyFactory {
     protected ThreadPool createThreadPool() {
 
         QueuedThreadPool threadPool = new QueuedThreadPool();
-        threadPool.setMinThreads(5);
-        threadPool.setMaxThreads(100);
+
+        String minThreads = Optional.ofNullable(System.getenv(ServerConfig.MIN_THREADS_ENV))
+                .filter(s -> !s.isEmpty())
+                .orElse(serverConfig.getMinThreads().toString());
+
+        String maxThreads = Optional.ofNullable(System.getenv(ServerConfig.MAX_THREADS_ENV))
+                .filter(s -> !s.isEmpty())
+                .orElse(serverConfig.getMaxThreads().toString());
+
+        try {
+
+            threadPool.setMinThreads(Integer.parseInt(minThreads));
+            threadPool.setMaxThreads(Integer.parseInt(maxThreads));
+        } catch (NumberFormatException e) {
+
+            throw new ServletServerException("Number of threads are in the incorrect format", e);
+        }
+
         return threadPool;
     }
 
@@ -57,9 +78,22 @@ public class JettyFactory {
 
         ServerConnector connector = new ServerConnector(
                 server, new HttpConnectionFactory(new HttpConfiguration()));
-        connector.setPort(8080);
-        connector.setIdleTimeout(60 * 60 * 1000);
-        connector.setSoLingerTime(-1);
+
+        String port = Optional.ofNullable(System.getenv(ServerConfig.PORT_ENV))
+                .filter(s -> !s.isEmpty())
+                .orElse(serverConfig.getPort().toString());
+
+        try {
+
+            connector.setPort(Integer.parseInt(port));
+        } catch (NumberFormatException e) {
+
+            throw new ServletServerException("Port is in the incorrect format", e);
+        }
+
+        connector.setIdleTimeout(serverConfig.getIdleTimeout());
+        connector.setSoLingerTime(serverConfig.getSoLingerTime());
+
         return connector;
     }
 

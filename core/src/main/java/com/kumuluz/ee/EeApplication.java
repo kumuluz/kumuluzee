@@ -22,6 +22,8 @@ public class EeApplication {
 
     public EeApplication() {
 
+        this.eeConfig = new EeConfig();
+
         initialize();
     }
 
@@ -51,10 +53,7 @@ public class EeApplication {
 
         server = sl.loadServletServer();
 
-        if (eeConfig != null && eeConfig.getServerConfig() != null) {
-
-            server.setServerConfig(eeConfig.getServerConfig());
-        }
+        server.setServerConfig(eeConfig.getServerConfig());
 
         server.initServer();
 

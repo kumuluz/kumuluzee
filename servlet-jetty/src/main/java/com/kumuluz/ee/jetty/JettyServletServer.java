@@ -9,6 +9,7 @@ import com.kumuluz.ee.common.utils.ResourcesUtils;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 
+import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
@@ -108,9 +109,13 @@ public class JettyServletServer implements ServletServer {
 
         appContext.setParentLoaderPriority(true);
 
-        appContext.setContextPath("/");
-
         appContext.setResourceBase(ResourcesUtils.getProjectWebResources());
+
+        String contextPath = Optional.ofNullable(System.getenv(ServerConfig.CONTEXT_PATH_ENV))
+                .filter(s -> !s.isEmpty())
+                .orElse(serverConfig.getContextPath());
+
+        appContext.setContextPath(contextPath);
 
         server.setHandler(appContext);
     }
