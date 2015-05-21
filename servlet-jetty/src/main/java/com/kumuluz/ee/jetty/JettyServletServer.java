@@ -2,6 +2,7 @@ package com.kumuluz.ee.jetty;
 
 import com.kumuluz.ee.common.ServletServer;
 import com.kumuluz.ee.common.attributes.ClasspathAttributes;
+import com.kumuluz.ee.common.config.ServerConfig;
 import com.kumuluz.ee.common.exceptions.ServletServerException;
 import com.kumuluz.ee.common.utils.ResourcesUtils;
 
@@ -18,6 +19,8 @@ public class JettyServletServer implements ServletServer {
     Logger log = Logger.getLogger(JettyServletServer.class.getSimpleName());
 
     private Server server;
+
+    private ServerConfig serverConfig;
 
     public JettyServletServer() {
     }
@@ -113,6 +116,18 @@ public class JettyServletServer implements ServletServer {
     }
 
     @Override
+    public void setServerConfig(ServerConfig serverConfig) {
+
+        this.serverConfig = serverConfig;
+    }
+
+    @Override
+    public ServerConfig getServerConfig() {
+
+        return serverConfig;
+    }
+
+    @Override
     public String getServerName() {
 
         return "Jetty";
@@ -120,6 +135,6 @@ public class JettyServletServer implements ServletServer {
 
     private JettyFactory createJettyFactory() {
 
-        return new JettyFactory();
+        return new JettyFactory(serverConfig);
     }
 }

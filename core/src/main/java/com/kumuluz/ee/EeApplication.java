@@ -1,8 +1,11 @@
 package com.kumuluz.ee;
 
 import com.kumuluz.ee.common.ServletServer;
+import com.kumuluz.ee.common.config.EeConfig;
+import com.kumuluz.ee.common.config.ServerConfig;
 import com.kumuluz.ee.common.utils.ResourcesUtils;
 
+import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
@@ -15,7 +18,16 @@ public class EeApplication {
 
     private ServletServer server;
 
+    private EeConfig eeConfig;
+
     public EeApplication() {
+
+        initialize();
+    }
+
+    public EeApplication(EeConfig eeConfig) {
+
+        this.eeConfig = eeConfig;
 
         initialize();
     }
@@ -38,6 +50,11 @@ public class EeApplication {
         ServerLoader sl = new ServerLoader();
 
         server = sl.loadServletServer();
+
+        if (eeConfig != null && eeConfig.getServerConfig() != null) {
+
+            server.setServerConfig(eeConfig.getServerConfig());
+        }
 
         server.initServer();
 

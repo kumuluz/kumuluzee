@@ -1,8 +1,9 @@
 package com.kumuluz.ee.jetty;
 
+import com.kumuluz.ee.common.config.ServerConfig;
+
 import org.eclipse.jetty.annotations.AnnotationConfiguration;
 import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
@@ -13,7 +14,6 @@ import org.eclipse.jetty.webapp.Configuration;
 import org.eclipse.jetty.webapp.FragmentConfiguration;
 import org.eclipse.jetty.webapp.JettyWebXmlConfiguration;
 import org.eclipse.jetty.webapp.MetaInfConfiguration;
-import org.eclipse.jetty.webapp.WebAppContext;
 import org.eclipse.jetty.webapp.WebInfConfiguration;
 import org.eclipse.jetty.webapp.WebXmlConfiguration;
 
@@ -22,7 +22,14 @@ import org.eclipse.jetty.webapp.WebXmlConfiguration;
  */
 public class JettyFactory {
 
+    private ServerConfig serverConfig;
+
     public JettyFactory() {
+    }
+
+    public JettyFactory(ServerConfig serverConfig) {
+
+        this.serverConfig = serverConfig;
     }
 
     public Server create() {
@@ -31,7 +38,7 @@ public class JettyFactory {
 
         server.addBean(createClassList());
         server.setStopAtShutdown(true);
-        server.setConnectors(new Connector[] {
+        server.setConnectors(new Connector[]{
                 createConnector(server)
         });
 
@@ -61,20 +68,12 @@ public class JettyFactory {
         Configuration.ClassList classList = new Configuration.ClassList(new String[0]);
 
         classList.add(AnnotationConfiguration.class.getName());
-
-//        if (config.isJarApp()) {
-//            classList.add(JarAppConfiguration.class.getName());
-//        } else if (config.isClasspath()) {
-//            classList.add(getClasspathConfiguration().getName());
-//        } else {
-//
-//        }
-
         classList.add(WebInfConfiguration.class.getName());
         classList.add(WebXmlConfiguration.class.getName());
         classList.add(MetaInfConfiguration.class.getName());
         classList.add(FragmentConfiguration.class.getName());
         classList.add(JettyWebXmlConfiguration.class.getName());
+
         return classList;
     }
 }
