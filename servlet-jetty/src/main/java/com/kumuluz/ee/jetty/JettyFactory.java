@@ -19,11 +19,14 @@ import org.eclipse.jetty.webapp.WebInfConfiguration;
 import org.eclipse.jetty.webapp.WebXmlConfiguration;
 
 import java.util.Optional;
+import java.util.logging.Logger;
 
 /**
  * @author Tilen
  */
 public class JettyFactory {
+
+    private Logger log = Logger.getLogger(JettyFactory.class.getSimpleName());
 
     private ServerConfig serverConfig;
 
@@ -71,6 +74,8 @@ public class JettyFactory {
             throw new ServletServerException("Number of threads are in the incorrect format", e);
         }
 
+        log.info("Starting KumuluzEE on Jetty with " + minThreads + " minimum and " + maxThreads + " maximum threads");
+
         return threadPool;
     }
 
@@ -93,6 +98,8 @@ public class JettyFactory {
 
         connector.setIdleTimeout(serverConfig.getIdleTimeout());
         connector.setSoLingerTime(serverConfig.getSoLingerTime());
+
+        log.info("Starting KumuluzEE on port " + port);
 
         return connector;
     }
