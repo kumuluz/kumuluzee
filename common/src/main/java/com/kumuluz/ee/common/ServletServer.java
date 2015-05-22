@@ -5,7 +5,7 @@ import com.kumuluz.ee.common.config.ServerConfig;
 /**
  * @author Tilen
  */
-public interface ServletServer {
+public interface ServletServer extends KumuluzServer {
 
     void initServer();
 
@@ -18,6 +18,4 @@ public interface ServletServer {
     void setServerConfig(ServerConfig serverConfig);
 
     ServerConfig getServerConfig();
-
-    String getServerName();
 }

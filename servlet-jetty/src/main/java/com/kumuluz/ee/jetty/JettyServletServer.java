@@ -4,7 +4,7 @@ import com.kumuluz.ee.common.ServletServer;
 import com.kumuluz.ee.common.attributes.ClasspathAttributes;
 import com.kumuluz.ee.common.config.ServerConfig;
 import com.kumuluz.ee.common.exceptions.ServletServerException;
-import com.kumuluz.ee.common.utils.ResourcesUtils;
+import com.kumuluz.ee.common.utils.ResourceUtils;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
@@ -109,7 +109,7 @@ public class JettyServletServer implements ServletServer {
 
         appContext.setParentLoaderPriority(true);
 
-        appContext.setResourceBase(ResourcesUtils.getProjectWebResources());
+        appContext.setResourceBase(ResourceUtils.getProjectWebResources());
 
         String contextPath = Optional.ofNullable(System.getenv(ServerConfig.CONTEXT_PATH_ENV))
                 .filter(s -> !s.isEmpty())

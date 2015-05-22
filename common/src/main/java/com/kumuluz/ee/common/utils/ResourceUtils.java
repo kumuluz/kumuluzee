@@ -5,11 +5,11 @@ import java.net.URL;
 /**
  * @author Tilen
  */
-public class ResourcesUtils {
+public class ResourceUtils {
 
     public static String getProjectWebResources() {
 
-        URL webapp = ResourcesUtils.class.getClassLoader().getResource("webapp");
+        URL webapp = ResourceUtils.class.getClassLoader().getResource("webapp");
 
         if (webapp != null) {
 
@@ -21,7 +21,7 @@ public class ResourcesUtils {
 
     public static boolean isRunningInJar() {
 
-        URL jar = ResourcesUtils.class.getClassLoader().getResource("webapp");
+        URL jar = ResourceUtils.class.getClassLoader().getResource("webapp");
 
         if (jar == null)
             throw new IllegalStateException("Base resource folder does not exists. Please check " +

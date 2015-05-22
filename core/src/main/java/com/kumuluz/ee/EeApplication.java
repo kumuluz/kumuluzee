@@ -2,10 +2,8 @@ package com.kumuluz.ee;
 
 import com.kumuluz.ee.common.ServletServer;
 import com.kumuluz.ee.common.config.EeConfig;
-import com.kumuluz.ee.common.config.ServerConfig;
-import com.kumuluz.ee.common.utils.ResourcesUtils;
+import com.kumuluz.ee.common.utils.ResourceUtils;
 
-import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
@@ -66,14 +64,14 @@ public class EeApplication {
 
     public void checkRequirements() {
 
-        if (ResourcesUtils.getProjectWebResources() == null) {
+        if (ResourceUtils.getProjectWebResources() == null) {
 
             throw new IllegalStateException("No 'webapp' directory found in the projects " +
                     "resources folder. Please add it to your resources even if it will be empty " +
                     "so that the servlet server can bind to it.");
         }
 
-        if (ResourcesUtils.isRunningInJar()) {
+        if (ResourceUtils.isRunningInJar()) {
 
             throw new RuntimeException("Running in a jar is currently not supported yet. Please " +
                     "build the application with the 'maven-dependency' plugin to explode your app" +
