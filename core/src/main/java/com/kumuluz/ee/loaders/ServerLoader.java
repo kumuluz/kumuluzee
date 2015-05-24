@@ -1,4 +1,4 @@
-package com.kumuluz.ee;
+package com.kumuluz.ee.loaders;
 
 import com.kumuluz.ee.common.ServletServer;
 import com.kumuluz.ee.common.exceptions.ServletServerException;
