@@ -1,5 +1,7 @@
 package com.kumuluz.ee.common.config;
 
+import com.kumuluz.ee.common.utils.EnvUtils;
+
 /**
  * @author Tilen
  */
@@ -24,6 +26,14 @@ public class ServerConfig {
     private Integer minThreads = 5;
 
     private Integer maxThreads = 100;
+
+    public ServerConfig() {
+
+        EnvUtils.getEnvAsInteger(PORT_ENV, this::setPort);
+        EnvUtils.getEnvAsInteger(MIN_THREADS_ENV, this::setMinThreads);
+        EnvUtils.getEnvAsInteger(MAX_THREADS_ENV, this::setMaxThreads);
+        EnvUtils.getEnv(CONTEXT_PATH_ENV, this::setContextPath);
+    }
 
     public Integer getPort() {
         return port;

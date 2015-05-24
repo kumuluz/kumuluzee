@@ -1,7 +1,6 @@
 package com.kumuluz.ee.jetty;
 
 import com.kumuluz.ee.common.config.ServerConfig;
-import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 
 import org.eclipse.jetty.annotations.AnnotationConfiguration;
 import org.eclipse.jetty.server.Connector;
@@ -18,7 +17,6 @@ import org.eclipse.jetty.webapp.MetaInfConfiguration;
 import org.eclipse.jetty.webapp.WebInfConfiguration;
 import org.eclipse.jetty.webapp.WebXmlConfiguration;
 
-import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
@@ -57,24 +55,11 @@ public class JettyFactory {
 
         QueuedThreadPool threadPool = new QueuedThreadPool();
 
-        String minThreads = Optional.ofNullable(System.getenv(ServerConfig.MIN_THREADS_ENV))
-                .filter(s -> !s.isEmpty())
-                .orElse(serverConfig.getMinThreads().toString());
+        threadPool.setMinThreads(serverConfig.getMinThreads());
+        threadPool.setMaxThreads(serverConfig.getMaxThreads());
 
-        String maxThreads = Optional.ofNullable(System.getenv(ServerConfig.MAX_THREADS_ENV))
-                .filter(s -> !s.isEmpty())
-                .orElse(serverConfig.getMaxThreads().toString());
-
-        try {
-
-            threadPool.setMinThreads(Integer.parseInt(minThreads));
-            threadPool.setMaxThreads(Integer.parseInt(maxThreads));
-        } catch (NumberFormatException e) {
-
-            throw new KumuluzServerException("Number of threads are in the incorrect format", e);
-        }
-
-        log.info("Starting KumuluzEE on Jetty with " + minThreads + " minimum and " + maxThreads + " maximum threads");
+        log.info("Starting KumuluzEE on Jetty with " + serverConfig.getMinThreads() + " minimum " +
+                "and " + serverConfig.getMaxThreads() + " maximum threads");
 
         return threadPool;
     }
@@ -84,22 +69,12 @@ public class JettyFactory {
         ServerConnector connector = new ServerConnector(
                 server, new HttpConnectionFactory(new HttpConfiguration()));
 
-        String port = Optional.ofNullable(System.getenv(ServerConfig.PORT_ENV))
-                .filter(s -> !s.isEmpty())
-                .orElse(serverConfig.getPort().toString());
-
-        try {
-
-            connector.setPort(Integer.parseInt(port));
-        } catch (NumberFormatException e) {
-
-            throw new KumuluzServerException("Port is in the incorrect format", e);
-        }
+        connector.setPort(serverConfig.getPort());
 
         connector.setIdleTimeout(serverConfig.getIdleTimeout());
         connector.setSoLingerTime(serverConfig.getSoLingerTime());
 
-        log.info("Starting KumuluzEE on port " + port);
+        log.info("Starting KumuluzEE on port " + serverConfig.getPort());
 
         return connector;
     }

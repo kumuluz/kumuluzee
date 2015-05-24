@@ -41,13 +41,13 @@ public class EeApplication {
 
     public void initialize() {
 
-        log.info("Initializing KumuluzEE...");
+        log.info("Initializing KumuluzEE");
 
-        log.info("Checking for requirements...");
+        log.info("Checking for requirements");
 
         checkRequirements();
 
-        log.info("Checks passed.");
+        log.info("Checks passed");
 
         ServerLoader sl = new ServerLoader();
 
