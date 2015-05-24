@@ -8,6 +8,7 @@ import com.kumuluz.ee.common.utils.ClassUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ServiceLoader;
 import java.util.logging.Logger;
 
 /**
@@ -16,10 +17,6 @@ import java.util.logging.Logger;
 public class ComponentLoader {
 
     Logger log = Logger.getLogger(ComponentLoader.class.getSimpleName());
-
-    private static final String[] availableComponents = {
-            "com.kumuluz.ee.jaxrs.JaxRsComponent"
-    };
 
     private ServletServer server;
 
@@ -34,41 +31,27 @@ public class ComponentLoader {
 
         log.info("Loading available components");
 
-        List<Class<?>> components = scanForAvailableComponents();
+        List<Component> components = scanForAvailableComponents();
 
-        for (Class<?> c : components) {
+        for (Component c : components) {
 
-            Component comp;
-
-            try {
-
-                comp = (Component) c.newInstance();
-            } catch (InstantiationException | IllegalAccessException | ClassCastException e) {
-
-                log.severe("Failed to instantiate: " + c.getSimpleName());
-
-                throw new ComponentsException(e.getMessage(), e.getCause());
-            }
-
-            log.info("Found " + comp.getComponentName() + " implemented by " + comp
+            log.info("Found " + c.getComponentName() + " implemented by " + c
                     .getImplementationName());
 
-            comp.init(server);
-            comp.load();
+            c.init(server);
+            c.load();
         }
 
         log.info("Loading for components complete");
     }
 
-    private List<Class<?>> scanForAvailableComponents() {
+    private List<Component> scanForAvailableComponents() {
 
         log.finest("Scanning for available components in the runtime");
 
-        ArrayList<Class<?>> servers = new ArrayList<>();
+        List<Component> servers = new ArrayList<>();
 
-        Arrays.stream(availableComponents)
-                .filter(ClassUtils::isPresent)
-                .forEach(c -> servers.add(ClassUtils.loadClass(c)));
+        ServiceLoader.load(Component.class).forEach(servers::add);
 
         return servers;
     }
