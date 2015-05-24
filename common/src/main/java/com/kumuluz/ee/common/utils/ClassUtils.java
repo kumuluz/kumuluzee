@@ -1,9 +1,6 @@
 package com.kumuluz.ee.common.utils;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 
 /**
  * @author Tilen
@@ -24,14 +21,8 @@ public class ClassUtils {
         }
     }
 
-    public static List<Class<?>> getClassesWithAnnotation(Class<?> annotation) {
+    public static List<String> getClassNamesWithAnnotation(Class<?> annotation) {
 
-        ArrayList<Class<?>> classes = new ArrayList<>();
-
-        new FastClasspathScanner("kumuluzee")
-                .matchClassesWithAnnotation(annotation, classes::add)
-                .scan();
-
-        return classes;
+        return ClassScanner.getInstance().getClassesWithAnnotation(annotation);
     }
 }

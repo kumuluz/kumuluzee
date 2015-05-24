@@ -2,6 +2,7 @@ package com.kumuluz.ee.jaxrs;
 
 import com.kumuluz.ee.common.Component;
 import com.kumuluz.ee.common.KumuluzServer;
+import com.kumuluz.ee.common.exceptions.ComponentsException;
 import com.kumuluz.ee.common.utils.ClassUtils;
 
 import java.util.HashMap;
@@ -29,22 +30,31 @@ public class JaxRsComponent implements Component {
     @Override
     public void load() {
 
-        List<Class<?>> jaxRsApplications = ClassUtils.getClassesWithAnnotation(ApplicationPath
+        List<String> jaxRsApplications = ClassUtils.getClassNamesWithAnnotation(ApplicationPath
                 .class);
 
         log.info("Scanning for JAX-RS applications");
 
-        for (Class<?> jaxRsApp : jaxRsApplications) {
+        for (String jaxRsApp : jaxRsApplications) {
 
-            log.info("Initiating JAX-RS application: " + jaxRsApp.getCanonicalName());
+            Class<?> c = ClassUtils.loadClass(jaxRsApp);
+
+            if (c == null) {
+
+                throw new ComponentsException("Class '" + jaxRsApp + "' was found during " +
+                        "annotation scanning however it could not be loaded by the class loader");
+            }
 
             Map<String, String> parameters = new HashMap<>();
-            parameters.put("javax.ws.rs.Application", jaxRsApp.getCanonicalName());
+            parameters.put("javax.ws.rs.Application", c.getCanonicalName());
 
-            String pattern = jaxRsApp.getAnnotation(ApplicationPath.class).value();
+            String pattern = c.getAnnotation(ApplicationPath.class).value();
 
             if (pattern.endsWith("/")) pattern += "*";
             else if (!pattern.endsWith("/*")) pattern += "/*";
+
+            log.info("Initiating JAX-RS application: " + c.getCanonicalName() + " with pattern: "
+                    + pattern);
 
             server.registerServlet(org.glassfish.jersey.servlet.ServletContainer.class,
                     pattern, parameters);
