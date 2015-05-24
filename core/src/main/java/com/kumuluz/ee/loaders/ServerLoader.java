@@ -1,11 +1,12 @@
 package com.kumuluz.ee.loaders;
 
 import com.kumuluz.ee.common.ServletServer;
-import com.kumuluz.ee.common.exceptions.ServletServerException;
+import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 import com.kumuluz.ee.common.utils.ClassUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -23,7 +24,7 @@ public class ServerLoader {
 
         log.info("Loading the http/servlet server...");
 
-        ArrayList<Class<?>> serversClasses = scanForAvailableServers();
+        List<Class<?>> serversClasses = scanForAvailableServers();
 
         if (serversClasses.isEmpty()) {
 
@@ -33,7 +34,7 @@ public class ServerLoader {
 
             log.severe(msg);
 
-            throw new ServletServerException(msg);
+            throw new KumuluzServerException(msg);
         }
 
         if (serversClasses.size() > 1) {
@@ -44,7 +45,7 @@ public class ServerLoader {
 
             log.severe(msg);
 
-            throw new ServletServerException(msg);
+            throw new KumuluzServerException(msg);
         }
 
         log.info("Found " + serversClasses.get(0).getSimpleName());
@@ -57,13 +58,13 @@ public class ServerLoader {
 
             log.severe("Failed to instantiate: " + serversClasses.get(0).getSimpleName());
 
-            throw new IllegalStateException(e.getMessage(), e.getCause());
+            throw new KumuluzServerException(e.getMessage(), e.getCause());
         }
 
         return server;
     }
 
-    private ArrayList<Class<?>> scanForAvailableServers() {
+    private List<Class<?>> scanForAvailableServers() {
 
         log.finest("Scanning for available supported http/servlet servers");
 

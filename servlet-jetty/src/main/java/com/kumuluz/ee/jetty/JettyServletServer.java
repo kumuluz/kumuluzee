@@ -3,14 +3,17 @@ package com.kumuluz.ee.jetty;
 import com.kumuluz.ee.common.ServletServer;
 import com.kumuluz.ee.common.attributes.ClasspathAttributes;
 import com.kumuluz.ee.common.config.ServerConfig;
-import com.kumuluz.ee.common.exceptions.ServletServerException;
+import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 import com.kumuluz.ee.common.utils.ResourceUtils;
 
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 import java.util.Optional;
 import java.util.logging.Logger;
+
+import javax.servlet.Servlet;
 
 /**
  * @author Tilen
@@ -20,6 +23,8 @@ public class JettyServletServer implements ServletServer {
     Logger log = Logger.getLogger(JettyServletServer.class.getSimpleName());
 
     private Server server;
+
+    private WebAppContext appContext;
 
     private ServerConfig serverConfig;
 
@@ -61,7 +66,7 @@ public class JettyServletServer implements ServletServer {
 
             log.severe(e.getMessage());
 
-            throw new ServletServerException(e.getMessage(), e.getCause());
+            throw new KumuluzServerException(e.getMessage(), e.getCause());
         }
 
         log.info(getServerName() + " started");
@@ -94,7 +99,7 @@ public class JettyServletServer implements ServletServer {
 
             log.severe(e.getMessage());
 
-            throw new ServletServerException(e.getMessage(), e.getCause());
+            throw new KumuluzServerException(e.getMessage(), e.getCause());
         }
 
         log.info(getServerName() + " stopped");
@@ -103,7 +108,7 @@ public class JettyServletServer implements ServletServer {
     @Override
     public void initWebContext() {
 
-        WebAppContext appContext = new WebAppContext();
+        appContext = new WebAppContext();
 
         appContext.setAttribute(JettyAttributes.jarPattern, ClasspathAttributes.exploded);
 
@@ -116,6 +121,8 @@ public class JettyServletServer implements ServletServer {
                 .orElse(serverConfig.getContextPath());
 
         appContext.setContextPath(contextPath);
+
+        log.info("Starting KumuluzEE with context root '" + contextPath + "'");
 
         server.setHandler(appContext);
     }
@@ -130,6 +137,20 @@ public class JettyServletServer implements ServletServer {
     public ServerConfig getServerConfig() {
 
         return serverConfig;
+    }
+
+    @Override
+    public void registerServlet(Class<?> servletClass, String mapping) {
+
+        Class<Servlet> servlet = (Class<Servlet>) servletClass;
+
+        ServletHolder holder = new ServletHolder(servlet);
+        holder.setInitOrder(0);
+        holder.setInitParameter("javax.ws.rs.Application", "kumuluzee.test.TestApplication");
+        //holder.setInitParameter(
+        //        "jersey.config.server.provider.packages", "kumuluzee.test");
+
+        appContext.addServlet(holder, mapping);
     }
 
     @Override

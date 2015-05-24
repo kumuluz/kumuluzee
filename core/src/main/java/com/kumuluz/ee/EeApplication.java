@@ -3,6 +3,8 @@ package com.kumuluz.ee;
 import com.kumuluz.ee.common.ServletServer;
 import com.kumuluz.ee.common.config.EeConfig;
 import com.kumuluz.ee.common.utils.ResourceUtils;
+import com.kumuluz.ee.loaders.ComponentLoader;
+import com.kumuluz.ee.loaders.ServerLoader;
 
 import java.util.logging.Logger;
 
@@ -56,6 +58,10 @@ public class EeApplication {
         server.initServer();
 
         server.initWebContext();
+
+        ComponentLoader cp = new ComponentLoader(server);
+
+        cp.loadComponents();
 
         server.startServer();
 

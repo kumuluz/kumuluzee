@@ -6,4 +6,10 @@ package com.kumuluz.ee.common;
 public interface Component {
 
     void init(KumuluzServer server);
+
+    void load();
+
+    String getComponentName();
+
+    String getImplementationName();
 }

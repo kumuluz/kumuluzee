@@ -5,5 +5,7 @@ package com.kumuluz.ee.common;
  */
 public interface KumuluzServer {
 
+    void registerServlet(Class<?> servletClass, String mapping);
+
     String getServerName();
 }

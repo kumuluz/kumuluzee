@@ -1,7 +1,7 @@
 package com.kumuluz.ee.jetty;
 
 import com.kumuluz.ee.common.config.ServerConfig;
-import com.kumuluz.ee.common.exceptions.ServletServerException;
+import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 
 import org.eclipse.jetty.annotations.AnnotationConfiguration;
 import org.eclipse.jetty.server.Connector;
@@ -71,7 +71,7 @@ public class JettyFactory {
             threadPool.setMaxThreads(Integer.parseInt(maxThreads));
         } catch (NumberFormatException e) {
 
-            throw new ServletServerException("Number of threads are in the incorrect format", e);
+            throw new KumuluzServerException("Number of threads are in the incorrect format", e);
         }
 
         log.info("Starting KumuluzEE on Jetty with " + minThreads + " minimum and " + maxThreads + " maximum threads");
@@ -93,7 +93,7 @@ public class JettyFactory {
             connector.setPort(Integer.parseInt(port));
         } catch (NumberFormatException e) {
 
-            throw new ServletServerException("Port is in the incorrect format", e);
+            throw new KumuluzServerException("Port is in the incorrect format", e);
         }
 
         connector.setIdleTimeout(serverConfig.getIdleTimeout());
