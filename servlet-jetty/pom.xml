@@ -20,7 +20,6 @@
         <dependency>
             <groupId>com.kumuluz.ee</groupId>
             <artifactId>kumuluzee-common</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>

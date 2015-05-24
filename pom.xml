@@ -29,6 +29,15 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <servlet.version>3.1.0</servlet.version>
+        <jsp.version>2.3.1</jsp.version>
+        <el.version>3.0.0</el.version>
+        <jaxrs.version>2.0.1</jaxrs.version>
+        <beanvalidation.version>1.1.0.Final</beanvalidation.version>
+
+        <fastclasspathscanner.version>1.2.3</fastclasspathscanner.version>
+        <junit.version>4.12</junit.version>
     </properties>
 
     <scm>
@@ -67,6 +76,7 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Kumuluz module dependencies-->
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-common</artifactId>
@@ -93,10 +103,43 @@
                 <version>1.0.0-alpha.1-SNAPSHOT</version>
             </dependency>
 
+            <!-- Java EE specification dependencies-->
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>${servlet.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet.jsp</groupId>
+                <artifactId>javax.servlet.jsp-api</artifactId>
+                <version>${jsp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.el</groupId>
+                <artifactId>javax.el-api</artifactId>
+                <version>${el.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.ws.rs</groupId>
+                <artifactId>javax.ws.rs-api</artifactId>
+                <version>${jaxrs.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+                <version>${beanvalidation.version}</version>
+            </dependency>
+
+            <!-- Various libraries used throughout the framework-->
+            <dependency>
+                <groupId>io.github.lukehutch</groupId>
+                <artifactId>fast-classpath-scanner</artifactId>
+                <version>${fastclasspathscanner.version}</version>
+            </dependency>
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.12</version>
+                <version>${junit.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
