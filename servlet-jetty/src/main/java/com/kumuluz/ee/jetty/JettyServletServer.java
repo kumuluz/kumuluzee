@@ -97,13 +97,9 @@ public class JettyServletServer implements ServletServer {
 
         appContext.setResourceBase(ResourceUtils.getProjectWebResources());
 
-        String contextPath = Optional.ofNullable(System.getenv(ServerConfig.CONTEXT_PATH_ENV))
-                .filter(s -> !s.isEmpty())
-                .orElse(serverConfig.getContextPath());
+        appContext.setContextPath(serverConfig.getContextPath());
 
-        appContext.setContextPath(contextPath);
-
-        log.info("Starting KumuluzEE with context root '" + contextPath + "'");
+        log.info("Starting KumuluzEE with context root '" + serverConfig.getContextPath() + "'");
 
         server.setHandler(appContext);
     }

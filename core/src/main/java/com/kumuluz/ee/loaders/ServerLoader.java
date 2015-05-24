@@ -7,6 +7,7 @@ import com.kumuluz.ee.common.utils.ClassUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ServiceLoader;
 import java.util.logging.Logger;
 
 /**
@@ -16,15 +17,11 @@ public class ServerLoader {
 
     Logger log = Logger.getLogger(ServerLoader.class.getSimpleName());
 
-    private static final String[] availableServers = {
-            "com.kumuluz.ee.jetty.JettyServletServer"
-    };
-
     public ServletServer loadServletServer() {
 
         log.info("Loading the http/servlet server...");
 
-        List<Class<?>> serversClasses = scanForAvailableServers();
+        List<ServletServer> serversClasses = scanForAvailableServers();
 
         if (serversClasses.isEmpty()) {
 
@@ -48,31 +45,20 @@ public class ServerLoader {
             throw new KumuluzServerException(msg);
         }
 
-        log.info("Found " + serversClasses.get(0).getSimpleName());
+        ServletServer server = serversClasses.get(0);
 
-        ServletServer server;
-
-        try {
-            server = (ServletServer) serversClasses.get(0).newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-
-            log.severe("Failed to instantiate: " + serversClasses.get(0).getSimpleName());
-
-            throw new KumuluzServerException(e.getMessage(), e.getCause());
-        }
+        log.info("Found " + server.getClass().getSimpleName());
 
         return server;
     }
 
-    private List<Class<?>> scanForAvailableServers() {
+    private List<ServletServer> scanForAvailableServers() {
 
         log.finest("Scanning for available supported http/servlet servers");
 
-        ArrayList<Class<?>> servers = new ArrayList<>();
+        List<ServletServer> servers = new ArrayList<>();
 
-        Arrays.stream(availableServers)
-                .filter(ClassUtils::isPresent)
-                .forEach(c -> servers.add(ClassUtils.loadClass(c)));
+        ServiceLoader.load(ServletServer.class).forEach(servers::add);
 
         return servers;
     }
