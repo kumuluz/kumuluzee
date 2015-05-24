@@ -10,6 +10,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -142,13 +143,22 @@ public class JettyServletServer implements ServletServer {
     @Override
     public void registerServlet(Class<?> servletClass, String mapping) {
 
+        registerServlet(servletClass, mapping, null);
+    }
+
+    @Override
+    public void registerServlet(Class<?> servletClass, String mapping, Map<String, String>
+            parameters) {
+
         Class<Servlet> servlet = (Class<Servlet>) servletClass;
 
         ServletHolder holder = new ServletHolder(servlet);
         holder.setInitOrder(0);
-        holder.setInitParameter("javax.ws.rs.Application", "kumuluzee.test.TestApplication");
-        //holder.setInitParameter(
-        //        "jersey.config.server.provider.packages", "kumuluzee.test");
+
+        if (parameters != null) {
+
+            parameters.forEach(holder::setInitParameter);
+        }
 
         appContext.addServlet(holder, mapping);
     }
