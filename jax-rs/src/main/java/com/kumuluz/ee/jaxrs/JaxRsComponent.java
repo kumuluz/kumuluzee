@@ -46,7 +46,7 @@ public class JaxRsComponent implements Component {
             }
 
             Map<String, String> parameters = new HashMap<>();
-            parameters.put("javax.ws.rs.Application", c.getCanonicalName());
+            parameters.put(JaxRsParameters.APPLICATION, c.getCanonicalName());
 
             String pattern = c.getAnnotation(ApplicationPath.class).value();
 

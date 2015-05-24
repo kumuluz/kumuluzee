@@ -21,16 +21,13 @@ import javax.servlet.Servlet;
  */
 public class JettyServletServer implements ServletServer {
 
-    Logger log = Logger.getLogger(JettyServletServer.class.getSimpleName());
+    private Logger log = Logger.getLogger(JettyServletServer.class.getSimpleName());
 
     private Server server;
 
     private WebAppContext appContext;
 
     private ServerConfig serverConfig;
-
-    public JettyServletServer() {
-    }
 
     @Override
     public void initServer() {
@@ -43,23 +40,11 @@ public class JettyServletServer implements ServletServer {
     @Override
     public void startServer() {
 
-        if (server == null) {
+        if (server == null)
+            throw new IllegalStateException("Jetty has to be initialized before starting it");
 
-            String msg = "Jetty has to be initialized before starting it";
-
-            log.severe(msg);
-
-            throw new IllegalStateException(msg);
-        }
-
-        if (server.isStarted() || server.isStarting()) {
-
-            String msg = "Jetty is already started";
-
-            log.severe(msg);
-
-            throw new IllegalStateException(msg);
-        }
+        if (server.isStarted() || server.isStarting())
+            throw new IllegalStateException("Jetty is already started");
 
         try {
             server.start();
@@ -76,23 +61,11 @@ public class JettyServletServer implements ServletServer {
     @Override
     public void stopServer() {
 
-        if (server == null) {
+        if (server == null)
+            throw new IllegalStateException("Jetty has to be initialized before stopping it");
 
-            String msg = "Jetty has to be initialized before stopping it";
-
-            log.severe(msg);
-
-            throw new IllegalStateException(msg);
-        }
-
-        if (server.isStarted() || server.isStarting()) {
-
-            String msg = "Jetty is already stopped";
-
-            log.severe(msg);
-
-            throw new IllegalStateException(msg);
-        }
+        if (server.isStarted() || server.isStarting())
+            throw new IllegalStateException("Jetty is not running stopped");
 
         try {
             server.stop();
@@ -108,6 +81,13 @@ public class JettyServletServer implements ServletServer {
 
     @Override
     public void initWebContext() {
+
+        if (server == null)
+            throw new IllegalStateException("Jetty has to be initialized before adding a web " +
+                    "context");
+
+        if (server.isStarted() || server.isStarting())
+            throw new IllegalStateException("Jetty cannot be started before adding a web context");
 
         appContext = new WebAppContext();
 
@@ -150,6 +130,13 @@ public class JettyServletServer implements ServletServer {
     public void registerServlet(Class<?> servletClass, String mapping, Map<String, String>
             parameters) {
 
+        if (server == null)
+            throw new IllegalStateException("Jetty has to be initialized before adding a servlet ");
+
+        if (server.isStarted() || server.isStarting())
+            throw new IllegalStateException("Jetty cannot be started before adding a servlet");
+
+        @SuppressWarnings("unchecked")
         Class<Servlet> servlet = (Class<Servlet>) servletClass;
 
         ServletHolder holder = new ServletHolder(servlet);
@@ -173,4 +160,6 @@ public class JettyServletServer implements ServletServer {
 
         return new JettyFactory(serverConfig);
     }
+
+
 }
