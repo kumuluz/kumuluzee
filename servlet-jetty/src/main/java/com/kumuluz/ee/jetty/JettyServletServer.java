@@ -117,13 +117,13 @@ public class JettyServletServer implements ServletServer {
     }
 
     @Override
-    public void registerServlet(Class<?> servletClass, String mapping) {
+    public void registerServlet(Class<? extends Servlet> servletClass, String mapping) {
 
         registerServlet(servletClass, mapping, null);
     }
 
     @Override
-    public void registerServlet(Class<?> servletClass, String mapping, Map<String, String>
+    public void registerServlet(Class<? extends Servlet> servletClass, String mapping, Map<String, String>
             parameters) {
 
         if (server == null)

@@ -13,7 +13,7 @@ public class ClassScanner {
 
     public ClassScanner() {
 
-        scanner = new FastClasspathScanner("kumuluzee");
+        scanner = new FastClasspathScanner();
         scanner.scan();
     }
 
