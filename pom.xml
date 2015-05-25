@@ -43,6 +43,7 @@
         <beanvalidation.version>1.1.0.Final</beanvalidation.version>
         <json.p.version>1.0</json.p.version>
 
+        <jandex.version>1.2.4.Final</jandex.version>
         <junit.version>4.12</junit.version>
     </properties>
 
@@ -105,7 +106,27 @@
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-cdi</artifactId>
+                <version>1.0.0-alpha.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-jpa</artifactId>
+                <version>1.0.0-alpha.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-jax-rs</artifactId>
+                <version>1.0.0-alpha.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-bean-validation</artifactId>
+                <version>1.0.0-alpha.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-json-p</artifactId>
                 <version>1.0.0-alpha.1-SNAPSHOT</version>
             </dependency>
 
@@ -157,6 +178,11 @@
             </dependency>
 
             <!-- Various libraries used throughout the framework-->
+            <dependency>
+                <groupId>org.jboss</groupId>
+                <artifactId>jandex</artifactId>
+                <version>${jandex.version}</version>
+            </dependency>
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>

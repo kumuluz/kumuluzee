@@ -24,7 +24,6 @@
         <dependency>
             <groupId>com.kumuluz.ee</groupId>
             <artifactId>kumuluzee-cdi</artifactId>
-            <version>1.0.0-alpha.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -35,8 +34,14 @@
 
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
-            <artifactId>eclipselink</artifactId>
+            <artifactId>org.eclipse.persistence.jpa</artifactId>
             <version>${eclipselink.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.glassfish</groupId>
+                    <artifactId>javax.json</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
