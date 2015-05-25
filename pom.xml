@@ -38,7 +38,7 @@
         <cdi.version>1.2</cdi.version>
         <jaxrs.version>2.0.1</jaxrs.version>
         <beanvalidation.version>1.1.0.Final</beanvalidation.version>
-        
+
         <junit.version>4.12</junit.version>
     </properties>
 
