@@ -1,7 +1,5 @@
 package com.kumuluz.ee.common.utils;
 
-import java.util.List;
-
 /**
  * @author Tilen
  */
@@ -19,10 +17,5 @@ public class ClassUtils {
         } catch (Throwable ex) {
             return null;
         }
-    }
-
-    public static List<String> getClassNamesWithAnnotation(Class<?> annotation) {
-
-        return ClassScanner.getInstance().getClassesWithAnnotation(annotation);
     }
 }
