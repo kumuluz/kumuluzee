@@ -27,11 +27,14 @@ your app lightweight.
 The goal is to support as many Java EE components as possible. Currently the following components are
 supported with more being added over time:
 
-- Servlet 3.1, JSP 2.3 (Jetty)
-- CDI 1.1 (RI Weld)
+- Servlet 3.1 (Jetty)
+- JSP 2.3 (RI JSP)
+- EL 3.0 (RI UEL)
+- CDI 1.2 (RI Weld)
 - JPA 2.1 (RI EclipseLink)
-- Bean Validation 1.1 (RI Hibernate validator)
 - JAX-RS 2.0 (RI Jersey)
+- Bean Validation 1.1 (RI Hibernate validator)
+- JSON-P 1.0 (RI JSONP)
 
 If you already know how to use Java EE, then you already know how to use KumuluzEE. Its dead simple,
 see the [getting started](#getting-started) section to create your first light-weight standalone
@@ -49,12 +52,6 @@ Maven:
     <artifactId>kumuluzee-core</artifactId>
     <version>1.0.0-alpha.1</version>
 </dependency>
-```
-
-Gradle:
-
-```groovy
-runtime 'com.kumuluz.ee:kumuluzee-core:1.0.0-alpha.1'
 ```
 
 To choose your Java EE components include them as your dependencies. To view whats you can include
