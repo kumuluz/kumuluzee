@@ -8,19 +8,18 @@
         <version>1.0.0-alpha.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <name>KumuluzEE Core</name>
+    <name>KumuluzEE Common</name>
 
     <artifactId>kumuluzee-common</artifactId>
 
     <dependencies>
         <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.github.lukehutch</groupId>
-            <artifactId>fast-classpath-scanner</artifactId>
         </dependency>
     </dependencies>
 
