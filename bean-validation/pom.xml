@@ -18,6 +18,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.kumuluz.ee</groupId>
+            <artifactId>kumuluzee-common</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
         </dependency>
