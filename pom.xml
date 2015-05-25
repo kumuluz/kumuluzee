@@ -38,7 +38,7 @@
         <jsp.version>2.3.1</jsp.version>
         <el.version>3.0.0</el.version>
         <cdi.version>1.2</cdi.version>
-        <jpa.version>2.1</jpa.version>
+        <jpa.version>2.1.0</jpa.version>
         <jaxrs.version>2.0.1</jaxrs.version>
         <beanvalidation.version>1.1.0.Final</beanvalidation.version>
         <json.p.version>1.0</json.p.version>
