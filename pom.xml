@@ -31,13 +31,14 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+        <annotations.version>1.2</annotations.version>
         <servlet.version>3.1.0</servlet.version>
         <jsp.version>2.3.1</jsp.version>
         <el.version>3.0.0</el.version>
+        <cdi.version>1.2</cdi.version>
         <jaxrs.version>2.0.1</jaxrs.version>
         <beanvalidation.version>1.1.0.Final</beanvalidation.version>
-
-        <fastclasspathscanner.version>1.2.3</fastclasspathscanner.version>
+        
         <junit.version>4.12</junit.version>
     </properties>
 
@@ -106,6 +107,11 @@
 
             <!-- Java EE specification dependencies-->
             <dependency>
+                <groupId>javax.annotation</groupId>
+                <artifactId>javax.annotation-api</artifactId>
+                <version>${annotations.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>
                 <version>${servlet.version}</version>
@@ -121,6 +127,11 @@
                 <version>${el.version}</version>
             </dependency>
             <dependency>
+                <groupId>javax.enterprise</groupId>
+                <artifactId>cdi-api</artifactId>
+                <version>${cdi.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>javax.ws.rs</groupId>
                 <artifactId>javax.ws.rs-api</artifactId>
                 <version>${jaxrs.version}</version>
@@ -132,11 +143,6 @@
             </dependency>
 
             <!-- Various libraries used throughout the framework-->
-            <dependency>
-                <groupId>io.github.lukehutch</groupId>
-                <artifactId>fast-classpath-scanner</artifactId>
-                <version>${fastclasspathscanner.version}</version>
-            </dependency>
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>

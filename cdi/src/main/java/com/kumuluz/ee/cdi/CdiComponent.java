@@ -1,4 +1,4 @@
-package com.kumuluz.ee.beanvalidation;
+package com.kumuluz.ee.cdi;
 
 import com.kumuluz.ee.common.Component;
 import com.kumuluz.ee.common.KumuluzServer;
@@ -8,9 +8,9 @@ import java.util.logging.Logger;
 /**
  * @author Tilen
  */
-public class BeanValidationComponent implements Component {
+public class CdiComponent implements Component {
 
-    private Logger log = Logger.getLogger(BeanValidationComponent.class.getSimpleName());
+    private Logger log = Logger.getLogger(CdiComponent.class.getSimpleName());
 
     @Override
     public void init(KumuluzServer server) {
@@ -19,18 +19,18 @@ public class BeanValidationComponent implements Component {
     @Override
     public void load() {
 
-        log.info("Initiating Hibernate Validator");
+        log.info("Initiating Weld");
     }
 
     @Override
     public String getComponentName() {
 
-        return "Bean Validation";
+        return "CDI";
     }
 
     @Override
     public String getImplementationName() {
 
-        return "Hibernate Validator";
+        return "Weld";
     }
 }
