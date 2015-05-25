@@ -10,6 +10,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 
+import java.util.EventListener;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -144,6 +145,18 @@ public class JettyServletServer implements ServletServer {
         }
 
         appContext.addServlet(holder, mapping);
+    }
+
+    @Override
+    public void registerListener(EventListener listener) {
+
+        if (server == null)
+            throw new IllegalStateException("Jetty has to be initialized before adding a servlet ");
+
+        if (server.isStarted() || server.isStarting())
+            throw new IllegalStateException("Jetty cannot be started before adding a servlet");
+
+        appContext.addEventListener(listener);
     }
 
     @Override
