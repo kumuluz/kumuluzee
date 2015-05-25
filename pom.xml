@@ -14,6 +14,7 @@
         <module>servlet-jetty</module>
         <module>jsp-jetty</module>
         <module>cdi</module>
+        <module>jpa</module>
         <module>jax-rs</module>
         <module>bean-validation</module>
         <module>json-p</module>
@@ -37,6 +38,7 @@
         <jsp.version>2.3.1</jsp.version>
         <el.version>3.0.0</el.version>
         <cdi.version>1.2</cdi.version>
+        <jpa.version>2.1</jpa.version>
         <jaxrs.version>2.0.1</jaxrs.version>
         <beanvalidation.version>1.1.0.Final</beanvalidation.version>
         <json.p.version>1.0</json.p.version>
@@ -132,6 +134,11 @@
                 <groupId>javax.enterprise</groupId>
                 <artifactId>cdi-api</artifactId>
                 <version>${cdi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.persistence</groupId>
+                <artifactId>javax.persistence</artifactId>
+                <version>${jpa.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.ws.rs</groupId>
