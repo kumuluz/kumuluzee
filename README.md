@@ -63,9 +63,7 @@ You can download the binaries from the [releases page](https://github.com/TFaga/
 
 KumuluzEE allows you to quickly and efficiently bootstrap a Java EE application using just the
 components that you need so that your app remains light and fast. We will be using Maven to create
-a sample app as that is our system of choice, however if you prefer Gradle or some other Java
-build/dependency system you can use that as well. Please refer to the full documentation to learn
-more. 
+a sample app as that is our system of choice.
 
 ### Create the project
 
