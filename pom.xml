@@ -12,7 +12,7 @@
         <module>common</module>
         <module>core</module>
         <module>servlet-jetty</module>
-        <module>jsp-jetty</module>
+        <module>jsp</module>
         <module>cdi</module>
         <module>jpa</module>
         <module>jax-rs</module>

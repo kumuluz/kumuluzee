@@ -8,9 +8,11 @@
         <version>1.0.0-alpha.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <name>KumuluzEE JSP Jetty</name>
 
-    <artifactId>kumuluzee-jsp-jetty</artifactId>
+    <name>KumuluzEE JSP</name>
+    <description>KumuluzEE JSP component implemented by JSP</description>
+
+    <artifactId>kumuluzee-jsp</artifactId>
 
     <properties>
         <jetty.version>9.2.10.v20150310</jetty.version>
