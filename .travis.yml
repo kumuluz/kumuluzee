@@ -1,5 +1,15 @@
 language: java
+env:
+  global:
+    secure: e4gw3Hrp3FQVNbbC30QMtrH4BHgL0zcNvVgEPluHAIym4c0XT2JAjLQhGJTjgesJZw3HrM/2ltHtzMuZUifMsegZQRIl+9SQQTFfDddx8GKZM4AnhA0kSHZqsYgcA+gtzw8injF7oKucq9YlkenXJ6rDD6Hcbs/XXBItRmvYDSI=
 jdk:
 - oraclejdk8
-install: mvn install -DskipTests=true -B -V
-script: mvn test -B
+before_install:
+- openssl aes-256-cbc -K $encrypted_8dafc9c32687_key -iv $encrypted_8dafc9c32687_iv
+  -in gpg.tar.enc -out gpg.tar -d
+- tar xvf gpg.tar
+install: mvn install -Dmaven.javadoc.skip=true -Dsource.skip=true -DskipTests=true
+  -V
+script: mvn test
+after_success:
+- mvn package gpg:sign -DskipTests=true --settings ./settings.xml
