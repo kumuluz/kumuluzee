@@ -8,7 +8,9 @@
         <version>1.0.0-alpha.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
+
     <name>KumuluzEE Core</name>
+    <description>KumuluzEE core bootstrap implementation</description>
 
     <artifactId>kumuluzee-core</artifactId>
 

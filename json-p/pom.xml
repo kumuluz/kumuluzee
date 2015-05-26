@@ -8,7 +8,9 @@
         <version>1.0.0-alpha.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
+
     <name>KumuluzEE JSON-P</name>
+    <description>KumuluzEE JSOP-P component implemented by JSONP</description>
 
     <artifactId>kumuluzee-json-p</artifactId>
 

@@ -8,7 +8,9 @@
         <version>1.0.0-alpha.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
+
     <name>KumuluzEE JAX-RS</name>
+    <description>KumuluzEE JAX-RS component implemented by Jersey</description>
 
     <artifactId>kumuluzee-jax-rs</artifactId>
 

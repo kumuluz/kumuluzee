@@ -8,7 +8,9 @@
         <version>1.0.0-alpha.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
+
     <name>KumuluzEE CDI</name>
+    <description>KumuluzEE CDI component implemented by Weld</description>
 
     <artifactId>kumuluzee-cdi</artifactId>
 
