@@ -1,7 +1,9 @@
 language: java
 env:
   global:
-    secure: e4gw3Hrp3FQVNbbC30QMtrH4BHgL0zcNvVgEPluHAIym4c0XT2JAjLQhGJTjgesJZw3HrM/2ltHtzMuZUifMsegZQRIl+9SQQTFfDddx8GKZM4AnhA0kSHZqsYgcA+gtzw8injF7oKucq9YlkenXJ6rDD6Hcbs/XXBItRmvYDSI=
+  - secure: e4gw3Hrp3FQVNbbC30QMtrH4BHgL0zcNvVgEPluHAIym4c0XT2JAjLQhGJTjgesJZw3HrM/2ltHtzMuZUifMsegZQRIl+9SQQTFfDddx8GKZM4AnhA0kSHZqsYgcA+gtzw8injF7oKucq9YlkenXJ6rDD6Hcbs/XXBItRmvYDSI=
+  - secure: t3feznQD/aHE2X69tHBq3QBmD8I0IpnjqVPSco/iwAhBbQAlq+QXUBX0YhGnI3vP7/jvQ6OSEcpgl++3psw5bJr9vzeCOKMjl6x1zgPSXpUkNGczoTvbyt/6XYnYyB50KhWGUeLgmIMQKXiUOC5gIJOFAgH4xWw3kVgHBvIZ6i8=
+  - secure: sOfajpt3u7pRW4ox+YrjDO/YCsQ5zQ9WSe28nhvrf+ppnKyRNcB6dKOE9ntnJ/fvukvK3BTolotryW2F+KjgK6diPpxeRAyQbY5F68t8pROe8hHcRsoO8/kSmPTKrwH0U1tVGVvavUoBcS5QA6bkym1qpl2/kNAmtk7uimeV2O0=
 jdk:
 - oraclejdk8
 before_install:
@@ -12,4 +14,4 @@ install: mvn install -Dmaven.javadoc.skip=true -Dsource.skip=true -DskipTests=tr
   -V
 script: mvn test
 after_success:
-- mvn package gpg:sign -DskipTests=true --settings ./settings.xml
+- mvn package gpg:sign deploy -DskipTests=true --settings ./settings.xml
