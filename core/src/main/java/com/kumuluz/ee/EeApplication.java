@@ -59,7 +59,7 @@ public class EeApplication {
 
         server.initWebContext();
 
-        ComponentLoader cp = new ComponentLoader(server);
+        ComponentLoader cp = new ComponentLoader(server, eeConfig);
 
         cp.loadComponents();
 

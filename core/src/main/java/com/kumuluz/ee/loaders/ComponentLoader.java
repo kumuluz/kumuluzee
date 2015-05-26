@@ -2,11 +2,9 @@ package com.kumuluz.ee.loaders;
 
 import com.kumuluz.ee.common.Component;
 import com.kumuluz.ee.common.ServletServer;
-import com.kumuluz.ee.common.exceptions.ComponentsException;
-import com.kumuluz.ee.common.utils.ClassUtils;
+import com.kumuluz.ee.common.config.EeConfig;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.logging.Logger;
@@ -20,11 +18,14 @@ public class ComponentLoader {
 
     private ServletServer server;
 
-    public ComponentLoader(ServletServer server) {
+    private EeConfig eeConfig;
+
+    public ComponentLoader(ServletServer server, EeConfig eeConfig) {
 
         log.info("Initiating component logger...");
 
         this.server = server;
+        this.eeConfig = eeConfig;
     }
 
     public void loadComponents() {
@@ -38,7 +39,7 @@ public class ComponentLoader {
             log.info("Found " + c.getComponentName() + " implemented by " + c
                     .getImplementationName());
 
-            c.init(server);
+            c.init(server, eeConfig);
             c.load();
         }
 

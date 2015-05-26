@@ -2,10 +2,8 @@ package com.kumuluz.ee.loaders;
 
 import com.kumuluz.ee.common.ServletServer;
 import com.kumuluz.ee.common.exceptions.KumuluzServerException;
-import com.kumuluz.ee.common.utils.ClassUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.logging.Logger;

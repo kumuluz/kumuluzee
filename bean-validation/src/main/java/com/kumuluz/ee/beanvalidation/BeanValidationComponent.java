@@ -2,6 +2,7 @@ package com.kumuluz.ee.beanvalidation;
 
 import com.kumuluz.ee.common.Component;
 import com.kumuluz.ee.common.KumuluzServer;
+import com.kumuluz.ee.common.config.EeConfig;
 
 import java.util.logging.Logger;
 
@@ -13,7 +14,7 @@ public class BeanValidationComponent implements Component {
     private Logger log = Logger.getLogger(BeanValidationComponent.class.getSimpleName());
 
     @Override
-    public void init(KumuluzServer server) {
+    public void init(KumuluzServer server, EeConfig eeConfig) {
     }
 
     @Override

@@ -12,7 +12,6 @@ import org.eclipse.jetty.webapp.WebAppContext;
 
 import java.util.EventListener;
 import java.util.Map;
-import java.util.Optional;
 import java.util.logging.Logger;
 
 import javax.servlet.Servlet;

@@ -3,7 +3,6 @@ package com.kumuluz.ee.jpa.resources;
 import org.jboss.weld.injection.spi.ResourceReference;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 
 /**
  * @author Tilen

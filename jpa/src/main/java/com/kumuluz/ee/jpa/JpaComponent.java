@@ -2,6 +2,8 @@ package com.kumuluz.ee.jpa;
 
 import com.kumuluz.ee.common.Component;
 import com.kumuluz.ee.common.KumuluzServer;
+import com.kumuluz.ee.common.config.EeConfig;
+import com.kumuluz.ee.jpa.resources.PersistenceUnitHolder;
 
 import java.util.logging.Logger;
 
@@ -13,7 +15,9 @@ public class JpaComponent implements Component {
     private Logger log = Logger.getLogger(JpaComponent.class.getSimpleName());
 
     @Override
-    public void init(KumuluzServer server) {
+    public void init(KumuluzServer server, EeConfig eeConfig) {
+
+        PersistenceUnitHolder.getInstance().setConfigs(eeConfig.getPersistenceConfigs());
     }
 
     @Override
