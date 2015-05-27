@@ -7,7 +7,7 @@
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.0-alpha.1</version>
+    <version>1.0.0-alpha.2-SNAPSHOT</version>
     <modules>
         <module>common</module>
         <module>core</module>
@@ -88,47 +88,47 @@
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-common</artifactId>
-                <version>1.0.0-alpha.1</version>
+                <version>1.0.0-alpha.2-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-core</artifactId>
-                <version>1.0.0-alpha.1</version>
+                <version>1.0.0-alpha.2-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-servlet-jetty</artifactId>
-                <version>1.0.0-alpha.1</version>
+                <version>1.0.0-alpha.2-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-jsp</artifactId>
-                <version>1.0.0-alpha.1</version>
+                <version>1.0.0-alpha.2-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-cdi</artifactId>
-                <version>1.0.0-alpha.1</version>
+                <version>1.0.0-alpha.2-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-jpa</artifactId>
-                <version>1.0.0-alpha.1</version>
+                <version>1.0.0-alpha.2-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-jax-rs</artifactId>
-                <version>1.0.0-alpha.1</version>
+                <version>1.0.0-alpha.2-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-bean-validation</artifactId>
-                <version>1.0.0-alpha.1</version>
+                <version>1.0.0-alpha.2-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-json-p</artifactId>
-                <version>1.0.0-alpha.1</version>
+                <version>1.0.0-alpha.2-SNAPSHOT</version>
             </dependency>
 
             <!-- Java EE specification dependencies-->
