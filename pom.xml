@@ -101,7 +101,7 @@
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
-                <artifactId>kumuluzee-jsp-jetty</artifactId>
+                <artifactId>kumuluzee-jsp</artifactId>
                 <version>1.0.0-alpha.1-SNAPSHOT</version>
             </dependency>
             <dependency>
