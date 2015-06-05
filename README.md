@@ -50,7 +50,7 @@ Maven:
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee-core</artifactId>
-    <version>1.0.0-alpha.1</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
