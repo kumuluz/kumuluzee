@@ -37,43 +37,76 @@ supported with more being added over time:
 - JSON-P 1.0 (RI JSONP)
 
 If you already know how to use Java EE, then you already know how to use KumuluzEE. Its dead simple,
-see the [getting started](#getting-started) section to create your first light-weight standalone
+see the [getting started](https://github.com/TFaga/KumuluzEE/wiki/Getting-started) wiki section to create your first light-weight standalone
 Java EE app in 5 minutes.
 
 ## Usage
 
-Add the core module of the library as a dependency to your project.
- 
-Maven:
+Using maven add the core module of the library as a dependency to your project.
 
 ```xml
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee-core</artifactId>
-    <version>1.0.0</version>
+    <version>${kumuluzee.version}</version>
 </dependency>
 ```
 
 To choose your Java EE components include them as your dependencies. You can chose any of the
-following components:
+following artifacts:
 
 ```xml
-<artifactId>kumuluzee-core</artifactId>
+<!-- Servlet (Jetty) -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-servlet-jetty</artifactId>
+    <version>${kumuluzee.version}</version>
+</dependency>
 
-<artifactId>kumuluzee-servlet-jetty</artifactId>
+<!-- JSP -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-jsp</artifactId>
+    <version>${kumuluzee.version}</version>
+</dependency>
 
-<artifactId>kumuluzee-jsp</artifactId>
+<!-- CDI -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-cdi</artifactId>
+    <version>${kumuluzee.version}</version>
+</dependency>
 
-<artifactId>kumuluzee-cdi</artifactId>
+<!-- JPA -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-jpa</artifactId>
+    <version>${kumuluzee.version}</version>
+</dependency>
 
-<artifactId>kumuluzee-jpa</artifactId>
+<!-- JAX-RS -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-jax-rs</artifactId>
+    <version>${kumuluzee.version}</version>
+</dependency>
 
-<artifactId>kumuluzee-jax-rs</artifactId>
+<!-- Bean Validation -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-bean-validation</artifactId>
+    <version>${kumuluzee.version}</version>
+</dependency>
 
-<artifactId>kumuluzee-bean-validation</artifactId>
-
-<artifactId>kumuluzee-json-p</artifactId>
+<!-- JSON-P -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-json-p</artifactId>
+    <version>${kumuluzee.version}</version>
+</dependency>
 ```
+
+More will be coming in the next weeks and months.
 
 ## Getting started
 
