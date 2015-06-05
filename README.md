@@ -54,205 +54,30 @@ Maven:
 </dependency>
 ```
 
-To choose your Java EE components include them as your dependencies. To view whats you can include
-please refer to the documentation.
+To choose your Java EE components include them as your dependencies. You can chose any of the
+following components:
 
-You can download the binaries from the [releases page](https://github.com/TFaga/KumuluzEE/releases).
+```xml
+<artifactId>kumuluzee-core</artifactId>
+
+<artifactId>kumuluzee-servlet-jetty</artifactId>
+
+<artifactId>kumuluzee-jsp</artifactId>
+
+<artifactId>kumuluzee-cdi</artifactId>
+
+<artifactId>kumuluzee-jpa</artifactId>
+
+<artifactId>kumuluzee-jax-rs</artifactId>
+
+<artifactId>kumuluzee-bean-validation</artifactId>
+
+<artifactId>kumuluzee-json-p</artifactId>
+```
 
 ## Getting started
 
-KumuluzEE allows you to quickly and efficiently bootstrap a Java EE application using just the
-components that you need so that your app remains light and fast. We will be using Maven to create
-a sample app.
-
-### Create the project
-
-Let's create a new project.
-
-```bash
-$ mvn -B archetype:generate \
-    -DarchetypeGroupId=org.apache.maven.archetypes \
-    -DgroupId=com.acme.app \
-    -DartifactId=app
-```
-
-Once created you must first add the appropriate dependencies. As mentioned the framework is completely
-modular which means that apart from the core functionality every component is packaged as a
-separate module and must be included explicitly as a dependency in order to use it. The framework
-will automatically detect which modules are included in the class path and bootstrap them together.
-
-All modules are versioned and released together which helps us reduce cross version conflicts and
-bugs. So it is recommended to define a property with the current version of KumuluzEE and use it
-with every dependency.
-
-> NOTE: Use the same version for every module as not doing so might result in unexpected behavior.
-
-```xml
-<properties>
-    <kumuluzee.version>1.0.0</kumuluzee.version>
-</properties>
-```
-
-First include the `core` module which includes the bootstrapping logic and configurations.
-
-```xml
-<dependency>
-    <groupId>com.kumuluz.ee</groupId>
-    <artifactId>kumuluzee-core</artifactId>
-    <version>${kumuluzee.version}</version>
-</dependency>
-```
-
-Now the core itself won't do much without something to run. At the very least we have to include an
-HTTP server that will process our apps requests and of course process our servlets as they are the
-backbone of Java EE. We prefer to use Jetty as the servlet implementation for its high performance
-and small footprint. If however you prefer a different server (like Tomcat) you can easily do so
-provided it is supported. Now lets add Jetty.
-
-```xml
-<dependency>
-    <groupId>com.kumuluz.ee</groupId>
-    <artifactId>kumuluzee-servlet-jetty</artifactId>
-    <version>${kumuluzee.version}</version>
-</dependency>
-```
-
-This is the bare minimum required to run an app with plain servlets. Lets try it out! First we will
-add an simple servlet. We don't need to include a `web.xml` file as like application servers KumuluzEE supports
-annotation scanning. However when and if you need it you can simply add it and it will be
-automatically detected and used.
-
-```java
-package com.acme.app;
-
-@WebServlet("/servlet")
-public class SimpleServlet extends HttpServlet {
-
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        response.setContentType("text/plain");
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.getWriter().println("Simple servlet");
-    }
-}
-```
-
-KumuluzEE will use a `webapp` folder at the root of your `resource` folder
-to look for files and configuration regarding it. This is the only difference to the standard
-Java EE file structure as the `webapp` folder has to be inside the `resource` folder, not alongside
-it.
-
-Create a webapp folder at the root of your resources directory and add a sample `index.html` file to
-it. 
-
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <title>Hello KumuluzEE</title>
-</head>
-<body>
-    <p>Microservices with Java EE</p>
-</body>
-</html>
-```
-
-If you want to use the default settings this is all you need to do. The `kumuluzee-core` package
-provides the class `com.kumuluz.ee.EeApplication` with a `main` method that will bootstrap your app.
-
-If you have your project opened in an IDE (IntelliJ, Eclipse, ..) you can now start the app by
-running the above class. If however you are looking to run it from the terminal (as will be the
-case on a server and various PaaS environments) then you run it directly from the class files in
-the `target` directory.
-
-### Run from the target directory
-
-To run from the target directory you must include the `maven-dependency-plugin` to your `pom.xml`
-file which will copy all your dependencies together with your classes.
-
-```xml
-<plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-dependency-plugin</artifactId>
-    <version>2.10</version>
-    <executions>
-        <execution>
-            <id>copy-dependencies</id>
-            <phase>package</phase>
-            <goals>
-                <goal>copy-dependencies</goal>
-            </goals>
-        </execution>
-    </executions>
-</plugin>
-```
-Run `maven install` and then you can start your app using the following command:
-
-```bash
-$ java -cp target/classes:target/dependency/* com.kumuluz.ee.EeApplication
-```
-
-Go to `http://localhost:8080/servlet` in your browser and you should see `"Simple servlet"` written.
-You can also visit `http://localhost:8080` to view the `index.html` that we've written.
-
-### Add the JAX-RS component to create REST services
-
-To enable JAX-RS in your application add the apropriate dependency to your application and the
-framework will automatically detect and enable it.
-
-```xml
-<dependency>
-    <groupId>com.kumuluz.ee</groupId>
-    <artifactId>kumuluzee-jax-rs</artifactId>
-    <version>${kumuluzee.version}</version>
-</dependency>
-```
-
-And thats it. Lets now add an application.
-
-```java
-package com.acme.app
-
-@ApplicationPath("/")
-public class RestApplication extends Application {
-
-}
-```
-
-And a rest resource.
-
-```java
-package com.acme.app;
-
-@Path("/rest")
-public class RestResource {
-
-    @GET
-    public Response getResources() {
-        
-        Map<String, String> json = new HashMap<>();
-        json.put("framework", "KumuluzEE");
-        
-        return Response.ok(json).build();
-    }
-}
-```
-
-Run the app and visit `http://localhost:8080/rest` and you should see the following.
-
-```json
-{
-    "framework": "KumuluzEE"
-}
-```
-
-Congratulations you have created a simple and lightweight Java EE app that follows the micro service
-pattern and can be easily deployed in a variety of cloud environments.
-
-For a full blown tutorial, please read our [blog post](https://blog.kumuluz.com/architecture/2015/06/04/microservices-with-java-ee-and-kumuluzee).
+You can find the getting started guide on the projects [wiki](https://github.com/TFaga/KumuluzEE/wiki/Getting-started).
 
 ## Building
 
