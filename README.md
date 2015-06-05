@@ -89,7 +89,7 @@ with every dependency.
 
 ```xml
 <properties>
-    <kumuluzee.version>1.0.0-alpha.1</kumuluzee.version>
+    <kumuluzee.version>1.0.0</kumuluzee.version>
 </properties>
 ```
 
