@@ -42,7 +42,9 @@ Java EE app in 5 minutes.
 
 ## Usage
 
-Using maven add the core module of the library as a dependency to your project.
+Using maven add the core module of the library as a dependency to your project. The `${kumuluzee.version}`
+variables represents the most current minor version. You can see the available version on the
+[Release Page](https://github.com/TFaga/KumuluzEE/releases).
 
 ```xml
 <dependency>
