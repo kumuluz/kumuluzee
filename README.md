@@ -252,7 +252,7 @@ Run the app and visit `http://localhost:8080/rest` and you should see the follow
 Congratulations you have created a simple and lightweight Java EE app that follows the micro service
 pattern and can be easily deployed in a variety of cloud environments.
 
-For an in depth guide, documentation and examples of other components please visit the project wiki.
+For a full blown tutorial, please read our [blog post](https://blog.kumuluz.com/architecture/2015/06/04/microservices-with-java-ee-and-kumuluzee).
 
 ## Building
 
