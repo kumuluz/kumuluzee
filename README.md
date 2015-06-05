@@ -63,7 +63,7 @@ You can download the binaries from the [releases page](https://github.com/TFaga/
 
 KumuluzEE allows you to quickly and efficiently bootstrap a Java EE application using just the
 components that you need so that your app remains light and fast. We will be using Maven to create
-a sample app as that is our system of choice.
+a sample app.
 
 ### Create the project
 
@@ -107,8 +107,7 @@ Now the core itself won't do much without something to run. At the very least we
 HTTP server that will process our apps requests and of course process our servlets as they are the
 backbone of Java EE. We prefer to use Jetty as the servlet implementation for its high performance
 and small footprint. If however you prefer a different server (like Tomcat) you can easily do so
-provided it is supported. Please refer to the full documentation to view supported servers. Now
-lets add Jetty.
+provided it is supported. Now lets add Jetty.
 
 ```xml
 <dependency>
@@ -119,9 +118,9 @@ lets add Jetty.
 ```
 
 This is the bare minimum required to run an app with plain servlets. Lets try it out! First we will
-add an simple servlet. We don't need to include a `web.xml` file as like application servers
-KumuluzEE supports annotation scanning. However when and if you need it you can simply add it and
-it will be automatically detected and used.
+add an simple servlet. We don't need to include a `web.xml` file as like application servers KumuluzEE supports
+annotation scanning. However when and if you need it you can simply add it and it will be
+automatically detected and used.
 
 ```java
 package com.acme.app;
@@ -138,6 +137,27 @@ public class SimpleServlet extends HttpServlet {
         response.getWriter().println("Simple servlet");
     }
 }
+```
+
+KumuluzEE will use a `webapp` folder at the root of your `resource` folder
+to look for files and configuration regarding it. This is the only difference to the standard
+Java EE file structure as the `webapp` folder has to be inside the `resource` folder, not alongside
+it.
+
+Create a webapp folder at the root of your resources directory and add a sample `index.html` file to
+it. 
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Hello KumuluzEE</title>
+</head>
+<body>
+    <p>Microservices with Java EE</p>
+</body>
+</html>
 ```
 
 If you want to use the default settings this is all you need to do. The `kumuluzee-core` package
@@ -176,6 +196,7 @@ $ java -cp target/classes:target/dependency/* com.kumuluz.ee.EeApplication
 ```
 
 Go to `http://localhost:8080/servlet` in your browser and you should see `"Simple servlet"` written.
+You can also visit `http://localhost:8080` to view the `index.html` that we've written.
 
 ### Add the JAX-RS component to create REST services
 
