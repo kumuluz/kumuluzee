@@ -15,7 +15,7 @@
     <artifactId>kumuluzee-jsp</artifactId>
 
     <properties>
-        <jetty.version>9.2.10.v20150310</jetty.version>
+        <jetty.version>9.2.13.v20150730</jetty.version>
     </properties>
 
     <dependencies>
