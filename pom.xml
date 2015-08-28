@@ -12,6 +12,7 @@
         <module>common</module>
         <module>core</module>
         <module>servlet-jetty</module>
+        <module>el</module>
         <module>jsp</module>
         <module>cdi</module>
         <module>jpa</module>
