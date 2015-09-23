@@ -52,6 +52,7 @@ public class HibernateValidatorTest {
         Set<ConstraintViolation<User>> constraintViolations =
                 validator.validate(u1);
 
+        Assert.assertNotNull(constraintViolations);
         Assert.assertEquals(0, constraintViolations.size());
     }
 
@@ -77,6 +78,7 @@ public class HibernateValidatorTest {
         Set<ConstraintViolation<User>> constraintViolations =
                 validator.validate(u1);
 
+        Assert.assertNotNull(constraintViolations);
         Assert.assertEquals(3, constraintViolations.size());
     }
 }
