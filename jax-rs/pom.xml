@@ -15,7 +15,7 @@
     <artifactId>kumuluzee-jax-rs</artifactId>
 
     <properties>
-        <jersey.version>2.21</jersey.version>
+        <jersey.version>2.22</jersey.version>
     </properties>
 
     <dependencies>
