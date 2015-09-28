@@ -157,4 +157,4 @@ When submitting a new feature, add tests that cover the feature.
 
 ## License
 
-GPLv3
+MIT
