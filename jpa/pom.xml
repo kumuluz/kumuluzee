@@ -10,45 +10,13 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
 
-    <name>KumuluzEE JPA</name>
-    <description>KumuluzEE JPA component implemented by EclipseLink</description>
     <modules>
         <module>eclipselink</module>
     </modules>
 
+    <name>KumuluzEE JPA</name>
+    <description>KumuluzEE JPA component</description>
+
     <artifactId>kumuluzee-jpa</artifactId>
-
-    <properties>
-        <eclipselink.version>2.6.1</eclipselink.version>
-    </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>com.kumuluz.ee</groupId>
-            <artifactId>kumuluzee-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.kumuluz.ee</groupId>
-            <artifactId>kumuluzee-cdi</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>javax.persistence</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>org.eclipse.persistence.jpa</artifactId>
-            <version>${eclipselink.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.glassfish</groupId>
-                    <artifactId>javax.json</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-    </dependencies>
 
 </project>
