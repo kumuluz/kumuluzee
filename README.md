@@ -20,6 +20,8 @@ Primary features:
 and Docker-like environments
 - Complete control over what Java EE components are included. Only include what you need and make
 your app lightweight.
+- Choose your Java EE component implementations. If there is a problem with a single implementation,
+you can simply add a different one.
 - Minimal to no configuration settings up the base server. Develop like any other Java EE application
 - Quick startup time, low resource consumption and stateless scalability accelerates development
 - Simplified unit and integration testing
@@ -31,8 +33,10 @@ supported with more being added over time:
 - JSP 2.3 (RI JSP)
 - EL 3.0 (RI UEL)
 - CDI 1.2 (RI Weld)
-- JPA 2.1 (RI EclipseLink)
-- JAX-RS 2.0 (RI Jersey)
+- JPA 2.1 (RI EclipseLink, Hibernate)
+- JAX-RS 2.0 (RI Jersey, RESTEasy)
+- JAX-WS 2.2 (RI Metro)
+- JSF 2.2 (RI Mojarra)
 - Bean Validation 1.1 (RI Hibernate validator)
 - JSON-P 1.0 (RI JSONP)
 
@@ -82,14 +86,14 @@ following artifacts:
 <!-- JPA -->
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
-    <artifactId>kumuluzee-jpa</artifactId>
+    <artifactId>kumuluzee-jpa-eclipselink</artifactId>
     <version>${kumuluzee.version}</version>
 </dependency>
 
 <!-- JAX-RS -->
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
-    <artifactId>kumuluzee-jax-rs</artifactId>
+    <artifactId>kumuluzee-jax-rs-jersey</artifactId>
     <version>${kumuluzee.version}</version>
 </dependency>
 
