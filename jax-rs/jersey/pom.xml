@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <name>KumuluzEE JAX-RS</name>
+    <name>KumuluzEE JAX-RS Jersey</name>
     <description>KumuluzEE JAX-RS component implemented by Jersey</description>
 
     <artifactId>kumuluzee-jax-rs-jersey</artifactId>

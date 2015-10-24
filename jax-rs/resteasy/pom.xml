@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <name>KumuluzEE JAX-RS</name>
+    <name>KumuluzEE JAX-RS RESTEasy</name>
     <description>KumuluzEE JAX-RS component implemented by RESTEasy</description>
 
     <artifactId>kumuluzee-jax-rs-resteasy</artifactId>

@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <name>KumuluzEE JPA</name>
+    <name>KumuluzEE JPA EclipseLink</name>
     <description>KumuluzEE JPA component implemented by EclipseLink</description>
 
     <artifactId>kumuluzee-jpa-eclipselink</artifactId>

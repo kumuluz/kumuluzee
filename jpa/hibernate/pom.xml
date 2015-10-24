@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <name>KumuluzEE JPA</name>
+    <name>KumuluzEE JPA Hibernate</name>
     <description>KumuluzEE JPA component implemented by Hibernate</description>
 
     <artifactId>kumuluzee-jpa-hibernate</artifactId>
