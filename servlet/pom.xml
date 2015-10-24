@@ -7,8 +7,12 @@
         <groupId>com.kumuluz.ee</groupId>
         <version>1.1.0-beta.1-SNAPSHOT</version>
     </parent>
-    <packaging>pom</packaging>
     <modelVersion>4.0.0</modelVersion>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>jetty</module>
+    </modules>
 
     <name>KumuluzEE Servlet</name>
     <description>KumuluzEE servlet server component</description>

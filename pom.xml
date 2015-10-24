@@ -11,7 +11,6 @@
     <modules>
         <module>common</module>
         <module>core</module>
-        <module>servlet-jetty</module>
         <module>el</module>
         <module>jsp</module>
         <module>cdi</module>
@@ -100,6 +99,12 @@
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-servlet</artifactId>
+                <version>1.1.0-beta.1-SNAPSHOT</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-servlet-jetty</artifactId>
                 <version>1.1.0-beta.1-SNAPSHOT</version>
             </dependency>
@@ -121,6 +126,12 @@
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-jpa</artifactId>
+                <version>1.1.0-beta.1-SNAPSHOT</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-jpa-eclipselink</artifactId>
                 <version>1.1.0-beta.1-SNAPSHOT</version>
             </dependency>
             <dependency>
