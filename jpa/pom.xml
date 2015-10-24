@@ -12,6 +12,7 @@
 
     <modules>
         <module>eclipselink</module>
+        <module>hibernate</module>
     </modules>
 
     <name>KumuluzEE JPA</name>
