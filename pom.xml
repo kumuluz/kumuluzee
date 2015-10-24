@@ -138,6 +138,12 @@
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-jax-rs</artifactId>
                 <version>1.1.0-beta.1-SNAPSHOT</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-jax-rs-jersey</artifactId>
+                <version>1.1.0-beta.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
