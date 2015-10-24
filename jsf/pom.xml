@@ -8,27 +8,15 @@
         <version>1.1.0-beta.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>mojarra</module>
+    </modules>
 
     <name>KumuluzEE JSF</name>
-    <description>KumuluzEE JSF component implemented by Mojarra</description>
+    <description>KumuluzEE JSF component</description>
 
     <artifactId>kumuluzee-jsf</artifactId>
 
-    <properties>
-        <mojarra.version>2.2.12</mojarra.version>
-    </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>com.kumuluz.ee</groupId>
-            <artifactId>kumuluzee-common</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>javax.faces</artifactId>
-            <version>${mojarra.version}</version>
-        </dependency>
-
-    </dependencies>
 </project>
