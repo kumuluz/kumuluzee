@@ -15,7 +15,7 @@
     <artifactId>kumuluzee-cdi</artifactId>
 
     <properties>
-        <weld.version>2.2.15.Final</weld.version>
+        <weld.version>2.3.0.Final</weld.version>
         <jersey.version>2.21</jersey.version>
     </properties>
 
