@@ -20,6 +20,7 @@
         <module>bean-validation</module>
         <module>json-p</module>
         <module>jsf</module>
+        <module>servlet</module>
     </modules>
     <name>KumuluzEE</name>
 
