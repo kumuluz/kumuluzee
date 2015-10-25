@@ -47,7 +47,7 @@ Java EE app in 5 minutes.
 ## Usage
 
 **This is the readme for the latest development version. To view the readme for the latest stable version,
-click [here](https://github.com/TFaga/KumuluzEE/blob/v1.0.0/README.md)**
+click [here](https://github.com/TFaga/KumuluzEE/blob/v1.0.0/README.md).**
 
 Using maven add the core module of the library as a dependency to your project. The `${kumuluzee.version}`
 variables represents the most current minor version. You can see the available version on the
