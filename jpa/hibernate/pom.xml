@@ -3,27 +3,26 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>kumuluzee</artifactId>
+        <artifactId>kumuluzee-jpa</artifactId>
         <groupId>com.kumuluz.ee</groupId>
         <version>2.0.0-beta.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <name>KumuluzEE Common</name>
-    <description>
-        KumuluzEE common utilities, configs, exceptions and Java EE component interfaces
-    </description>
+    <name>KumuluzEE JPA Hibernate</name>
+    <description>KumuluzEE JPA component implemented by Hibernate</description>
 
-    <artifactId>kumuluzee-common</artifactId>
+    <artifactId>kumuluzee-jpa-hibernate</artifactId>
+
+    <properties>
+        <hibernate.version>5.0.2.Final</hibernate.version>
+    </properties>
 
     <dependencies>
         <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
         </dependency>
     </dependencies>
 

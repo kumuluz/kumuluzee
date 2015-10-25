@@ -3,27 +3,26 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>kumuluzee</artifactId>
+        <artifactId>kumuluzee-jax-rs</artifactId>
         <groupId>com.kumuluz.ee</groupId>
         <version>2.0.0-beta.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <name>KumuluzEE Common</name>
-    <description>
-        KumuluzEE common utilities, configs, exceptions and Java EE component interfaces
-    </description>
+    <name>KumuluzEE JAX-RS RESTEasy</name>
+    <description>KumuluzEE JAX-RS component implemented by RESTEasy</description>
 
-    <artifactId>kumuluzee-common</artifactId>
+    <artifactId>kumuluzee-jax-rs-resteasy</artifactId>
+
+    <properties>
+        <resteasy.version>3.0.13.Final</resteasy.version>
+    </properties>
 
     <dependencies>
         <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jaxrs</artifactId>
+            <version>${resteasy.version}</version>
         </dependency>
     </dependencies>
 

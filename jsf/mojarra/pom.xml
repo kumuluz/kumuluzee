@@ -3,19 +3,19 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>kumuluzee</artifactId>
+        <artifactId>kumuluzee-jsf</artifactId>
         <groupId>com.kumuluz.ee</groupId>
         <version>2.0.0-beta.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <name>KumuluzEE JSP</name>
-    <description>KumuluzEE EL component implemented by UEL</description>
+    <name>KumuluzEE JSF Mojarra</name>
+    <description>KumuluzEE JSF component implemented by Mojarra</description>
 
-    <artifactId>kumuluzee-el</artifactId>
+    <artifactId>kumuluzee-jsf-mojarra</artifactId>
 
     <properties>
-        <uel-version>3.0.0</uel-version>
+        <mojarra.version>2.2.12</mojarra.version>
     </properties>
 
     <dependencies>
@@ -25,15 +25,9 @@
         </dependency>
 
         <dependency>
-            <groupId>javax.el</groupId>
-            <artifactId>javax.el-api</artifactId>
-            <version>${el.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.glassfish</groupId>
-            <artifactId>javax.el</artifactId>
-            <version>${uel-version}</version>
+            <artifactId>javax.faces</artifactId>
+            <version>${mojarra.version}</version>
         </dependency>
     </dependencies>
 

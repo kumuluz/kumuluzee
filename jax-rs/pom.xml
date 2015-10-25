@@ -5,7 +5,7 @@
     <parent>
         <artifactId>kumuluzee</artifactId>
         <groupId>com.kumuluz.ee</groupId>
-        <version>1.1.0-beta.1-SNAPSHOT</version>
+        <version>2.0.0-beta.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
@@ -15,6 +15,7 @@
 
     <modules>
         <module>jersey</module>
+        <module>resteasy</module>
     </modules>
 
     <artifactId>kumuluzee-jax-rs</artifactId>
