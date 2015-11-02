@@ -4,8 +4,10 @@ import com.kumuluz.ee.jpa.resources.PersistenceContextResourceFactory;
 import com.kumuluz.ee.jpa.resources.PersistenceUnitHolder;
 import com.kumuluz.ee.jpa.resources.PersistenceUnitResourceFactory;
 
+import org.jboss.weld.bootstrap.api.Service;
 import org.jboss.weld.injection.spi.JpaInjectionServices;
 import org.jboss.weld.injection.spi.ResourceReferenceFactory;
+import org.kohsuke.MetaInfServices;
 
 import javax.annotation.Priority;
 import javax.enterprise.inject.spi.InjectionPoint;
@@ -18,6 +20,7 @@ import javax.persistence.PersistenceUnit;
  * @author Tilen
  */
 @Priority(1)
+@MetaInfServices(Service.class)
 public class JpaService implements JpaInjectionServices {
 
     @Override

@@ -9,6 +9,7 @@ import com.kumuluz.ee.common.utils.ResourceUtils;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
+import org.kohsuke.MetaInfServices;
 
 import java.util.EventListener;
 import java.util.Map;
@@ -19,6 +20,7 @@ import javax.servlet.Servlet;
 /**
  * @author Tilen
  */
+@MetaInfServices
 public class JettyServletServer implements ServletServer {
 
     private Logger log = Logger.getLogger(JettyServletServer.class.getSimpleName());

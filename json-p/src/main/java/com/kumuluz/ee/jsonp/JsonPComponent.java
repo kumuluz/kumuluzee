@@ -3,12 +3,14 @@ package com.kumuluz.ee.jsonp;
 import com.kumuluz.ee.common.Component;
 import com.kumuluz.ee.common.KumuluzServer;
 import com.kumuluz.ee.common.config.EeConfig;
+import org.kohsuke.MetaInfServices;
 
 import java.util.logging.Logger;
 
 /**
  * @author Tilen
  */
+@MetaInfServices
 public class JsonPComponent implements Component {
 
     private Logger log = Logger.getLogger(JsonPComponent.class.getSimpleName());
