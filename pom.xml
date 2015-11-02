@@ -47,6 +47,7 @@
         <beanvalidation.version>1.1.0.Final</beanvalidation.version>
         <json.p.version>1.0</json.p.version>
 
+        <metainf.version>1.6</metainf.version>
         <jandex.version>1.2.4.Final</jandex.version>
         <junit.version>4.12</junit.version>
     </properties>
@@ -91,91 +92,91 @@
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-common</artifactId>
-                <version>2.0.0-beta.1-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-core</artifactId>
-                <version>2.0.0-beta.1-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-servlet</artifactId>
-                <version>2.0.0-beta.1-SNAPSHOT</version>
+                <version>${project.version}</version>
                 <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-servlet-jetty</artifactId>
-                <version>2.0.0-beta.1-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-jsp</artifactId>
-                <version>2.0.0-beta.1-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-el</artifactId>
-                <version>2.0.0-beta.1-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-cdi</artifactId>
-                <version>2.0.0-beta.1-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-jpa</artifactId>
-                <version>2.0.0-beta.1-SNAPSHOT</version>
+                <version>${project.version}</version>
                 <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-jpa-eclipselink</artifactId>
-                <version>2.0.0-beta.1-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-jpa-hibernate</artifactId>
-                <version>2.0.0-beta.1-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-jax-rs</artifactId>
-                <version>2.0.0-beta.1-SNAPSHOT</version>
+                <version>${project.version}</version>
                 <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-jax-rs-jersey</artifactId>
-                <version>2.0.0-beta.1-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-jax-rs-resteasy</artifactId>
-                <version>2.0.0-beta.1-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-jsf</artifactId>
-                <version>2.0.0-beta.1-SNAPSHOT</version>
+                <version>${project.version}</version>
                 <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-jsf-mojarra</artifactId>
-                <version>2.0.0-beta.1-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-bean-validation</artifactId>
-                <version>2.0.0-beta.1-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-json-p</artifactId>
-                <version>2.0.0-beta.1-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
 
             <!-- Java EE specification dependencies-->
@@ -231,6 +232,11 @@
             </dependency>
 
             <!-- Various libraries used throughout the framework-->
+            <dependency>
+                <groupId>org.kohsuke.metainf-services</groupId>
+                <artifactId>metainf-services</artifactId>
+                <version>${metainf.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.jboss</groupId>
                 <artifactId>jandex</artifactId>

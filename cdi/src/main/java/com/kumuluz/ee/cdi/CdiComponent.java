@@ -3,12 +3,14 @@ package com.kumuluz.ee.cdi;
 import com.kumuluz.ee.common.Component;
 import com.kumuluz.ee.common.KumuluzServer;
 import com.kumuluz.ee.common.config.EeConfig;
+import org.kohsuke.MetaInfServices;
 
 import java.util.logging.Logger;
 
 /**
  * @author Tilen
  */
+@MetaInfServices
 public class CdiComponent implements Component {
 
     private Logger log = Logger.getLogger(CdiComponent.class.getSimpleName());

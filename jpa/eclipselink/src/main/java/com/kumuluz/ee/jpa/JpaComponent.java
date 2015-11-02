@@ -4,12 +4,14 @@ import com.kumuluz.ee.common.Component;
 import com.kumuluz.ee.common.KumuluzServer;
 import com.kumuluz.ee.common.config.EeConfig;
 import com.kumuluz.ee.jpa.resources.PersistenceUnitHolder;
+import org.kohsuke.MetaInfServices;
 
 import java.util.logging.Logger;
 
 /**
  * @author Tilen
  */
+@MetaInfServices
 public class JpaComponent implements Component {
 
     private Logger log = Logger.getLogger(JpaComponent.class.getSimpleName());
