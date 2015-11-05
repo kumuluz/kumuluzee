@@ -8,56 +8,15 @@
         <version>2.0.0-beta.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
+    <packaging>pom</packaging>
 
     <name>KumuluzEE CDI</name>
-    <description>KumuluzEE CDI component implemented by Weld</description>
+    <description>KumuluzEE CDI component</description>
+
+    <modules>
+        <module>weld</module>
+    </modules>
 
     <artifactId>kumuluzee-cdi</artifactId>
-
-    <properties>
-        <weld.version>2.3.0.Final</weld.version>
-        <jersey.version>2.21</jersey.version>
-    </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>com.kumuluz.ee</groupId>
-            <artifactId>kumuluzee-common</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.enterprise</groupId>
-            <artifactId>cdi-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.weld.servlet</groupId>
-            <artifactId>weld-servlet-core</artifactId>
-            <version>${weld.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.jboss.spec.javax.annotation</groupId>
-                    <artifactId>jboss-annotations-api_1.2_spec</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.jboss.spec.javax.el</groupId>
-                    <artifactId>jboss-el-api_3.0_spec</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.jboss.spec.javax.interceptor</groupId>
-                    <artifactId>jboss-interceptors-api_1.2_spec</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss</groupId>
-            <artifactId>jandex</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.ext.cdi</groupId>
-            <artifactId>jersey-cdi1x</artifactId>
-            <version>${jersey.version}</version>
-        </dependency>
-    </dependencies>
 
 </project>
