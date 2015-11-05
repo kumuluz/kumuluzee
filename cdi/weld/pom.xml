@@ -16,7 +16,7 @@
 
     <properties>
         <weld.version>2.3.0.Final</weld.version>
-        <jersey.version>2.21</jersey.version>
+        <jersey.version>2.17</jersey.version>
     </properties>
 
     <dependencies>
