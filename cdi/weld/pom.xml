@@ -50,6 +50,11 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>org.jboss.weld</groupId>
+            <artifactId>weld-core-jsf</artifactId>
+            <version>${weld.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.jboss</groupId>
             <artifactId>jandex</artifactId>
         </dependency>
@@ -58,6 +63,7 @@
             <artifactId>jersey-cdi1x</artifactId>
             <version>${jersey.version}</version>
         </dependency>
+
     </dependencies>
 
 </project>
