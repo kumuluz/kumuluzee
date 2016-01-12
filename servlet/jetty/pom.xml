@@ -15,7 +15,7 @@
     <artifactId>kumuluzee-servlet-jetty</artifactId>
 
     <properties>
-        <jetty.version>9.3.5.v20151012</jetty.version>
+        <jetty.version>9.3.6.v20151106</jetty.version>
     </properties>
 
     <dependencies>
