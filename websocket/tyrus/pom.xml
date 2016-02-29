@@ -31,10 +31,9 @@
 
         <dependency>
             <groupId>org.glassfish.tyrus</groupId>
-            <artifactId>tyrus-server</artifactId>
+            <artifactId>tyrus-container-servlet</artifactId>
             <version>${tyrus.version}</version>
         </dependency>
-
     </dependencies>
 
 </project>
