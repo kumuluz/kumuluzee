@@ -20,7 +20,6 @@
         <module>json-p</module>
         <module>jsf</module>
         <module>servlet</module>
-        <module>websocket</module>
     </modules>
     <name>KumuluzEE</name>
 
@@ -173,16 +172,6 @@
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-jsf-mojarra</artifactId>
-                <version>2.0.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>com.kumuluz.ee</groupId>
-                <artifactId>kumuluzee-websocket</artifactId>
-                <version>2.0.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>com.kumuluz.ee</groupId>
-                <artifactId>kumuluzee-websocket-tyrus</artifactId>
                 <version>2.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
