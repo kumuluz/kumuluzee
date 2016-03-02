@@ -13,12 +13,8 @@
         <module>core</module>
         <module>el</module>
         <module>jsp</module>
-        <module>cdi</module>
-        <module>jpa</module>
-        <module>jax-rs</module>
-        <module>bean-validation</module>
         <module>json-p</module>
-        <module>jsf</module>
+
         <module>servlet</module>
         <module>components</module>
     </modules>

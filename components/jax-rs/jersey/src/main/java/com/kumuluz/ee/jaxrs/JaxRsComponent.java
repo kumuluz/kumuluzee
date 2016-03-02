@@ -6,8 +6,6 @@ import com.kumuluz.ee.common.config.EeConfig;
 
 import java.util.logging.Logger;
 
-import javax.ws.rs.ApplicationPath;
-
 /**
  * @author Tilen
  */
