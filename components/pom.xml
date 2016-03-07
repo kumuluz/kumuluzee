@@ -12,6 +12,7 @@
 
     <name>KumuluzEE Components</name>
     <description>KumuluzEE Java EE components that are independent of the underlying server.</description>
+
     <modules>
         <module>websocket</module>
         <module>cdi</module>
