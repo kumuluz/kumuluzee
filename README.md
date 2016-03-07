@@ -30,6 +30,7 @@ The goal is to support as many Java EE components as possible. Currently the fol
 supported with more being added over time:
 
 - Servlet 3.1 (Jetty)
+- WebSocket 1.1 (Jetty)
 - JSP 2.3 (RI JSP)
 - EL 3.0 (RI UEL)
 - CDI 1.2 (RI Weld)
@@ -72,21 +73,28 @@ following artifacts:
     <version>${kumuluzee.version}</version>
 </dependency>
 
-<!-- JSP -->
+<!-- WebSocket (Jetty) -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-websocket-jetty</artifactId>
+    <version>${kumuluzee.version}</version>
+</dependency>
+
+<!-- JSP (Jetty) -->
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee-jsp</artifactId>
     <version>${kumuluzee.version}</version>
 </dependency>
 
-<!-- CDI -->
+<!-- CDI (Weld) -->
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
-    <artifactId>kumuluzee-cdi</artifactId>
+    <artifactId>kumuluzee-cdi-weld</artifactId>
     <version>${kumuluzee.version}</version>
 </dependency>
 
-<!-- JPA -->
+<!-- JPA (EclipseLink) -->
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee-jpa-eclipselink</artifactId>
@@ -100,10 +108,10 @@ following artifacts:
     <version>${kumuluzee.version}</version>
 </dependency>
 
-<!-- Bean Validation -->
+<!-- Bean Validation (Hibernate validator) -->
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
-    <artifactId>kumuluzee-bean-validation</artifactId>
+    <artifactId>kumuluzee-bean-validation-hibernate-validator</artifactId>
     <version>${kumuluzee.version}</version>
 </dependency>
 
