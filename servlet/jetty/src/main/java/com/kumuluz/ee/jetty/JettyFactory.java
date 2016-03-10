@@ -3,6 +3,8 @@ package com.kumuluz.ee.jetty;
 import com.kumuluz.ee.common.config.ServerConfig;
 
 import org.eclipse.jetty.annotations.AnnotationConfiguration;
+import org.eclipse.jetty.plus.webapp.EnvConfiguration;
+import org.eclipse.jetty.plus.webapp.PlusConfiguration;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -89,6 +91,8 @@ public class JettyFactory {
         classList.add(MetaInfConfiguration.class.getName());
         classList.add(FragmentConfiguration.class.getName());
         classList.add(JettyWebXmlConfiguration.class.getName());
+        classList.add(EnvConfiguration.class.getName());
+        classList.add(PlusConfiguration.class.getName());
 
         return classList;
     }
