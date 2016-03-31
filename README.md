@@ -34,8 +34,8 @@ supported with more being added over time:
 - JSP 2.3 (RI JSP)
 - EL 3.0 (RI UEL)
 - CDI 1.2 (RI Weld)
-- JPA 2.1 (RI EclipseLink, Hibernate)
-- JAX-RS 2.0 (RI Jersey, RESTEasy)
+- JPA 2.1 (RI EclipseLink)
+- JAX-RS 2.0 (RI Jersey)
 - JAX-WS 2.2 (RI Metro)
 - JSF 2.2 (RI Mojarra)
 - Bean Validation 1.1 (RI Hibernate validator)
@@ -101,7 +101,7 @@ following artifacts:
     <version>${kumuluzee.version}</version>
 </dependency>
 
-<!-- JAX-RS -->
+<!-- JAX-RS (Jersey) -->
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee-jax-rs-jersey</artifactId>
@@ -123,7 +123,19 @@ following artifacts:
 </dependency>
 ```
 
-More will be coming in the next weeks and months.
+## Planned features
+
+The next major release will focus on adding the two major components: JAX-WS and EJB. Currently Metro is planned as the implementation
+of JAX-WS and OpenEJB for EJB.
+
+Additional implementations will also be added to existing components. Currently the following are planned:
+
+- RESTEasy (JAX-RS)
+- Hibernate (JPA)
+- MyFaces (JSF)
+
+The features will arrive separately following a series of betas, first of which will be available at the end of March/begining of April.
+If the testing goes well, the final release should come soon after a few betas.
 
 ## Getting started
 
