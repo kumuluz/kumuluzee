@@ -24,12 +24,6 @@ public class CdiComponent implements Component {
     }
 
     @Override
-    public String getComponentName() {
-
-        return "CDI";
-    }
-
-    @Override
     public String getImplementationName() {
 
         return "Weld";

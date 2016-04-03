@@ -24,12 +24,6 @@ public class JspComponent implements Component {
     }
 
     @Override
-    public String getComponentName() {
-
-        return "JSP";
-    }
-
-    @Override
     public String getImplementationName() {
 
         return "JSP";

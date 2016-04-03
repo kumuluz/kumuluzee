@@ -24,12 +24,6 @@ public class ElComponent implements Component {
     }
 
     @Override
-    public String getComponentName() {
-
-        return "EL";
-    }
-
-    @Override
     public String getImplementationName() {
 
         return "UEL";

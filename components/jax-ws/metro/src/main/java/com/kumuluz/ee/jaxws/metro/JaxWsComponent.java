@@ -25,11 +25,6 @@ public class JaxWsComponent implements Component {
     }
 
     @Override
-    public String getComponentName() {
-        return "JAX-WS";
-    }
-
-    @Override
     public String getImplementationName() {
         return "Metro";
     }

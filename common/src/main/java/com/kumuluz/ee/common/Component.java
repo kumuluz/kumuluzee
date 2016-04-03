@@ -11,7 +11,5 @@ public interface Component {
 
     void load();
 
-    String getComponentName();
-
     String getImplementationName();
 }

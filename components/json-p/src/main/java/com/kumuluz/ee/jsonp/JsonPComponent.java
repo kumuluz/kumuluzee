@@ -3,12 +3,15 @@ package com.kumuluz.ee.jsonp;
 import com.kumuluz.ee.common.Component;
 import com.kumuluz.ee.common.KumuluzServer;
 import com.kumuluz.ee.common.config.EeConfig;
+import com.kumuluz.ee.common.dependencies.EeComponentDef;
+import com.kumuluz.ee.common.dependencies.EeComponentType;
 
 import java.util.logging.Logger;
 
 /**
  * @author Tilen
  */
+@EeComponentDef(EeComponentType.JSON_P)
 public class JsonPComponent implements Component {
 
     private Logger log = Logger.getLogger(JsonPComponent.class.getSimpleName());
@@ -21,12 +24,6 @@ public class JsonPComponent implements Component {
     public void load() {
 
         log.info("Initiating JSONP");
-    }
-
-    @Override
-    public String getComponentName() {
-
-        return "JSON-P";
     }
 
     @Override

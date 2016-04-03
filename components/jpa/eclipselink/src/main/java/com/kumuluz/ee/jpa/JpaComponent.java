@@ -27,12 +27,6 @@ public class JpaComponent implements Component {
     }
 
     @Override
-    public String getComponentName() {
-
-        return "JPA";
-    }
-
-    @Override
     public String getImplementationName() {
 
         return "EclipseLink";

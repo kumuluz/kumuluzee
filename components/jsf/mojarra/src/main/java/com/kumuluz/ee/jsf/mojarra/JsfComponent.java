@@ -24,12 +24,6 @@ public class JsfComponent implements Component {
     }
 
     @Override
-    public String getComponentName() {
-
-        return "JSF";
-    }
-
-    @Override
     public String getImplementationName() {
 
         return "Mojarra";

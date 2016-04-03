@@ -24,12 +24,6 @@ public class JaxRsComponent implements Component {
     }
 
     @Override
-    public String getComponentName() {
-
-        return "JAX-RS";
-    }
-
-    @Override
     public String getImplementationName() {
 
         return "Jersey";
