@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 /**
  * @author Tilen
  */
-@EeComponentDef(EeComponentType.BEAN_VALIDATION)
 public class BeanValidationComponent implements Component {
 
     private Logger log = Logger.getLogger(BeanValidationComponent.class.getSimpleName());
@@ -24,11 +23,5 @@ public class BeanValidationComponent implements Component {
     public void load() {
 
         log.info("Initiating Hibernate Validator");
-    }
-
-    @Override
-    public String getImplementationName() {
-
-        return "Hibernate Validator";
     }
 }

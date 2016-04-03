@@ -10,6 +10,4 @@ public interface Component {
     void init(KumuluzServer server, EeConfig eeConfig);
 
     void load();
-
-    String getImplementationName();
 }

@@ -22,10 +22,4 @@ public class JspComponent implements Component {
 
         log.info("Initiating JSP");
     }
-
-    @Override
-    public String getImplementationName() {
-
-        return "JSP";
-    }
 }

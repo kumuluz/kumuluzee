@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 /**
  * @author Tilen
  */
-@EeComponentDef(EeComponentType.JSON_P)
 public class JsonPComponent implements Component {
 
     private Logger log = Logger.getLogger(JsonPComponent.class.getSimpleName());
@@ -24,11 +23,5 @@ public class JsonPComponent implements Component {
     public void load() {
 
         log.info("Initiating JSONP");
-    }
-
-    @Override
-    public String getImplementationName() {
-
-        return "JSONP";
     }
 }

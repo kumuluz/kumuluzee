@@ -22,10 +22,4 @@ public class JaxRsComponent implements Component {
 
         log.info("Initiating Jersey");
     }
-
-    @Override
-    public String getImplementationName() {
-
-        return "Jersey";
-    }
 }

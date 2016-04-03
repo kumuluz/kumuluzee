@@ -22,10 +22,4 @@ public class JsfComponent implements Component {
 
         log.info("Initiating Mojarra");
     }
-
-    @Override
-    public String getImplementationName() {
-
-        return "Mojarra";
-    }
 }

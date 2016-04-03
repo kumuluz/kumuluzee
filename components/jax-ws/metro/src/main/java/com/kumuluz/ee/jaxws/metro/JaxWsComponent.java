@@ -23,9 +23,4 @@ public class JaxWsComponent implements Component {
     public void load() {
         log.info("Initiating Metro");
     }
-
-    @Override
-    public String getImplementationName() {
-        return "Metro";
-    }
 }

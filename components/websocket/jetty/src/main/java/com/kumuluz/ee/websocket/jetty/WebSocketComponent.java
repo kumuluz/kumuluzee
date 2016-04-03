@@ -25,10 +25,4 @@ public class WebSocketComponent implements Component {
 
         log.info("Initiating WebSocket for Jetty");
     }
-
-    @Override
-    public String getImplementationName() {
-
-        return "Jetty";
-    }
 }

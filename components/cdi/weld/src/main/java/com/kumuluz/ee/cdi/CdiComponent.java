@@ -22,10 +22,4 @@ public class CdiComponent implements Component {
 
         log.info("Initiating Weld");
     }
-
-    @Override
-    public String getImplementationName() {
-
-        return "Weld";
-    }
 }

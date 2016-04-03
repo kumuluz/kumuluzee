@@ -22,10 +22,4 @@ public class ElComponent implements Component {
 
         log.info("Initiating UEL");
     }
-
-    @Override
-    public String getImplementationName() {
-
-        return "UEL";
-    }
 }
