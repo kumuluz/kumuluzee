@@ -36,8 +36,8 @@ public class ComponentLoader {
 
         for (Component c : components) {
 
-            log.info("Found " + c.getComponentName() + " implemented by " + c
-                    .getImplementationName());
+//            log.info("Found " + c.getComponentName() + " implemented by " + c
+//                    .getImplementationName());
 
             c.init(server, eeConfig);
             c.load();
