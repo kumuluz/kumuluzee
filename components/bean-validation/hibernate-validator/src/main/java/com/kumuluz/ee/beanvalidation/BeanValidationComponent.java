@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 /**
  * @author Tilen
  */
+@EeComponentDef(name = "Hibernate Validator", type = EeComponentType.BEAN_VALIDATION)
 public class BeanValidationComponent implements Component {
 
     private Logger log = Logger.getLogger(BeanValidationComponent.class.getSimpleName());
