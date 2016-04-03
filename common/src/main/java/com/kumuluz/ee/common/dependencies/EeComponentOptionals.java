@@ -11,9 +11,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-public @interface EeComponentDef {
+public @interface EeComponentOptionals {
 
-    String name();
-
-    EeComponentType type();
+    EeComponentOptional[] value();
 }
