@@ -11,11 +11,9 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-public @interface EeComponentDef {
+public @interface ServerDef {
 
     String value();
 
-    EeComponentType type();
-
-    EeComponentType[] requires();
+    EeComponentType[] provides();
 }

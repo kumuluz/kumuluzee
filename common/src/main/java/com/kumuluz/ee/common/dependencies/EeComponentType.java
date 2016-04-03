@@ -6,5 +6,5 @@ package com.kumuluz.ee.common.dependencies;
  */
 public enum EeComponentType {
 
-    WEBSOCKET, JSP, EL, JSF, JPA, CDI, JAX_RS, JAX_WS, BEAN_VALIDATION, JSON_P
+    SERVLET, WEBSOCKET, JSP, EL, JSF, JPA, CDI, JAX_RS, JAX_WS, BEAN_VALIDATION, JSON_P, JTA, BATCH, MAIL
 }
