@@ -1,5 +1,7 @@
 package com.kumuluz.ee.common;
 
+import com.kumuluz.ee.common.config.ServerConfig;
+
 import java.util.EventListener;
 import java.util.Map;
 
@@ -10,11 +12,19 @@ import javax.servlet.Servlet;
  */
 public interface KumuluzServer {
 
+    void initServer();
+
+    void startServer();
+
+    void stopServer();
+
     void registerServlet(Class<? extends Servlet> servletClass, String mapping);
 
     void registerServlet(Class<? extends Servlet> servletClass, String mapping, Map<String, String> parameters);
 
     void registerListener(EventListener listener);
 
-    String getServerName();
+    void setServerConfig(ServerConfig serverConfig);
+
+    ServerConfig getServerConfig();
 }

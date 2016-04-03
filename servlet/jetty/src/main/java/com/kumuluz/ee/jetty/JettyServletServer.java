@@ -3,6 +3,8 @@ package com.kumuluz.ee.jetty;
 import com.kumuluz.ee.common.ServletServer;
 import com.kumuluz.ee.common.attributes.ClasspathAttributes;
 import com.kumuluz.ee.common.config.ServerConfig;
+import com.kumuluz.ee.common.dependencies.EeComponentType;
+import com.kumuluz.ee.common.dependencies.ServerDef;
 import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 import com.kumuluz.ee.common.utils.ResourceUtils;
 
@@ -17,8 +19,10 @@ import java.util.logging.Logger;
 import javax.servlet.Servlet;
 
 /**
- * @author Tilen
+ * @author Tilen Faganel
+ * @since 1.0.0
  */
+@ServerDef(value = "Jetty", provides = {EeComponentType.SERVLET})
 public class JettyServletServer implements ServletServer {
 
     private Logger log = Logger.getLogger(JettyServletServer.class.getSimpleName());
@@ -33,8 +37,6 @@ public class JettyServletServer implements ServletServer {
     public void initServer() {
 
         server = createJettyFactory().create();
-
-        log.info(getServerName() + " initiated");
     }
 
     @Override
@@ -54,8 +56,6 @@ public class JettyServletServer implements ServletServer {
 
             throw new KumuluzServerException(e.getMessage(), e.getCause());
         }
-
-        log.info(getServerName() + " started");
     }
 
     @Override
@@ -75,8 +75,6 @@ public class JettyServletServer implements ServletServer {
 
             throw new KumuluzServerException(e.getMessage(), e.getCause());
         }
-
-        log.info(getServerName() + " stopped");
     }
 
     @Override
@@ -158,16 +156,8 @@ public class JettyServletServer implements ServletServer {
         appContext.addEventListener(listener);
     }
 
-    @Override
-    public String getServerName() {
-
-        return "Jetty";
-    }
-
     private JettyFactory createJettyFactory() {
 
         return new JettyFactory(serverConfig);
     }
-
-
 }
