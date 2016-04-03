@@ -15,7 +15,6 @@
 
     <modules>
         <module>jersey</module>
-        <module>resteasy</module>
     </modules>
 
     <artifactId>kumuluzee-jax-rs</artifactId>
