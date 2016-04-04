@@ -47,9 +47,6 @@ Java EE app in 5 minutes.
 
 ## Usage
 
-**This is the readme for the latest development version. To view the readme for the latest stable version,
-click [here](https://github.com/TFaga/KumuluzEE/blob/v1.0.0/README.md).**
-
 Using maven add the core module of the library as a dependency to your project. The `${kumuluzee.version}`
 variables represents the most current minor version. You can see the available version on the
 [Release Page](https://github.com/TFaga/KumuluzEE/releases).
@@ -87,6 +84,13 @@ following artifacts:
     <version>${kumuluzee.version}</version>
 </dependency>
 
+<!-- EL (UEL) -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-el-uel</artifactId>
+    <version>${kumuluzee.version}</version>
+</dependency>
+
 <!-- CDI (Weld) -->
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
@@ -118,15 +122,19 @@ following artifacts:
 <!-- JSON-P -->
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
-    <artifactId>kumuluzee-json-p</artifactId>
+    <artifactId>kumuluzee-json-p-jsonp</artifactId>
     <version>${kumuluzee.version}</version>
 </dependency>
 ```
 
 ## Planned features
 
-The next major release will focus on adding the two major components: JAX-WS and EJB. Currently Metro is planned as the implementation
-of JAX-WS and OpenEJB for EJB.
+The next major release will focus on adding the two major components: 
+
+- JAX-WS
+- EJB
+ 
+Currently Metro is planned as the implementation for JAX-WS and OpenEJB for EJB.
 
 Additional implementations will also be added to existing components. Currently the following are planned:
 
@@ -161,7 +169,7 @@ cd KumuluzEE
 To build KumuluzEE run:
 
 ```bash
-mvn install
+mvn clean package
 ```
 
 This will build all modules and run the testsuite. 
