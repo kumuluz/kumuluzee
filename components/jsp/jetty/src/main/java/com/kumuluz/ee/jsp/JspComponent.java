@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  * @author Tilen Faganel
  * @since 1.0.0
  */
-@EeComponentDef(name = "JSP", type = EeComponentType.JSP)
+@EeComponentDef(name = "Jetty", type = EeComponentType.JSP)
 @EeComponentDependency(value = EeComponentType.EL)
 public class JspComponent implements Component {
 
@@ -26,6 +26,6 @@ public class JspComponent implements Component {
     @Override
     public void load() {
 
-        log.info("Initiating JSP");
+        log.info("Initiating Jetty Apache Jasper");
     }
 }
