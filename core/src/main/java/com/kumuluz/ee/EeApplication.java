@@ -163,8 +163,8 @@ public class EeApplication {
 
                 if (depCompName == null) {
 
-                    String msg = "EE component dependency unfulfilled. The EE component " + cmp.getType() +
-                            "implemented by " + cmp.getName() + " requires " + dep.value() + ", which was not " +
+                    String msg = "EE component dependency unfulfilled. The EE component " + cmp.getType().getName() +
+                            " implemented by " + cmp.getName() + " requires " + dep.value().getName() + ", which was not " +
                             "found. Please make sure to include the required component.";
 
                     log.severe(msg);
@@ -172,11 +172,11 @@ public class EeApplication {
                     throw new KumuluzServerException(msg);
                 }
 
-                if (dep.implementations().length == 0 ||
+                if (dep.implementations().length > 0 &&
                         !Arrays.asList(dep.implementations()).contains(depCompName)) {
 
                     String msg = "EE component implementation dependency unfulfilled. The EE component " +
-                            cmp.getType() + "implemented by " + cmp.getName() + " requires " + dep.value() +
+                            cmp.getType().getName() + " implemented by " + cmp.getName() + " requires " + dep.value().getName() +
                             " implemented by one of the following implementations: " +
                             Arrays.toString(dep.implementations()) + ". Please make sure you use one of the " +
                             "implementations required by this component.";
@@ -207,7 +207,7 @@ public class EeApplication {
                         !Arrays.asList(dep.implementations()).contains(depCompName)) {
 
                     String msg = "EE component implementation dependency unfulfilled. The EE component " +
-                            cmp.getType() + "implemented by " + cmp.getName() + " requires " + dep.value() +
+                            cmp.getType().getName() + "implemented by " + cmp.getName() + " requires " + dep.value().getName() +
                             " implemented by one of the following implementations: " +
                             Arrays.toString(dep.implementations()) + ". Please make sure you use one of the " +
                             "implementations required by this component.";
