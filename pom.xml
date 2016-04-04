@@ -37,7 +37,6 @@
         <cdi.version>1.2</cdi.version>
         <jpa.version>2.1.0</jpa.version>
         <jaxrs.version>2.0.1</jaxrs.version>
-        <jaxws.version>2.2.11</jaxws.version>
         <jsf.version>2.2.12</jsf.version>
         <websocket.version>1.1</websocket.version>
         <beanvalidation.version>1.1.0.Final</beanvalidation.version>
@@ -133,16 +132,6 @@
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
-                <artifactId>kumuluzee-ejb</artifactId>
-                <version>2.0.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>com.kumuluz.ee</groupId>
-                <artifactId>kumuluzee-ejb-openejb</artifactId>
-                <version>2.0.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-jpa</artifactId>
                 <version>2.0.0-SNAPSHOT</version>
                 <type>pom</type>
@@ -171,16 +160,6 @@
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-jax-rs-resteasy</artifactId>
-                <version>2.0.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>com.kumuluz.ee</groupId>
-                <artifactId>kumuluzee-jax-ws</artifactId>
-                <version>2.0.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>com.kumuluz.ee</groupId>
-                <artifactId>kumuluzee-jax-ws-metro</artifactId>
                 <version>2.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
