@@ -22,5 +22,7 @@ public class JsonPComponent implements Component {
 
     @Override
     public void load() {
+
+        log.info("Initiating JSONP");
     }
 }
