@@ -12,10 +12,10 @@
     <artifactId>kumuluzee-jsp-jetty</artifactId>
 
     <name>KumuluzEE JSP</name>
-    <description>KumuluzEE JSP component implemented by Jetty</description>
+    <description>KumuluzEE JSP component implemented by Jetty (Apache Jasper)</description>
 
     <properties>
-        <jetty.version>9.2.14.v20151106</jetty.version>
+        <jetty.version>9.3.7.v20160115</jetty.version>
     </properties>
 
     <dependencies>
@@ -26,14 +26,8 @@
 
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-jsp</artifactId>
+            <artifactId>apache-jsp</artifactId>
             <version>${jetty.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.glassfish</groupId>
-                    <artifactId>javax.el</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
