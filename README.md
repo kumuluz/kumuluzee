@@ -36,7 +36,6 @@ supported with more being added over time:
 - CDI 1.2 (RI Weld)
 - JPA 2.1 (RI EclipseLink)
 - JAX-RS 2.0 (RI Jersey)
-- JAX-WS 2.2 (RI Metro)
 - JSF 2.2 (RI Mojarra)
 - Bean Validation 1.1 (RI Hibernate validator)
 - JSON-P 1.0 (RI JSONP)
