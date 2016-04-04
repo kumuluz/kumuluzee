@@ -31,7 +31,7 @@ supported with more being added over time:
 
 - Servlet 3.1 (Jetty)
 - WebSocket 1.1 (Jetty)
-- JSP 2.3 (RI JSP)
+- JSP 2.3 (Jetty Apache Jasper)
 - EL 3.0 (RI UEL)
 - CDI 1.2 (RI Weld)
 - JPA 2.1 (RI EclipseLink)
@@ -77,10 +77,10 @@ following artifacts:
     <version>${kumuluzee.version}</version>
 </dependency>
 
-<!-- JSP (Jetty) -->
+<!-- JSP (Jetty Apache Jasper) -->
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
-    <artifactId>kumuluzee-jsp</artifactId>
+    <artifactId>kumuluzee-jsp-jetty</artifactId>
     <version>${kumuluzee.version}</version>
 </dependency>
 
