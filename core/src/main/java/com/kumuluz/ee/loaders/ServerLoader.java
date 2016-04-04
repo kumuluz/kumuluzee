@@ -17,9 +17,9 @@ import java.util.logging.Logger;
  */
 public class ServerLoader {
 
-    private Logger log = Logger.getLogger(ServerLoader.class.getSimpleName());
+    private static Logger log = Logger.getLogger(ServerLoader.class.getSimpleName());
 
-    public KumuluzServerWrapper loadServletServer() {
+    public static KumuluzServer loadServletServer() {
 
         log.info("Loading the KumuluzEE server...");
 
@@ -64,10 +64,10 @@ public class ServerLoader {
 
         log.info("Found " + serverDef.value());
 
-        return new KumuluzServerWrapper(server, serverDef.value(), Arrays.asList(serverDef.provides()));
+        return server;
     }
 
-    private List<KumuluzServer> scanForAvailableServers() {
+    private static List<KumuluzServer> scanForAvailableServers() {
 
         log.finest("Scanning for available supported KumuluzEE servers");
 

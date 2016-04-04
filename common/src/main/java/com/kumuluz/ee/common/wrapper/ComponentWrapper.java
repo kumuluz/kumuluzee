@@ -1,6 +1,8 @@
 package com.kumuluz.ee.common.wrapper;
 
 import com.kumuluz.ee.common.Component;
+import com.kumuluz.ee.common.dependencies.EeComponentDependency;
+import com.kumuluz.ee.common.dependencies.EeComponentOptional;
 import com.kumuluz.ee.common.dependencies.EeComponentType;
 
 import java.util.List;
@@ -12,14 +14,18 @@ import java.util.List;
 public class ComponentWrapper {
 
     private Component component;
-    private EeComponentType type;
-    private List<ComponentDependencyWrapper> dependencies;
+    private String name;
+    private EeComponentDependency[] dependencies;
+    private EeComponentOptional[] optionalDependencies;
 
-    public ComponentWrapper(Component component, EeComponentType type, List<ComponentDependencyWrapper> dependencies) {
 
+    public ComponentWrapper(Component component, String name,
+                            EeComponentDependency[] dependencies,
+                            EeComponentOptional[] optionalDependencies) {
         this.component = component;
-        this.type = type;
+        this.name = name;
         this.dependencies = dependencies;
+        this.optionalDependencies = optionalDependencies;
     }
 
     public Component getComponent() {
@@ -30,19 +36,28 @@ public class ComponentWrapper {
         this.component = component;
     }
 
-    public EeComponentType getType() {
-        return type;
-    }
 
-    public void setType(EeComponentType type) {
-        this.type = type;
-    }
-
-    public List<ComponentDependencyWrapper> getDependencies() {
+    public EeComponentDependency[] getDependencies() {
         return dependencies;
     }
 
-    public void setDependencies(List<ComponentDependencyWrapper> dependencies) {
+    public void setDependencies(EeComponentDependency[] dependencies) {
         this.dependencies = dependencies;
+    }
+
+    public EeComponentOptional[] getOptionalDependencies() {
+        return optionalDependencies;
+    }
+
+    public void setOptionalDependencies(EeComponentOptional[] optionalDependencies) {
+        this.optionalDependencies = optionalDependencies;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

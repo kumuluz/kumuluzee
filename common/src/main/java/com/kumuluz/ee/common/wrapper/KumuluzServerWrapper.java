@@ -13,9 +13,9 @@ public class KumuluzServerWrapper {
 
     private KumuluzServer server;
     private String name;
-    private List<EeComponentType> providedEeComponents;
+    private EeComponentType[] providedEeComponents;
 
-    public KumuluzServerWrapper(KumuluzServer server, String name, List<EeComponentType> providedEeComponents) {
+    public KumuluzServerWrapper(KumuluzServer server, String name, EeComponentType[] providedEeComponents) {
 
         this.server = server;
         this.name = name;
@@ -38,11 +38,11 @@ public class KumuluzServerWrapper {
         this.name = name;
     }
 
-    public List<EeComponentType> getProvidedEeComponents() {
+    public EeComponentType[] getProvidedEeComponents() {
         return providedEeComponents;
     }
 
-    public void setProvidedEeComponents(List<EeComponentType> providedEeComponents) {
+    public void setProvidedEeComponents(EeComponentType[] providedEeComponents) {
         this.providedEeComponents = providedEeComponents;
     }
 }

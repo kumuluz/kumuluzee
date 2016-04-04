@@ -40,4 +40,7 @@ public enum EeComponentType {
         this.name = name;
     }
 
+    public String getName() {
+        return name;
+    }
 }
