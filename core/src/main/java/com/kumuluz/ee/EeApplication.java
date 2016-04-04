@@ -5,6 +5,7 @@ import com.kumuluz.ee.common.KumuluzServer;
 import com.kumuluz.ee.common.ServletServer;
 import com.kumuluz.ee.common.config.EeConfig;
 import com.kumuluz.ee.common.dependencies.*;
+import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 import com.kumuluz.ee.common.utils.ResourceUtils;
 import com.kumuluz.ee.common.wrapper.ComponentWrapper;
 import com.kumuluz.ee.common.wrapper.EeComponentWrapper;
@@ -12,9 +13,13 @@ import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
 import com.kumuluz.ee.loaders.ComponentLoader;
 import com.kumuluz.ee.loaders.ServerLoader;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Tilen Faganel
@@ -106,22 +111,115 @@ public class EeApplication {
 
     private void processEeComponents(List<Component> components) {
 
-        List<EeComponentWrapper> eeComp = new ArrayList<>();
+        Map<EeComponentType, EeComponentWrapper> eeComp = new HashMap<>();
 
+        // Wrap components with their metadata and check for duplicates
         for (Component c : components) {
 
             EeComponentDef def = c.getClass().getDeclaredAnnotation(EeComponentDef.class);
 
             if (def != null) {
 
+                if (eeComp.containsKey(def.type()) ||
+                        Arrays.asList(server.getProvidedEeComponents()).contains(def.type())) {
+
+                    String msg = "Found multiple implementations (" +
+                            (eeComp.get(def.type()) != null ? eeComp.get(def.type()).getName() : server.getName()) +
+                            ", " + def.name() + ") of the same EE component (" + def.type().getName() + "). " +
+                            "Please check to make sure you only include a single implementation of a specific " +
+                            "EE component.";
+
+                    log.severe(msg);
+
+                    throw new KumuluzServerException(msg);
+                }
+
                 EeComponentDependency[] dependencies = c.getClass().getDeclaredAnnotationsByType(EeComponentDependency.class);
                 EeComponentOptional[] optionals = c.getClass().getDeclaredAnnotationsByType(EeComponentOptional.class);
 
-                eeComponents.add(new EeComponentWrapper(c, def.name(), def.type(), dependencies, optionals));
+                eeComp.put(def.type(), new EeComponentWrapper(c, def.name(), def.type(), dependencies, optionals));
             }
         }
 
-        eeComponents = eeComp;
+        log.info("Processing EE component dependencies");
+
+        // Check if all dependencies are fulfilled
+        for (EeComponentWrapper cmp : eeComp.values()) {
+
+            for (EeComponentDependency dep : cmp.getDependencies()) {
+
+                String depCompName = null;
+
+                ComponentWrapper depComp = eeComp.get(dep.value());
+
+                // Check all posible locations for the dependency (Components and Server)
+                if (depComp != null) {
+
+                    depCompName = depComp.getName();
+                } else if (Arrays.asList(server.getProvidedEeComponents()).contains(dep.value())) {
+
+                    depCompName = server.getName();
+                }
+
+                if (depCompName == null) {
+
+                    String msg = "EE component dependency unfulfilled. The EE component " + cmp.getType() +
+                            "implemented by " + cmp.getName() + " requires " + dep.value() + ", which was not " +
+                            "found. Please make sure to include the required component.";
+
+                    log.severe(msg);
+
+                    throw new KumuluzServerException(msg);
+                }
+
+                if (dep.implementations().length == 0 ||
+                        !Arrays.asList(dep.implementations()).contains(depCompName)) {
+
+                    String msg = "EE component implementation dependency unfulfilled. The EE component " +
+                            cmp.getType() + "implemented by " + cmp.getName() + " requires " + dep.value() +
+                            " implemented by one of the following implementations: " +
+                            Arrays.toString(dep.implementations()) + ". Please make sure you use one of the " +
+                            "implementations required by this component.";
+
+                    log.severe(msg);
+
+                    throw new KumuluzServerException(msg);
+                }
+            }
+
+            // Check if all optional dependencies and their implementations are fulfilled
+            for (EeComponentOptional dep : cmp.getOptionalDependencies()) {
+
+                String depCompName = null;
+
+                ComponentWrapper depComp = eeComp.get(dep.value());
+
+                // Check all posible locations for the dependency (Components and Server)
+                if (depComp != null) {
+
+                    depCompName = depComp.getName();
+                } else if (!Arrays.asList(server.getProvidedEeComponents()).contains(dep.value())) {
+
+                    depCompName = server.getName();
+                }
+
+                if (depCompName != null && dep.implementations().length > 0 &&
+                        !Arrays.asList(dep.implementations()).contains(depCompName)) {
+
+                    String msg = "EE component implementation dependency unfulfilled. The EE component " +
+                            cmp.getType() + "implemented by " + cmp.getName() + " requires " + dep.value() +
+                            " implemented by one of the following implementations: " +
+                            Arrays.toString(dep.implementations()) + ". Please make sure you use one of the " +
+                            "implementations required by this component.";
+
+                    log.severe(msg);
+
+                    throw new KumuluzServerException(msg);
+                }
+            }
+        }
+
+        eeComponents = eeComp.values().stream().collect(Collectors.toList());
     }
 
     private void checkRequirements() {

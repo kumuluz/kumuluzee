@@ -13,5 +13,5 @@ public @interface EeComponentDependency {
 
     EeComponentType value();
 
-    String[] implementations();
+    String[] implementations() default {};
 }

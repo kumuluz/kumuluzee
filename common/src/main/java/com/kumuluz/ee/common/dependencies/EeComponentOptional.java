@@ -13,5 +13,5 @@ public @interface EeComponentOptional {
 
     EeComponentType value();
 
-    String[] implementations();
+    String[] implementations() default {};
 }

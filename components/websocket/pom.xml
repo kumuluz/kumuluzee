@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
 
-    <name>KumuluzEE WebSocket Jetty</name>
+    <name>KumuluzEE WebSocket</name>
     <description>KumuluzEE WebSocket server component</description>
 
     <modules>
