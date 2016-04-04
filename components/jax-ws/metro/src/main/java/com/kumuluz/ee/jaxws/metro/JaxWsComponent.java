@@ -1,10 +1,10 @@
 package com.kumuluz.ee.jaxws.metro;
 
 import com.kumuluz.ee.common.Component;
-import com.kumuluz.ee.common.KumuluzServer;
 import com.kumuluz.ee.common.config.EeConfig;
 import com.kumuluz.ee.common.dependencies.EeComponentDef;
 import com.kumuluz.ee.common.dependencies.EeComponentType;
+import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
 
 import java.util.logging.Logger;
 
@@ -18,7 +18,7 @@ public class JaxWsComponent implements Component {
     private Logger log = Logger.getLogger(JaxWsComponent.class.getSimpleName());
 
     @Override
-    public void init(KumuluzServer server, EeConfig eeConfig) {
+    public void init(KumuluzServerWrapper server, EeConfig eeConfig) {
 
     }
 

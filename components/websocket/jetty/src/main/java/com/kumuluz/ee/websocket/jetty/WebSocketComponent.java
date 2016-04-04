@@ -1,9 +1,9 @@
 package com.kumuluz.ee.websocket.jetty;
 
 import com.kumuluz.ee.common.Component;
-import com.kumuluz.ee.common.KumuluzServer;
 import com.kumuluz.ee.common.config.EeConfig;
 import com.kumuluz.ee.common.dependencies.*;
+import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
 
 import java.util.logging.Logger;
 
@@ -17,7 +17,7 @@ public class WebSocketComponent implements Component {
     private Logger log = Logger.getLogger(WebSocketComponent.class.getSimpleName());
 
     @Override
-    public void init(KumuluzServer server, EeConfig eeConfig) {
+    public void init(KumuluzServerWrapper server, EeConfig eeConfig) {
     }
 
     @Override
