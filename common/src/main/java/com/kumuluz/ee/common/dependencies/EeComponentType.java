@@ -6,33 +6,33 @@ package com.kumuluz.ee.common.dependencies;
  */
 public enum EeComponentType {
 
-    SERVLET(""),
+    SERVLET("Servlet"),
 
-    WEBSOCKET(""),
+    WEBSOCKET("WebSocket"),
 
-    JSP(""),
+    JSP("JSP"),
 
-    EL(""),
+    EL("EL"),
 
-    JSF(""),
+    JSF("JSF"),
 
-    JPA(""),
+    JPA("JPA"),
 
-    CDI(""),
+    CDI("CDI"),
 
-    JAX_RS(""),
+    JAX_RS("JAX-RS"),
 
-    JAX_WS(""),
+    JAX_WS("JAX-WS"),
 
-    BEAN_VALIDATION(""),
+    BEAN_VALIDATION("Bean Validation"),
 
-    JSON_P(""),
+    JSON_P("JSON-P"),
 
-    JTA(""),
+    JTA("JTA"),
 
-    BATCH(""),
+    BATCH("Batch"),
 
-    MAIL("");
+    MAIL("JavaMail");
 
     private final String name;
 
