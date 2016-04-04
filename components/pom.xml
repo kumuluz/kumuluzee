@@ -23,6 +23,7 @@
         <module>jpa</module>
         <module>json-p</module>
         <module>bean-validation</module>
+        <module>jax-ws</module>
     </modules>
 
     <artifactId>kumuluzee-components</artifactId>
