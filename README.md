@@ -111,6 +111,13 @@ following artifacts:
     <version>${kumuluzee.version}</version>
 </dependency>
 
+<!-- JSF (Mojarra) -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-jsf-mojarra</artifactId>
+    <version>${kumuluzee.version}</version>
+</dependency>
+
 <!-- Bean Validation (Hibernate validator) -->
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
