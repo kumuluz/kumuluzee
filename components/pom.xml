@@ -15,10 +15,13 @@
 
     <modules>
         <module>websocket</module>
+        <module>jsp</module>
+        <module>el</module>
         <module>cdi</module>
         <module>jax-rs</module>
         <module>jsf</module>
         <module>jpa</module>
+        <module>json-p</module>
         <module>bean-validation</module>
         <module>jax-ws</module>
     </modules>
