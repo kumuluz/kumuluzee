@@ -15,7 +15,7 @@
     <artifactId>kumuluzee-jax-ws-metro</artifactId>
 
     <properties>
-
+        <metro.version>2.3.1</metro.version>
     </properties>
 
     <dependencies>
@@ -27,6 +27,12 @@
         <dependency>
             <groupId>javax.xml.ws</groupId>
             <artifactId>jaxws-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.metro</groupId>
+            <artifactId>webservices-rt</artifactId>
+            <version>${metro.version}</version>
         </dependency>
     </dependencies>
 
