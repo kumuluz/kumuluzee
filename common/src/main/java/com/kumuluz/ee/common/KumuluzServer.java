@@ -18,12 +18,6 @@ public interface KumuluzServer {
 
     void stopServer();
 
-    void registerServlet(Class<? extends Servlet> servletClass, String mapping);
-
-    void registerServlet(Class<? extends Servlet> servletClass, String mapping, Map<String, String> parameters);
-
-    void registerListener(EventListener listener);
-
     void setServerConfig(ServerConfig serverConfig);
 
     ServerConfig getServerConfig();
