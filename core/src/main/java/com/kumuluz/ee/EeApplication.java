@@ -2,10 +2,14 @@ package com.kumuluz.ee;
 
 import com.kumuluz.ee.common.ServletServer;
 import com.kumuluz.ee.common.config.EeConfig;
+import com.kumuluz.ee.common.dependencies.EeComponentType;
 import com.kumuluz.ee.common.utils.ResourceUtils;
+import com.kumuluz.ee.common.wrapper.ComponentWrapper;
+import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
 import com.kumuluz.ee.loaders.ComponentLoader;
 import com.kumuluz.ee.loaders.ServerLoader;
 
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -16,9 +20,11 @@ public class EeApplication {
 
     private Logger log = Logger.getLogger(EeApplication.class.getSimpleName());
 
-    private ServletServer server;
-
     private EeConfig eeConfig;
+
+    private KumuluzServerWrapper server;
+
+    private Map<EeComponentType, ComponentWrapper> components;
 
     public EeApplication() {
 
@@ -50,20 +56,23 @@ public class EeApplication {
         log.info("Checks passed");
 
         ServerLoader sl = new ServerLoader();
-
         server = sl.loadServletServer();
-
-        server.setServerConfig(eeConfig.getServerConfig());
-
-        server.initServer();
-
-        server.initWebContext();
 
         ComponentLoader cp = new ComponentLoader(server, eeConfig);
 
         cp.loadComponents();
 
-        server.startServer();
+        server.getServer().setServerConfig(eeConfig.getServerConfig());
+        server.getServer().initServer();
+
+        if (server.getServer() instanceof ServletServer) {
+
+            ServletServer servletServer = (ServletServer) server.getServer();
+
+            servletServer.initWebContext();
+        }
+
+        server.getServer().startServer();
 
         log.info("KumuluzEE started successfully");
     }

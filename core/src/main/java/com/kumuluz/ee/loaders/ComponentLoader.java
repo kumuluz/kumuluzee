@@ -10,11 +10,12 @@ import java.util.ServiceLoader;
 import java.util.logging.Logger;
 
 /**
- * @author Tilen
+ * @author Tilen Faganel
+ * @since 1.0.0
  */
 public class ComponentLoader {
 
-    Logger log = Logger.getLogger(ComponentLoader.class.getSimpleName());
+    private Logger log = Logger.getLogger(ComponentLoader.class.getSimpleName());
 
     private ServletServer server;
 
@@ -22,7 +23,7 @@ public class ComponentLoader {
 
     public ComponentLoader(ServletServer server, EeConfig eeConfig) {
 
-        log.info("Initiating component logger...");
+        log.info("Initiating component loader...");
 
         this.server = server;
         this.eeConfig = eeConfig;
@@ -35,9 +36,6 @@ public class ComponentLoader {
         List<Component> components = scanForAvailableComponents();
 
         for (Component c : components) {
-
-//            log.info("Found " + c.getComponentName() + " implemented by " + c
-//                    .getImplementationName());
 
             c.init(server, eeConfig);
             c.load();

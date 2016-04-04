@@ -15,5 +15,5 @@ public @interface ServerDef {
 
     String value();
 
-    EeComponentType[] provides();
+    EeComponentType[] provides() default {};
 }
