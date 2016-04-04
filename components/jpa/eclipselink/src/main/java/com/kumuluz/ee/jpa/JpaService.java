@@ -15,7 +15,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
 
 /**
- * @author Tilen
+ * @author Tilen Faganel
+ * @since 1.0.0
  */
 @Priority(1)
 public class JpaService implements JpaInjectionServices {

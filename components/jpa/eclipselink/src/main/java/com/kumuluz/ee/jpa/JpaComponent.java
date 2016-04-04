@@ -10,7 +10,8 @@ import com.kumuluz.ee.jpa.resources.PersistenceUnitHolder;
 import java.util.logging.Logger;
 
 /**
- * @author Tilen
+ * @author Tilen Faganel
+ * @since 1.0.0
  */
 @EeComponentDef(name = "EclipseLink", type = EeComponentType.JPA)
 public class JpaComponent implements Component {

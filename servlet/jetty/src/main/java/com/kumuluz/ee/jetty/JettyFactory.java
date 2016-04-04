@@ -22,7 +22,8 @@ import org.eclipse.jetty.webapp.WebXmlConfiguration;
 import java.util.logging.Logger;
 
 /**
- * @author Tilen
+ * @author Tilen Faganel
+ * @since 1.0.0
  */
 public class JettyFactory {
 

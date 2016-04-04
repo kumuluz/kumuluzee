@@ -8,7 +8,8 @@ import java.util.Map;
 import javax.servlet.Servlet;
 
 /**
- * @author Tilen
+ * @author Tilen Faganel
+ * @since 1.0.0
  */
 public interface KumuluzServer {
 

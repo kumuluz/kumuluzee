@@ -7,7 +7,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 /**
- * @author Tilen
+ * @author Tilen Faganel
+ * @since 1.0.0
  */
 public class PersistenceContextResourceFactory implements ResourceReferenceFactory<EntityManager> {
 

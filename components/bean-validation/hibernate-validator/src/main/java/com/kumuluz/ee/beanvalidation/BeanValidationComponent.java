@@ -9,7 +9,8 @@ import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
 import java.util.logging.Logger;
 
 /**
- * @author Tilen
+ * @author Tilen Faganel
+ * @since 1.0.0
  */
 @EeComponentDef(name = "Hibernate Validator", type = EeComponentType.BEAN_VALIDATION)
 public class BeanValidationComponent implements Component {

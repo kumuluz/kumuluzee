@@ -4,7 +4,8 @@ import com.kumuluz.ee.common.config.EeConfig;
 import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
 
 /**
- * @author Tilen
+ * @author Tilen Faganel
+ * @since 1.0.0
  */
 public interface Component {
 

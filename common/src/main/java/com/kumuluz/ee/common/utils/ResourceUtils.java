@@ -3,7 +3,8 @@ package com.kumuluz.ee.common.utils;
 import java.net.URL;
 
 /**
- * @author Tilen
+ * @author Tilen Faganel
+ * @since 1.0.0
  */
 public class ResourceUtils {
 

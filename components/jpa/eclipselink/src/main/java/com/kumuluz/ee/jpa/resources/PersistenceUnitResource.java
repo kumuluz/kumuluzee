@@ -5,7 +5,8 @@ import org.jboss.weld.injection.spi.ResourceReference;
 import javax.persistence.EntityManagerFactory;
 
 /**
- * @author Tilen
+ * @author Tilen Faganel
+ * @since 1.0.0
  */
 public class PersistenceUnitResource implements ResourceReference<EntityManagerFactory> {
 

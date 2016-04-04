@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 /**
  * @author Tilen Faganel
+ * @since 2.0.0
  */
 @EeComponentDef(name = "Jetty", type = EeComponentType.WEBSOCKET)
 @EeComponentDependency(value = EeComponentType.SERVLET, implementations = {"Jetty"})

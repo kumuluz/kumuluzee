@@ -3,7 +3,8 @@ package com.kumuluz.ee.common.config;
 import com.kumuluz.ee.common.utils.EnvUtils;
 
 /**
- * @author Tilen
+ * @author Tilen Faganel
+ * @since 1.0.0
  */
 public class PersistenceConfig {
 

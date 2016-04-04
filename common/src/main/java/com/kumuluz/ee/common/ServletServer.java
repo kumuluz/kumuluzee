@@ -5,7 +5,8 @@ import java.util.EventListener;
 import java.util.Map;
 
 /**
- * @author Tilen
+ * @author Tilen Faganel
+ * @since 1.0.0
  */
 public interface ServletServer extends KumuluzServer {
 

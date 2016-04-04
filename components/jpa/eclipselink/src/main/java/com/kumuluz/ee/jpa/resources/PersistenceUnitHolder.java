@@ -12,7 +12,8 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 /**
- * @author Tilen
+ * @author Tilen Faganel
+ * @since 1.0.0
  */
 public class PersistenceUnitHolder {
 

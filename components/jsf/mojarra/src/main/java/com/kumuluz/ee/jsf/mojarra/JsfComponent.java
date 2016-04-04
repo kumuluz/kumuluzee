@@ -10,7 +10,8 @@ import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
 import java.util.logging.Logger;
 
 /**
- * @author Tilen
+ * @author Tilen Faganel
+ * @since 2.0.0
  */
 @EeComponentDef(name = "Mojarra", type = EeComponentType.JSF)
 @EeComponentDependency(value = EeComponentType.SERVLET)

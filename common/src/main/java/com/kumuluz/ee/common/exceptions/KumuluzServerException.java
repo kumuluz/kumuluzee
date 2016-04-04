@@ -1,7 +1,8 @@
 package com.kumuluz.ee.common.exceptions;
 
 /**
- * @author Tilen
+ * @author Tilen Faganel
+ * @since 1.0.0
  */
 public class KumuluzServerException extends RuntimeException {
 
