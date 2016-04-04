@@ -22,7 +22,5 @@ public class ElComponent implements Component {
 
     @Override
     public void load() {
-
-        log.info("Initiating UEL");
     }
 }

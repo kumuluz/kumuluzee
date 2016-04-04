@@ -42,7 +42,7 @@
         </dependency>
         <dependency>
             <groupId>com.kumuluz.ee</groupId>
-            <artifactId>kumuluzee-el</artifactId>
+            <artifactId>kumuluzee-el-uel</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
