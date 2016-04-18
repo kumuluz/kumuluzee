@@ -135,12 +135,7 @@ following artifacts:
 
 ## Planned features
 
-The next major release will focus on adding the two major components: 
-
-- JAX-WS
-- EJB
- 
-Currently Metro is planned as the implementation for JAX-WS and OpenEJB for EJB.
+For full Java EE support please refer to our website for the enterprise version.
 
 Additional implementations will also be added to existing components. Currently the following are planned:
 
