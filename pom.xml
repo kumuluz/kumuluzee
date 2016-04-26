@@ -42,6 +42,7 @@
         <websocket.version>1.1</websocket.version>
         <beanvalidation.version>1.1.0.Final</beanvalidation.version>
         <json.p.version>1.0</json.p.version>
+        <ejb.version>3.2</ejb.version>
 
         <jandex.version>1.2.4.Final</jandex.version>
         <junit.version>4.12</junit.version>
@@ -275,6 +276,11 @@
                 <groupId>javax.json</groupId>
                 <artifactId>javax.json-api</artifactId>
                 <version>${json.p.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.ejb</groupId>
+                <artifactId>javax.ejb-api</artifactId>
+                <version>${ejb.version}</version>
             </dependency>
 
             <!-- Various libraries used throughout the framework-->

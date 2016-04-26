@@ -24,6 +24,7 @@
         <module>json-p</module>
         <module>bean-validation</module>
         <module>jax-ws</module>
+        <module>ejb</module>
     </modules>
 
     <artifactId>kumuluzee-components</artifactId>

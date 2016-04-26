@@ -30,6 +30,8 @@ public enum EeComponentType {
 
     JTA("JTA"),
 
+    EJB("EJB"),
+
     BATCH("Batch"),
 
     MAIL("JavaMail");

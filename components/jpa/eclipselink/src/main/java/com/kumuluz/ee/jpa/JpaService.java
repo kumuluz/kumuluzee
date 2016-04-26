@@ -5,6 +5,7 @@ import com.kumuluz.ee.jpa.resources.PersistenceUnitHolder;
 import com.kumuluz.ee.jpa.resources.PersistenceUnitResourceFactory;
 
 import org.jboss.weld.injection.spi.JpaInjectionServices;
+import org.jboss.weld.injection.spi.ResourceInjectionServices;
 import org.jboss.weld.injection.spi.ResourceReferenceFactory;
 
 import javax.annotation.Priority;

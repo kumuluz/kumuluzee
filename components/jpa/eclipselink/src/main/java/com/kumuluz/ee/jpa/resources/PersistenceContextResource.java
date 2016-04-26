@@ -26,8 +26,6 @@ public class PersistenceContextResource implements ResourceReference<EntityManag
     @Override
     public void release() {
 
-        System.out.println(em + " closed");
-
         em.close();
     }
 }
