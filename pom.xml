@@ -38,7 +38,7 @@
         <jpa.version>2.1.1</jpa.version>
         <jaxrs.version>2.0.1</jaxrs.version>
         <jaxws.version>2.2.11</jaxws.version>
-        <jsf.version>2.2.12</jsf.version>
+        <jsf.version>2.2.14</jsf.version>
         <websocket.version>1.1</websocket.version>
         <beanvalidation.version>1.1.0.Final</beanvalidation.version>
         <json.p.version>1.0</json.p.version>

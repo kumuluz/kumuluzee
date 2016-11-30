@@ -15,7 +15,7 @@
     <artifactId>kumuluzee-jsf-mojarra</artifactId>
 
     <properties>
-        <mojarra.version>2.2.12</mojarra.version>
+        <mojarra.version>2.2.14</mojarra.version>
     </properties>
 
     <dependencies>
