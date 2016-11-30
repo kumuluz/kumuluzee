@@ -15,7 +15,7 @@
     <artifactId>kumuluzee-jpa-eclipselink</artifactId>
 
     <properties>
-        <eclipselink.version>2.6.1</eclipselink.version>
+        <eclipselink.version>2.6.4</eclipselink.version>
     </properties>
 
     <dependencies>
