@@ -15,7 +15,7 @@
     <description>KumuluzEE Bean Validation component implemented by Hibernate Validator</description>
 
     <properties>
-        <hibernate.validator.version>5.2.2.Final</hibernate.validator.version>
+        <hibernate.validator.version>5.3.3.Final</hibernate.validator.version>
     </properties>
 
     <dependencies>
