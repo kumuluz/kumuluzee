@@ -30,7 +30,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <annotations.version>1.2</annotations.version>
+        <annotations.version>1.3</annotations.version>
         <servlet.version>3.1.0</servlet.version>
         <jsp.version>2.3.1</jsp.version>
         <el.version>3.0.0</el.version>
