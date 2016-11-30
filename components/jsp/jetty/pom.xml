@@ -15,7 +15,7 @@
     <description>KumuluzEE JSP component implemented by Jetty (Apache Jasper)</description>
 
     <properties>
-        <jetty.version>9.3.7.v20160115</jetty.version>
+        <jetty.version>9.3.14.v20161028</jetty.version>
     </properties>
 
     <dependencies>
