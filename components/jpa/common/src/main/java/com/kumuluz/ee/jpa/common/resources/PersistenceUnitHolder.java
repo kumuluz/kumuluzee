@@ -1,15 +1,10 @@
-package com.kumuluz.ee.jpa.resources;
+package com.kumuluz.ee.jpa.common.resources;
 
 import com.kumuluz.ee.common.config.PersistenceConfig;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
-
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import java.util.*;
 
 /**
  * @author Tilen Faganel

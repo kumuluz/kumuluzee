@@ -9,31 +9,25 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <name>KumuluzEE JPA EclipseLink</name>
-    <description>KumuluzEE JPA component implemented by EclipseLink</description>
+    <name>KumuluzEE JPA Common</name>
+    <description>KumuluzEE JPA component common utilities, configs and exceptions</description>
 
-    <artifactId>kumuluzee-jpa-eclipselink</artifactId>
-
-    <properties>
-        <eclipselink.version>2.6.4</eclipselink.version>
-    </properties>
+    <artifactId>kumuluzee-jpa-common</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>com.kumuluz.ee</groupId>
-            <artifactId>kumuluzee-jpa-common</artifactId>
+            <artifactId>kumuluzee-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.kumuluz.ee</groupId>
+            <artifactId>kumuluzee-cdi-weld</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
-            <artifactId>org.eclipse.persistence.jpa</artifactId>
-            <version>${eclipselink.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.glassfish</groupId>
-                    <artifactId>javax.json</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>javax.persistence</artifactId>
         </dependency>
     </dependencies>
 

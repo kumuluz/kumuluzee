@@ -11,6 +11,7 @@ import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -34,8 +35,8 @@ public class ComponentLoader {
         for (Component c : components) {
 
             boolean anyMatch = Stream.of(COMPONENT_ANNOTATIONS)
-                    .map(a -> (Annotation) c.getClass().getDeclaredAnnotation(a))
-                    .anyMatch(a -> a != null);
+                    .map(a -> c.getClass().getDeclaredAnnotation(a))
+                    .anyMatch(Objects::nonNull);
 
             if (!anyMatch) {
 

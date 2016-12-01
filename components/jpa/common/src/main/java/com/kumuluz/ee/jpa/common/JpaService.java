@@ -1,11 +1,9 @@
-package com.kumuluz.ee.jpa;
+package com.kumuluz.ee.jpa.common;
 
-import com.kumuluz.ee.jpa.resources.PersistenceContextResourceFactory;
-import com.kumuluz.ee.jpa.resources.PersistenceUnitHolder;
-import com.kumuluz.ee.jpa.resources.PersistenceUnitResourceFactory;
-
+import com.kumuluz.ee.jpa.common.resources.PersistenceContextResourceFactory;
+import com.kumuluz.ee.jpa.common.resources.PersistenceUnitHolder;
+import com.kumuluz.ee.jpa.common.resources.PersistenceUnitResourceFactory;
 import org.jboss.weld.injection.spi.JpaInjectionServices;
-import org.jboss.weld.injection.spi.ResourceInjectionServices;
 import org.jboss.weld.injection.spi.ResourceReferenceFactory;
 
 import javax.annotation.Priority;

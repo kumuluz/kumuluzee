@@ -1,11 +1,11 @@
-package com.kumuluz.ee.jpa;
+package com.kumuluz.ee.jpa.eclipselink;
 
 import com.kumuluz.ee.common.Component;
 import com.kumuluz.ee.common.config.EeConfig;
 import com.kumuluz.ee.common.dependencies.EeComponentDef;
 import com.kumuluz.ee.common.dependencies.EeComponentType;
 import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
-import com.kumuluz.ee.jpa.resources.PersistenceUnitHolder;
+import com.kumuluz.ee.jpa.common.resources.PersistenceUnitHolder;
 
 import java.util.logging.Logger;
 

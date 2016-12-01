@@ -9,13 +9,13 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <name>KumuluzEE JPA EclipseLink</name>
-    <description>KumuluzEE JPA component implemented by EclipseLink</description>
+    <name>KumuluzEE JPA Hibernate</name>
+    <description>KumuluzEE JPA component implemented by Hibernate</description>
 
-    <artifactId>kumuluzee-jpa-eclipselink</artifactId>
+    <artifactId>kumuluzee-jpa-hibernate</artifactId>
 
     <properties>
-        <eclipselink.version>2.6.4</eclipselink.version>
+        <hibernate.version>5.2.5.Final</hibernate.version>
     </properties>
 
     <dependencies>
@@ -25,15 +25,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>org.eclipse.persistence.jpa</artifactId>
-            <version>${eclipselink.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.glassfish</groupId>
-                    <artifactId>javax.json</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
         </dependency>
     </dependencies>
 
