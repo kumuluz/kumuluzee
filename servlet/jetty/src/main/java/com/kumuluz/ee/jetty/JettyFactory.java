@@ -69,8 +69,12 @@ public class JettyFactory {
 
     protected Connector createConnector(final Server server) {
 
+        HttpConfiguration configuration = new HttpConfiguration();
+        configuration.setRequestHeaderSize(serverConfig.getRequestHeaderSize());
+        configuration.setResponseHeaderSize(serverConfig.getResponseHeaderSize());
+
         ServerConnector connector = new ServerConnector(
-                server, new HttpConnectionFactory(new HttpConfiguration()));
+                server, new HttpConnectionFactory(configuration));
 
         connector.setPort(serverConfig.getPort());
 
