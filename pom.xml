@@ -44,7 +44,7 @@
         <json.p.version>1.0</json.p.version>
         <ejb.version>3.2</ejb.version>
 
-        <jandex.version>1.2.4.Final</jandex.version>
+        <jandex.version>2.0.3.Final</jandex.version>
         <junit.version>4.12</junit.version>
     </properties>
 
