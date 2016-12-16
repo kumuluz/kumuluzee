@@ -33,6 +33,7 @@ public class PersistenceUnitHolder {
             config.ifPresent(c -> {
 
                 Optional.ofNullable(c.getUrl()).ifPresent(u -> properties.put("javax.persistence.jdbc.url", u));
+                Optional.ofNullable(c.getDriver()).ifPresent(d -> properties.put("javax.persistence.jdbc.driver", d));
                 Optional.ofNullable(c.getUsername()).ifPresent(u -> properties.put("javax.persistence.jdbc.user", u));
                 Optional.ofNullable(c.getPassword()).ifPresent(p -> properties.put("javax.persistence.jdbc.password", p));
             });
