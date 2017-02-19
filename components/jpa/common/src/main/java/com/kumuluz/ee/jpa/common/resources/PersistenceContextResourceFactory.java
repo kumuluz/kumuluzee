@@ -4,7 +4,6 @@ import org.jboss.weld.injection.spi.ResourceReference;
 import org.jboss.weld.injection.spi.ResourceReferenceFactory;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 
 /**
  * @author Tilen Faganel
@@ -12,16 +11,15 @@ import javax.persistence.EntityManagerFactory;
  */
 public class PersistenceContextResourceFactory implements ResourceReferenceFactory<EntityManager> {
 
-    private EntityManagerFactory emf;
+    private final EntityManager em;
 
-    public PersistenceContextResourceFactory(javax.persistence.EntityManagerFactory emf) {
-
-        this.emf = emf;
+    public PersistenceContextResourceFactory(javax.persistence.EntityManager em) {
+        this.em = em;
     }
 
     @Override
     public ResourceReference<EntityManager> createResource() {
 
-        return new PersistenceContextResource(emf.createEntityManager());
+        return new PersistenceContextResource(em);
     }
 }

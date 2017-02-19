@@ -12,7 +12,7 @@ import javax.persistence.EntityManagerFactory;
 public class PersistenceUnitResourceFactory implements
         ResourceReferenceFactory<EntityManagerFactory> {
 
-    private EntityManagerFactory emf;
+    private final EntityManagerFactory emf;
 
     public PersistenceUnitResourceFactory(EntityManagerFactory emf) {
 

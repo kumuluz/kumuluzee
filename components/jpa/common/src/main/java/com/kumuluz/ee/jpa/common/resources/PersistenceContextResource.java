@@ -10,7 +10,7 @@ import javax.persistence.EntityManager;
  */
 public class PersistenceContextResource implements ResourceReference<EntityManager> {
 
-    private EntityManager em;
+    private final EntityManager em;
 
     public PersistenceContextResource(EntityManager em) {
 

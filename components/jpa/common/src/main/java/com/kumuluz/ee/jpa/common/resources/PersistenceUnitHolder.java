@@ -14,12 +14,21 @@ public class PersistenceUnitHolder {
 
     private List<PersistenceConfig> configs;
 
-    private Map<String, EntityManagerFactory> factories = new HashMap<>();
+    private final Map<String, EntityManagerFactory> factories = new HashMap<>();
+
+    private EntityManagerFactory defaultEntityMangerFactory;
 
     private static final PersistenceUnitHolder instance = new PersistenceUnitHolder();
 
     public synchronized EntityManagerFactory getEntityManagerFactory(String unitName) {
 
+        if ("".equals(unitName)) {
+            return defaultEntityManagerFactory();
+        }
+        return findNamedUnitEntityManagerFactory(unitName);
+    }
+
+    private EntityManagerFactory findNamedUnitEntityManagerFactory(String unitName) {
         EntityManagerFactory factory = factories.get(unitName);
 
         if (factory == null) {
@@ -54,5 +63,27 @@ public class PersistenceUnitHolder {
     public static PersistenceUnitHolder getInstance() {
 
         return instance;
+    }
+
+    private EntityManagerFactory defaultEntityManagerFactory() {
+        if (defaultEntityMangerFactory == null) {
+            Properties properties = new Properties();
+
+            Optional<PersistenceConfig> config = configs.stream()
+                    .findFirst();
+
+            config.ifPresent(c -> {
+
+                Optional.ofNullable(c.getUrl()).ifPresent(u -> properties.put("javax.persistence.jdbc.url", u));
+                Optional.ofNullable(c.getDriver()).ifPresent(d -> properties.put("javax.persistence.jdbc.driver", d));
+                Optional.ofNullable(c.getUsername()).ifPresent(u -> properties.put("javax.persistence.jdbc.user", u));
+                Optional.ofNullable(c.getPassword()).ifPresent(p -> properties.put("javax.persistence.jdbc.password", p));
+                
+                defaultEntityMangerFactory = Persistence.createEntityManagerFactory(c.getUnitName(), properties);
+            });
+
+        }
+        return defaultEntityMangerFactory;
+
     }
 }

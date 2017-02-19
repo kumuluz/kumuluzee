@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 @EeComponentDef(name = "EclipseLink", type = EeComponentType.JPA)
 public class JpaComponent implements Component {
 
-    private Logger log = Logger.getLogger(JpaComponent.class.getSimpleName());
+    private static final Logger log = Logger.getLogger(JpaComponent.class.getSimpleName());
 
     @Override
     public void init(KumuluzServerWrapper server, EeConfig eeConfig) {
