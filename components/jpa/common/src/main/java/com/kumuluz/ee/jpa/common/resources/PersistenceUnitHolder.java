@@ -22,7 +22,7 @@ public class PersistenceUnitHolder {
 
     public synchronized EntityManagerFactory getEntityManagerFactory(String unitName) {
 
-        if ("".equals(unitName)) {
+        if (unitName == null || "".equals(unitName)) {
             return defaultEntityManagerFactory();
         }
         return findNamedUnitEntityManagerFactory(unitName);
@@ -79,7 +79,7 @@ public class PersistenceUnitHolder {
                 Optional.ofNullable(c.getUsername()).ifPresent(u -> properties.put("javax.persistence.jdbc.user", u));
                 Optional.ofNullable(c.getPassword()).ifPresent(p -> properties.put("javax.persistence.jdbc.password", p));
                 
-                defaultEntityMangerFactory = Persistence.createEntityManagerFactory(c.getUnitName(), properties);
+                defaultEntityMangerFactory = Persistence.createEntityManagerFactory("", properties);
             });
 
         }
