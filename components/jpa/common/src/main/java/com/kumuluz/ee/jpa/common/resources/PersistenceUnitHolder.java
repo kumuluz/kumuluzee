@@ -79,7 +79,7 @@ public class PersistenceUnitHolder {
                 Optional.ofNullable(c.getUsername()).ifPresent(u -> properties.put("javax.persistence.jdbc.user", u));
                 Optional.ofNullable(c.getPassword()).ifPresent(p -> properties.put("javax.persistence.jdbc.password", p));
                 
-                defaultEntityMangerFactory = Persistence.createEntityManagerFactory("default", properties);
+                defaultEntityMangerFactory = Persistence.createEntityManagerFactory(c.getUnitName(), properties);
             });
 
         }
