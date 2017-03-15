@@ -40,7 +40,6 @@
             <artifactId>javax-websocket-client-impl</artifactId>
             <version>${jetty.version}</version>
         </dependency>
-
     </dependencies>
 
 </project>

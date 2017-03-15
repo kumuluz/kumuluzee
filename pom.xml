@@ -14,6 +14,7 @@
         <module>servlet</module>
         <module>components</module>
         <module>bom</module>
+        <module>profiles</module>
     </modules>
 
     <name>KumuluzEE</name>
@@ -116,6 +117,7 @@
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-jsp</artifactId>
                 <version>${project.version}</version>
+                <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
@@ -126,6 +128,7 @@
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-el</artifactId>
                 <version>${project.version}</version>
+                <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
@@ -179,6 +182,7 @@
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-jax-ws</artifactId>
                 <version>${project.version}</version>
+                <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
@@ -200,6 +204,7 @@
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-websocket</artifactId>
                 <version>${project.version}</version>
+                <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
@@ -210,6 +215,7 @@
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-bean-validation</artifactId>
                 <version>${project.version}</version>
+                <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
@@ -220,10 +226,28 @@
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-json-p</artifactId>
                 <version>${project.version}</version>
+                <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-json-p-jsonp</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-profiles</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-micro-profile</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
