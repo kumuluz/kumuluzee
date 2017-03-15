@@ -11,10 +11,11 @@
     <modules>
         <module>common</module>
         <module>core</module>
-
         <module>servlet</module>
         <module>components</module>
+        <module>bom</module>
     </modules>
+
     <name>KumuluzEE</name>
 
     <inceptionYear>2015</inceptionYear>
