@@ -34,6 +34,11 @@
             <artifactId>webservices-rt</artifactId>
             <version>${metro.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.glassfish.metro</groupId>
+            <artifactId>webservices-extra</artifactId>
+            <version>${metro.version}</version>
+        </dependency>
     </dependencies>
 
 </project>
