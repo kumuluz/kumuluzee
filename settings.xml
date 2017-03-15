@@ -27,7 +27,6 @@
                 <gpg.secretKeyring>~/build/${env.TRAVIS_REPO_SLUG}/gpg.key</gpg.secretKeyring>
                 <gpg.publicKeyring>~/build/${env.TRAVIS_REPO_SLUG}/gpg.pub</gpg.publicKeyring>
                 <gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
-                <gpg.useagent>false</gpg.useagent>
             </properties>
         </profile>
     </profiles>

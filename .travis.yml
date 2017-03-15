@@ -18,4 +18,4 @@ install: mvn install -DskipTests=true -V
 script: mvn test
 
 after_success:
-- mvn deploy -Pdeploy -DskipTests=true --settings ./settings.xml
+- mvn source:jar javadoc:jar deploy -Pdeploy -DskipTests=true --settings ./settings.xml
