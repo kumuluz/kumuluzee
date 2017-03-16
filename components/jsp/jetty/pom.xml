@@ -11,7 +11,7 @@
 
     <artifactId>kumuluzee-jsp-jetty</artifactId>
 
-    <name>KumuluzEE JSP</name>
+    <name>KumuluzEE JSP Jetty</name>
     <description>KumuluzEE JSP component implemented by Jetty (Apache Jasper)</description>
 
     <properties>

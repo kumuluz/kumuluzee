@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <name>KumuluzEE JSP</name>
+    <name>KumuluzEE EL UEL</name>
     <description>KumuluzEE EL component implemented by UEL</description>
 
     <artifactId>kumuluzee-el-uel</artifactId>
