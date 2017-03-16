@@ -25,6 +25,11 @@
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.esotericsoftware.yamlbeans</groupId>
+            <artifactId>yamlbeans</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
