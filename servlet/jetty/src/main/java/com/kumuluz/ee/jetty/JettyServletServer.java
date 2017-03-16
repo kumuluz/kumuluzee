@@ -9,13 +9,17 @@ import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 import com.kumuluz.ee.common.utils.ResourceUtils;
 
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 
+import java.util.EnumSet;
 import java.util.EventListener;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.servlet.DispatcherType;
+import javax.servlet.Filter;
 import javax.servlet.Servlet;
 
 /**
@@ -154,6 +158,43 @@ public class JettyServletServer implements ServletServer {
             throw new IllegalStateException("Jetty cannot be started before adding a servlet");
 
         appContext.addEventListener(listener);
+    }
+
+    @Override
+    public void registerFilter(Class<? extends Filter> filterClass, String pathSpec) {
+
+        registerFilter(filterClass, pathSpec, EnumSet.of(DispatcherType.REQUEST));
+    }
+
+    @Override
+    public void registerFilter(Class<? extends Filter> filterClass, String pathSpec, Map<String, String> parameters) {
+
+        registerFilter(filterClass, pathSpec, EnumSet.of(DispatcherType.REQUEST), parameters);
+    }
+
+    @Override
+    public void registerFilter(Class<? extends Filter> filterClass, String pathSpec, EnumSet<DispatcherType> dispatches) {
+
+        registerFilter(filterClass, pathSpec, dispatches, null);
+    }
+
+    @Override
+    public void registerFilter(Class<? extends Filter> filterClass, String pathSpec, EnumSet<DispatcherType> dispatches, Map<String, String> parameters) {
+
+        if (server == null)
+            throw new IllegalStateException("Jetty has to be initialized before adding a servlet ");
+
+        if (server.isStarted() || server.isStarting())
+            throw new IllegalStateException("Jetty cannot be started before adding a servlet");
+
+        FilterHolder holder = new FilterHolder(filterClass);
+
+        if (parameters != null) {
+
+            parameters.forEach(holder::setInitParameter);
+        }
+
+        appContext.addFilter(holder, pathSpec, dispatches);
     }
 
     private JettyFactory createJettyFactory() {
