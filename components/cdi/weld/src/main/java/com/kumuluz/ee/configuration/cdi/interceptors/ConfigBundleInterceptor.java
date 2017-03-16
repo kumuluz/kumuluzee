@@ -4,6 +4,7 @@ import com.kumuluz.ee.configuration.cdi.ConfigBundle;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Priority;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 import java.lang.reflect.Method;
@@ -14,6 +15,7 @@ import java.lang.reflect.Method;
  */
 @Interceptor
 @ConfigBundle
+@Priority(Interceptor.Priority.LIBRARY_BEFORE)
 public class ConfigBundleInterceptor {
 
     @PostConstruct
