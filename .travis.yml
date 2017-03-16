@@ -14,7 +14,7 @@ before_install:
   -in gpg.tar.enc -out gpg.tar -d
 - tar xvf gpg.tar
 
-install: mvn install -DskipTests=true -V
+install: mvn clean install -DskipTests=true -V
 script: mvn test
 
 after_success:
