@@ -12,7 +12,6 @@ import java.util.logging.Logger;
 public class EnvironmentConfigurationSource implements ConfigurationSource {
 
     private static final Logger log = Logger.getLogger(EnvironmentConfigurationSource.class.getName());
-
     private static EnvironmentConfigurationSource instance;
 
     @Override
@@ -116,5 +115,6 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
     private String parseKeyNameForEnvironmentVariables(String key) {
 
         return key.toUpperCase().replaceAll("\\.", "_");
+
     }
 }

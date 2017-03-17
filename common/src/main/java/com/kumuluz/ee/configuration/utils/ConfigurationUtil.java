@@ -22,6 +22,14 @@ public class ConfigurationUtil {
     protected ConfigurationUtil() {
     }
 
+    public static ConfigurationUtil getInstance() {
+        if (instance == null) {
+            instance = new ConfigurationUtil();
+            instance.init();
+        }
+        return instance;
+    }
+
     private void init() {
 
         // specify sources
@@ -34,14 +42,6 @@ public class ConfigurationUtil {
             log.info("Initialising configuration source: " + configurationSource.getClass().getSimpleName());
             configurationSource.init();
         }
-    }
-
-    public static ConfigurationUtil getInstance() {
-        if (instance == null) {
-            instance = new ConfigurationUtil();
-            instance.init();
-        }
-        return instance;
     }
 
     public Optional<String> get(String key) {
