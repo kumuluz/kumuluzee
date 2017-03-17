@@ -19,7 +19,10 @@ public class ConfigurationUtil {
     private static ConfigurationUtil instance;
     private List<ConfigurationSource> configurationSources;
 
-    private ConfigurationUtil() {
+    protected ConfigurationUtil() {
+    }
+
+    private void init() {
 
         // specify sources
         configurationSources = new ArrayList<>();
@@ -31,12 +34,12 @@ public class ConfigurationUtil {
             log.info("Initialising configuration source: " + configurationSource.getClass().getSimpleName());
             configurationSource.init();
         }
-
     }
 
     public static ConfigurationUtil getInstance() {
         if (instance == null) {
             instance = new ConfigurationUtil();
+            instance.init();
         }
         return instance;
     }
