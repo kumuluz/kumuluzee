@@ -13,6 +13,8 @@ import java.lang.reflect.Method;
 import java.util.Optional;
 
 /**
+ * Interceptor class for ConfigBundle annotation.
+ *
  * @author Tilen Faganel
  * @since 2.1.0
  */
@@ -28,16 +30,22 @@ public class ConfigBundleInterceptor {
     public Object loadConfiguration(InvocationContext ic) throws Exception {
 
         Object target = ic.getTarget();
+        Class targetClass = target.getClass();
+
+        if (targetClassIsProxied(targetClass)) {
+            targetClass = targetClass.getSuperclass();
+        }
+
         ConfigurationUtil configurationUtil = ConfigurationUtil.getInstance();
 
         // invoke setters for fields which are defined in configuration
-        for (Method m : target.getClass().getMethods()) {
+        for (Method m : targetClass.getMethods()) {
 
             if (m.getName().substring(0, 3).equals("set") && m.getParameters().length == 1) {
 
                 if (m.getParameters()[0].getType().equals(String.class)) {
 
-                    Optional<String> value = configurationUtil.get(getKeyName(target, m.getName()));
+                    Optional<String> value = configurationUtil.get(getKeyName(targetClass, m.getName()));
 
                     if (value.isPresent()) {
                         m.invoke(target, value.get());
@@ -45,7 +53,7 @@ public class ConfigBundleInterceptor {
 
                 } else if (m.getParameters()[0].getType().equals(Boolean.class)) {
 
-                    Optional<Boolean> value = configurationUtil.getBoolean(getKeyName(target, m.getName()));
+                    Optional<Boolean> value = configurationUtil.getBoolean(getKeyName(targetClass, m.getName()));
 
                     if (value.isPresent()) {
                         m.invoke(target, value.get());
@@ -53,7 +61,7 @@ public class ConfigBundleInterceptor {
 
                 } else if (m.getParameters()[0].getType().equals(Float.class)) {
 
-                    Optional<Float> value = configurationUtil.getFloat(getKeyName(target, m.getName()));
+                    Optional<Float> value = configurationUtil.getFloat(getKeyName(targetClass, m.getName()));
 
                     if (value.isPresent()) {
                         m.invoke(target, value.get());
@@ -61,7 +69,7 @@ public class ConfigBundleInterceptor {
 
                 } else if (m.getParameters()[0].getType().equals(Double.class)) {
 
-                    Optional<Double> value = configurationUtil.getDouble(getKeyName(target, m.getName()));
+                    Optional<Double> value = configurationUtil.getDouble(getKeyName(targetClass, m.getName()));
 
                     if (value.isPresent()) {
                         m.invoke(target, value.get());
@@ -69,7 +77,7 @@ public class ConfigBundleInterceptor {
 
                 } else if (m.getParameters()[0].getType().equals(Integer.class)) {
 
-                    Optional<Integer> value = configurationUtil.getInteger(getKeyName(target, m.getName()));
+                    Optional<Integer> value = configurationUtil.getInteger(getKeyName(targetClass, m.getName()));
 
                     if (value.isPresent()) {
                         m.invoke(target, value.get());
@@ -85,22 +93,22 @@ public class ConfigBundleInterceptor {
     /**
      * Construct key name from prefix and field name or ConfigValue value (if present)
      *
-     * @param target target class
-     * @param setter name of the setter method
+     * @param targetClass target class
+     * @param setter      name of the setter method
      * @return key in format prefix.key-name
      */
-    private String getKeyName(Object target, String setter) throws Exception {
+    private String getKeyName(Class targetClass, String setter) throws Exception {
 
         String key;
 
         // get prefix
-        String prefix = target.getClass().getAnnotation(ConfigBundle.class).value();
+        String prefix = ((ConfigBundle) targetClass.getAnnotation(ConfigBundle.class)).value();
         if (prefix.isEmpty()) {
-            prefix = camelCaseToHyphenCase(target.getClass().getSuperclass().getSimpleName());
+            prefix = camelCaseToHyphenCase(targetClass.getSimpleName());
         }
 
         // get ConfigValue
-        Field field = target.getClass().getSuperclass().getDeclaredField(setterToField(setter));
+        Field field = targetClass.getDeclaredField(setterToField(setter));
         ConfigValue fieldAnnotation = null;
         if (field != null) {
             fieldAnnotation = field.getAnnotation(ConfigValue.class);
@@ -148,6 +156,17 @@ public class ConfigBundleInterceptor {
         }
 
         return parsedString;
+
+    }
+
+    /**
+     * Check if target class is proxied.
+     *
+     * @param targetClass target class
+     * @return true if target class is proxied
+     */
+    private boolean targetClassIsProxied(Class targetClass) {
+        return targetClass.getCanonicalName().contains("$Proxy");
     }
 }
 

@@ -9,7 +9,8 @@ import java.lang.annotation.Target;
 /**
  * Annotation specifies key name for automatic initialisation of a field from configuration.
  *
- * @param value key name.
+ * @author Tilen Faganel
+ * @since 2.1.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
