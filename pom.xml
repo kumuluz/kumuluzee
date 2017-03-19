@@ -47,7 +47,9 @@
         <ejb.version>3.2</ejb.version>
 
         <jandex.version>2.0.3.Final</jandex.version>
+        <hikari.version>2.6.1</hikari.version>
         <yamlbeans.version>1.11</yamlbeans.version>
+        <yaml.version>1.18</yaml.version>
         <junit.version>4.12</junit.version>
     </properties>
 
@@ -326,9 +328,19 @@
                 <version>${jandex.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.zaxxer</groupId>
+                <artifactId>HikariCP</artifactId>
+                <version>${hikari.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.esotericsoftware.yamlbeans</groupId>
                 <artifactId>yamlbeans</artifactId>
                 <version>${yamlbeans.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${yaml.version}</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>

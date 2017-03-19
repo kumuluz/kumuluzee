@@ -8,6 +8,7 @@ import com.kumuluz.ee.common.dependencies.ServerDef;
 import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 import com.kumuluz.ee.common.utils.ResourceUtils;
 
+import org.eclipse.jetty.plus.jndi.Resource;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -18,9 +19,11 @@ import java.util.EventListener;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.naming.NamingException;
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
+import javax.sql.DataSource;
 
 /**
  * @author Tilen Faganel
@@ -195,6 +198,18 @@ public class JettyServletServer implements ServletServer {
         }
 
         appContext.addFilter(holder, pathSpec, dispatches);
+    }
+
+    @Override
+    public void registerDataSource(DataSource ds, String jndiName) {
+
+        try {
+            Resource resource = new Resource(jndiName, ds);
+
+            appContext.setAttribute(jndiName, resource);
+        } catch (NamingException e) {
+            throw new IllegalArgumentException("Unable to create naming data source entry with jndi name " + jndiName + "");
+        }
     }
 
     private JettyFactory createJettyFactory() {

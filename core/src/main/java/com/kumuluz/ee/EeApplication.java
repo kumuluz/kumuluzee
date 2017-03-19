@@ -3,6 +3,7 @@ package com.kumuluz.ee;
 import com.kumuluz.ee.common.Component;
 import com.kumuluz.ee.common.KumuluzServer;
 import com.kumuluz.ee.common.ServletServer;
+import com.kumuluz.ee.common.config.DataSourceConfig;
 import com.kumuluz.ee.common.config.EeConfig;
 import com.kumuluz.ee.common.dependencies.*;
 import com.kumuluz.ee.common.exceptions.KumuluzServerException;
@@ -12,6 +13,7 @@ import com.kumuluz.ee.common.wrapper.EeComponentWrapper;
 import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
 import com.kumuluz.ee.loaders.ComponentLoader;
 import com.kumuluz.ee.loaders.ServerLoader;
+import com.zaxxer.hikari.HikariDataSource;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -83,6 +85,23 @@ public class EeApplication {
             ServletServer servletServer = (ServletServer) server.getServer();
 
             servletServer.initWebContext();
+
+            // Create and register datasources to the underlying server
+            if (eeConfig.getDatasources().size() > 0) {
+
+                for (DataSourceConfig dsc : eeConfig.getDatasources()) {
+
+                    HikariDataSource ds = new HikariDataSource();
+                    ds.setJdbcUrl(dsc.getConnectionUrl());
+                    ds.setUsername(dsc.getUsername());
+                    ds.setPassword(dsc.getPassword());
+
+                    if (dsc.getMaxPoolSize() != null )
+                        ds.setMaximumPoolSize(dsc.getMaxPoolSize());
+
+                    servletServer.registerDataSource(ds, dsc.getJndiName());
+                }
+            }
         }
 
         // Initiate every found component in the order specified by the components dependencies
