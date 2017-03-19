@@ -192,6 +192,11 @@ public class FileConfigurationSource implements ConfigurationSource {
     }
 
     @Override
+    public Optional<Integer> getListSize(String key) {
+        return Optional.empty();
+    }
+
+    @Override
     public void set(String key, String value) {
 
     }

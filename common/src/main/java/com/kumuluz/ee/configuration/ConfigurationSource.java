@@ -20,6 +20,8 @@ public interface ConfigurationSource {
 
     Optional<Float> getFloat(String key);
 
+    Optional<Integer> getListSize(String key);
+
     void set(String key, String value);
 
     void set(String key, Boolean value);
