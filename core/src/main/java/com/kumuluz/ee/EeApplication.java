@@ -97,6 +97,9 @@ public class EeApplication {
                     ds.setUsername(dsc.getUsername());
                     ds.setPassword(dsc.getPassword());
 
+                    if (dsc.getDriverClass() != null && !dsc.getDriverClass().isEmpty())
+                        ds.setDriverClassName(dsc.getDriverClass());
+
                     if (dsc.getMaxPoolSize() != null )
                         ds.setMaximumPoolSize(dsc.getMaxPoolSize());
 

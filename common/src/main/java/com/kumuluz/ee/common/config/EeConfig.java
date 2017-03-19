@@ -53,12 +53,14 @@ public class EeConfig {
                                 DataSourceConfig dsc = new DataSourceConfig();
 
                                 Optional<String> jndiName = ConfigurationUtil.getInstance().get("kumuluzee.datasources[" + i + "].jndi-name");
+                                Optional<String> driverClass = ConfigurationUtil.getInstance().get("kumuluzee.datasources[" + i + "].driver-class");
                                 Optional<String> conUrl = ConfigurationUtil.getInstance().get("kumuluzee.datasources[" + i + "].connection-url");
                                 Optional<String> user = ConfigurationUtil.getInstance().get("kumuluzee.datasources[" + i + "].username");
                                 Optional<String> pass = ConfigurationUtil.getInstance().get("kumuluzee.datasources[" + i + "].password");
                                 Optional<Integer> maxPool = ConfigurationUtil.getInstance().getInteger("kumuluzee.datasources[" + i + "].max-pool-size");
 
                                 dsc.setJndiName(jndiName.isPresent() ? jndiName.get() : (String) dsCfgMap.get("jndi-name"));
+                                dsc.setDriverClass(driverClass.isPresent() ? driverClass.get() : (String) dsCfgMap.get("driver-class"));
                                 dsc.setConnectionUrl(conUrl.isPresent() ? conUrl.get() : (String) dsCfgMap.get("connection-url"));
                                 dsc.setUsername(user.isPresent() ? user.get() : (String) dsCfgMap.get("username"));
                                 dsc.setPassword(pass.isPresent() ? pass.get() : (String) dsCfgMap.get("password"));
