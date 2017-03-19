@@ -4,10 +4,7 @@ import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author Tilen Faganel
@@ -15,11 +12,14 @@ import java.util.Optional;
  */
 public class EeConfig {
 
+    private String version;
+
     private ServerConfig serverConfig = new ServerConfig();
     private List<PersistenceConfig> persistenceConfigs = new ArrayList<>();
     private List<DataSourceConfig> datasources = new ArrayList<>();
 
     public EeConfig() {
+        this.version = ResourceBundle.getBundle("version").getString("version");
 
         persistenceConfigs.add(new PersistenceConfig());
 
@@ -80,6 +80,14 @@ public class EeConfig {
                 }
             }
         }
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     public ServerConfig getServerConfig() {

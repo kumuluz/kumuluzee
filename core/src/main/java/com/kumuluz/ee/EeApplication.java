@@ -7,6 +7,7 @@ import com.kumuluz.ee.common.config.DataSourceConfig;
 import com.kumuluz.ee.common.config.EeConfig;
 import com.kumuluz.ee.common.dependencies.*;
 import com.kumuluz.ee.common.exceptions.KumuluzServerException;
+import com.kumuluz.ee.common.filters.PoweredByFilter;
 import com.kumuluz.ee.common.utils.ResourceUtils;
 import com.kumuluz.ee.common.wrapper.ComponentWrapper;
 import com.kumuluz.ee.common.wrapper.EeComponentWrapper;
@@ -102,6 +103,11 @@ public class EeApplication {
                     servletServer.registerDataSource(ds, dsc.getJndiName());
                 }
             }
+
+            // Add all included filters
+            Map<String, String> filterParams = new HashMap<>();
+            filterParams.put("name", "KumuluzEE/" + eeConfig.getVersion());
+            servletServer.registerFilter(PoweredByFilter.class, "/*", filterParams);
         }
 
         // Initiate every found component in the order specified by the components dependencies
