@@ -99,6 +99,22 @@ public class ConfigurationUtil {
         return Optional.empty();
     }
 
+    public Optional<Integer> getListSize(String key) {
+        int listSize = -1;
+
+        for (ConfigurationSource configurationSource : configurationSources) {
+            Optional<Integer> currentListSize = configurationSource.getListSize(key);
+            if (currentListSize.isPresent() && currentListSize.get() > listSize) {
+                listSize = currentListSize.get();
+            }
+        }
+        if (listSize == -1) {
+            return Optional.empty();
+        } else {
+            return Optional.of(listSize);
+        }
+    }
+
     public void set(String key, String value) {
         configurationSources.get(0).set(key, value);
     }

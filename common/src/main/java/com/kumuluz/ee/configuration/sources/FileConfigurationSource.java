@@ -1,8 +1,7 @@
 package com.kumuluz.ee.configuration.sources;
 
-import com.esotericsoftware.yamlbeans.YamlException;
-import com.esotericsoftware.yamlbeans.YamlReader;
 import com.kumuluz.ee.configuration.ConfigurationSource;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -23,35 +22,45 @@ public class FileConfigurationSource implements ConfigurationSource {
     private static final Logger log = Logger.getLogger(FileConfigurationSource.class.getName());
     private static FileConfigurationSource instance;
 
+    private String ymlFileName;
     private String yamlFileName;
     private String propertiesFileName;
     private Map<String, Object> config;
     private Properties properties;
 
     public FileConfigurationSource() {
-        this.yamlFileName = "config.yml";
+        this.ymlFileName = "config.yml";
+        this.yamlFileName = "config.yaml";
         this.propertiesFileName = "config.properties";
+    }
+
+    public static FileConfigurationSource getInstance() {
+        if (instance == null) {
+            instance = new FileConfigurationSource();
+        }
+        return instance;
     }
 
     @Override
     public void init() {
 
-        YamlReader reader = null;
+        // read yaml file to Map<String, Object>
+        URL file;
+        Yaml yaml = new Yaml();
         try {
-            URL file = getClass().getClassLoader().getResource(yamlFileName);
+            file = getClass().getClassLoader().getResource(ymlFileName);
+            if (file == null) {
+                file = getClass().getClassLoader().getResource(yamlFileName);
+            }
             if (file != null) {
-
-                log.info("Loading configuration from yaml file " + yamlFileName);
-
-                reader = new YamlReader(new FileReader(file.getFile()));
-                config = (Map<String, Object>) reader.read();
+                log.info("Loading configuration from yaml file.");
+                config = (Map<String, Object>) yaml.load(new FileReader(file.getFile()));
             }
         } catch (FileNotFoundException e) {
             log.info("Yaml configuration file was not found.");
-        } catch (YamlException e) {
-            log.severe("Malformed yaml configuration file.");
         }
 
+        // parse yaml file to Map<String, Object>
         if (config == null) {
 
             try {
@@ -81,44 +90,14 @@ public class FileConfigurationSource implements ConfigurationSource {
     @Override
     public Optional<String> get(String key) {
 
-        // get value from yaml configuration
+        // get key value from yaml configuration
         if (config != null) {
 
-            // value array support
-            int arrayIndex = 0;
-            int openingBracket = key.indexOf("[");
-            int closingBracket = key.indexOf("]");
-            if (closingBracket == key.length() - 1 && openingBracket != -1) {
+            Object value = getValue(key);
 
-                try {
-                    arrayIndex = Integer.parseInt(key.substring(openingBracket + 1, closingBracket));
-                } catch (NumberFormatException e) {
-                    log.severe("Cannot cast array index.");
-                    return Optional.empty();
-                }
+            return (value == null) ? Optional.empty() : Optional.of(value.toString());
 
-                key = key.substring(0, openingBracket);
-            }
-
-            // find key in Map
-            String[] splittedKey = key.split("\\.");
-            Object value = config;
-            for (String s : splittedKey) {
-                if (value == null) {
-                    return Optional.empty();
-                }
-                value = ((Map) value).get(s);
-            }
-
-            // return value
-            if (value instanceof String) {
-                return Optional.of((String) value);
-            } else if (value instanceof List) {
-                return (arrayIndex < ((List) value).size()) ? Optional.of((String) ((List) value).get(arrayIndex)) :
-                        Optional.empty();
-            }
-
-            // get value from yaml configuration
+            // get value from .properties configuration
         } else if (properties != null) {
 
             String value = properties.getProperty(key);
@@ -193,7 +172,15 @@ public class FileConfigurationSource implements ConfigurationSource {
 
     @Override
     public Optional<Integer> getListSize(String key) {
+
+        Object value = getValue(key);
+
+        if (value instanceof List) {
+            return Optional.of(((List) value).size());
+        }
+
         return Optional.empty();
+
     }
 
     @Override
@@ -221,4 +208,78 @@ public class FileConfigurationSource implements ConfigurationSource {
 
     }
 
+    /**
+     * Returns true, if key represents an array.
+     *
+     * @param key configuration key
+     * @return
+     */
+    private boolean representsArray(String key) {
+
+        int openingBracket = key.indexOf("[");
+        int closingBracket = key.indexOf("]");
+
+        if (closingBracket == key.length() - 1 && openingBracket != -1) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Parses configuration map, returns value for given key.
+     *
+     * @param key configuration key
+     * @return Value for given key.
+     */
+    private Object getValue(String key) {
+
+        // iterate over configuration tree
+        String[] splittedKeys = key.split("\\.");
+        Object value = config;
+        for (String splittedKey : splittedKeys) {
+
+            if (value == null) {
+                return null;
+            }
+
+            // parse arrays
+            if (representsArray(splittedKey)) {
+
+                // value array support
+                int arrayIndex;
+                int openingBracket = splittedKey.indexOf("[");
+                int closingBracket = splittedKey.indexOf("]");
+
+                try {
+                    arrayIndex = Integer.parseInt(splittedKey.substring(openingBracket + 1, closingBracket));
+                } catch (NumberFormatException e) {
+                    log.severe("Cannot cast array index.");
+                    return null;
+                }
+
+                splittedKey = splittedKey.substring(0, openingBracket);
+
+                if (value instanceof Map) {
+                    value = ((Map) value).get(splittedKey);
+                } else {
+                    return null;
+                }
+
+                if (value instanceof List) {
+                    value = (arrayIndex < ((List) value).size()) ? ((List) value).get(arrayIndex) : null;
+                }
+
+            } else {
+                if (value instanceof Map) {
+                    value = ((Map) value).get(splittedKey);
+                } else {
+                    return null;
+                }
+            }
+        }
+
+        return value;
+
+    }
 }

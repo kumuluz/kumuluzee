@@ -14,6 +14,13 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
     private static final Logger log = Logger.getLogger(EnvironmentConfigurationSource.class.getName());
     private static EnvironmentConfigurationSource instance;
 
+    public static EnvironmentConfigurationSource getInstance() {
+        if (instance == null) {
+            instance = new EnvironmentConfigurationSource();
+        }
+        return instance;
+    }
+
     @Override
     public void init() {
     }
@@ -23,7 +30,6 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
 
         String value = System.getenv(parseKeyNameForEnvironmentVariables(key));
         return (value == null) ? Optional.empty() : Optional.of(value);
-
     }
 
     @Override
@@ -89,7 +95,22 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
 
     @Override
     public Optional<Integer> getListSize(String key) {
-        return Optional.empty();
+
+        int listSize = -1;
+        int index = -1;
+        String value;
+
+        do {
+            listSize += 1;
+            index += 1;
+            value = System.getenv(parseKeyNameForEnvironmentVariables(key + "[" + index + "]"));
+        } while (value != null);
+
+        if (listSize > 0) {
+            return Optional.of(listSize);
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override
