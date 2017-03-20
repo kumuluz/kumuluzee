@@ -1,9 +1,7 @@
 package com.kumuluz.ee.common.config;
 
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
-import org.yaml.snakeyaml.Yaml;
 
-import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -23,63 +21,32 @@ public class EeConfig {
 
         persistenceConfigs.add(new PersistenceConfig());
 
-        InputStream is = getClass().getClassLoader().getResourceAsStream("config.yml");
+        ConfigurationUtil cfg = ConfigurationUtil.getInstance();
 
-        if (is != null) {
+        Optional<Integer> dsSizeOpt = cfg.getListSize("kumuluzee.datasources");
 
-            Yaml yaml = new Yaml();
+        if (dsSizeOpt.isPresent()) {
+            Integer dsSize = dsSizeOpt.get();
 
-            Object rootCfg = yaml.load(getClass().getClassLoader().getResourceAsStream("config.yml"));
+            for (int i = 0; i < dsSize; i++) {
 
-            if (rootCfg instanceof Map) {
-                Map rootCfgMap = (Map) rootCfg;
+                DataSourceConfig dsc = new DataSourceConfig();
 
-                Object keeCfg = rootCfgMap.get("kumuluzee");
+                Optional<String> jndiName = cfg.get("kumuluzee.datasources[" + i + "].jndi-name");
+                Optional<String> driverClass = cfg.get("kumuluzee.datasources[" + i + "].driver-class");
+                Optional<String> conUrl = cfg.get("kumuluzee.datasources[" + i + "].connection-url");
+                Optional<String> user = cfg.get("kumuluzee.datasources[" + i + "].username");
+                Optional<String> pass = cfg.get("kumuluzee.datasources[" + i + "].password");
+                Optional<Integer> maxPool = cfg.getInteger("kumuluzee.datasources[" + i + "].max-pool-size");
 
-                if (keeCfg instanceof Map) {
-                    Map keeCfgMap = (Map) keeCfg;
+                jndiName.ifPresent(dsc::setJndiName);
+                driverClass.ifPresent(dsc::setDriverClass);
+                conUrl.ifPresent(dsc::setConnectionUrl);
+                user.ifPresent(dsc::setUsername);
+                pass.ifPresent(dsc::setPassword);
+                maxPool.ifPresent(dsc::setMaxPoolSize);
 
-                    Object dssCfg = keeCfgMap.get("datasources");
-
-                    if (dssCfg instanceof List) {
-                        List dssCfgList = (List) dssCfg;
-
-                        for (int i = 0; i < dssCfgList.size(); i++) {
-                            Object dsCfg = dssCfgList.get(i);
-
-                            if (dsCfg instanceof Map) {
-                                Map dsCfgMap = (Map) dsCfg;
-
-                                DataSourceConfig dsc = new DataSourceConfig();
-
-                                Optional<String> jndiName = ConfigurationUtil.getInstance().get("kumuluzee.datasources[" + i + "].jndi-name");
-                                Optional<String> driverClass = ConfigurationUtil.getInstance().get("kumuluzee.datasources[" + i + "].driver-class");
-                                Optional<String> conUrl = ConfigurationUtil.getInstance().get("kumuluzee.datasources[" + i + "].connection-url");
-                                Optional<String> user = ConfigurationUtil.getInstance().get("kumuluzee.datasources[" + i + "].username");
-                                Optional<String> pass = ConfigurationUtil.getInstance().get("kumuluzee.datasources[" + i + "].password");
-                                Optional<Integer> maxPool = ConfigurationUtil.getInstance().getInteger("kumuluzee.datasources[" + i + "].max-pool-size");
-
-                                dsc.setJndiName(jndiName.isPresent() ? jndiName.get() : (String) dsCfgMap.get("jndi-name"));
-                                dsc.setDriverClass(driverClass.isPresent() ? driverClass.get() : (String) dsCfgMap.get("driver-class"));
-                                dsc.setConnectionUrl(conUrl.isPresent() ? conUrl.get() : (String) dsCfgMap.get("connection-url"));
-                                dsc.setUsername(user.isPresent() ? user.get() : (String) dsCfgMap.get("username"));
-                                dsc.setPassword(pass.isPresent() ? pass.get() : (String) dsCfgMap.get("password"));
-
-                                if (maxPool.isPresent()) {
-                                    dsc.setMaxPoolSize(maxPool.get());
-                                } else {
-                                    Object maxPoolSize = dsCfgMap.get("max-pool-size");
-
-                                    if (maxPoolSize != null && maxPoolSize instanceof Integer) {
-                                        dsc.setMaxPoolSize((Integer) maxPoolSize);
-                                    }
-                                }
-
-                                datasources.add(dsc);
-                            }
-                        }
-                    }
-                }
+                datasources.add(dsc);
             }
         }
     }
