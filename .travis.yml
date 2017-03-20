@@ -1,4 +1,5 @@
 language: java
+dist: trusty
 
 env:
   global:
@@ -7,7 +8,7 @@ env:
   - secure: sOfajpt3u7pRW4ox+YrjDO/YCsQ5zQ9WSe28nhvrf+ppnKyRNcB6dKOE9ntnJ/fvukvK3BTolotryW2F+KjgK6diPpxeRAyQbY5F68t8pROe8hHcRsoO8/kSmPTKrwH0U1tVGVvavUoBcS5QA6bkym1qpl2/kNAmtk7uimeV2O0=
 
 jdk:
-- oraclejdk8
+- openjdk8
 
 before_install:
 - openssl aes-256-cbc -K $encrypted_8dafc9c32687_key -iv $encrypted_8dafc9c32687_iv
