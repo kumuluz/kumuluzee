@@ -1,5 +1,5 @@
 # KumuluzEE
-[![Build Status](https://img.shields.io/travis/TFaga/KumuluzEE/master.svg?style=flat)](https://travis-ci.org/TFaga/KumuluzEE)
+[![Build Status](https://img.shields.io/travis/kumuluz/KumuluzEE/master.svg?style=flat)](https://travis-ci.org/kumuluz/KumuluzEE)
 
 > Lightweight framework for creating small standalone Java EE applications in a micro service way.
 
@@ -41,14 +41,14 @@ supported with more being added over time:
 - JSON-P 1.0 (RI JSONP)
 
 If you already know how to use Java EE, then you already know how to use KumuluzEE. Its dead simple,
-see the [getting started](https://github.com/TFaga/KumuluzEE/wiki/Getting-started) wiki section to create your first light-weight standalone
+see the [getting started](https://github.com/kumuluz/KumuluzEE/wiki/Getting-started) wiki section to create your first light-weight standalone
 Java EE app in 5 minutes.
 
 ## Usage
 
 Using maven add the core module of the library as a dependency to your project. The `${kumuluzee.version}`
 variables represents the most current minor version. You can see the available version on the
-[Release Page](https://github.com/TFaga/KumuluzEE/releases).
+[Release Page](https://github.com/kumuluz/KumuluzEE/releases).
 
 ```xml
 <dependency>
@@ -148,7 +148,7 @@ If the testing goes well, the final release should come soon after a few betas.
 
 ## Getting started
 
-You can find the getting started guide on the projects [wiki](https://github.com/TFaga/KumuluzEE/wiki/Getting-started).
+You can find the getting started guide on the projects [wiki](https://github.com/kumuluz/KumuluzEE/wiki/Getting-started).
 
 ## Building
 
@@ -163,7 +163,7 @@ git --version
 First clone the KumuluzEE repository:
 
 ```bash
-git clone https://github.com/TFaga/KumuluzEE.git
+git clone https://github.com/kumuluz/KumuluzEE.git
 cd KumuluzEE
 ```
     
@@ -179,13 +179,13 @@ Once completed you will find the build archives in the modules respected `target
 
 ## Changelog
 
-Recent changes can be viewed on Github on the [Releases Page](https://github.com/TFaga/KumuluzEE/releases)
+Recent changes can be viewed on Github on the [Releases Page](https://github.com/kumuluz/KumuluzEE/releases)
 
 ## Contribute
 
-See the [contributing docs](https://github.com/TFaga/KumuluzEE/blob/master/CONTRIBUTING.md)
+See the [contributing docs](https://github.com/kumuluz/KumuluzEE/blob/master/CONTRIBUTING.md)
 
-When submitting an issue, please follow the [guidelines](https://github.com/TFaga/KumuluzEE/blob/master/CONTRIBUTING.md#bugs).
+When submitting an issue, please follow the [guidelines](https://github.com/kumuluz/KumuluzEE/blob/master/CONTRIBUTING.md#bugs).
 
 When submitting a bugfix, write a test that exposes the bug and fails before applying your fix. Submit the test alongside the fix.
 
