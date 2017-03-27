@@ -3,6 +3,7 @@
  */
 package com.kumuluz.ee.logs.messages;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -32,5 +33,12 @@ public class SimpleLogMessage implements MethodCallLogMessage, MethodCallExitLog
 
     public void setFields(Map<String, String> fields) {
         this.fields = fields;
+    }
+
+    public void addField(String key, String value) {
+        if (fields == null) {
+            fields = new HashMap();
+        }
+        fields.put(key,value);
     }
 }
