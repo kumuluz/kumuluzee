@@ -66,13 +66,17 @@ variables represents the most current minor version. You can see the available v
 [Release Page](https://github.com/kumuluz/KumuluzEE/releases).
 
 ```xml
-<dependency>
-    <groupId>com.kumuluz.ee</groupId>
-    <artifactId>kumuluzee-bom</artifactId>
-    <version>${kumuluzee.version}</version>
-    <type>pom</type>
-    <scope>import</scope>
-</dependency>
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>com.kumuluz.ee</groupId>
+            <artifactId>kumuluzee-bom</artifactId>
+            <version>${kumuluz.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
 ```
 
 To choose your Java EE components include them as your dependencies. You can chose any of the
