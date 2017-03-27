@@ -9,7 +9,7 @@ that can be started as any other JAR app.
 The framework automates the tasks, related to the deployment and configuration of Java EE applications and makes it seamless,
 thus overcoming the major drawback of the microservice architecture and eliminating the need for an application server. 
 
-KumuluzEE has been designed to use the standard Java EE technologies and APIs. 
+KumuluzEE has been designed to use the standard Java EE technologies and APIs with optional extensions for easier development of cloud-native microservices. 
 Therefore, it is particularly suitable for existing enterprise Java EE developers,
 who would like to leverage their skills, but progressively move from monolithic to microservice
 design patterns.
@@ -24,6 +24,8 @@ your app lightweight.
 you can simply add a different one.
 - Minimal to no configuration settings up the base server. Develop like any other Java EE application
 - Quick startup time, low resource consumption and stateless scalability accelerates development
+- Extend your microservices with common cloud-native patterns, such as config, discovery, logging, circuit-breakers,
+etc. KumuluzEE provides all the building blocks.
 - Simplified unit and integration testing
 
 The goal is to support as many Java EE components as possible. Currently the following components are
@@ -34,11 +36,21 @@ supported with more being added over time:
 - JSP 2.3 (Jetty Apache Jasper)
 - EL 3.0 (RI UEL)
 - CDI 1.2 (RI Weld)
-- JPA 2.1 (RI EclipseLink)
+- JPA 2.1 (RI EclipseLink, Hibernate)
 - JAX-RS 2.0 (RI Jersey)
 - JSF 2.2 (RI Mojarra)
 - Bean Validation 1.1 (RI Hibernate validator)
 - JSON-P 1.0 (RI JSONP)
+
+In addition to the standard Java EE components, KumuluzEE also comes with several extensions that complement and extend
+its functionality. The extensions will follow the same modular concept as the Java EE components in which you can chose
+if you want to use it as well as the underlying implementation of the extension. Most extensions are geared towards creating
+cloud-native microservices including configuration, logging, discovery, circuit-breakers, metrics, security, event streaming and more.
+As such they will be part of the KumuluzEE Cloud project with some exceptions. Currently the following
+extensions are available with more planned soon:
+
+- KumuluzEE Config (File and environment variables built-in)
+- [KumuluzEE Logs](https://github.com/kumuluz/kumuluzee-logs)
 
 If you already know how to use Java EE, then you already know how to use KumuluzEE. Its dead simple,
 see the [getting started](https://github.com/kumuluz/KumuluzEE/wiki/Getting-started) wiki section to create your first light-weight standalone
@@ -46,15 +58,20 @@ Java EE app in 5 minutes.
 
 ## Usage
 
-Using maven add the core module of the library as a dependency to your project. The `${kumuluzee.version}`
+KumuluzEE ships with a BOM (bill of materials) which you can use to easily add the various components you need without
+worrying about the versions and their compatibility as it is required that all components are the same version. 
+
+Using maven add the BOM module of the library as a dependency to your project. The `${kumuluzee.version}`
 variables represents the most current minor version. You can see the available version on the
 [Release Page](https://github.com/kumuluz/KumuluzEE/releases).
 
 ```xml
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
-    <artifactId>kumuluzee-core</artifactId>
+    <artifactId>kumuluzee-bom</artifactId>
     <version>${kumuluzee.version}</version>
+    <type>pom</type>
+    <scope>import</scope>
 </dependency>
 ```
 
@@ -104,6 +121,15 @@ following artifacts:
     <version>${kumuluzee.version}</version>
 </dependency>
 
+<!-- or -->
+
+<!-- JPA (Hibernate) -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-jpa-hibernate</artifactId>
+    <version>${kumuluzee.version}</version>
+</dependency>
+
 <!-- JAX-RS (Jersey) -->
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
@@ -133,18 +159,10 @@ following artifacts:
 </dependency>
 ```
 
-## Planned features
+To choose your KumuluzEE extensions include them as your dependencies. You can find the available implementations and
+options at their respected project pages:
 
-For full Java EE support please refer to our website for the enterprise version.
-
-Additional implementations will also be added to existing components. Currently the following are planned:
-
-- RESTEasy (JAX-RS)
-- Hibernate (JPA)
-- MyFaces (JSF)
-
-The features will arrive separately following a series of betas, first of which will be available at the end of March/begining of April.
-If the testing goes well, the final release should come soon after a few betas.
+- [KumuluzEE Logs](https://github.com/kumuluz/kumuluzee-logs)
 
 ## Getting started
 
