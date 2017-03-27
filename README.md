@@ -1,5 +1,5 @@
 # KumuluzEE
-[![Build Status](https://img.shields.io/travis/kumuluz/KumuluzEE/master.svg?style=flat)](https://travis-ci.org/kumuluz/KumuluzEE)
+[![Build Status](https://img.shields.io/travis/kumuluz/kumuluzee/master.svg?style=flat)](https://travis-ci.org/kumuluz/kumuluzee)
 
 > Lightweight framework for creating small standalone Java EE applications in a micro service way.
 
