@@ -87,42 +87,36 @@ following artifacts:
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee-servlet-jetty</artifactId>
-    <version>${kumuluzee.version}</version>
 </dependency>
 
 <!-- WebSocket (Jetty) -->
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee-websocket-jetty</artifactId>
-    <version>${kumuluzee.version}</version>
 </dependency>
 
 <!-- JSP (Jetty Apache Jasper) -->
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee-jsp-jetty</artifactId>
-    <version>${kumuluzee.version}</version>
 </dependency>
 
 <!-- EL (UEL) -->
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee-el-uel</artifactId>
-    <version>${kumuluzee.version}</version>
 </dependency>
 
 <!-- CDI (Weld) -->
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee-cdi-weld</artifactId>
-    <version>${kumuluzee.version}</version>
 </dependency>
 
 <!-- JPA (EclipseLink) -->
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee-jpa-eclipselink</artifactId>
-    <version>${kumuluzee.version}</version>
 </dependency>
 
 <!-- or -->
@@ -131,35 +125,30 @@ following artifacts:
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee-jpa-hibernate</artifactId>
-    <version>${kumuluzee.version}</version>
 </dependency>
 
 <!-- JAX-RS (Jersey) -->
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee-jax-rs-jersey</artifactId>
-    <version>${kumuluzee.version}</version>
 </dependency>
 
 <!-- JSF (Mojarra) -->
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee-jsf-mojarra</artifactId>
-    <version>${kumuluzee.version}</version>
 </dependency>
 
 <!-- Bean Validation (Hibernate validator) -->
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee-bean-validation-hibernate-validator</artifactId>
-    <version>${kumuluzee.version}</version>
 </dependency>
 
 <!-- JSON-P -->
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee-json-p-jsonp</artifactId>
-    <version>${kumuluzee.version}</version>
 </dependency>
 ```
 
