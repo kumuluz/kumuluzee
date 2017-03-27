@@ -58,6 +58,25 @@ public interface LogCommons {
     LogMethodContext logMethodEntry(LogLevel level, LogMethodMessage logMethodMessage);
 
     /**
+     * Log Method entry with custom LogLevel definition
+     *
+     * @param marker             Marker object defining type of resource
+     * @param logMethodMessage LogMethodMessage object with details about log content
+     * @return LogMethodContext object, which is passed to logMethodExit
+     */
+    LogMethodContext logMethodEntry(Marker marker, LogMethodMessage logMethodMessage);
+
+    /**
+     * Log Method entry with custom LogLevel definition
+     *
+     * @param level            LogLevel
+     * @param marker             Marker object defining type of resource
+     * @param logMethodMessage LogMethodMessage object with details about log content
+     * @return LogMethodContext object, which is passed to logMethodExit
+     */
+    LogMethodContext logMethodEntry(LogLevel level, Marker marker, LogMethodMessage logMethodMessage);
+
+    /**
      * Log Method exit
      *
      * @param logMethodContext LogMethodContext object with details returned from Entry log
@@ -71,6 +90,16 @@ public interface LogCommons {
      * @return LogResourceContext object, which is passed to logResourceEnd
      */
     LogResourceContext logResourceStart(LogResourceMessage logResourceMessage);
+
+    /**
+     * Log Resource invokation start
+     *
+     * @param level              LogLevel
+     * @param logResourceMessage LogResourceMessage object with details about invoked resource and configuration
+     * @return LogResourceContext object, which is passed to logResourceEnd
+     */
+    LogResourceContext logResourceStart(LogLevel level, LogResourceMessage logResourceMessage);
+
 
     /**
      * Log Resource invokation start
