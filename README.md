@@ -79,7 +79,18 @@ variables represents the most current minor version. You can see the available v
 </dependencyManagement>
 ```
 
-To choose your Java EE components include them as your dependencies. You can chose any of the
+Now you can either choose any single combinations of Java EE components or use one of the common pre-built profiles that
+ship as part of KumuluzEE. You can chose any of the following profiles:
+
+```xml
+<!-- MicroProfile 1.0 -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-microProfile-1.0</artifactId>
+</dependency>
+```
+
+To choose your Java EE components with fine grain control include them as your dependencies. You can chose any of the
 following artifacts:
 
 ```xml
