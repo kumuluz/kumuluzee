@@ -16,10 +16,7 @@ import com.kumuluz.ee.loaders.ComponentLoader;
 import com.kumuluz.ee.loaders.ServerLoader;
 import com.zaxxer.hikari.HikariDataSource;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -246,7 +243,7 @@ public class EeApplication {
             }
         }
 
-        eeComponents = eeComp.values().stream().collect(Collectors.toList());
+        eeComponents = new ArrayList<>(eeComp.values());
     }
 
     private void checkRequirements() {
