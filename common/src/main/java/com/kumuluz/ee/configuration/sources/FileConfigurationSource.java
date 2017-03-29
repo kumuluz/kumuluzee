@@ -3,10 +3,8 @@ package com.kumuluz.ee.configuration.sources;
 import com.kumuluz.ee.configuration.ConfigurationSource;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -45,19 +43,31 @@ public class FileConfigurationSource implements ConfigurationSource {
     public void init() {
 
         // read yaml file to Map<String, Object>
-        URL file;
+        InputStream file;
         Yaml yaml = new Yaml();
         try {
-            file = getClass().getClassLoader().getResource(ymlFileName);
+            file = getClass().getClassLoader().getResourceAsStream(ymlFileName);
+
             if (file == null) {
-                file = getClass().getClassLoader().getResource(yamlFileName);
+                file = getClass().getClassLoader().getResourceAsStream(yamlFileName);
             }
+
             if (file != null) {
-                log.info("Loading configuration from yaml file.");
-                config = (Map<String, Object>) yaml.load(new FileReader(file.getFile()));
+                log.info("Loading configuration from YAML file.");
+
+                Object yamlParsed = yaml.load(file);
+
+                if (yamlParsed instanceof Map) {
+                    config = (Map<String, Object>) yamlParsed;
+                } else {
+                    log.info("Configuration YAML is malformed as it contains an array at the root level. Skipping.");
+                }
+
+                file.close();
             }
-        } catch (FileNotFoundException e) {
-            log.info("Yaml configuration file was not found.");
+        } catch (IOException e) {
+            log.info("Couldn't successfully process the YAML configuration file." +
+                    "All your properties may not be correctly loaded");
         }
 
         // parse yaml file to Map<String, Object>
@@ -76,14 +86,14 @@ public class FileConfigurationSource implements ConfigurationSource {
 
                 inputStream.close();
             } catch (Exception e) {
-                log.severe("Properties file not found.");
+                log.info("Properties file not found.");
             }
 
         }
         if (config != null || properties != null) {
             log.info("Configuration successfully read.");
         } else {
-            log.severe("Unable to load configuration from file. No configuration files were found.");
+            log.info("Unable to load configuration from file. No configuration files were found.");
         }
     }
 
