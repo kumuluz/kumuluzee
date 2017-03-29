@@ -10,6 +10,10 @@ env:
 jdk:
 - openjdk8
 
+cache:
+  directories:
+  - $HOME/.m2
+
 before_install:
 - openssl aes-256-cbc -K $encrypted_8dafc9c32687_key -iv $encrypted_8dafc9c32687_iv
   -in gpg.tar.enc -out gpg.tar -d
