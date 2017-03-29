@@ -259,10 +259,10 @@ public class EeApplication {
 
         if (ResourceUtils.isRunningInJar()) {
 
-            throw new RuntimeException("Running in a jar is currently not supported yet. Please " +
-                    "build the application with the 'maven-dependency' plugin to explode your app" +
-                    " with dependencies. Then run it with 'java -cp " +
-                    "target/classes:target/dependency/* yourmainclass'.");
+            log.info("KumuluzEE running inside a JAR runtime.");
+        } else {
+
+            log.info("KumuluzEE running in an exploded class and dependency runtime.");
         }
     }
 }
