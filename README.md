@@ -42,6 +42,8 @@ supported with more being added over time:
 - Bean Validation 1.1 (RI Hibernate validator)
 - JSON-P 1.0 (RI JSONP)
 
+## KumuluzEE extensions
+
 In addition to the standard Java EE components, KumuluzEE also comes with several extensions that complement and extend
 its functionality. The extensions will follow the same modular concept as the Java EE components in which you can chose
 if you want to use it as well as the underlying implementation of the extension. Most extensions are geared towards creating
