@@ -1,32 +1,32 @@
 # KumuluzEE
 [![Build Status](https://img.shields.io/travis/kumuluz/kumuluzee/master.svg?style=flat)](https://travis-ci.org/kumuluz/kumuluzee)
 
-> Lightweight framework for creating small standalone Java EE applications in a micro service way.
+> Lightweight open-source framework for developing microservices using standard Java EE technologies and migrating Java EE to cloud-native architecture.
 
-KumuluzEE allows you to simply with minimal or no configuration create a standalone lightweight Java EE application
-that can be started as any other JAR app.
+KumuluzEE is a lightweight framework for developing microservices using standard Java EE technologies and migrating 
+existing Java EE applications to microservices. KumuluzEE packages microservices as standalone JARs.
+KumuluzEE microservices are lightweight and optimized for size and start-up time.
+They fit perfectly with Docker containers.
 
-The framework automates the tasks, related to the deployment and configuration of Java EE applications and makes it seamless,
-thus overcoming the major drawback of the microservice architecture and eliminating the need for an application server. 
+KumuluzEE also provides extensions for developing common patterns in cloud-native architectures,
+including configuration, logging, discovery, circuit-breakers, metrics, security, event streaming and more.
 
-KumuluzEE has been designed to use the standard Java EE technologies and APIs with optional extensions for easier development of cloud-native microservices. 
-Therefore, it is particularly suitable for existing enterprise Java EE developers,
-who would like to leverage their skills, but progressively move from monolithic to microservice
-design patterns.
+KumuluzEE has been designed to use the standard Java EE technologies and APIs with optional extensions for easier
+development of cloud-native microservices. Therefore, it is particularly suitable for existing enterprise Java EE developers,
+who would like to leverage their skills, but progressively move from monolithic to microservice design patterns.
 
 Primary features:
 
 - No need for a traditional application server. Run your app anywhere Java runs as well as in PaaS
 and Docker-like environments
-- Complete control over what Java EE components are included. Only include what you need and make
+- Allows you to develop microservices using standard Java EE technologies.
+- Allows you to gradually migrate existing Java EE applications to microservices and cloud-native architecture.
+- Complete control over what Java EE components and its implementations are included. Only include what you need and make
 your app lightweight.
-- Choose your Java EE component implementations. If there is a problem with a single implementation,
-you can simply add a different one.
 - Minimal to no configuration settings up the base server. Develop like any other Java EE application
 - Quick startup time, low resource consumption and stateless scalability accelerates development
 - Extend your microservices with common cloud-native patterns, such as config, discovery, logging, circuit-breakers,
 etc. KumuluzEE provides all the building blocks.
-- Simplified unit and integration testing
 
 The goal is to support as many Java EE components as possible. Currently the following components are
 supported with more being added over time:
@@ -49,7 +49,7 @@ cloud-native microservices including configuration, logging, discovery, circuit-
 As such they will be part of the KumuluzEE Cloud project with some exceptions. Currently the following
 extensions are available with more planned soon:
 
-- KumuluzEE Config (File and environment variables built-in)
+- [KumuluzEE Config (File and environment variables built-in)](https://github.com/kumuluz/kumuluzee/wiki/Configuration)
 - [KumuluzEE Logs](https://github.com/kumuluz/kumuluzee-logs)
 
 If you already know how to use Java EE, then you already know how to use KumuluzEE. Its dead simple,
