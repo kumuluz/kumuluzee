@@ -14,11 +14,6 @@
 
     <artifactId>kumuluzee-jta-common</artifactId>
 
-    <properties>
-        <jta.version>1.2</jta.version>
-        <eclipselink.version>2.6.4</eclipselink.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.kumuluz.ee</groupId>
@@ -26,31 +21,19 @@
         </dependency>
 
         <dependency>
-            <groupId>com.kumuluz.ee</groupId>
-            <artifactId>kumuluzee-cdi-weld</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>javax.transaction</groupId>
             <artifactId>javax.transaction-api</artifactId>
-            <version>${jta.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>org.eclipse.persistence.core</artifactId>
-            <version>${eclipselink.version}</version>
+            <groupId>com.kumuluz.ee</groupId>
+            <artifactId>kumuluzee-cdi-weld</artifactId>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.persistence</groupId>
-                    <artifactId>org.eclipse.persistence.asm</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.glassfish</groupId>
-                    <artifactId>javax.json</artifactId>
-                </exclusion>
-            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.kumuluz.ee</groupId>
+            <artifactId>kumuluzee-jpa-eclipselink</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

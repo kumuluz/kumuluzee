@@ -239,6 +239,11 @@
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-jta</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-jta-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
