@@ -45,6 +45,7 @@
         <beanvalidation.version>1.1.0.Final</beanvalidation.version>
         <json.p.version>1.0</json.p.version>
         <ejb.version>3.2</ejb.version>
+        <jta.version>1.2</jta.version>
 
         <jandex.version>2.0.3.Final</jandex.version>
         <hikari.version>2.6.1</hikari.version>
@@ -238,6 +239,16 @@
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-jta-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-jta-narayana</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-bom</artifactId>
                 <version>${project.version}</version>
                 <type>pom</type>
@@ -324,6 +335,11 @@
                 <groupId>javax.ejb</groupId>
                 <artifactId>javax.ejb-api</artifactId>
                 <version>${ejb.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.transaction</groupId>
+                <artifactId>javax.transaction-api</artifactId>
+                <version>${jta.version}</version>
             </dependency>
 
             <!-- Various libraries used throughout the framework-->
