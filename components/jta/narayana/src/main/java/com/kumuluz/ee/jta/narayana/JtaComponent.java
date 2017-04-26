@@ -1,6 +1,5 @@
 package com.kumuluz.ee.jta.narayana;
 
-
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.jta.utils.JNDIManager;
 import com.kumuluz.ee.common.Component;
