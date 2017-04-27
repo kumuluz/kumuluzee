@@ -13,12 +13,7 @@ import java.util.List;
  * @author Marcos Koch Salvador
  * @since 2.3.0
  */
-public class KumuluzTransactionServices implements TransactionServices {
-
-    private static final List<Integer> TRANSACTION_ACTIVE_STATUS = Arrays.asList(
-        Status.STATUS_ACTIVE, Status.STATUS_COMMITTING, Status.STATUS_MARKED_ROLLBACK, Status.STATUS_PREPARED,
-        Status.STATUS_PREPARING, Status.STATUS_ROLLING_BACK
-	);
+public class JtaTransactionServices implements TransactionServices {
 
     @Override
     public void registerSynchronization(Synchronization synchronizedObserver) {
@@ -33,7 +28,7 @@ public class KumuluzTransactionServices implements TransactionServices {
     public boolean isTransactionActive() {
         try {
             int status = JtaTransactionHolder.getInstance().getTransactionManager().getStatus();
-            return TRANSACTION_ACTIVE_STATUS.contains(status);
+            return JtaTransactionHolder.TRANSACTION_ACTIVE_STATUS.contains(status);
         } catch (SystemException e) {
             throw new RuntimeException(e);
         }
