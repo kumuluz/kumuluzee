@@ -3,6 +3,8 @@ package com.kumuluz.ee.jpa.common;
 import com.kumuluz.ee.jpa.common.resources.PersistenceContextResourceFactory;
 import com.kumuluz.ee.jpa.common.resources.PersistenceUnitHolder;
 import com.kumuluz.ee.jpa.common.resources.PersistenceUnitResourceFactory;
+import java.util.Map;
+import java.util.TreeMap;
 import org.jboss.weld.injection.spi.JpaInjectionServices;
 import org.jboss.weld.injection.spi.ResourceReferenceFactory;
 
@@ -20,29 +22,40 @@ import javax.persistence.PersistenceUnit;
 @Priority(1)
 public class JpaService implements JpaInjectionServices {
 
+    private ResourceReferenceFactory<EntityManager> defaultPersistenceContextResourceFactory;
+    private ResourceReferenceFactory<EntityManagerFactory> defaultPersistenceUnitResourceFactory;
+
+    private final Map<String, PersistenceContextResourceFactory> pcResourceFactories = new TreeMap<>();
+    private final Map<String, PersistenceUnitResourceFactory> puResourceFactories = new TreeMap<>();
+
     @Override
-    public ResourceReferenceFactory<EntityManager> registerPersistenceContextInjectionPoint
-            (InjectionPoint injectionPoint) {
+    public ResourceReferenceFactory<EntityManager> registerPersistenceContextInjectionPoint(InjectionPoint injectionPoint) {
 
-        PersistenceContext pc = injectionPoint.getAnnotated().getAnnotation(PersistenceContext
-                .class);
+        PersistenceContext pc = injectionPoint.getAnnotated().getAnnotation(PersistenceContext.class);
 
-        EntityManagerFactory factory = PersistenceUnitHolder.getInstance()
-                .getEntityManagerFactory(pc.unitName());
-
-        return new PersistenceContextResourceFactory(factory);
+        if ("".equals(pc.unitName())) {
+            if (defaultPersistenceContextResourceFactory == null) {
+                defaultPersistenceContextResourceFactory = new PersistenceContextResourceFactory(PersistenceUnitHolder.getInstance()
+                        .getEntityManagerFactory(pc.unitName()).createEntityManager());
+            }
+            return defaultPersistenceContextResourceFactory;
+        }
+        return persistenceContextResourceFactory(pc.unitName());
     }
 
     @Override
-    public ResourceReferenceFactory<EntityManagerFactory> registerPersistenceUnitInjectionPoint
-            (InjectionPoint injectionPoint) {
+    public ResourceReferenceFactory<EntityManagerFactory> registerPersistenceUnitInjectionPoint(InjectionPoint injectionPoint) {
 
         PersistenceUnit pu = injectionPoint.getAnnotated().getAnnotation(PersistenceUnit.class);
 
-        EntityManagerFactory factory = PersistenceUnitHolder.getInstance()
-                .getEntityManagerFactory(pu.unitName());
-
-        return new PersistenceUnitResourceFactory(factory);
+        if ("".equals(pu.unitName())) {
+            if (defaultPersistenceUnitResourceFactory == null) {
+                defaultPersistenceUnitResourceFactory = new PersistenceUnitResourceFactory(PersistenceUnitHolder.getInstance()
+                        .getEntityManagerFactory(pu.unitName()));
+            }
+            return defaultPersistenceUnitResourceFactory;
+        }
+        return persistenceUnitResourceFactory(pu.unitName());
     }
 
     @Override
@@ -59,5 +72,27 @@ public class JpaService implements JpaInjectionServices {
 
     @Override
     public void cleanup() {
+    }
+
+    private ResourceReferenceFactory<EntityManager> persistenceContextResourceFactory(final String unitName) {
+        if (pcResourceFactories.containsKey(unitName)) {
+            return pcResourceFactories.get(unitName);
+        }
+        final EntityManagerFactory factory = PersistenceUnitHolder.getInstance()
+                .getEntityManagerFactory(unitName);
+        final PersistenceContextResourceFactory pcrfactory = new PersistenceContextResourceFactory(factory.createEntityManager());
+        pcResourceFactories.put(unitName, pcrfactory);
+        return pcrfactory;
+    }
+
+    private ResourceReferenceFactory<EntityManagerFactory> persistenceUnitResourceFactory(final String unitName) {
+        if (puResourceFactories.containsKey(unitName)) {
+            return puResourceFactories.get(unitName);
+        }
+        final EntityManagerFactory factory = PersistenceUnitHolder.getInstance()
+                .getEntityManagerFactory(unitName);
+        final PersistenceUnitResourceFactory purfactory = new PersistenceUnitResourceFactory(factory);
+        puResourceFactories.put(unitName, purfactory);
+        return purfactory;
     }
 }
