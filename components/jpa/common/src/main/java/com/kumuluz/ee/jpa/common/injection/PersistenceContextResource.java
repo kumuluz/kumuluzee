@@ -1,4 +1,4 @@
-package com.kumuluz.ee.jpa.common.resources;
+package com.kumuluz.ee.jpa.common.injection;
 
 import org.jboss.weld.injection.spi.ResourceReference;
 

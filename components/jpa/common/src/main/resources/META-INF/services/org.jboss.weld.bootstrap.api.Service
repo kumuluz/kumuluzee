@@ -1,1 +1,1 @@
-com.kumuluz.ee.jpa.common.JpaService
+com.kumuluz.ee.jpa.common.injection.JpaService

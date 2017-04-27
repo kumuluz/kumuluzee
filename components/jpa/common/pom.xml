@@ -30,6 +30,11 @@
             <artifactId>kumuluzee-cdi-weld</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.kumuluz.ee</groupId>
+            <artifactId>kumuluzee-jta-common</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
 </project>

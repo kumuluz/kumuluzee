@@ -1,8 +1,8 @@
-package com.kumuluz.ee.jpa.common;
+package com.kumuluz.ee.jpa.common.injection;
 
-import com.kumuluz.ee.jpa.common.resources.PersistenceContextResourceFactory;
-import com.kumuluz.ee.jpa.common.resources.PersistenceUnitHolder;
-import com.kumuluz.ee.jpa.common.resources.PersistenceUnitResourceFactory;
+import com.kumuluz.ee.jpa.common.PersistenceUnitHolder;
+import com.kumuluz.ee.jpa.common.PersistenceWrapper;
+import com.kumuluz.ee.jpa.common.exceptions.NoDefaultPersistenceUnit;
 import org.jboss.weld.injection.spi.JpaInjectionServices;
 import org.jboss.weld.injection.spi.ResourceReferenceFactory;
 
@@ -24,25 +24,48 @@ public class JpaService implements JpaInjectionServices {
     public ResourceReferenceFactory<EntityManager> registerPersistenceContextInjectionPoint
             (InjectionPoint injectionPoint) {
 
+        PersistenceUnitHolder holder = PersistenceUnitHolder.getInstance();
+
         PersistenceContext pc = injectionPoint.getAnnotated().getAnnotation(PersistenceContext
                 .class);
+        String unitName = pc.unitName();
 
-        EntityManagerFactory factory = PersistenceUnitHolder.getInstance()
-                .getEntityManagerFactory(pc.unitName());
+        if (unitName.isEmpty()) {
 
-        return new PersistenceContextResourceFactory(factory);
+            unitName = holder.getDefaultUnitName();
+
+            if (unitName.isEmpty()) {
+                throw new NoDefaultPersistenceUnit();
+            }
+        }
+
+        PersistenceWrapper wrapper = holder.getEntityManagerFactory(unitName);
+
+        return new PersistenceContextResourceFactory(wrapper.getEntityManagerFactory(),
+                wrapper.getTransactionType(), pc.synchronization());
     }
 
     @Override
     public ResourceReferenceFactory<EntityManagerFactory> registerPersistenceUnitInjectionPoint
             (InjectionPoint injectionPoint) {
 
+        PersistenceUnitHolder holder = PersistenceUnitHolder.getInstance();
+
         PersistenceUnit pu = injectionPoint.getAnnotated().getAnnotation(PersistenceUnit.class);
+        String unitName = pu.unitName();
 
-        EntityManagerFactory factory = PersistenceUnitHolder.getInstance()
-                .getEntityManagerFactory(pu.unitName());
+        if (unitName.isEmpty()) {
 
-        return new PersistenceUnitResourceFactory(factory);
+            unitName = holder.getDefaultUnitName();
+
+            if (unitName.isEmpty()) {
+                throw new NoDefaultPersistenceUnit();
+            }
+        }
+
+        PersistenceWrapper wrapper = holder.getEntityManagerFactory(unitName);
+
+        return new PersistenceUnitResourceFactory(wrapper.getEntityManagerFactory());
     }
 
     @Override

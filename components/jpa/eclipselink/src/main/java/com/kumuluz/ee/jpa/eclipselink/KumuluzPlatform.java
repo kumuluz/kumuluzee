@@ -1,4 +1,4 @@
-package com.kumuluz.ee.jta.common.eclipselink;
+package com.kumuluz.ee.jpa.eclipselink;
 
 import org.eclipse.persistence.platform.server.ServerPlatformBase;
 import org.eclipse.persistence.sessions.DatabaseSession;
