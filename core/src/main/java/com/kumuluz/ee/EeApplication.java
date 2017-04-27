@@ -18,7 +18,6 @@ import com.zaxxer.hikari.HikariDataSource;
 
 import java.util.*;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * @author Tilen Faganel
@@ -31,8 +30,6 @@ public class EeApplication {
     private EeConfig eeConfig;
 
     private KumuluzServerWrapper server;
-
-    private List<EeComponentWrapper> eeComponents;
 
     public EeApplication() {
 
@@ -71,7 +68,9 @@ public class EeApplication {
 
         // Loading all the present components, extracting their metadata and process dependencies
         List<Component> components = ComponentLoader.loadComponents();
-        processEeComponents(components);
+        List<EeComponentWrapper> eeComponents = processEeComponents(components);
+
+        eeConfig.getEeComponents().addAll(eeComponents);
 
         // Initiate the server
         server.getServer().setServerConfig(eeConfig.getServerConfig());
@@ -133,7 +132,7 @@ public class EeApplication {
         server = new KumuluzServerWrapper(kumuluzServer, serverDef.value(), serverDef.provides());
     }
 
-    private void processEeComponents(List<Component> components) {
+    private List<EeComponentWrapper> processEeComponents(List<Component> components) {
 
         Map<EeComponentType, EeComponentWrapper> eeComp = new HashMap<>();
 
@@ -243,7 +242,7 @@ public class EeApplication {
             }
         }
 
-        eeComponents = new ArrayList<>(eeComp.values());
+        return new ArrayList<>(eeComp.values());
     }
 
     private void checkRequirements() {

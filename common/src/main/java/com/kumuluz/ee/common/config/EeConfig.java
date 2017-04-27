@@ -1,5 +1,6 @@
 package com.kumuluz.ee.common.config;
 
+import com.kumuluz.ee.common.wrapper.EeComponentWrapper;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
 
 import java.util.*;
@@ -15,6 +16,8 @@ public class EeConfig {
     private ServerConfig serverConfig = new ServerConfig();
     private List<PersistenceConfig> persistenceConfigs = new ArrayList<>();
     private List<DataSourceConfig> datasources = new ArrayList<>();
+
+    private List<EeComponentWrapper> eeComponents = new ArrayList<>();
 
     public EeConfig() {
         this.version = ResourceBundle.getBundle("version").getString("version");
@@ -55,16 +58,8 @@ public class EeConfig {
         return version;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
     public ServerConfig getServerConfig() {
         return serverConfig;
-    }
-
-    public void setServerConfig(ServerConfig serverConfig) {
-        this.serverConfig = serverConfig;
     }
 
     public List<PersistenceConfig> getPersistenceConfigs() {
@@ -73,5 +68,9 @@ public class EeConfig {
 
     public List<DataSourceConfig> getDatasources() {
         return datasources;
+    }
+
+    public List<EeComponentWrapper> getEeComponents() {
+        return eeComponents;
     }
 }

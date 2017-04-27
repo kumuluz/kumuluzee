@@ -18,7 +18,6 @@ public class ComponentWrapper {
     private EeComponentDependency[] dependencies;
     private EeComponentOptional[] optionalDependencies;
 
-
     public ComponentWrapper(Component component, String name,
                             EeComponentDependency[] dependencies,
                             EeComponentOptional[] optionalDependencies) {
