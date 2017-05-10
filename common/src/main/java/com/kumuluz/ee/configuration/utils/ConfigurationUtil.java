@@ -1,5 +1,6 @@
 package com.kumuluz.ee.configuration.utils;
 
+import com.kumuluz.ee.configuration.ConfigurationListener;
 import com.kumuluz.ee.configuration.ConfigurationSource;
 import com.kumuluz.ee.configuration.sources.EnvironmentConfigurationSource;
 import com.kumuluz.ee.configuration.sources.FileConfigurationSource;
@@ -15,38 +16,35 @@ import java.util.logging.Logger;
  */
 public class ConfigurationUtil {
 
-    private static final Logger log = Logger.getLogger(ConfigurationUtil.class.getName());
     private static ConfigurationUtil instance;
-    private List<ConfigurationSource> configurationSources;
 
-    protected ConfigurationUtil() {
+    private ConfigurationImpl config;
+
+    private ConfigurationUtil(ConfigurationImpl config) {
+        this.config = config;
+    }
+
+    public static void initialize(ConfigurationImpl config) {
+
+        if (instance != null) {
+            throw new IllegalStateException("");
+        }
+
+        instance = new ConfigurationUtil(config);
     }
 
     public static ConfigurationUtil getInstance() {
+
         if (instance == null) {
-            instance = new ConfigurationUtil();
-            instance.init();
+            throw new IllegalStateException("");
         }
+
         return instance;
-    }
-
-    private void init() {
-
-        // specify sources
-        configurationSources = new ArrayList<>();
-        configurationSources.add(new EnvironmentConfigurationSource());
-        configurationSources.add(new FileConfigurationSource());
-
-        // initialise sources
-        for (ConfigurationSource configurationSource : configurationSources) {
-            log.info("Initialising configuration source: " + configurationSource.getClass().getSimpleName());
-            configurationSource.init();
-        }
     }
 
     public Optional<String> get(String key) {
 
-        for (ConfigurationSource configurationSource : configurationSources) {
+        for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
             Optional<String> value = configurationSource.get(key);
             if (value.isPresent()) {
                 return value;
@@ -57,7 +55,7 @@ public class ConfigurationUtil {
 
     public Optional<Boolean> getBoolean(String key) {
 
-        for (ConfigurationSource configurationSource : configurationSources) {
+        for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
             Optional<Boolean> value = configurationSource.getBoolean(key);
             if (value.isPresent()) {
                 return value;
@@ -68,7 +66,7 @@ public class ConfigurationUtil {
 
     public Optional<Integer> getInteger(String key) {
 
-        for (ConfigurationSource configurationSource : configurationSources) {
+        for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
             Optional<Integer> value = configurationSource.getInteger(key);
             if (value.isPresent()) {
                 return value;
@@ -79,7 +77,7 @@ public class ConfigurationUtil {
 
     public Optional<Double> getDouble(String key) {
 
-        for (ConfigurationSource configurationSource : configurationSources) {
+        for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
             Optional<Double> value = configurationSource.getDouble(key);
             if (value.isPresent()) {
                 return value;
@@ -90,7 +88,7 @@ public class ConfigurationUtil {
 
     public Optional<Float> getFloat(String key) {
 
-        for (ConfigurationSource configurationSource : configurationSources) {
+        for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
             Optional<Float> value = configurationSource.getFloat(key);
             if (value.isPresent()) {
                 return value;
@@ -102,7 +100,7 @@ public class ConfigurationUtil {
     public Optional<Integer> getListSize(String key) {
         int listSize = -1;
 
-        for (ConfigurationSource configurationSource : configurationSources) {
+        for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
             Optional<Integer> currentListSize = configurationSource.getListSize(key);
             if (currentListSize.isPresent() && currentListSize.get() > listSize) {
                 listSize = currentListSize.get();
@@ -116,22 +114,30 @@ public class ConfigurationUtil {
     }
 
     public void set(String key, String value) {
-        configurationSources.get(0).set(key, value);
+        config.getConfigurationSources().get(0).set(key, value);
     }
 
     public void set(String key, Boolean value) {
-        configurationSources.get(0).set(key, value);
+        config.getConfigurationSources().get(0).set(key, value);
     }
 
     public void set(String key, Integer value) {
-        configurationSources.get(0).set(key, value);
+        config.getConfigurationSources().get(0).set(key, value);
     }
 
     public void set(String key, Double value) {
-        configurationSources.get(0).set(key, value);
+        config.getConfigurationSources().get(0).set(key, value);
     }
 
     public void set(String key, Float value) {
-        configurationSources.get(0).set(key, value);
+        config.getConfigurationSources().get(0).set(key, value);
+    }
+
+    public void subscribe(ConfigurationListener listener) {
+        config.getDispatcher().subscribe(listener);
+    }
+
+    public void unsubscribe(ConfigurationListener listener) {
+        config.getDispatcher().unsubscribe(listener);
     }
 }

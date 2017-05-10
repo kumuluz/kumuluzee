@@ -2,6 +2,7 @@ package com.kumuluz.ee.configuration.cdi.interceptors;
 
 import com.kumuluz.ee.configuration.cdi.ConfigBundle;
 import com.kumuluz.ee.configuration.cdi.ConfigValue;
+import com.kumuluz.ee.configuration.utils.ConfigurationDispatcher;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
 
 import javax.annotation.PostConstruct;

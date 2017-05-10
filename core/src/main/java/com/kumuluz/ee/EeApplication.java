@@ -12,6 +12,8 @@ import com.kumuluz.ee.common.utils.ResourceUtils;
 import com.kumuluz.ee.common.wrapper.ComponentWrapper;
 import com.kumuluz.ee.common.wrapper.EeComponentWrapper;
 import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
+import com.kumuluz.ee.configuration.utils.ConfigurationImpl;
+import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
 import com.kumuluz.ee.loaders.ComponentLoader;
 import com.kumuluz.ee.loaders.ServerLoader;
 import com.zaxxer.hikari.HikariDataSource;
@@ -60,6 +62,14 @@ public class EeApplication {
 
         log.info("Checks passed");
 
+        log.info("Initializing main configuration");
+
+        ConfigurationImpl configImpl = new ConfigurationImpl();
+
+        ConfigurationUtil.initialize(configImpl);
+
+        log.info("Initialized main config");
+
         log.info("Initializing components");
 
         // Loading the kumuluz server and extracting its metadata
@@ -71,6 +81,15 @@ public class EeApplication {
         List<EeComponentWrapper> eeComponents = processEeComponents(components);
 
         eeConfig.getEeComponents().addAll(eeComponents);
+
+        // Loading the extensions and extracting its metadata (
+        // required - @EeExtensionDef anotation)
+        // Check for EE dependencies on extensions
+
+        // Initiate the config extensions (filter(c.type -> c == CONFIG))
+        // Initialize ConfigurationDispatcher
+        // getPropery()
+        // Insert into ConfigurationUtil
 
         // Initiate the server
         server.getServer().setServerConfig(eeConfig.getServerConfig());
@@ -119,6 +138,8 @@ public class EeApplication {
         }
 
         log.info("Components initialized");
+
+        // Initiate the other extensions (filter(c.type -> c != CONFIG))
 
         server.getServer().startServer();
 
@@ -244,6 +265,8 @@ public class EeApplication {
 
         return new ArrayList<>(eeComp.values());
     }
+
+    // processEeExtensions()
 
     private void checkRequirements() {
 
