@@ -72,11 +72,6 @@ public class EeApplication {
 
     private void initialize() {
 
-        if (this.eeConfig == null) {
-            this.eeConfig = new EeConfig();
-            eeConfig.init();
-        }
-
         log.info("Initializing KumuluzEE");
 
         log.info("Checking for requirements");
@@ -90,6 +85,11 @@ public class EeApplication {
         ConfigurationImpl configImpl = new ConfigurationImpl();
 
         ConfigurationUtil.initialize(configImpl);
+
+        if (this.eeConfig == null) {
+            this.eeConfig = new EeConfig();
+            eeConfig.init();
+        }
 
         log.info("Initialized main config");
 
