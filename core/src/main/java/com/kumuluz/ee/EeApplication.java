@@ -21,6 +21,7 @@
 package com.kumuluz.ee;
 
 import com.kumuluz.ee.common.Component;
+import com.kumuluz.ee.common.Extension;
 import com.kumuluz.ee.common.KumuluzServer;
 import com.kumuluz.ee.common.ServletServer;
 import com.kumuluz.ee.common.config.DataSourceConfig;
@@ -35,11 +36,13 @@ import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
 import com.kumuluz.ee.configuration.utils.ConfigurationImpl;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
 import com.kumuluz.ee.loaders.ComponentLoader;
+import com.kumuluz.ee.loaders.ExtensionLoader;
 import com.kumuluz.ee.loaders.ServerLoader;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * @author Tilen Faganel
@@ -107,12 +110,21 @@ public class EeApplication {
 
         // Loading the extensions and extracting its metadata (
         // required - @EeExtensionDef anotation)
-        // Check for EE dependencies on extensions
+        // TODO Check for EE dependencies on extensions
+
+        List<Extension> extensions = ExtensionLoader.loadExtensions();
 
         // Initiate the config extensions (filter(c.type -> c == CONFIG))
         // Initialize ConfigurationDispatcher
         // getPropery()
         // Insert into ConfigurationUtil
+
+        List<Extension> configExtensions = extensions.stream().filter(extension -> extension.getClass().getAnnotation
+                (EeExtensionDef.class).type().equals(EeExtensionType.CONFIG)).collect(Collectors.toList());
+
+        for (Extension configurationExtension : configExtensions) {
+            configurationExtension.init(server, eeConfig);
+        }
 
         // Initiate the server
         server.getServer().setServerConfig(eeConfig.getServerConfig());
@@ -138,7 +150,7 @@ public class EeApplication {
                     if (dsc.getDriverClass() != null && !dsc.getDriverClass().isEmpty())
                         ds.setDriverClassName(dsc.getDriverClass());
 
-                    if (dsc.getMaxPoolSize() != null )
+                    if (dsc.getMaxPoolSize() != null)
                         ds.setMaximumPoolSize(dsc.getMaxPoolSize());
 
                     servletServer.registerDataSource(ds, dsc.getJndiName());
@@ -201,7 +213,8 @@ public class EeApplication {
                     throw new KumuluzServerException(msg);
                 }
 
-                EeComponentDependency[] dependencies = c.getClass().getDeclaredAnnotationsByType(EeComponentDependency.class);
+                EeComponentDependency[] dependencies = c.getClass().getDeclaredAnnotationsByType
+                        (EeComponentDependency.class);
                 EeComponentOptional[] optionals = c.getClass().getDeclaredAnnotationsByType(EeComponentOptional.class);
 
                 eeComp.put(def.type(), new EeComponentWrapper(c, def.name(), def.type(), dependencies, optionals));
@@ -231,7 +244,8 @@ public class EeApplication {
                 if (depCompName == null) {
 
                     String msg = "EE component dependency unfulfilled. The EE component " + cmp.getType().getName() +
-                            " implemented by " + cmp.getName() + " requires " + dep.value().getName() + ", which was not " +
+                            " implemented by " + cmp.getName() + " requires " + dep.value().getName() + ", which was " +
+                            "not " +
                             "found. Please make sure to include the required component.";
 
                     log.severe(msg);
@@ -243,7 +257,8 @@ public class EeApplication {
                         !Arrays.asList(dep.implementations()).contains(depCompName)) {
 
                     String msg = "EE component implementation dependency unfulfilled. The EE component " +
-                            cmp.getType().getName() + " implemented by " + cmp.getName() + " requires " + dep.value().getName() +
+                            cmp.getType().getName() + " implemented by " + cmp.getName() + " requires " + dep.value()
+                            .getName() +
                             " implemented by one of the following implementations: " +
                             Arrays.toString(dep.implementations()) + ". Please make sure you use one of the " +
                             "implementations required by this component.";
@@ -274,7 +289,8 @@ public class EeApplication {
                         !Arrays.asList(dep.implementations()).contains(depCompName)) {
 
                     String msg = "EE component implementation dependency unfulfilled. The EE component " +
-                            cmp.getType().getName() + "implemented by " + cmp.getName() + " requires " + dep.value().getName() +
+                            cmp.getType().getName() + "implemented by " + cmp.getName() + " requires " + dep.value()
+                            .getName() +
                             " implemented by one of the following implementations: " +
                             Arrays.toString(dep.implementations()) + ". Please make sure you use one of the " +
                             "implementations required by this component.";
