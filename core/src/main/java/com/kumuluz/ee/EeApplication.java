@@ -55,8 +55,6 @@ public class EeApplication {
 
     public EeApplication() {
 
-        this.eeConfig = new EeConfig();
-
         initialize();
     }
 
@@ -72,7 +70,12 @@ public class EeApplication {
         EeApplication app = new EeApplication();
     }
 
-    public void initialize() {
+    private void initialize() {
+
+        if (this.eeConfig == null) {
+            this.eeConfig = new EeConfig();
+            eeConfig.init();
+        }
 
         log.info("Initializing KumuluzEE");
 

@@ -39,7 +39,7 @@ public class EeConfig {
 
     private List<EeComponentWrapper> eeComponents = new ArrayList<>();
 
-    public EeConfig() {
+    public void init() {
         this.version = ResourceBundle.getBundle("version").getString("version");
 
         persistenceConfigs.add(new PersistenceConfig());
