@@ -156,8 +156,12 @@ public class ConfigurationUtil {
         config.getConfigurationSources().get(0).set(key, value);
     }
 
-    public void subscribe(ConfigurationListener listener) {
+    public void subscribe(ConfigurationListener listener, String key) {
+
         config.getDispatcher().subscribe(listener);
+
+        watch(key);
+
     }
 
     public void unsubscribe(ConfigurationListener listener) {

@@ -261,9 +261,7 @@ public class ConfigBundleInterceptor {
                     }
 
                 }
-            });
-
-            ConfigurationUtil.getInstance().watch(watchedKey);
+            }, watchedKey);
 
         }
 
