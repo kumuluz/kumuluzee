@@ -22,7 +22,6 @@ package com.kumuluz.ee.configuration.cdi.interceptors;
 
 import com.kumuluz.ee.configuration.cdi.ConfigBundle;
 import com.kumuluz.ee.configuration.cdi.ConfigValue;
-import com.kumuluz.ee.configuration.utils.ConfigurationDispatcher;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
 
 import javax.annotation.PostConstruct;
@@ -30,8 +29,10 @@ import javax.annotation.Priority;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 /**
  * Interceptor class for ConfigBundle annotation.
@@ -43,6 +44,8 @@ import java.util.Optional;
 @ConfigBundle
 @Priority(Interceptor.Priority.LIBRARY_BEFORE)
 public class ConfigBundleInterceptor {
+
+    private static final Logger log = Logger.getLogger(ConfigBundleInterceptor.class.getName());
 
     /**
      * Method initialises class fields from configuration.
@@ -72,6 +75,8 @@ public class ConfigBundleInterceptor {
                         m.invoke(target, value.get());
                     }
 
+                    deployWatcher(target, targetClass, m, getKeyName(targetClass, m.getName()));
+
                 } else if (m.getParameters()[0].getType().equals(Boolean.class)) {
 
                     Optional<Boolean> value = configurationUtil.getBoolean(getKeyName(targetClass, m.getName()));
@@ -79,6 +84,8 @@ public class ConfigBundleInterceptor {
                     if (value.isPresent()) {
                         m.invoke(target, value.get());
                     }
+
+                    deployWatcher(target, targetClass, m, getKeyName(targetClass, m.getName()));
 
                 } else if (m.getParameters()[0].getType().equals(Float.class)) {
 
@@ -88,6 +95,8 @@ public class ConfigBundleInterceptor {
                         m.invoke(target, value.get());
                     }
 
+                    deployWatcher(target, targetClass, m, getKeyName(targetClass, m.getName()));
+
                 } else if (m.getParameters()[0].getType().equals(Double.class)) {
 
                     Optional<Double> value = configurationUtil.getDouble(getKeyName(targetClass, m.getName()));
@@ -96,6 +105,8 @@ public class ConfigBundleInterceptor {
                         m.invoke(target, value.get());
                     }
 
+                    deployWatcher(target, targetClass, m, getKeyName(targetClass, m.getName()));
+
                 } else if (m.getParameters()[0].getType().equals(Integer.class)) {
 
                     Optional<Integer> value = configurationUtil.getInteger(getKeyName(targetClass, m.getName()));
@@ -103,6 +114,8 @@ public class ConfigBundleInterceptor {
                     if (value.isPresent()) {
                         m.invoke(target, value.get());
                     }
+
+                    deployWatcher(target, targetClass, m, getKeyName(targetClass, m.getName()));
 
                 }
             }
@@ -188,6 +201,72 @@ public class ConfigBundleInterceptor {
      */
     private boolean targetClassIsProxied(Class targetClass) {
         return targetClass.getCanonicalName().contains("$Proxy");
+    }
+
+    /**
+     * Subscribes to an event dispatcher and starts a watch for a given key.
+     *
+     * @param target      target instance
+     * @param targetClass target class
+     * @param method      method to invoke
+     * @param watchedKey  watched key
+     * @throws Exception
+     */
+    private void deployWatcher(Object target, Class targetClass, Method method, String watchedKey) throws Exception {
+
+        String setter = method.getName();
+
+        Field field = targetClass.getDeclaredField(setterToField(setter));
+        ConfigValue fieldAnnotation = null;
+        if (field != null) {
+            fieldAnnotation = field.getAnnotation(ConfigValue.class);
+        }
+
+        if (fieldAnnotation != null && fieldAnnotation.watch() == true) {
+
+            ConfigurationUtil.getInstance().subscribe((key, value) -> {
+
+                if (watchedKey == key) {
+                    try {
+                        if (String.class.equals(method.getParameters()[0].getType())) {
+                            method.invoke(target, value);
+                        } else if (Boolean.class.equals(method.getParameters()[0].getType())) {
+                            method.invoke(target, Boolean.parseBoolean(value));
+                        } else if (Float.class.equals(method.getParameters()[0].getType())) {
+                            try {
+                                method.invoke(target, Float.parseFloat(value));
+                            } catch (NumberFormatException e) {
+                                log.severe("Exception while storing new value: Number format exception. " +
+                                        "Expected: Float. Value: " + value);
+                            }
+                        } else if (Double.class.equals(method.getParameters()[0].getType())) {
+                            try {
+                                method.invoke(target, Double.parseDouble(value));
+                            } catch (NumberFormatException e) {
+                                log.severe("Exception while storing new value: Number format exception. Expected:" +
+                                        " Double. Value: " + value);
+                            }
+                        } else if (Integer.class.equals(method.getParameters()[0].getType())) {
+                            try {
+                                method.invoke(target, Integer.parseInt(value));
+                            } catch (NumberFormatException e) {
+                                log.severe("Exception while storing new value: Number format exception. Expected:" +
+                                        " Integer. Value: " + value);
+                            }
+                        }
+                    } catch (IllegalAccessException e) {
+                        log.severe("Illegal access exception: " + e.toString());
+                    } catch (InvocationTargetException e) {
+                        log.severe("Invocation target exception: " + e.toString());
+                    }
+
+                }
+            });
+
+            ConfigurationUtil.getInstance().watch(watchedKey);
+
+        }
+
     }
 }
 

@@ -42,6 +42,8 @@ public interface ConfigurationSource {
 
     Optional<Integer> getListSize(String key);
 
+    void watch(String key);
+
     void set(String key, String value);
 
     void set(String key, Boolean value);

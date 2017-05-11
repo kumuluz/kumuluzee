@@ -134,6 +134,11 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
     }
 
     @Override
+    public void watch(String key) {
+
+    }
+
+    @Override
     public void set(String key, String value) {
 
     }

@@ -37,13 +37,17 @@ public class ConfigurationDispatcher {
 
     public void notifyChange(String key, String value) {
 
+        for (ConfigurationListener subscription : subscriptions) {
+            subscription.onChange(key, value);
+        }
+
     }
 
     public void subscribe(ConfigurationListener listener) {
-
+        subscriptions.add(listener);
     }
 
     public void unsubscribe(ConfigurationListener listener) {
-
+        subscriptions.remove(listener);
     }
 }

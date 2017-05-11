@@ -122,18 +122,18 @@ public class EeApplication {
 
         log.info("Initializing config extensions");
 
-        List<Extension> configExtensions = extensions.stream().filter(extension -> extension.getClass().getAnnotation
-                (EeExtensionDef.class).type().equals(EeExtensionType.CONFIG)).collect(Collectors.toList());
+        List<Extension> configExtensions = extensions.stream().filter(extension -> extension.getClass()
+                .getDeclaredAnnotation(EeExtensionDef.class).type().equals(EeExtensionType.CONFIG)).collect
+                (Collectors.toList());
 
         for (Extension configExtension : configExtensions) {
 
-            log.info("Initialising extension: " + configExtension.getClass().getAnnotation(EeExtensionDef.class)
+            log.info("Initialising extension: " + configExtension.getClass().getDeclaredAnnotation(EeExtensionDef.class)
                     .name());
 
             configExtension.init(server, eeConfig);
 
-            Optional<ConfigurationSource> configurationSource = configExtension.getProperty(ConfigurationSource
-                    .class);
+            Optional<ConfigurationSource> configurationSource = configExtension.getProperty(ConfigurationSource.class);
             if (configurationSource != null && configurationSource.isPresent()) {
                 configImpl.getConfigurationSources().add(1, configurationSource.get());
             } else {
@@ -191,12 +191,14 @@ public class EeApplication {
 
         // Initiate the other extensions (filter(c.type -> c != CONFIG))
 
-        List<Extension> otherExtensions = extensions.stream().filter(extension -> !extension.getClass().getAnnotation
-                (EeExtensionDef.class).type().equals(EeExtensionType.CONFIG)).collect(Collectors.toList());
+        List<Extension> otherExtensions = extensions.stream().filter(extension -> !extension.getClass()
+                .getDeclaredAnnotation(EeExtensionDef.class).type().equals(EeExtensionType.CONFIG)).collect
+                (Collectors.toList());
 
         log.info("Initialising non-config extensions");
         for (Extension extension : otherExtensions) {
-            log.info("Initialising extension: " + extension.getClass().getAnnotation(EeExtensionDef.class).name());
+            log.info("Initialising extension: " + extension.getClass().getDeclaredAnnotation(EeExtensionDef.class)
+                    .name());
             extension.init(server, eeConfig);
         }
 
