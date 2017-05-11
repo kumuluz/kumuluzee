@@ -110,16 +110,9 @@ public class EeApplication {
         eeConfig.getEeComponents().addAll(eeComponents);
 
         // Loading the extensions and extracting its metadata (
-        // required - @EeExtensionDef anotation)
-        // TODO Check for EE dependencies on extensions
-
         List<Extension> extensions = ExtensionLoader.loadExtensions();
 
         // Initiate the config extensions (filter(c.type -> c == CONFIG))
-        // Initialize ConfigurationDispatcher
-        // getPropery()
-        // Insert into ConfigurationUtil
-
         log.info("Initializing config extensions");
 
         List<Extension> configExtensions = extensions.stream().filter(extension -> extension.getClass()
@@ -136,8 +129,6 @@ public class EeApplication {
             Optional<ConfigurationSource> configurationSource = configExtension.getProperty(ConfigurationSource.class);
             if (configurationSource != null && configurationSource.isPresent()) {
                 configImpl.getConfigurationSources().add(1, configurationSource.get());
-            } else {
-                // TODO throw exception?
             }
         }
 
@@ -190,7 +181,6 @@ public class EeApplication {
         log.info("Components initialized");
 
         // Initiate the other extensions (filter(c.type -> c != CONFIG))
-
         List<Extension> otherExtensions = extensions.stream().filter(extension -> !extension.getClass()
                 .getDeclaredAnnotation(EeExtensionDef.class).type().equals(EeExtensionType.CONFIG)).collect
                 (Collectors.toList());
