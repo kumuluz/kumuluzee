@@ -128,6 +128,7 @@ public class EeApplication {
 
             Optional<ConfigurationSource> configurationSource = configExtension.getProperty(ConfigurationSource.class);
             if (configurationSource != null && configurationSource.isPresent()) {
+                configurationSource.get().setConfigurationDispatcher(configImpl.getDispatcher());
                 configImpl.getConfigurationSources().add(1, configurationSource.get());
             }
         }

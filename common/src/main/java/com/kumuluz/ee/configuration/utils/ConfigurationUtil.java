@@ -168,7 +168,4 @@ public class ConfigurationUtil {
         config.getDispatcher().unsubscribe(listener);
     }
 
-    public void notifyChange(String key, String value) {
-        config.getDispatcher().notifyChange(key, value);
-    }
 }
