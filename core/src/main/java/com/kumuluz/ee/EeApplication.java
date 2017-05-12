@@ -112,6 +112,9 @@ public class EeApplication {
         // Loading the extensions and extracting its metadata (
         List<Extension> extensions = ExtensionLoader.loadExtensions();
 
+        // process extensions
+        processEeExtensions(extensions, eeComponents);
+
         // Initiate the config extensions (filter(c.type -> c == CONFIG))
         log.info("Initializing config extensions");
 
@@ -322,7 +325,43 @@ public class EeApplication {
         return new ArrayList<>(eeComp.values());
     }
 
-    // processEeExtensions()
+    private void processEeExtensions(List<Extension> extensions, List<EeComponentWrapper> wrappedComponents) {
+
+        // get types of all available components
+        List<EeComponentType> componentTypes = new ArrayList<>();
+        for (EeComponentWrapper wrappedComponent : wrappedComponents) {
+            componentTypes.add(wrappedComponent.getType());
+        }
+
+        // Check if all dependencies are fulfilled
+        for (Extension extension : extensions) {
+
+            EeExtensionDef extensionDef = extension.getClass().getDeclaredAnnotation(EeExtensionDef.class);
+
+            EeComponentDependency[] dependencies = extension.getClass().getDeclaredAnnotationsByType
+                    (EeComponentDependency.class);
+
+            for (EeComponentDependency dependency : dependencies) {
+
+                if (!componentTypes.contains(dependency.value())) {
+
+                    String msg = "EE extension implementation dependency unfulfilled. The EE extension " +
+                            extensionDef.name() + " requires " + dependency.value().getName() +
+                            " implemented by one of the following implementations: " +
+                            Arrays.toString(dependency.implementations()) + ". Please make sure you use one of the " +
+                            "implementations required by this component.";
+
+                    log.severe(msg);
+
+                    throw new KumuluzServerException(msg);
+
+                }
+
+            }
+
+        }
+
+    }
 
     private void checkRequirements() {
 
