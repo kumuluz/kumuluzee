@@ -224,7 +224,7 @@ public class ConfigBundleInterceptor {
 
         if (fieldAnnotation != null && fieldAnnotation.watch() == true) {
 
-            ConfigurationUtil.getInstance().subscribe((key, value) -> {
+            ConfigurationUtil.getInstance().subscribe(watchedKey, (key, value) -> {
 
                 if (watchedKey == key) {
                     try {
@@ -261,7 +261,7 @@ public class ConfigBundleInterceptor {
                     }
 
                 }
-            }, watchedKey);
+            });
 
         }
 
