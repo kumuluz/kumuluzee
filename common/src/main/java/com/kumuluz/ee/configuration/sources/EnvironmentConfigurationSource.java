@@ -21,6 +21,7 @@
 package com.kumuluz.ee.configuration.sources;
 
 import com.kumuluz.ee.configuration.ConfigurationSource;
+import com.kumuluz.ee.configuration.utils.ConfigurationDispatcher;
 
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -134,6 +135,11 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
     }
 
     @Override
+    public void watch(String key) {
+
+    }
+
+    @Override
     public void set(String key, String value) {
 
     }
@@ -155,6 +161,11 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
 
     @Override
     public void set(String key, Float value) {
+
+    }
+
+    @Override
+    public void setConfigurationDispatcher(ConfigurationDispatcher configurationDispatcher) {
 
     }
 

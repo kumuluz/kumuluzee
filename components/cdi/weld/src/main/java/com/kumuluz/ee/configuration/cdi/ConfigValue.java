@@ -27,7 +27,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation specifies key name for automatic initialisation of a field from configuration.
+ * Annotation specifies key name for automatic initialisation of a field from configuration. If attribute watch is
+ * set to true, key is subscribed to dynamic configuration events.
  *
  * @author Tilen Faganel
  * @since 2.1.0
@@ -36,4 +37,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 public @interface ConfigValue {
     @Nonbinding String value() default "";
+
+    @Nonbinding boolean watch() default false;
 }

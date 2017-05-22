@@ -20,6 +20,8 @@
 */
 package com.kumuluz.ee.configuration;
 
+import com.kumuluz.ee.configuration.utils.ConfigurationDispatcher;
+
 import java.util.Optional;
 
 /**
@@ -42,6 +44,8 @@ public interface ConfigurationSource {
 
     Optional<Integer> getListSize(String key);
 
+    void watch(String key);
+
     void set(String key, String value);
 
     void set(String key, Boolean value);
@@ -51,4 +55,7 @@ public interface ConfigurationSource {
     void set(String key, Double value);
 
     void set(String key, Float value);
+
+    void setConfigurationDispatcher(ConfigurationDispatcher configurationDispatcher);
+
 }

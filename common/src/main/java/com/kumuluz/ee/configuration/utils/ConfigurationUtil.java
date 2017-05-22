@@ -22,13 +22,8 @@ package com.kumuluz.ee.configuration.utils;
 
 import com.kumuluz.ee.configuration.ConfigurationListener;
 import com.kumuluz.ee.configuration.ConfigurationSource;
-import com.kumuluz.ee.configuration.sources.EnvironmentConfigurationSource;
-import com.kumuluz.ee.configuration.sources.FileConfigurationSource;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 /**
  * @author Tilen Faganel
@@ -133,6 +128,14 @@ public class ConfigurationUtil {
         }
     }
 
+    public void watch(String key) {
+
+        for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
+            configurationSource.watch(key);
+        }
+
+    }
+
     public void set(String key, String value) {
         config.getConfigurationSources().get(0).set(key, value);
     }
@@ -153,11 +156,16 @@ public class ConfigurationUtil {
         config.getConfigurationSources().get(0).set(key, value);
     }
 
-    public void subscribe(ConfigurationListener listener) {
+    public void subscribe(String key, ConfigurationListener listener) {
+
         config.getDispatcher().subscribe(listener);
+
+        watch(key);
+
     }
 
     public void unsubscribe(ConfigurationListener listener) {
         config.getDispatcher().unsubscribe(listener);
     }
+
 }
