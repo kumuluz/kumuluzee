@@ -109,18 +109,16 @@ public class EeApplication {
 
         eeConfig.getEeComponents().addAll(eeComponents);
 
-        // Loading the extensions and extracting its metadata (
+        // Loading the extensions and extracting its metadata
         List<Extension> extensions = ExtensionLoader.loadExtensions();
-
-        // process extensions
         processEeExtensions(extensions, eeComponents);
 
         // Initiate the config extensions (filter(c.type -> c == CONFIG))
         log.info("Initializing config extensions");
 
         List<Extension> configExtensions = extensions.stream().filter(extension -> extension.getClass()
-                .getDeclaredAnnotation(EeExtensionDef.class).type().equals(EeExtensionType.CONFIG)).collect
-                (Collectors.toList());
+                .getDeclaredAnnotation(EeExtensionDef.class).type().equals(EeExtensionType.CONFIG))
+                .collect(Collectors.toList());
 
         for (Extension configExtension : configExtensions) {
 
@@ -130,10 +128,12 @@ public class EeApplication {
             configExtension.init(server, eeConfig);
 
             Optional<ConfigurationSource> configurationSource = configExtension.getProperty(ConfigurationSource.class);
-            if (configurationSource != null && configurationSource.isPresent()) {
-                configurationSource.get().setConfigurationDispatcher(configImpl.getDispatcher());
-                configImpl.getConfigurationSources().add(1, configurationSource.get());
-            }
+
+            configurationSource.ifPresent(s -> {
+
+                s.init(configImpl.getDispatcher());
+                configImpl.getConfigurationSources().add(1, s);
+            });
         }
 
         // Initiate the server
@@ -191,8 +191,8 @@ public class EeApplication {
 
         log.info("Initialising non-config extensions");
         for (Extension extension : otherExtensions) {
-            log.info("Initialising extension: " + extension.getClass().getDeclaredAnnotation(EeExtensionDef.class)
-                    .name());
+            log.info("Initialising extension: " + extension.getClass()
+                    .getDeclaredAnnotation(EeExtensionDef.class).name());
             extension.init(server, eeConfig);
         }
 
@@ -360,7 +360,6 @@ public class EeApplication {
             }
 
         }
-
     }
 
     private void checkRequirements() {

@@ -40,7 +40,6 @@ public class ConfigurationDispatcher {
         for (ConfigurationListener subscription : subscriptions) {
             subscription.onChange(key, value);
         }
-
     }
 
     public void subscribe(ConfigurationListener listener) {

@@ -30,7 +30,7 @@ import java.util.Optional;
  */
 public interface ConfigurationSource {
 
-    void init();
+    void init(ConfigurationDispatcher configurationDispatcher);
 
     Optional<String> get(String key);
 
@@ -55,7 +55,4 @@ public interface ConfigurationSource {
     void set(String key, Double value);
 
     void set(String key, Float value);
-
-    void setConfigurationDispatcher(ConfigurationDispatcher configurationDispatcher);
-
 }

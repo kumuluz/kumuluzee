@@ -31,6 +31,7 @@ import javax.interceptor.InvocationContext;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -177,20 +178,19 @@ public class ConfigBundleInterceptor {
      */
     private String camelCaseToHyphenCase(String s) {
 
-        String parsedString = s.substring(0, 1).toLowerCase();
+        StringBuilder parsedString = new StringBuilder(s.substring(0, 1).toLowerCase());
 
         for (char c : s.substring(1).toCharArray()) {
 
             if (Character.isUpperCase(c)) {
-                parsedString += "-" + Character.toLowerCase(c);
+                parsedString.append("-").append(Character.toLowerCase(c));
             } else {
-                parsedString += c;
+                parsedString.append(c);
             }
 
         }
 
-        return parsedString;
-
+        return parsedString.toString();
     }
 
     /**
@@ -217,16 +217,19 @@ public class ConfigBundleInterceptor {
         String setter = method.getName();
 
         Field field = targetClass.getDeclaredField(setterToField(setter));
+
         ConfigValue fieldAnnotation = null;
+
         if (field != null) {
             fieldAnnotation = field.getAnnotation(ConfigValue.class);
         }
 
-        if (fieldAnnotation != null && fieldAnnotation.watch() == true) {
+        if (fieldAnnotation != null && fieldAnnotation.watch()) {
 
             ConfigurationUtil.getInstance().subscribe(watchedKey, (key, value) -> {
 
-                if (watchedKey == key) {
+                if (Objects.equals(watchedKey, key)) {
+
                     try {
                         if (String.class.equals(method.getParameters()[0].getType())) {
                             method.invoke(target, value);
@@ -262,9 +265,7 @@ public class ConfigBundleInterceptor {
 
                 }
             });
-
         }
-
     }
 }
 

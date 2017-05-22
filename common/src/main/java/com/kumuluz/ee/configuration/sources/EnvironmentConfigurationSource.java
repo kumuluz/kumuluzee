@@ -43,7 +43,7 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
     }
 
     @Override
-    public void init() {
+    public void init(ConfigurationDispatcher configurationDispatcher) {
     }
 
     @Override
@@ -161,11 +161,6 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
 
     @Override
     public void set(String key, Float value) {
-
-    }
-
-    @Override
-    public void setConfigurationDispatcher(ConfigurationDispatcher configurationDispatcher) {
 
     }
 

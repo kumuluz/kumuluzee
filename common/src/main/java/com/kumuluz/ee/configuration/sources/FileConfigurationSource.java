@@ -61,7 +61,7 @@ public class FileConfigurationSource implements ConfigurationSource {
     }
 
     @Override
-    public void init() {
+    public void init(ConfigurationDispatcher configurationDispatcher) {
 
         // read yaml file to Map<String, Object>
         InputStream file;
@@ -244,11 +244,6 @@ public class FileConfigurationSource implements ConfigurationSource {
 
     }
 
-    @Override
-    public void setConfigurationDispatcher(ConfigurationDispatcher configurationDispatcher) {
-
-    }
-
     /**
      * Returns true, if key represents an array.
      *
@@ -260,11 +255,8 @@ public class FileConfigurationSource implements ConfigurationSource {
         int openingBracket = key.indexOf("[");
         int closingBracket = key.indexOf("]");
 
-        if (closingBracket == key.length() - 1 && openingBracket != -1) {
-            return true;
-        }
+        return closingBracket == key.length() - 1 && openingBracket != -1;
 
-        return false;
     }
 
     /**
@@ -321,6 +313,5 @@ public class FileConfigurationSource implements ConfigurationSource {
         }
 
         return value;
-
     }
 }
