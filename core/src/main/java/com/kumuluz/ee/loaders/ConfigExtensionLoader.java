@@ -20,8 +20,9 @@
 */
 package com.kumuluz.ee.loaders;
 
-import com.kumuluz.ee.common.Extension;
+import com.kumuluz.ee.common.ConfigExtension;
 import com.kumuluz.ee.common.dependencies.EeExtensionDef;
+import com.kumuluz.ee.common.dependencies.EeExtensionType;
 import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 
 import java.util.ArrayList;
@@ -32,32 +33,39 @@ import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 /**
- * @author Jan Meznarič
+ * @author Tilen Faganel
  * @since 2.3.0
  */
-public class ExtensionLoader {
+public class ConfigExtensionLoader {
 
     private static final Logger log = Logger.getLogger(ExtensionLoader.class.getSimpleName());
 
-    private static final Class EXTENSION_ANNOTATIONS[] = {EeExtensionDef.class};
+    public static List<ConfigExtension> loadExtensions() {
 
-    public static List<Extension> loadExtensions() {
+        log.info("Loading available config extensions");
 
-        log.info("Loading available extensions");
+        List<ConfigExtension> extensions = scanForAvailableExtensions();
 
-        List<Extension> extensions = scanForAvailableExtensions();
+        for (ConfigExtension e : extensions) {
 
-        for (Extension e : extensions) {
+            EeExtensionDef eeExtensionDef = e.getClass().getDeclaredAnnotation(EeExtensionDef.class);
 
-            boolean anyMatch = Stream.of(EXTENSION_ANNOTATIONS)
-                    .map(a -> e.getClass().getDeclaredAnnotation(a))
-                    .anyMatch(Objects::nonNull);
-
-            if (!anyMatch) {
+            if (eeExtensionDef == null) {
 
                 String msg = "The found class \"" + e.getClass().getSimpleName() + "\" is missing an extension" +
                         "definition annotation. The annotation is required in order to correctly process the " +
                         "extension type and its dependencies.";
+
+                log.severe(msg);
+
+                throw new KumuluzServerException(msg);
+            }
+
+            if (!eeExtensionDef.type().equals(EeExtensionType.CONFIG)) {
+
+                String msg = "The found class \"" + e.getClass().getSimpleName() + "\" does not have the correct " +
+                        "extension type defined. The interface \"ConfigExtension\" requires that the supporting " +
+                        " definition annotations specifies the extension type of \"CONFIG\". ";
 
                 log.severe(msg);
 
@@ -70,13 +78,13 @@ public class ExtensionLoader {
         return extensions;
     }
 
-    private static List<Extension> scanForAvailableExtensions() {
+    private static List<ConfigExtension> scanForAvailableExtensions() {
 
         log.finest("Scanning for available extensions in the runtime");
 
-        List<Extension> extensions = new ArrayList<>();
+        List<ConfigExtension> extensions = new ArrayList<>();
 
-        ServiceLoader.load(Extension.class).forEach(extensions::add);
+        ServiceLoader.load(ConfigExtension.class).forEach(extensions::add);
 
         return extensions;
     }

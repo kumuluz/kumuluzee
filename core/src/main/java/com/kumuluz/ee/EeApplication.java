@@ -34,6 +34,7 @@ import com.kumuluz.ee.configuration.ConfigurationSource;
 import com.kumuluz.ee.configuration.utils.ConfigurationImpl;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
 import com.kumuluz.ee.loaders.ComponentLoader;
+import com.kumuluz.ee.loaders.ConfigExtensionLoader;
 import com.kumuluz.ee.loaders.ExtensionLoader;
 import com.kumuluz.ee.loaders.ServerLoader;
 import com.zaxxer.hikari.HikariDataSource;
@@ -94,8 +95,6 @@ public class EeApplication {
 
         log.info("Initialized main config");
 
-        log.info("Initializing components");
-
         // Loading the kumuluz server and extracting its metadata
         KumuluzServer kumuluzServer = ServerLoader.loadServletServer();
         processKumuluzServer(kumuluzServer);
@@ -106,47 +105,31 @@ public class EeApplication {
 
         eeConfig.getEeComponents().addAll(eeComponents);
 
+        // Loading the config extensions and extracting its metadata
+        List<ConfigExtension> configExtensions = ConfigExtensionLoader.loadExtensions();
+
         // Loading the extensions and extracting its metadata
         List<Extension> extensions = ExtensionLoader.loadExtensions();
         processEeExtensions(extensions, eeComponents);
 
-        // Initiate the config extensions (filter(c.type -> c == CONFIG))
+        // Initiate the config extensions
         log.info("Initializing config extensions");
 
-        List<Extension> configExtensions = extensions.stream().filter(extension -> extension.getClass()
-                .getDeclaredAnnotation(EeExtensionDef.class).type().equals(EeExtensionType.CONFIG))
-                .collect(Collectors.toList());
+        for (ConfigExtension extension : configExtensions) {
 
-        for (Extension extension : configExtensions) {
+            log.info("Found config extension implemented by " + extension.getClass().getDeclaredAnnotation(EeExtensionDef.class)
+                    .name());
 
-            if (extension instanceof ConfigExtension) {
-                ConfigExtension configExtension = (ConfigExtension) extension;
+            extension.init(server, eeConfig);
+            extension.load();
 
-                log.info("Initializing extension: " + configExtension.getClass().getDeclaredAnnotation(EeExtensionDef.class)
-                        .name());
+            ConfigurationSource source = extension.getConfigurationSource();
 
-                configExtension.init(server, eeConfig);
-
-                ConfigurationSource source = configExtension.getConfigurationSource();
-
-                source.init(configImpl.getDispatcher());
-                configImpl.getConfigurationSources().add(1, source);
-            }
-//
-//
-//
-//            configExtension.init(server, eeConfig);
-//
-//            Optional<ConfigurationSource> configurationSource = configExtension.getProperty(ConfigurationSource.class);
-//
-//
-//
-//            configurationSource.ifPresent(s -> {
-//
-//                s.init(configImpl.getDispatcher());
-//                configImpl.getConfigurationSources().add(1, s);
-//            });
+            source.init(configImpl.getDispatcher());
+            configImpl.getConfigurationSources().add(1, source);
         }
+
+        log.info("Config extensions initialized");
 
         // Initiate the server
         server.getServer().setServerConfig(eeConfig.getServerConfig());
@@ -185,6 +168,8 @@ public class EeApplication {
             servletServer.registerFilter(PoweredByFilter.class, "/*", filterParams);
         }
 
+        log.info("Initializing components");
+
         // Initiate every found component in the order specified by the components dependencies
         for (EeComponentWrapper cw : eeComponents) {
 
@@ -196,17 +181,19 @@ public class EeApplication {
 
         log.info("Components initialized");
 
-        // Initiate the other extensions (filter(c.type -> c != CONFIG))
-        List<Extension> otherExtensions = extensions.stream().filter(extension -> !extension.getClass()
-                .getDeclaredAnnotation(EeExtensionDef.class).type().equals(EeExtensionType.CONFIG)).collect
-                (Collectors.toList());
+        // Initiate the other extensions
+        log.info("Initializing extensions");
 
-        log.info("Initializing non-config extensions");
-        for (Extension extension : otherExtensions) {
-            log.info("Initializing extension: " + extension.getClass()
+        for (Extension extension : extensions) {
+
+            log.info("Found extension implemented by " + extension.getClass()
                     .getDeclaredAnnotation(EeExtensionDef.class).name());
+
             extension.init(server, eeConfig);
+            extension.load();
         }
+
+        log.info("Extensions Initialized");
 
         server.getServer().startServer();
 
@@ -341,6 +328,7 @@ public class EeApplication {
 
         // get types of all available components
         List<EeComponentType> componentTypes = new ArrayList<>();
+
         for (EeComponentWrapper wrappedComponent : wrappedComponents) {
             componentTypes.add(wrappedComponent.getType());
         }
@@ -368,9 +356,7 @@ public class EeApplication {
                     throw new KumuluzServerException(msg);
 
                 }
-
             }
-
         }
     }
 
