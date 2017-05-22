@@ -20,10 +20,7 @@
 */
 package com.kumuluz.ee;
 
-import com.kumuluz.ee.common.Component;
-import com.kumuluz.ee.common.Extension;
-import com.kumuluz.ee.common.KumuluzServer;
-import com.kumuluz.ee.common.ServletServer;
+import com.kumuluz.ee.common.*;
 import com.kumuluz.ee.common.config.DataSourceConfig;
 import com.kumuluz.ee.common.config.EeConfig;
 import com.kumuluz.ee.common.dependencies.*;
@@ -120,20 +117,35 @@ public class EeApplication {
                 .getDeclaredAnnotation(EeExtensionDef.class).type().equals(EeExtensionType.CONFIG))
                 .collect(Collectors.toList());
 
-        for (Extension configExtension : configExtensions) {
+        for (Extension extension : configExtensions) {
 
-            log.info("Initialising extension: " + configExtension.getClass().getDeclaredAnnotation(EeExtensionDef.class)
-                    .name());
+            if (extension instanceof ConfigExtension) {
+                ConfigExtension configExtension = (ConfigExtension) extension;
 
-            configExtension.init(server, eeConfig);
+                log.info("Initializing extension: " + configExtension.getClass().getDeclaredAnnotation(EeExtensionDef.class)
+                        .name());
 
-            Optional<ConfigurationSource> configurationSource = configExtension.getProperty(ConfigurationSource.class);
+                configExtension.init(server, eeConfig);
 
-            configurationSource.ifPresent(s -> {
+                ConfigurationSource source = configExtension.getConfigurationSource();
 
-                s.init(configImpl.getDispatcher());
-                configImpl.getConfigurationSources().add(1, s);
-            });
+                source.init(configImpl.getDispatcher());
+                configImpl.getConfigurationSources().add(1, source);
+            }
+//
+//
+//
+//            configExtension.init(server, eeConfig);
+//
+//            Optional<ConfigurationSource> configurationSource = configExtension.getProperty(ConfigurationSource.class);
+//
+//
+//
+//            configurationSource.ifPresent(s -> {
+//
+//                s.init(configImpl.getDispatcher());
+//                configImpl.getConfigurationSources().add(1, s);
+//            });
         }
 
         // Initiate the server
@@ -189,9 +201,9 @@ public class EeApplication {
                 .getDeclaredAnnotation(EeExtensionDef.class).type().equals(EeExtensionType.CONFIG)).collect
                 (Collectors.toList());
 
-        log.info("Initialising non-config extensions");
+        log.info("Initializing non-config extensions");
         for (Extension extension : otherExtensions) {
-            log.info("Initialising extension: " + extension.getClass()
+            log.info("Initializing extension: " + extension.getClass()
                     .getDeclaredAnnotation(EeExtensionDef.class).name());
             extension.init(server, eeConfig);
         }

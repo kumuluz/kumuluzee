@@ -58,11 +58,7 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
 
         Optional<String> value = get(key);
 
-        if (value.isPresent()) {
-            return Optional.of(Boolean.valueOf(value.get()));
-        } else {
-            return Optional.empty();
-        }
+        return value.map(Boolean::valueOf);
     }
 
     @Override
