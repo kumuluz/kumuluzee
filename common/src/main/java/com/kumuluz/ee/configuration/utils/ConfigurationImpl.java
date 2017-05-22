@@ -55,7 +55,7 @@ public class ConfigurationImpl {
         // initialise sources
         for (ConfigurationSource configurationSource : configurationSources) {
             log.info("Initialising configuration source: " + configurationSource.getClass().getSimpleName());
-            configurationSource.init();
+            configurationSource.init(dispatcher );
         }
     }
 
