@@ -28,7 +28,7 @@ public enum EeExtensionType {
 
     CONFIG("Config"),
     DISCOVERY("Discovery"),
-    OAUTH2("OAuth 2.0");
+    SECURITY("Security");
 
     private final String name;
 
