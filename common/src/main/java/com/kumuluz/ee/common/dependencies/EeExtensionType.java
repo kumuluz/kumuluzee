@@ -27,7 +27,8 @@ package com.kumuluz.ee.common.dependencies;
 public enum EeExtensionType {
 
     CONFIG("Config"),
-    DISCOVERY("Discovery");
+    DISCOVERY("Discovery"),
+    SECURITY("Security");
 
     private final String name;
 
