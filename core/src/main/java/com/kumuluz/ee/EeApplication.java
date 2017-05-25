@@ -41,7 +41,6 @@ import com.zaxxer.hikari.HikariDataSource;
 
 import java.util.*;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * @author Tilen Faganel
@@ -117,8 +116,8 @@ public class EeApplication {
 
         for (ConfigExtension extension : configExtensions) {
 
-            log.info("Found config extension implemented by " + extension.getClass().getDeclaredAnnotation(EeExtensionDef.class)
-                    .name());
+            log.info("Found config extension implemented by " + extension.getClass().getDeclaredAnnotation
+                    (EeExtensionDef.class).name());
 
             extension.init(server, eeConfig);
             extension.load();
@@ -326,8 +325,10 @@ public class EeApplication {
 
     private void processEeExtensions(List<Extension> extensions, List<EeComponentWrapper> wrappedComponents) {
 
-        // get types of all available components
+        // Get component types of components loaded in server. Since at this point not all the components are loaded,
+        // also add all detected components
         List<EeComponentType> componentTypes = new ArrayList<>();
+        componentTypes.addAll(Arrays.asList(server.getProvidedEeComponents()));
 
         for (EeComponentWrapper wrappedComponent : wrappedComponents) {
             componentTypes.add(wrappedComponent.getType());
