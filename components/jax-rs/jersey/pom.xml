@@ -69,23 +69,6 @@
             <artifactId>jackson-annotations</artifactId>
             <version>${jackson.version}</version>
         </dependency>
-
-        <!--<dependency>-->
-        <!--<groupId>org.glassfish.jersey.media</groupId>-->
-        <!--<artifactId>jersey-media-moxy</artifactId>-->
-        <!--<version>2.24.1</version>-->
-        <!--<exclusions>-->
-        <!--<exclusion>-->
-        <!--<groupId>org.eclipse.persistence</groupId>-->
-        <!--<artifactId>org.eclipse.persistence.moxy</artifactId>-->
-        <!--</exclusion>-->
-        <!--</exclusions>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-        <!--<groupId>org.eclipse.persistence</groupId>-->
-        <!--<artifactId>org.eclipse.persistence.moxy</artifactId>-->
-        <!--<version>2.6.4</version>-->
-        <!--</dependency>-->
     </dependencies>
 
 </project>

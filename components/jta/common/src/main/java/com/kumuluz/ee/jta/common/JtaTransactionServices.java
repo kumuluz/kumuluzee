@@ -22,12 +22,9 @@ package com.kumuluz.ee.jta.common;
 
 import org.jboss.weld.transaction.spi.TransactionServices;
 
-import javax.transaction.Status;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author Marcos Koch Salvador
