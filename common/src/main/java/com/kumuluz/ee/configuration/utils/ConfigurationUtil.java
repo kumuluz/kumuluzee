@@ -35,6 +35,8 @@ public class ConfigurationUtil {
 
     private ConfigurationImpl config;
 
+    protected ConfigurationUtil() {}
+
     private ConfigurationUtil(ConfigurationImpl config) {
         this.config = config;
     }
