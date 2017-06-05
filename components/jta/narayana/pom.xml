@@ -14,11 +14,6 @@
 
     <artifactId>kumuluzee-jta-narayana</artifactId>
 
-    <properties>
-        <narayana.version>5.5.6.Final</narayana.version>
-        <jboss-transaction-spi.version>7.6.0.Final</jboss-transaction-spi.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.kumuluz.ee</groupId>

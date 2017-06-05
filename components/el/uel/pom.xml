@@ -14,10 +14,6 @@
 
     <artifactId>kumuluzee-el-uel</artifactId>
 
-    <properties>
-        <uel-version>3.0.0</uel-version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.kumuluz.ee</groupId>

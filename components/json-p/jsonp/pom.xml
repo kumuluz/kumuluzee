@@ -14,10 +14,6 @@
     <name>KumuluzEE JSON-P JSONP</name>
     <description>KumuluzEE JSOP-P component implemented by JSONP</description>
 
-    <properties>
-        <jsonp.version>1.0.4</jsonp.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.kumuluz.ee</groupId>

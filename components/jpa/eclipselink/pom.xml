@@ -14,10 +14,6 @@
 
     <artifactId>kumuluzee-jpa-eclipselink</artifactId>
 
-    <properties>
-        <eclipselink.version>2.6.4</eclipselink.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.kumuluz.ee</groupId>
