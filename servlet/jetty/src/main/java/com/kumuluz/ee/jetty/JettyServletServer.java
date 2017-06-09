@@ -116,7 +116,11 @@ public class JettyServletServer implements ServletServer {
 
         appContext = new WebAppContext();
 
-        appContext.setAttribute(JettyAttributes.jarPattern, ClasspathAttributes.exploded);
+        if (ResourceUtils.isRunningInJar()) {
+            appContext.setAttribute(JettyAttributes.jarPattern, ClasspathAttributes.jar);
+        } else {
+            appContext.setAttribute(JettyAttributes.jarPattern, ClasspathAttributes.exploded);
+        }
 
         appContext.setParentLoaderPriority(true);
 

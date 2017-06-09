@@ -26,6 +26,8 @@ package com.kumuluz.ee.common.attributes;
  */
 public class ClasspathAttributes {
 
+    public static final String jar = ".*";
+
     public static final String exploded = ".*/classes/.*";
 
     public static final String exploded_test = ".*/test-classes/.*";
