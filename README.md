@@ -56,7 +56,7 @@ The following extensions are available with more planned soon:
 
 - [KumuluzEE Config (File and environment variables built-in)](https://github.com/kumuluz/kumuluzee/wiki/Configuration)
 - [KumuluzEE Config (Config server etcd/Consul)](https://github.com/kumuluz/kumuluzee-config)
-- [KumuluzEE REST (or implementation of common, advanced and flexible REST API functionalities and patterns. Includes support for exposing JPA entities through REST)](https://github.com/kumuluz/kumuluzee/ kumuluzee-rest)
+- [KumuluzEE REST (For implementation of common, advanced and flexible REST API functionalities and patterns. Includes support for exposing JPA entities through REST)](https://github.com/kumuluz/kumuluzee/kumuluzee-rest)
 - [KumuluzEE Logs (For advanced microservice framework for logging)](https://github.com/kumuluz/kumuluzee-logs)
 - [KumuluzEE Discovery (For dynamic service discovery (etcd or Consul). Fully compatible with Kubernetes)](https://github.com/kumuluz/kumuluzee-discovery)
 - [KumuluzEE Metrics (For easy collection and reporting of performance metrics)](https://github.com/kumuluz)
