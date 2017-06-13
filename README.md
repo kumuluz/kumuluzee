@@ -54,15 +54,15 @@ if you want to use it as well as the underlying implementation of the extension.
 cloud-native microservices including configuration, logging, discovery, circuit-breakers, metrics, security, event streaming and more.
 The following extensions are available with more planned soon:
 
-- [KumuluzEE Config (File and environment variables built-in)](https://github.com/kumuluz/kumuluzee/wiki/Configuration)
-- [KumuluzEE Config (Config server etcd/Consul)](https://github.com/kumuluz/kumuluzee-config)
-- [KumuluzEE REST (For implementation of common, advanced and flexible REST API functionalities and patterns. Includes support for exposing JPA entities through REST)](https://github.com/kumuluz/kumuluzee/kumuluzee-rest)
-- [KumuluzEE Logs (For advanced microservice framework for logging)](https://github.com/kumuluz/kumuluzee-logs)
-- [KumuluzEE Discovery (For dynamic service discovery (etcd or Consul). Fully compatible with Kubernetes)](https://github.com/kumuluz/kumuluzee-discovery)
-- [KumuluzEE Metrics (For easy collection and reporting of performance metrics)](https://github.com/kumuluz)
-- [KumuluzEE Security (For easy integration with OAuth2/OpenID identity and access management providers)](https://github.com/kumuluz/kumuluzee-security)
-- [KumuluzEE Circuit Breaker (For implementing circuit breakers and decoupling microservices)](https://github.com/kumuluz)
-- [KumuluzEE Kafka (For event streaming support using Apache Kafka)](https://github.com/kumuluz/kumuluzee-kafka)
+- [KumuluzEE Config](https://github.com/kumuluz/kumuluzee/wiki/Configuration) (File and environment variables built-in)
+- [KumuluzEE Config with config server](https://github.com/kumuluz/kumuluzee-config) (Config server etcd/Consul)
+- [KumuluzEE REST](https://github.com/kumuluz/kumuluzee/kumuluzee-rest) (For implementation of common, advanced and flexible REST API functionalities and patterns. Includes support for exposing JPA entities through REST)
+- [KumuluzEE Logs](https://github.com/kumuluz/kumuluzee-logs) (For advanced microservice framework for logging)
+- [KumuluzEE Discovery](https://github.com/kumuluz/kumuluzee-discovery) (For dynamic service discovery (etcd or Consul). Fully compatible with Kubernetes)
+- [KumuluzEE Metrics](https://github.com/kumuluz) (For easy collection and reporting of performance metrics)
+- [KumuluzEE Security](https://github.com/kumuluz/kumuluzee-security) (For easy integration with OAuth2/OpenID identity and access management providers)
+- [KumuluzEE Circuit Breaker](https://github.com/kumuluz) (For implementing circuit breakers and decoupling microservices)
+- [KumuluzEE Kafka](https://github.com/kumuluz/kumuluzee-kafka) (For event streaming support using Apache Kafka)
 
 
 If you already know how to use Java EE, then you already know how to use KumuluzEE. It’s dead simple,
