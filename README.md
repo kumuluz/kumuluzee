@@ -67,7 +67,7 @@ The following extensions are available with more planned soon:
 
 If you already know how to use Java EE, then you already know how to use KumuluzEE. It’s dead simple,
 see the [getting started](https://github.com/kumuluz/KumuluzEE/wiki/Getting-started) wiki section to create your first light-weight standalone
-Java EE app in 5 minutes.
+Java EE app in 5 minutes. Refer to [samples](https://github.com/kumuluz/kumuluzee-samples) for more examples.
 
 ## Usage
 
