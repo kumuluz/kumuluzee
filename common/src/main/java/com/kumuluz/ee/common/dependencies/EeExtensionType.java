@@ -28,7 +28,8 @@ public enum EeExtensionType {
 
     CONFIG("Config"),
     DISCOVERY("Discovery"),
-    SECURITY("Security");
+    SECURITY("Security"),
+    CIRCUIT_BREAKER("Circuit Breaker");
 
     private final String name;
 
