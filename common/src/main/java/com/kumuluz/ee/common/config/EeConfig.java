@@ -36,6 +36,7 @@ public class EeConfig {
     private ServerConfig serverConfig = new ServerConfig();
     private List<PersistenceConfig> persistenceConfigs = new ArrayList<>();
     private List<DataSourceConfig> datasources = new ArrayList<>();
+    private List<XaDataSourceConfig> xaDatasources = new ArrayList<>();
 
     private List<EeComponentWrapper> eeComponents = new ArrayList<>();
 
@@ -49,9 +50,8 @@ public class EeConfig {
         Optional<Integer> dsSizeOpt = cfg.getListSize("kumuluzee.datasources");
 
         if (dsSizeOpt.isPresent()) {
-            Integer dsSize = dsSizeOpt.get();
 
-            for (int i = 0; i < dsSize; i++) {
+            for (int i = 0; i < dsSizeOpt.get(); i++) {
 
                 DataSourceConfig dsc = new DataSourceConfig();
 
@@ -72,6 +72,34 @@ public class EeConfig {
                 datasources.add(dsc);
             }
         }
+
+        Optional<Integer> xDsSizeOpt = cfg.getListSize("kumuluzee.xa-datasources");
+
+        if (xDsSizeOpt.isPresent()) {
+
+            for (int i = 0; i < xDsSizeOpt.get(); i++) {
+
+                XaDataSourceConfig xdsc = new XaDataSourceConfig();
+
+                Optional<String> jndiName = cfg.get("kumuluzee.xa-datasources[" + i + "].jndi-name");
+                Optional<String> xaDatasourceClass = cfg.get("kumuluzee.xa-datasources[" + i + "].xa-datasource-class");
+                Optional<String> serverName = cfg.get("kumuluzee.xa-datasources[" + i + "].server-name");
+                Optional<String> portNumber = cfg.get("kumuluzee.xa-datasources[" + i + "].port-number");
+                Optional<String> databaseName = cfg.get("kumuluzee.xa-datasources[" + i + "].database-name");
+                Optional<String> user = cfg.get("kumuluzee.xa-datasources[" + i + "].username");
+                Optional<String> pass = cfg.get("kumuluzee.xa-datasources[" + i + "].password");
+
+                jndiName.ifPresent(xdsc::setJndiName);
+                xaDatasourceClass.ifPresent(xdsc::setXaDatasourceClass);
+                serverName.ifPresent(xdsc::setServerName);
+                portNumber.ifPresent(xdsc::setPortNumber);
+                databaseName.ifPresent(xdsc::setDatabaseName);
+                user.ifPresent(xdsc::setUsername);
+                pass.ifPresent(xdsc::setPassword);
+
+                xaDatasources.add(xdsc);
+            }
+        }
     }
 
     public String getVersion() {
@@ -88,6 +116,10 @@ public class EeConfig {
 
     public List<DataSourceConfig> getDatasources() {
         return datasources;
+    }
+
+    public List<XaDataSourceConfig> getXaDatasources() {
+        return xaDatasources;
     }
 
     public List<EeComponentWrapper> getEeComponents() {

@@ -20,9 +20,14 @@
 */
 package com.kumuluz.ee;
 
+import com.kumuluz.ee.builders.JtaXADataSourceBuilder;
 import com.kumuluz.ee.common.*;
 import com.kumuluz.ee.common.config.DataSourceConfig;
 import com.kumuluz.ee.common.config.EeConfig;
+import com.kumuluz.ee.common.config.XaDataSourceConfig;
+import com.kumuluz.ee.common.datasources.XADataSourceBuilder;
+import com.kumuluz.ee.common.datasources.NonJtaXADataSourceWrapper;
+import com.kumuluz.ee.common.datasources.XADataSourceWrapper;
 import com.kumuluz.ee.common.dependencies.*;
 import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 import com.kumuluz.ee.common.filters.PoweredByFilter;
@@ -39,6 +44,7 @@ import com.kumuluz.ee.loaders.ExtensionLoader;
 import com.kumuluz.ee.loaders.ServerLoader;
 import com.zaxxer.hikari.HikariDataSource;
 
+import javax.sql.XADataSource;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -158,6 +164,28 @@ public class EeApplication {
                         ds.setMaximumPoolSize(dsc.getMaxPoolSize());
 
                     servletServer.registerDataSource(ds, dsc.getJndiName());
+                }
+            }
+
+            if (eeConfig.getXaDatasources().size() > 0) {
+
+                Boolean jtaPresent = eeConfig.getEeComponents().stream().anyMatch(c -> c.getType().equals(EeComponentType.JTA));
+
+                for (XaDataSourceConfig xdsc : eeConfig.getXaDatasources()) {
+
+                    XADataSourceBuilder XADataSourceBuilder = new XADataSourceBuilder(xdsc);
+
+                    XADataSource xaDataSource = XADataSourceBuilder.constructXaDataSource();
+
+                    XADataSourceWrapper xaDataSourceWrapper;
+
+                    if (jtaPresent) {
+                        xaDataSourceWrapper = JtaXADataSourceBuilder.buildJtaXADataSourceWrapper(xaDataSource);
+                    } else {
+                        xaDataSourceWrapper = new NonJtaXADataSourceWrapper(xaDataSource);
+                    }
+
+                    servletServer.registerDataSource(xaDataSourceWrapper, xdsc.getJndiName());
                 }
             }
 
