@@ -26,6 +26,5 @@ package com.kumuluz.ee.jetty;
  */
 public class JettyAttributes {
 
-    public static final String jarPattern = "org.eclipse.jetty.server.webapp" +
-            ".ContainerIncludeJarPattern";
+    public static final String jarPattern = "org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern";
 }
