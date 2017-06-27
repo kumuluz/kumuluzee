@@ -121,7 +121,7 @@ public class EeApplication {
 
         for (ConfigExtensionWrapper extension : eeConfigExtensions) {
 
-            log.info("Found config extension implemented by " + extension.getClass().getDeclaredAnnotation
+            log.info("Found config extension implemented by " + extension.getExtension().getClass().getDeclaredAnnotation
                     (EeExtensionDef.class).name());
 
             extension.getExtension().init(server, eeConfig);
@@ -212,7 +212,7 @@ public class EeApplication {
 
         for (ExtensionWrapper extension : eeExtensions) {
 
-            log.info("Found extension implemented by " + extension.getClass()
+            log.info("Found extension implemented by " + extension.getExtension().getClass()
                     .getDeclaredAnnotation(EeExtensionDef.class).name());
 
             extension.getExtension().init(server, eeConfig);
