@@ -23,7 +23,7 @@ package com.kumuluz.ee.configuration.sources;
 import com.kumuluz.ee.configuration.ConfigurationSource;
 import com.kumuluz.ee.configuration.utils.ConfigurationDispatcher;
 
-import java.util.Optional;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -50,6 +50,11 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
     public Optional<String> get(String key) {
 
         String value = System.getenv(parseKeyNameForEnvironmentVariables(key));
+
+        if (value == null) {
+            value = System.getenv(parseKeyNameForEnvironmentVariablesLegacy(key));
+        }
+
         return (value == null) ? Optional.empty() : Optional.of(value);
     }
 
@@ -131,6 +136,48 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
     }
 
     @Override
+    public Optional<List<String>> getMapKeys(String key) {
+
+        Map<String, String> environment = System.getenv();
+
+        Set<String> keys = new HashSet<>();
+
+        for (String envKey : environment.keySet()) {
+
+            String newKey = "";
+
+            if (envKey.startsWith(parseKeyNameForEnvironmentVariables(key))) {
+                int index = parseKeyNameForEnvironmentVariables(key).length() + 1;
+                if (index < envKey.length() && "_".equals(envKey.substring(index - 1, index))) {
+                    newKey = envKey.substring(index);
+                }
+            } else if (envKey.startsWith(parseKeyNameForEnvironmentVariablesLegacy(key))) {
+                int index = parseKeyNameForEnvironmentVariablesLegacy(key).length() + 1;
+                if (index < envKey.length() && "_".equals(envKey.substring(index - 1, index))) {
+                    newKey = envKey.substring(index);
+                }
+            }
+
+            if (!newKey.isEmpty()) {
+
+                int index = newKey.indexOf('_');
+                if (index > 0) {
+                    newKey = newKey.substring(0, index);
+                }
+
+                keys.add(newKey.toLowerCase());
+            }
+
+        }
+
+        if (keys.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(new LinkedList<>(keys));
+    }
+
+    @Override
     public void watch(String key) {
 
     }
@@ -161,6 +208,13 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
     }
 
     private String parseKeyNameForEnvironmentVariables(String key) {
+
+        return key.toUpperCase().replaceAll("\\[", "_").replaceAll("\\].", "_")
+                .replaceAll("-", "_").replaceAll("\\.", "_");
+
+    }
+
+    private String parseKeyNameForEnvironmentVariablesLegacy(String key) {
 
         return key.toUpperCase().replaceAll("\\.", "_");
 
