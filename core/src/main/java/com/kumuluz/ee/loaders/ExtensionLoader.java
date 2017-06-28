@@ -22,6 +22,7 @@ package com.kumuluz.ee.loaders;
 
 import com.kumuluz.ee.common.Extension;
 import com.kumuluz.ee.common.dependencies.EeExtensionDef;
+import com.kumuluz.ee.common.dependencies.EeExtensionType;
 import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 
 import java.util.ArrayList;
@@ -39,8 +40,6 @@ public class ExtensionLoader {
 
     private static final Logger log = Logger.getLogger(ExtensionLoader.class.getSimpleName());
 
-    private static final Class EXTENSION_ANNOTATIONS[] = {EeExtensionDef.class};
-
     public static List<Extension> loadExtensions() {
 
         log.info("Loading available extensions");
@@ -49,15 +48,24 @@ public class ExtensionLoader {
 
         for (Extension e : extensions) {
 
-            boolean anyMatch = Stream.of(EXTENSION_ANNOTATIONS)
-                    .map(a -> e.getClass().getDeclaredAnnotation(a))
-                    .anyMatch(Objects::nonNull);
+            EeExtensionDef eeExtensionDef = e.getClass().getDeclaredAnnotation(EeExtensionDef.class);
 
-            if (!anyMatch) {
+            if (eeExtensionDef == null) {
 
                 String msg = "The found class \"" + e.getClass().getSimpleName() + "\" is missing an extension" +
                         "definition annotation. The annotation is required in order to correctly process the " +
                         "extension type and its dependencies.";
+
+                log.severe(msg);
+
+                throw new KumuluzServerException(msg);
+            }
+
+            if (eeExtensionDef.type().equals(EeExtensionType.CONFIG)) {
+
+                String msg = "The found class \"" + e.getClass().getSimpleName() + "\" does not have the correct " +
+                        "extension type defined. The extension type \"CONFIG\" requires that the class implements " +
+                        "the \"ConfigExtension\" interface.";
 
                 log.severe(msg);
 

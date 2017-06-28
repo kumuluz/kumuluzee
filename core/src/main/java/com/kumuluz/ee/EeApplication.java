@@ -20,16 +20,19 @@
 */
 package com.kumuluz.ee;
 
+import com.kumuluz.ee.builders.JtaXADataSourceBuilder;
 import com.kumuluz.ee.common.*;
 import com.kumuluz.ee.common.config.DataSourceConfig;
 import com.kumuluz.ee.common.config.EeConfig;
+import com.kumuluz.ee.common.config.XaDataSourceConfig;
+import com.kumuluz.ee.common.datasources.XADataSourceBuilder;
+import com.kumuluz.ee.common.datasources.NonJtaXADataSourceWrapper;
+import com.kumuluz.ee.common.datasources.XADataSourceWrapper;
 import com.kumuluz.ee.common.dependencies.*;
 import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 import com.kumuluz.ee.common.filters.PoweredByFilter;
 import com.kumuluz.ee.common.utils.ResourceUtils;
-import com.kumuluz.ee.common.wrapper.ComponentWrapper;
-import com.kumuluz.ee.common.wrapper.EeComponentWrapper;
-import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
+import com.kumuluz.ee.common.wrapper.*;
 import com.kumuluz.ee.configuration.ConfigurationSource;
 import com.kumuluz.ee.configuration.utils.ConfigurationImpl;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
@@ -39,6 +42,7 @@ import com.kumuluz.ee.loaders.ExtensionLoader;
 import com.kumuluz.ee.loaders.ServerLoader;
 import com.zaxxer.hikari.HikariDataSource;
 
+import javax.sql.XADataSource;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -106,23 +110,24 @@ public class EeApplication {
 
         // Loading the config extensions and extracting its metadata
         List<ConfigExtension> configExtensions = ConfigExtensionLoader.loadExtensions();
+        List<ConfigExtensionWrapper> eeConfigExtensions = processEeConfigExtensions(configExtensions, eeComponents);
 
         // Loading the extensions and extracting its metadata
         List<Extension> extensions = ExtensionLoader.loadExtensions();
-        processEeExtensions(extensions, eeComponents);
+        List<ExtensionWrapper> eeExtensions = processEeExtensions(extensions, eeComponents);
 
         // Initiate the config extensions
         log.info("Initializing config extensions");
 
-        for (ConfigExtension extension : configExtensions) {
+        for (ConfigExtensionWrapper extension : eeConfigExtensions) {
 
-            log.info("Found config extension implemented by " + extension.getClass().getDeclaredAnnotation
+            log.info("Found config extension implemented by " + extension.getExtension().getClass().getDeclaredAnnotation
                     (EeExtensionDef.class).name());
 
-            extension.init(server, eeConfig);
-            extension.load();
+            extension.getExtension().init(server, eeConfig);
+            extension.getExtension().load();
 
-            ConfigurationSource source = extension.getConfigurationSource();
+            ConfigurationSource source = extension.getExtension().getConfigurationSource();
 
             source.init(configImpl.getDispatcher());
             configImpl.getConfigurationSources().add(1, source);
@@ -161,6 +166,28 @@ public class EeApplication {
                 }
             }
 
+            if (eeConfig.getXaDatasources().size() > 0) {
+
+                Boolean jtaPresent = eeConfig.getEeComponents().stream().anyMatch(c -> c.getType().equals(EeComponentType.JTA));
+
+                for (XaDataSourceConfig xdsc : eeConfig.getXaDatasources()) {
+
+                    XADataSourceBuilder XADataSourceBuilder = new XADataSourceBuilder(xdsc);
+
+                    XADataSource xaDataSource = XADataSourceBuilder.constructXaDataSource();
+
+                    XADataSourceWrapper xaDataSourceWrapper;
+
+                    if (jtaPresent) {
+                        xaDataSourceWrapper = JtaXADataSourceBuilder.buildJtaXADataSourceWrapper(xaDataSource);
+                    } else {
+                        xaDataSourceWrapper = new NonJtaXADataSourceWrapper(xaDataSource);
+                    }
+
+                    servletServer.registerDataSource(xaDataSourceWrapper, xdsc.getJndiName());
+                }
+            }
+
             // Add all included filters
             Map<String, String> filterParams = new HashMap<>();
             filterParams.put("name", "KumuluzEE/" + eeConfig.getVersion());
@@ -183,13 +210,13 @@ public class EeApplication {
         // Initiate the other extensions
         log.info("Initializing extensions");
 
-        for (Extension extension : extensions) {
+        for (ExtensionWrapper extension : eeExtensions) {
 
-            log.info("Found extension implemented by " + extension.getClass()
+            log.info("Found extension implemented by " + extension.getExtension().getClass()
                     .getDeclaredAnnotation(EeExtensionDef.class).name());
 
-            extension.init(server, eeConfig);
-            extension.load();
+            extension.getExtension().init(server, eeConfig);
+            extension.getExtension().load();
         }
 
         log.info("Extensions Initialized");
@@ -306,7 +333,7 @@ public class EeApplication {
                 if (depCompName != null && dep.implementations().length > 0 &&
                         !Arrays.asList(dep.implementations()).contains(depCompName)) {
 
-                    String msg = "EE component implementation dependency unfulfilled. The EE component " +
+                    String msg = "EE component optional implementation dependency unfulfilled. The EE component " +
                             cmp.getType().getName() + "implemented by " + cmp.getName() + " requires " + dep.value()
                             .getName() +
                             " implemented by one of the following implementations: " +
@@ -323,39 +350,148 @@ public class EeApplication {
         return new ArrayList<>(eeComp.values());
     }
 
-    private void processEeExtensions(List<Extension> extensions, List<EeComponentWrapper> wrappedComponents) {
+    private List<ExtensionWrapper> processEeExtensions(List<Extension> extensions, List<EeComponentWrapper> wrappedComponents) {
 
-        // Get component types of components loaded in server. Since at this point not all the components are loaded,
-        // also add all detected components
-        List<EeComponentType> componentTypes = new ArrayList<>();
-        componentTypes.addAll(Arrays.asList(server.getProvidedEeComponents()));
+        Map<EeExtensionType, ExtensionWrapper> eeExt = new HashMap<>();
 
-        for (EeComponentWrapper wrappedComponent : wrappedComponents) {
-            componentTypes.add(wrappedComponent.getType());
+        // Wrap extensions with their metadata and check for duplicates
+        for (Extension e : extensions) {
+
+            EeExtensionDef def = e.getClass().getDeclaredAnnotation(EeExtensionDef.class);
+
+            if (def != null) {
+
+                if (eeExt.containsKey(def.type())) {
+
+                    String msg = "Found multiple implementations (" + eeExt.get(def.type()).getName() +
+                            ", " + def.name() + ") of the same EE extension (" + def.type().getName() + "). " +
+                            "Please check to make sure you only include a single implementation of a specific " +
+                            "EE extension.";
+
+                    log.severe(msg);
+
+                    throw new KumuluzServerException(msg);
+                }
+
+                EeComponentDependency[] dependencies = e.getClass().getDeclaredAnnotationsByType
+                        (EeComponentDependency.class);
+                EeComponentOptional[] optionals = e.getClass().getDeclaredAnnotationsByType(EeComponentOptional.class);
+
+                eeExt.put(def.type(), new ExtensionWrapper(e, def.name(), def.type(), dependencies, optionals));
+            }
         }
 
+        List<ExtensionWrapper> extensionWrappers = new ArrayList<>(eeExt.values());
+
+        log.info("Processing EE extension dependencies");
+
+        processEeExtensionDependencies(extensionWrappers, wrappedComponents);
+
+        return extensionWrappers;
+    }
+
+    private List<ConfigExtensionWrapper> processEeConfigExtensions(List<ConfigExtension> extensions, List<EeComponentWrapper> wrappedComponents) {
+
+        List<ConfigExtensionWrapper> extensionWrappers = new ArrayList<>();
+
+        for (ConfigExtension c : extensions) {
+
+            EeExtensionDef def = c.getClass().getDeclaredAnnotation(EeExtensionDef.class);
+
+            if (def != null) {
+
+                EeComponentDependency[] dependencies = c.getClass().getDeclaredAnnotationsByType(EeComponentDependency.class);
+                EeComponentOptional[] optionals = c.getClass().getDeclaredAnnotationsByType(EeComponentOptional.class);
+
+                extensionWrappers.add(new ConfigExtensionWrapper(c, def.name(), def.type(), dependencies, optionals));
+            }
+        }
+
+        log.info("Processing EE config extension dependencies");
+
+        processEeExtensionDependencies(extensionWrappers, wrappedComponents);
+
+        return extensionWrappers;
+    }
+
+    private void processEeExtensionDependencies(List<? extends ExtensionWrapper> extensions, List<EeComponentWrapper> components) {
+
         // Check if all dependencies are fulfilled
-        for (Extension extension : extensions) {
+        for (ExtensionWrapper ext : extensions) {
 
-            EeExtensionDef extensionDef = extension.getClass().getDeclaredAnnotation(EeExtensionDef.class);
+            for (EeComponentDependency dep : ext.getDependencies()) {
 
-            EeComponentDependency[] dependencies = extension.getClass().getDeclaredAnnotationsByType
-                    (EeComponentDependency.class);
+                Optional<EeComponentWrapper> depComp = components.stream()
+                        .filter(c -> c.getType().equals(dep.value())).findFirst();
 
-            for (EeComponentDependency dependency : dependencies) {
+                String depCompName = null;
 
-                if (!componentTypes.contains(dependency.value())) {
+                if (depComp.isPresent()) {
+
+                    depCompName = depComp.get().getName();
+                } else if (Arrays.asList(server.getProvidedEeComponents()).contains(dep.value())) {
+
+                    depCompName = server.getName();
+                }
+
+                if (depCompName == null) {
 
                     String msg = "EE extension implementation dependency unfulfilled. The EE extension " +
-                            extensionDef.name() + " requires " + dependency.value().getName() +
+                            ext.getType().getName() + " requires " + dep.value().getName() +
                             " implemented by one of the following implementations: " +
-                            Arrays.toString(dependency.implementations()) + ". Please make sure you use one of the " +
+                            Arrays.toString(dep.implementations()) + ". Please make sure you use one of the " +
                             "implementations required by this component.";
 
                     log.severe(msg);
 
                     throw new KumuluzServerException(msg);
 
+                }
+
+                if (dep.implementations().length > 0 &&
+                        !Arrays.asList(dep.implementations()).contains(depCompName)) {
+
+                    String msg = "EE extension implementation dependency unfulfilled. The EE extension " +
+                            ext.getType().getName() + " implemented by " + ext.getName() + " requires component " +
+                            dep.value().getName() + " implemented by one of the following implementations: " +
+                            Arrays.toString(dep.implementations()) + ". Please make sure you use one of the " +
+                            "component implementations required by this component.";
+
+                    log.severe(msg);
+
+                    throw new KumuluzServerException(msg);
+                }
+            }
+
+            // Check if all optional dependencies and their implementations are fulfilled
+            for (EeComponentOptional dep : ext.getOptionalDependencies()) {
+
+                Optional<EeComponentWrapper> depComp = components.stream()
+                        .filter(c -> c.getType().equals(dep.value())).findFirst();
+
+                String depCompName = null;
+
+                // Check all posible locations for the dependency (Components and Server)
+                if (depComp.isPresent()) {
+
+                    depCompName = depComp.get().getName();
+                } else if (!Arrays.asList(server.getProvidedEeComponents()).contains(dep.value())) {
+
+                    depCompName = server.getName();
+                }
+
+                if (depCompName != null && dep.implementations().length > 0 &&
+                        !Arrays.asList(dep.implementations()).contains(depCompName)) {
+
+                    String msg = "EE extension optional implementation dependency unfulfilled. The EE extension " +
+                            ext.getType().getName() + "implemented by " + ext.getName() + " requires component " +
+                            dep.value().getName() + " implemented by one of the following implementations: " +
+                            Arrays.toString(dep.implementations()) + ". Please make sure you use one of the " +
+                            "component implementations required by this component.";
+
+                    log.severe(msg);
+
+                    throw new KumuluzServerException(msg);
                 }
             }
         }

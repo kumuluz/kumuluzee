@@ -18,27 +18,13 @@
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
 */
-package com.kumuluz.ee.common.dependencies;
+package com.kumuluz.ee.common.datasources;
+
+import javax.sql.DataSource;
 
 /**
  * @author Tilen Faganel
  * @since 2.3.0
  */
-public enum EeExtensionType {
-
-    CONFIG("Config"),
-    DISCOVERY("Discovery"),
-    SECURITY("Security"),
-    CIRCUIT_BREAKER("Circuit Breaker"),
-    LOGS("Logs");
-
-    private final String name;
-
-    EeExtensionType(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
+public interface XADataSourceWrapper extends DataSource {
 }

@@ -30,6 +30,8 @@ import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.util.log.JavaUtilLog;
+import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.eclipse.jetty.webapp.Configuration;
@@ -62,6 +64,8 @@ public class JettyFactory {
     }
 
     public Server create() {
+
+        Log.setLog(new JavaUtilLog());
 
         Server server = new Server(createThreadPool());
 

@@ -32,15 +32,19 @@ The goal is to support as many Java EE components as possible. Currently the fol
 supported with more being added over time:
 
 - Servlet 3.1 (Jetty)
-- WebSocket 1.1 (Jetty)
-- JSP 2.3 (Jetty Apache Jasper)
-- EL 3.0 (RI UEL)
 - CDI 1.2 (RI Weld)
-- JPA 2.1 (RI EclipseLink, Hibernate)
-- JAX-RS 2.0 (RI Jersey)
-- JSF 2.2 (RI Mojarra)
-- Bean Validation 1.1 (RI Hibernate validator)
+- JAX-RS 2.1. (RI Jersey)
 - JSON-P 1.0 (RI JSONP)
+- JSP 2.3 (Jetty Apache Jasper)
+- JPA 2.1 (RI EclipseLink)
+- JPA 2.1 (RI Hibernate)
+- EL 3.0 (RI UEL)
+- JAX-WS (RI Metro)
+- JSF 2.2 (RI Mojarra)
+- WebSocket 1.1 (Jetty)
+- Bean Validation 1.1 (RI Hibernate validator)
+- JTA 1.2 (Narayana)
+
 
 ## KumuluzEE extensions
 
@@ -48,15 +52,22 @@ In addition to the standard Java EE components, KumuluzEE also comes with severa
 its functionality. The extensions will follow the same modular concept as the Java EE components in which you can chose
 if you want to use it as well as the underlying implementation of the extension. Most extensions are geared towards creating
 cloud-native microservices including configuration, logging, discovery, circuit-breakers, metrics, security, event streaming and more.
-As such they will be part of the KumuluzEE Cloud project with some exceptions. Currently the following
-extensions are available with more planned soon:
+The following extensions are available with more planned soon:
 
-- [KumuluzEE Config (File and environment variables built-in)](https://github.com/kumuluz/kumuluzee/wiki/Configuration)
-- [KumuluzEE Logs](https://github.com/kumuluz/kumuluzee-logs)
+- [KumuluzEE Config](https://github.com/kumuluz/kumuluzee/wiki/Configuration) (File and environment variables built-in)
+- [KumuluzEE Config with config server](https://github.com/kumuluz/kumuluzee-config) (Config server etcd/Consul)
+- [KumuluzEE REST](https://github.com/kumuluz/kumuluzee-rest) (For implementation of common, advanced and flexible REST API functionalities and patterns. Includes support for exposing JPA entities through REST)
+- [KumuluzEE Logs](https://github.com/kumuluz/kumuluzee-logs) (For advanced microservice framework for logging)
+- [KumuluzEE Discovery](https://github.com/kumuluz/kumuluzee-discovery) (For dynamic service discovery (etcd or Consul). Fully compatible with Kubernetes)
+- [KumuluzEE Metrics](https://github.com/kumuluz) (For easy collection and reporting of performance metrics)
+- [KumuluzEE Security](https://github.com/kumuluz/kumuluzee-security) (For easy integration with OAuth2/OpenID identity and access management providers)
+- [KumuluzEE Circuit Breaker](https://github.com/kumuluz) (For implementing circuit breakers and decoupling microservices)
+- [KumuluzEE Kafka](https://github.com/kumuluz/kumuluzee-kafka) (For event streaming support using Apache Kafka)
 
-If you already know how to use Java EE, then you already know how to use KumuluzEE. Its dead simple,
+
+If you already know how to use Java EE, then you already know how to use KumuluzEE. It’s dead simple,
 see the [getting started](https://github.com/kumuluz/KumuluzEE/wiki/Getting-started) wiki section to create your first light-weight standalone
-Java EE app in 5 minutes.
+Java EE app in 5 minutes. Refer to [samples](https://github.com/kumuluz/kumuluzee-samples) for more examples.
 
 ## Usage
 
@@ -173,6 +184,7 @@ options at their respected project pages:
 ## Getting started
 
 You can find the getting started guide on the projects [wiki](https://github.com/kumuluz/KumuluzEE/wiki/Getting-started).
+You can find samples [for Java EE and KumuluzEE]( https://github.com/kumuluz/kumuluzee-samples)
 
 ## Building
 

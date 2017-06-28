@@ -19,6 +19,11 @@
             <groupId>com.kumuluz.ee</groupId>
             <artifactId>kumuluzee-common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.kumuluz.ee</groupId>
+            <artifactId>kumuluzee-jta-common</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>junit</groupId>

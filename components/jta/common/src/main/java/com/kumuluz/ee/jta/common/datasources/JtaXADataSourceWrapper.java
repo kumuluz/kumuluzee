@@ -18,27 +18,42 @@
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
 */
-package com.kumuluz.ee.common.dependencies;
+package com.kumuluz.ee.jta.common.datasources;
+
+import com.kumuluz.ee.common.datasources.NonJtaXADataSourceWrapper;
+
+import javax.sql.XAConnection;
+import javax.sql.XADataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * @author Tilen Faganel
  * @since 2.3.0
  */
-public enum EeExtensionType {
+public class JtaXADataSourceWrapper extends NonJtaXADataSourceWrapper {
 
-    CONFIG("Config"),
-    DISCOVERY("Discovery"),
-    SECURITY("Security"),
-    CIRCUIT_BREAKER("Circuit Breaker"),
-    LOGS("Logs");
-
-    private final String name;
-
-    EeExtensionType(String name) {
-        this.name = name;
+    public JtaXADataSourceWrapper(XADataSource xaDataSource) {
+        super(xaDataSource);
     }
 
-    public String getName() {
-        return name;
+    @Override
+    public Connection getConnection() throws SQLException {
+
+        checkIfValid();
+
+        XAConnection xaConnection = xaDataSource.getXAConnection();
+
+        return new JtaXAConnectionWrapper(xaConnection);
+    }
+
+    @Override
+    public Connection getConnection(String username, String password) throws SQLException {
+
+        checkIfValid();
+
+        XAConnection xaConnection = xaDataSource.getXAConnection(username, password);
+
+        return new JtaXAConnectionWrapper(xaConnection);
     }
 }

@@ -51,7 +51,7 @@ public class JtaComponent implements Component {
     public void load() {
         log.info("Initiating Narayana JTA");
 
-        arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreDir("narayana");
+        arjPropertyManager.getObjectStoreEnvironmentBean().setObjectStoreDir("ObjectStore");
 
         try {
             JNDIManager.bindJTAImplementation();

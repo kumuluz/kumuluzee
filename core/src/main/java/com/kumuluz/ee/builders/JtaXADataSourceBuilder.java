@@ -18,27 +18,21 @@
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
 */
-package com.kumuluz.ee.common.dependencies;
+package com.kumuluz.ee.builders;
+
+import com.kumuluz.ee.common.datasources.NonJtaXADataSourceWrapper;
+import com.kumuluz.ee.jta.common.datasources.JtaXADataSourceWrapper;
+
+import javax.sql.XADataSource;
 
 /**
  * @author Tilen Faganel
  * @since 2.3.0
  */
-public enum EeExtensionType {
+public class JtaXADataSourceBuilder {
 
-    CONFIG("Config"),
-    DISCOVERY("Discovery"),
-    SECURITY("Security"),
-    CIRCUIT_BREAKER("Circuit Breaker"),
-    LOGS("Logs");
+    public static NonJtaXADataSourceWrapper buildJtaXADataSourceWrapper(XADataSource xaDataSource) {
 
-    private final String name;
-
-    EeExtensionType(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
+        return new JtaXADataSourceWrapper(xaDataSource);
     }
 }
