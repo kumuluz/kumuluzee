@@ -217,10 +217,12 @@ public class FileConfigurationSource implements ConfigurationSource {
             map = (Map) o;
         }
 
-        if (map != null) {
-            return Optional.of(new LinkedList(map.keySet()));
+        if (map == null || map.isEmpty()) {
+            return Optional.empty();
         }
-        return Optional.empty();
+
+        return Optional.of(new ArrayList(map.keySet()));
+
     }
 
     @Override

@@ -22,7 +22,7 @@ package com.kumuluz.ee.configuration.enums;
 
 /**
  * @author Jan Meznarič
- * @since 2.2.0
+ * @since 2.3.0
  */
 public enum ConfigurationValueType {
     STRING,

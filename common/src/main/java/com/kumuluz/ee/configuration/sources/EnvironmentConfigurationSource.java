@@ -138,43 +138,42 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
     @Override
     public Optional<List<String>> getMapKeys(String key) {
 
-        Map<String, String> environment = System.getenv();
+        Set<String> mapKeys = new HashSet<>();
 
-        Set<String> keys = new HashSet<>();
+        for (String envKey : System.getenv().keySet()) {
 
-        for (String envKey : environment.keySet()) {
+            String mapKey = "";
 
-            String newKey = "";
-
+            // check for both supported formats of environment key names
             if (envKey.startsWith(parseKeyNameForEnvironmentVariables(key))) {
                 int index = parseKeyNameForEnvironmentVariables(key).length() + 1;
                 if (index < envKey.length() && "_".equals(envKey.substring(index - 1, index))) {
-                    newKey = envKey.substring(index);
+                    mapKey = envKey.substring(index);
                 }
             } else if (envKey.startsWith(parseKeyNameForEnvironmentVariablesLegacy(key))) {
                 int index = parseKeyNameForEnvironmentVariablesLegacy(key).length() + 1;
                 if (index < envKey.length() && "_".equals(envKey.substring(index - 1, index))) {
-                    newKey = envKey.substring(index);
+                    mapKey = envKey.substring(index);
                 }
             }
 
-            if (!newKey.isEmpty()) {
+            if (!mapKey.isEmpty()) {
 
-                int index = newKey.indexOf('_');
+                int index = mapKey.indexOf('_');
                 if (index > 0) {
-                    newKey = newKey.substring(0, index);
+                    mapKey = mapKey.substring(0, index);
                 }
 
-                keys.add(newKey.toLowerCase());
+                mapKeys.add(mapKey.toLowerCase());
             }
 
         }
 
-        if (keys.isEmpty()) {
+        if (mapKeys.isEmpty()) {
             return Optional.empty();
         }
 
-        return Optional.of(new LinkedList<>(keys));
+        return Optional.of(new ArrayList<>(mapKeys));
     }
 
     @Override
@@ -209,8 +208,8 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
 
     private String parseKeyNameForEnvironmentVariables(String key) {
 
-        return key.toUpperCase().replaceAll("\\[", "_").replaceAll("\\].", "_")
-                .replaceAll("-", "_").replaceAll("\\.", "_");
+        return key.toUpperCase().replaceAll("\\[", "").replaceAll("\\]", "")
+                .replaceAll("-", "").replaceAll("\\.", "_");
 
     }
 

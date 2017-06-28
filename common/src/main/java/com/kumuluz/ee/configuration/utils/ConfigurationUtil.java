@@ -24,9 +24,7 @@ import com.kumuluz.ee.configuration.ConfigurationListener;
 import com.kumuluz.ee.configuration.ConfigurationSource;
 import com.kumuluz.ee.configuration.enums.ConfigurationValueType;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author Tilen Faganel
@@ -169,8 +167,7 @@ public class ConfigurationUtil {
 
     public Optional<ConfigurationValueType> getType(String key) {
 
-        Optional<String> value = get(key);
-
+        // check if key type is a list or a map
         if (getListSize(key).isPresent()) {
             return Optional.of(ConfigurationValueType.LIST);
         }
@@ -178,6 +175,9 @@ public class ConfigurationUtil {
         if (getMapKeys(key).isPresent()) {
             return Optional.of(ConfigurationValueType.MAP);
         }
+
+        // get the key value from sources according to priorities and determine its type
+        Optional<String> value = get(key);
 
         if (!value.isPresent()) {
             return Optional.empty();
@@ -188,7 +188,7 @@ public class ConfigurationUtil {
         }
 
         try {
-            Integer i = Integer.valueOf(value.get());
+            Integer.valueOf(value.get());
             return Optional.of(ConfigurationValueType.INTEGER);
         } catch (NumberFormatException e) {
         }
@@ -202,7 +202,7 @@ public class ConfigurationUtil {
         }
 
         try {
-            Double d = Double.valueOf(value.get());
+            Double.valueOf(value.get());
             return Optional.of(ConfigurationValueType.DOUBLE);
         } catch (NumberFormatException e) {
         }
@@ -213,19 +213,19 @@ public class ConfigurationUtil {
 
     public Optional<List<String>> getMapKeys(String key) {
 
-        List<String> keys = new LinkedList<>();
+        Set<String> mapKeys = new HashSet<>();
 
         for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
             Optional<List<String>> value = configurationSource.getMapKeys(key);
             if (value.isPresent()) {
-                keys.addAll(value.get());
+                mapKeys.addAll(value.get());
             }
         }
 
-        if (keys.isEmpty()) {
+        if (mapKeys.isEmpty()) {
             return Optional.empty();
         }
 
-        return Optional.of(keys);
+        return Optional.of(new ArrayList<>(mapKeys));
     }
 }
