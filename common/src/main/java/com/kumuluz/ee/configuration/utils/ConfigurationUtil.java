@@ -190,7 +190,7 @@ public class ConfigurationUtil {
         try {
             Integer.valueOf(value.get());
             return Optional.of(ConfigurationValueType.INTEGER);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ignored) {
         }
 
         try {
@@ -198,13 +198,13 @@ public class ConfigurationUtil {
             if (!f.isInfinite()) {
                 return Optional.of(ConfigurationValueType.FLOAT);
             }
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ignored) {
         }
 
         try {
             Double.valueOf(value.get());
             return Optional.of(ConfigurationValueType.DOUBLE);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ignored) {
         }
 
         return Optional.of(ConfigurationValueType.STRING);
@@ -216,10 +216,10 @@ public class ConfigurationUtil {
         Set<String> mapKeys = new HashSet<>();
 
         for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
+
             Optional<List<String>> value = configurationSource.getMapKeys(key);
-            if (value.isPresent()) {
-                mapKeys.addAll(value.get());
-            }
+
+            value.ifPresent(mapKeys::addAll);
         }
 
         if (mapKeys.isEmpty()) {

@@ -20,6 +20,9 @@
 */
 package com.kumuluz.ee.common.config;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Tilen Faganel
  * @since 2.3.0
@@ -28,11 +31,10 @@ public class XaDataSourceConfig {
 
     private String jndiName;
     private String xaDatasourceClass;
-    private String serverName;
-    private String portNumber;
-    private String databaseName;
     private String username;
     private String password;
+
+    private Map<String, String> props = new HashMap<>();
 
     public String getJndiName() {
         return jndiName;
@@ -50,30 +52,6 @@ public class XaDataSourceConfig {
         this.xaDatasourceClass = xaDatasourceClass;
     }
 
-    public String getServerName() {
-        return serverName;
-    }
-
-    public void setServerName(String serverName) {
-        this.serverName = serverName;
-    }
-
-    public String getPortNumber() {
-        return portNumber;
-    }
-
-    public void setPortNumber(String portNumber) {
-        this.portNumber = portNumber;
-    }
-
-    public String getDatabaseName() {
-        return databaseName;
-    }
-
-    public void setDatabaseName(String databaseName) {
-        this.databaseName = databaseName;
-    }
-
     public String getUsername() {
         return username;
     }
@@ -88,5 +66,9 @@ public class XaDataSourceConfig {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Map<String, String> getProps() {
+        return props;
     }
 }

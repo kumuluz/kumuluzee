@@ -227,32 +227,26 @@ public class FileConfigurationSource implements ConfigurationSource {
 
     @Override
     public void watch(String key) {
-
     }
 
     @Override
     public void set(String key, String value) {
-
     }
 
     @Override
     public void set(String key, Boolean value) {
-
     }
 
     @Override
     public void set(String key, Integer value) {
-
     }
 
     @Override
     public void set(String key, Double value) {
-
     }
 
     @Override
     public void set(String key, Float value) {
-
     }
 
     /**
