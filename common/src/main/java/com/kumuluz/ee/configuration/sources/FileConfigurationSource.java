@@ -26,10 +26,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -207,6 +204,24 @@ public class FileConfigurationSource implements ConfigurationSource {
         }
 
         return Optional.empty();
+
+    }
+
+    @Override
+    public Optional<List<String>> getMapKeys(String key) {
+
+        Object o = getValue(key);
+        Map map = null;
+
+        if (o instanceof Map) {
+            map = (Map) o;
+        }
+
+        if (map == null || map.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(new ArrayList(map.keySet()));
 
     }
 

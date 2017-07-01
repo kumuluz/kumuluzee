@@ -18,44 +18,18 @@
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
 */
-package com.kumuluz.ee.configuration;
-
-import com.kumuluz.ee.configuration.utils.ConfigurationDispatcher;
-
-import java.util.List;
-import java.util.Optional;
+package com.kumuluz.ee.configuration.enums;
 
 /**
- * @author Tilen Faganel
- * @since 2.1.0
+ * @author Jan Meznarič
+ * @since 2.3.0
  */
-public interface ConfigurationSource {
-
-    void init(ConfigurationDispatcher configurationDispatcher);
-
-    Optional<String> get(String key);
-
-    Optional<Boolean> getBoolean(String key);
-
-    Optional<Integer> getInteger(String key);
-
-    Optional<Double> getDouble(String key);
-
-    Optional<Float> getFloat(String key);
-
-    Optional<Integer> getListSize(String key);
-
-    Optional<List<String>> getMapKeys(String key);
-
-    void watch(String key);
-
-    void set(String key, String value);
-
-    void set(String key, Boolean value);
-
-    void set(String key, Integer value);
-
-    void set(String key, Double value);
-
-    void set(String key, Float value);
+public enum ConfigurationValueType {
+    STRING,
+    INTEGER,
+    DOUBLE,
+    FLOAT,
+    BOOLEAN,
+    LIST,
+    MAP
 }
