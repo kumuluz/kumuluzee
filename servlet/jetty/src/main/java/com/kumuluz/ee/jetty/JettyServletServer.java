@@ -120,7 +120,9 @@ public class JettyServletServer implements ServletServer {
 //            appContext.setAttribute(JettyAttributes.jarPattern, ClasspathAttributes.exploded);
 //        }
 
-        appContext.setClassLoader(getClass().getClassLoader());
+//        ClassLoader classLoader = getClass().getClassLoader();
+//        appContext.setClassLoader(classLoader);
+//        log.info("Starting KumuluzEE with '" + classLoader + "' class loader");
 
         appContext.setParentLoaderPriority(true);
 

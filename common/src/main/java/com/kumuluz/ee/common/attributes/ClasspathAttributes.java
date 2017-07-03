@@ -26,7 +26,7 @@ package com.kumuluz.ee.common.attributes;
  */
 public class ClasspathAttributes {
 
-//    public static final String jar = ".*/com/kumuluz/ee/samples/jaxrs/.*|META-INF/.*|webapp/.*";
+//    public static final String jar = ".*/com/.*|.*/META-INF/.*|.*/webapp/.*";
 //    public static final String jar = ".*";
     public static final String jar = "^((?!(lib|/lib|/lib/|lib/)).)*\\.jar$";
 
