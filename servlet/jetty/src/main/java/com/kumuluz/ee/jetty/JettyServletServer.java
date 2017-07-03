@@ -32,6 +32,7 @@ import org.eclipse.jetty.plus.jndi.Resource;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.webapp.WebAppClassLoader;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 import java.util.*;
@@ -120,9 +121,11 @@ public class JettyServletServer implements ServletServer {
 //            appContext.setAttribute(JettyAttributes.jarPattern, ClasspathAttributes.exploded);
 //        }
 
-//        ClassLoader classLoader = getClass().getClassLoader();
-//        appContext.setClassLoader(classLoader);
-//        log.info("Starting KumuluzEE with '" + classLoader + "' class loader");
+        try {
+            appContext.setClassLoader(getClass().getClassLoader());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         appContext.setParentLoaderPriority(true);
 
