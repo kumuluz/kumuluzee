@@ -55,9 +55,8 @@ public class XADataSourceBuilder {
 
         setProperty(xaDataSource, "user", xaDataSourceConfig.getUsername());
         setProperty(xaDataSource, "password", xaDataSourceConfig.getPassword());
-        setProperty(xaDataSource, "serverName", xaDataSourceConfig.getServerName());
-        setProperty(xaDataSource, "portNumber", xaDataSourceConfig.getPortNumber());
-        setProperty(xaDataSource, "databaseName", xaDataSourceConfig.getDatabaseName());
+
+        xaDataSourceConfig.getProps().forEach((k, v) -> setProperty(xaDataSource, k, v));
 
         return xaDataSource;
     }
@@ -85,7 +84,7 @@ public class XADataSourceBuilder {
 
         for (Method method : methods) {
 
-            if (method.getName().equals(name) && method.getParameterTypes().length == 1) {
+            if (method.getName().equalsIgnoreCase(name) && method.getParameterTypes().length == 1) {
                 // ignores overloading, just takes the first match it finds.
                 matchingMethod = method;
                 break;

@@ -22,8 +22,9 @@ package com.kumuluz.ee.configuration.utils;
 
 import com.kumuluz.ee.configuration.ConfigurationListener;
 import com.kumuluz.ee.configuration.ConfigurationSource;
+import com.kumuluz.ee.configuration.enums.ConfigurationValueType;
 
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author Tilen Faganel
@@ -35,7 +36,8 @@ public class ConfigurationUtil {
 
     private ConfigurationImpl config;
 
-    protected ConfigurationUtil() {}
+    protected ConfigurationUtil() {
+    }
 
     private ConfigurationUtil(ConfigurationImpl config) {
         this.config = config;
@@ -161,5 +163,69 @@ public class ConfigurationUtil {
 
     public void unsubscribe(ConfigurationListener listener) {
         config.getDispatcher().unsubscribe(listener);
+    }
+
+    public Optional<ConfigurationValueType> getType(String key) {
+
+        // check if key type is a list or a map
+        if (getListSize(key).isPresent()) {
+            return Optional.of(ConfigurationValueType.LIST);
+        }
+
+        if (getMapKeys(key).isPresent()) {
+            return Optional.of(ConfigurationValueType.MAP);
+        }
+
+        // get the key value from sources according to priorities and determine its type
+        Optional<String> value = get(key);
+
+        if (!value.isPresent()) {
+            return Optional.empty();
+        }
+
+        if ("true".equals(value.get().toLowerCase()) || "false".equals(value.get().toLowerCase())) {
+            return Optional.of(ConfigurationValueType.BOOLEAN);
+        }
+
+        try {
+            Integer.valueOf(value.get());
+            return Optional.of(ConfigurationValueType.INTEGER);
+        } catch (NumberFormatException ignored) {
+        }
+
+        try {
+            Float f = Float.valueOf(value.get());
+            if (!f.isInfinite()) {
+                return Optional.of(ConfigurationValueType.FLOAT);
+            }
+        } catch (NumberFormatException ignored) {
+        }
+
+        try {
+            Double.valueOf(value.get());
+            return Optional.of(ConfigurationValueType.DOUBLE);
+        } catch (NumberFormatException ignored) {
+        }
+
+        return Optional.of(ConfigurationValueType.STRING);
+
+    }
+
+    public Optional<List<String>> getMapKeys(String key) {
+
+        Set<String> mapKeys = new HashSet<>();
+
+        for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
+
+            Optional<List<String>> value = configurationSource.getMapKeys(key);
+
+            value.ifPresent(mapKeys::addAll);
+        }
+
+        if (mapKeys.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(new ArrayList<>(mapKeys));
     }
 }

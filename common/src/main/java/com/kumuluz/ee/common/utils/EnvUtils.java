@@ -26,7 +26,8 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
- * @author Tilen
+ * @author Tilen Faganel
+ * @since 1.0.0
  */
 public class EnvUtils {
 

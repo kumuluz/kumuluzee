@@ -20,6 +20,7 @@
 */
 package com.kumuluz.ee.common.config;
 
+import com.kumuluz.ee.common.utils.StringUtils;
 import com.kumuluz.ee.common.wrapper.EeComponentWrapper;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
 
@@ -83,19 +84,25 @@ public class EeConfig {
 
                 Optional<String> jndiName = cfg.get("kumuluzee.xa-datasources[" + i + "].jndi-name");
                 Optional<String> xaDatasourceClass = cfg.get("kumuluzee.xa-datasources[" + i + "].xa-datasource-class");
-                Optional<String> serverName = cfg.get("kumuluzee.xa-datasources[" + i + "].server-name");
-                Optional<String> portNumber = cfg.get("kumuluzee.xa-datasources[" + i + "].port-number");
-                Optional<String> databaseName = cfg.get("kumuluzee.xa-datasources[" + i + "].database-name");
                 Optional<String> user = cfg.get("kumuluzee.xa-datasources[" + i + "].username");
                 Optional<String> pass = cfg.get("kumuluzee.xa-datasources[" + i + "].password");
 
                 jndiName.ifPresent(xdsc::setJndiName);
                 xaDatasourceClass.ifPresent(xdsc::setXaDatasourceClass);
-                serverName.ifPresent(xdsc::setServerName);
-                portNumber.ifPresent(xdsc::setPortNumber);
-                databaseName.ifPresent(xdsc::setDatabaseName);
                 user.ifPresent(xdsc::setUsername);
                 pass.ifPresent(xdsc::setPassword);
+
+                Optional<List<String>> props = cfg.getMapKeys("kumuluzee.xa-datasources[" + i + "].props");
+
+                if (props.isPresent()) {
+
+                    for (String propName : props.get()) {
+
+                        Optional<String> propValue = cfg.get("kumuluzee.xa-datasources[" + i + "].props." + propName);
+
+                        propValue.ifPresent(v -> xdsc.getProps().put(StringUtils.hyphenCaseToCamelCase(propName), v));
+                    }
+                }
 
                 xaDatasources.add(xdsc);
             }

@@ -20,6 +20,7 @@
 */
 package com.kumuluz.ee.configuration.cdi.interceptors;
 
+import com.kumuluz.ee.common.utils.StringUtils;
 import com.kumuluz.ee.configuration.cdi.ConfigBundle;
 import com.kumuluz.ee.configuration.cdi.ConfigValue;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
@@ -139,7 +140,7 @@ public class ConfigBundleInterceptor {
         // get prefix
         String prefix = ((ConfigBundle) targetClass.getAnnotation(ConfigBundle.class)).value();
         if (prefix.isEmpty()) {
-            prefix = camelCaseToHyphenCase(targetClass.getSimpleName());
+            prefix = StringUtils.camelCaseToHyphenCase(targetClass.getSimpleName());
         }
 
         // get ConfigValue
@@ -150,10 +151,10 @@ public class ConfigBundleInterceptor {
         }
 
         if (fieldAnnotation != null && !fieldAnnotation.value().isEmpty()) {
-            key = prefix + "." + camelCaseToHyphenCase(fieldAnnotation.value());
+            key = prefix + "." + StringUtils.camelCaseToHyphenCase(fieldAnnotation.value());
 
         } else {
-            key = prefix + "." + camelCaseToHyphenCase(setter.substring(3));
+            key = prefix + "." + StringUtils.camelCaseToHyphenCase(setter.substring(3));
         }
 
         return key;
@@ -168,29 +169,6 @@ public class ConfigBundleInterceptor {
      */
     private String setterToField(String setter) {
         return Character.toLowerCase(setter.charAt(3)) + setter.substring(4);
-    }
-
-    /**
-     * Parse upper camel case to lower hyphen case.
-     *
-     * @param s string in upper camel case format
-     * @return string in lower hyphen case format
-     */
-    private String camelCaseToHyphenCase(String s) {
-
-        StringBuilder parsedString = new StringBuilder(s.substring(0, 1).toLowerCase());
-
-        for (char c : s.substring(1).toCharArray()) {
-
-            if (Character.isUpperCase(c)) {
-                parsedString.append("-").append(Character.toLowerCase(c));
-            } else {
-                parsedString.append(c);
-            }
-
-        }
-
-        return parsedString.toString();
     }
 
     /**
