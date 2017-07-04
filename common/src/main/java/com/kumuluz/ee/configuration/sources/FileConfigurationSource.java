@@ -211,17 +211,17 @@ public class FileConfigurationSource implements ConfigurationSource {
     public Optional<List<String>> getMapKeys(String key) {
 
         Object o = getValue(key);
-        Map map = null;
+        Map<String, Object> map = null;
 
         if (o instanceof Map) {
-            map = (Map) o;
+            map = (Map<String, Object>) o;
         }
 
         if (map == null || map.isEmpty()) {
             return Optional.empty();
         }
 
-        return Optional.of(new ArrayList(map.keySet()));
+        return Optional.of(new ArrayList<>(map.keySet()));
 
     }
 
