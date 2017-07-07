@@ -216,10 +216,14 @@ public class ConfigurationUtil {
         Set<String> mapKeys = new HashSet<>();
 
         for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
-
             Optional<List<String>> value = configurationSource.getMapKeys(key);
-
-            value.ifPresent(mapKeys::addAll);
+            if (value.isPresent()) {
+                for (String s : value.get()) {
+                    if (!mapKeys.contains(s.replace("-", ""))) {
+                        mapKeys.add(s);
+                    }
+                }
+            }
         }
 
         if (mapKeys.isEmpty()) {
