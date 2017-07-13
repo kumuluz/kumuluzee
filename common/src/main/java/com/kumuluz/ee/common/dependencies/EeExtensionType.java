@@ -30,7 +30,8 @@ public enum EeExtensionType {
     DISCOVERY("Discovery"),
     SECURITY("Security"),
     CIRCUIT_BREAKER("Circuit Breaker"),
-    LOGS("Logs");
+    LOGS("Logs"),
+    STREAMING("Streaming");
 
     private final String name;
 
