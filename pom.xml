@@ -15,6 +15,7 @@
         <module>components</module>
         <module>bom</module>
         <module>profiles</module>
+        <module>tools</module>
     </modules>
 
     <name>KumuluzEE</name>
@@ -273,6 +274,23 @@
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-microProfile-1.0</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-tools</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-loader</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <type>maven-plugin</type>
             </dependency>
 
             <!-- Java EE specification dependencies-->
