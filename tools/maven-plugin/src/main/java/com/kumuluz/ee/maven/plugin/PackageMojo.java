@@ -20,6 +20,7 @@
 */
 package com.kumuluz.ee.maven.plugin;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.BuildPluginManager;
@@ -29,11 +30,15 @@ import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.project.MavenProject;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
 
@@ -50,7 +55,7 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
 public class PackageMojo extends AbstractMojo {
 
     private static final String LOADER_JAR = "META-INF/loader/kumuluzee-loader.jar";
-    private static final String LOADER_JAR_GAV = "com.kumuluz.ee:kumuluzee-loader:2.3.0-SNAPSHOT";
+//    private static final String LOADER_JAR_GAV = "com.kumuluz.ee:kumuluzee-loader:2.3.0-SNAPSHOT";
     private static final String TEMP_DIR_NAME_PREFIX = "kumuluzee-loader.";
     private static final String CLASS_SUFFIX = ".class";
 
@@ -105,76 +110,78 @@ public class PackageMojo extends AbstractMojo {
         );
     }
 
-    private void unpackDependencies() throws MojoExecutionException {
-        ExecutionEnvironment executionEnvironment = executionEnvironment(mavenProject, mavenSession, buildPluginManager);
-
+//    private void unpackDependencies() throws MojoExecutionException {
+//        ExecutionEnvironment executionEnvironment = executionEnvironment(mavenProject, mavenSession, buildPluginManager);
+//
 //        try {
-            executeMojo(
-                    plugin(
-                            groupId("org.apache.maven.plugins"),
-                            artifactId("maven-dependency-plugin"),
-                            version("3.0.1")
-                    ),
-                    goal("unpack"),
-                    configuration(
-                            element("artifact", LOADER_JAR_GAV),
-                            element("excludes", "META-INF/**"),
-                            element("outputDirectory", "${project.build.directory}/classes")
-                    ),
-                    executionEnvironment
-            );
+//            executeMojo(
+//                    plugin(
+//                            groupId("org.apache.maven.plugins"),
+//                            artifactId("maven-dependency-plugin"),
+//                            version("3.0.1")
+//                    ),
+//                    goal("unpack"),
+//                    configuration(
+//                            element("artifact", LOADER_JAR_GAV),
+//                            element("excludes", "META-INF/**"),
+//                            element("outputDirectory", "${project.build.directory}/classes")
+//                    ),
+//                    executionEnvironment
+//            );
 //        } catch (MojoExecutionException e) {
 //            unpackDependenciesFallback();
 //        }
-    }
-
-//    private void unpackDependenciesFallback() throws MojoExecutionException {
-//        try {
-//            // get plugin JAR
-//            String pluginJarPath = getPluginJarPath();
-//            JarFile pluginJar = new JarFile(new File(pluginJarPath));
-//
-//            // extract loader JAR from plugin JAR
-//            JarEntry pluginJarloaderJarEntry = pluginJar.getJarEntry(LOADER_JAR);
-//            InputStream loaderJarInputStream = pluginJar.getInputStream(pluginJarloaderJarEntry);
-//
-//            File tmpDirectory = new File(System.getProperty("java.io.tmpdir"), "EeBootLoader");
-//            if (!tmpDirectory.exists()) {
-//                tmpDirectory.mkdir();
-//            }
-//            chmod777(tmpDirectory);
-//
-//            File tmpLoaderJarFile = File.createTempFile(TEMP_DIR_NAME_PREFIX, null, tmpDirectory);
-//            tmpLoaderJarFile.deleteOnExit();
-//            chmod777(tmpLoaderJarFile);
-//
-//            FileUtils.copyInputStreamToFile(loaderJarInputStream, tmpLoaderJarFile);
-//
-//            // extract loader JAR contents
-//            JarFile loaderJar = new JarFile(tmpLoaderJarFile);
-//            loaderJar
-//                    .stream()
-//                    .parallel()
-//                    .filter(loaderJarEntry -> loaderJarEntry.getName().toLowerCase().endsWith(CLASS_SUFFIX))
-//                    .forEach(loaderJarEntry -> {
-//                        try {
-//                            File file = new File(mavenProject.getBuild().getDirectory(), "classes/" + loaderJarEntry.getName());
-//                            if (file.getParentFile() != null) {
-//                                file.getParentFile().mkdirs();
-//                            }
-//
-//                            InputStream inputStream = loaderJar.getInputStream(loaderJarEntry);
-//                            FileUtils.copyInputStreamToFile(inputStream, file);
-//                        } catch (IOException e) {
-//                            // ignore
-//                        }
-//                    });
-//
-//            loaderJar.close();
-//        } catch (IOException e) {
-//            throw new MojoExecutionException("Failed to unpack kumuluzee-loader dependency: " + e.getMessage() + ".");
-//        }
 //    }
+
+    private void unpackDependencies() throws MojoExecutionException {
+        getLog().info("Unpacking kumuluzee-loader dependency.");
+
+        try {
+            // get plugin JAR
+            String pluginJarPath = getPluginJarPath();
+            JarFile pluginJar = new JarFile(new File(pluginJarPath));
+
+            // extract loader JAR from plugin JAR
+            JarEntry pluginJarloaderJarEntry = pluginJar.getJarEntry(LOADER_JAR);
+            InputStream loaderJarInputStream = pluginJar.getInputStream(pluginJarloaderJarEntry);
+
+            File tmpDirectory = new File(System.getProperty("java.io.tmpdir"), "EeBootLoader");
+            if (!tmpDirectory.exists()) {
+                tmpDirectory.mkdir();
+            }
+            chmod777(tmpDirectory);
+
+            File tmpLoaderJarFile = File.createTempFile(TEMP_DIR_NAME_PREFIX, null, tmpDirectory);
+            tmpLoaderJarFile.deleteOnExit();
+            chmod777(tmpLoaderJarFile);
+
+            FileUtils.copyInputStreamToFile(loaderJarInputStream, tmpLoaderJarFile);
+
+            // extract loader JAR contents
+            JarFile loaderJar = new JarFile(tmpLoaderJarFile);
+            loaderJar
+                    .stream()
+                    .parallel()
+                    .filter(loaderJarEntry -> loaderJarEntry.getName().toLowerCase().endsWith(CLASS_SUFFIX))
+                    .forEach(loaderJarEntry -> {
+                        try {
+                            File file = new File(mavenProject.getBuild().getDirectory(), "classes/" + loaderJarEntry.getName());
+                            if (file.getParentFile() != null) {
+                                file.getParentFile().mkdirs();
+                            }
+
+                            InputStream inputStream = loaderJar.getInputStream(loaderJarEntry);
+                            FileUtils.copyInputStreamToFile(inputStream, file);
+                        } catch (IOException e) {
+                            // ignore
+                        }
+                    });
+
+            loaderJar.close();
+        } catch (IOException e) {
+            throw new MojoExecutionException("Failed to unpack kumuluzee-loader dependency: " + e.getMessage() + ".");
+        }
+    }
 
     private String getPluginJarPath() throws MojoExecutionException {
         try {
