@@ -31,7 +31,8 @@ public enum EeExtensionType {
     SECURITY("Security"),
     CIRCUIT_BREAKER("Circuit Breaker"),
     LOGS("Logs"),
-    STREAMING("Streaming");
+    STREAMING("Streaming"),
+    METRICS("Metrics");
 
     private final String name;
 
