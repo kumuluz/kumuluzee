@@ -30,6 +30,8 @@ public class ServerConfig {
 
     public static final String PORT_ENV = "PORT";
 
+    public static final String SSL_PORT_ENV = "SSL_PORT";
+
     public static final String MIN_THREADS_ENV = "MIN_THREADS";
 
     public static final String MAX_THREADS_ENV = "MAX_THREADS";
@@ -40,7 +42,19 @@ public class ServerConfig {
 
     public static final String CONTEXT_PATH_ENV = "CONTEXT_PATH";
 
+    public static final String KEYSTORE_PATH_ENV = "KEYSTORE_PATH";
+
+    public static final String KEYSTORE_PASSWORD_ENV = "KEYSTORE_PASSWORD";
+
+    public static final String KEY_MANAGER_PASS_ENV = "KEY_MANAGER_PASSWORD";
+
+    public static final String ENABLE_SSL_ENV = "ENABLE_SSL";
+
+    public static final String FORCE_SSL_ENV = "FORCE_SSL";
+
     private Integer port = 8080;
+
+    private Integer sslPort = 8443;
 
     private String contextPath = "/";
 
@@ -56,14 +70,30 @@ public class ServerConfig {
 
     private Integer responseHeaderSize = 8 * 1024;
 
+    private String keystorePath = System.getProperty("javax.net.ssl.keyStore");
+
+    private String keystorePassword = System.getProperty("javax.net.ssl.keyStorePassword");
+
+    private String keyManagerPassword;
+
+    private Boolean enableSSL = false;
+
+    private Boolean forceSSL = false;
+
     public ServerConfig() {
 
         EnvUtils.getEnvAsInteger(PORT_ENV, this::setPort);
+        EnvUtils.getEnvAsInteger(SSL_PORT_ENV, this::setSSLPort);
         EnvUtils.getEnvAsInteger(MIN_THREADS_ENV, this::setMinThreads);
         EnvUtils.getEnvAsInteger(MAX_THREADS_ENV, this::setMaxThreads);
         EnvUtils.getEnvAsInteger(REQUEST_HEADER_SIZE, this::setRequestHeaderSize);
         EnvUtils.getEnvAsInteger(RESPONSE_HEADER_SIZE, this::setResponseHeaderSize);
         EnvUtils.getEnv(CONTEXT_PATH_ENV, this::setContextPath);
+        EnvUtils.getEnv(KEYSTORE_PATH_ENV, this::setKeystorePath);
+        EnvUtils.getEnv(KEYSTORE_PASSWORD_ENV, this::setKeystorePassword);
+        EnvUtils.getEnv(KEY_MANAGER_PASS_ENV, this::setKeyManagerPassword);
+        EnvUtils.getEnvAsBoolean(ENABLE_SSL_ENV, this::setEnableSSL);
+        EnvUtils.getEnvAsBoolean(FORCE_SSL_ENV, this::setForceSSL);
     }
 
     public Integer getPort() {
@@ -72,6 +102,14 @@ public class ServerConfig {
 
     public void setPort(Integer port) {
         this.port = port;
+    }
+
+    public Integer getSSLPort() {
+        return sslPort;
+    }
+
+    public void setSSLPort(Integer sslPort) {
+        this.sslPort = sslPort;
     }
 
     public String getContextPath() {
@@ -128,5 +166,50 @@ public class ServerConfig {
 
     public void setResponseHeaderSize(Integer responseHeaderSize) {
         this.responseHeaderSize = responseHeaderSize;
+    }
+
+    public String getKeystorePath() {
+        return keystorePath;
+    }
+
+    public void setKeystorePath(String keystorePath) {
+        this.keystorePath = keystorePath;
+    }
+
+    public String getKeystorePassword() {
+        return keystorePassword;
+    }
+
+    public void setKeystorePassword(String keystorePassword) {
+        this.keystorePassword = keystorePassword;
+    }
+
+    public String getKeyManagerPassword() {
+        return keyManagerPassword;
+    }
+
+    public void setKeyManagerPassword(String keyManagerPassword) {
+        this.keyManagerPassword = keyManagerPassword;
+    }
+
+    public Boolean getEnableSSL() {
+        return enableSSL;
+    }
+
+    public void setEnableSSL(Boolean enableSSL) {
+        this.enableSSL = enableSSL;
+    }
+
+    public Boolean getForceSSL() {
+        return forceSSL;
+    }
+
+    public void setForceSSL(Boolean forceSSL) {
+        this.forceSSL = forceSSL;
+    }
+
+    private String getDefaultKeystorePath() {
+        String jrePath = System.getProperty("java.home");
+        return keystorePath;
     }
 }

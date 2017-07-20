@@ -21,27 +21,22 @@
 package com.kumuluz.ee.jetty;
 
 import com.kumuluz.ee.common.config.ServerConfig;
-
+import com.kumuluz.ee.common.utils.StringUtils;
 import org.eclipse.jetty.annotations.AnnotationConfiguration;
 import org.eclipse.jetty.plus.webapp.EnvConfiguration;
 import org.eclipse.jetty.plus.webapp.PlusConfiguration;
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.HttpConfiguration;
-import org.eclipse.jetty.server.HttpConnectionFactory;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.util.log.JavaUtilLog;
 import org.eclipse.jetty.util.log.Log;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
-import org.eclipse.jetty.webapp.Configuration;
-import org.eclipse.jetty.webapp.FragmentConfiguration;
-import org.eclipse.jetty.webapp.JettyWebXmlConfiguration;
-import org.eclipse.jetty.webapp.MetaInfConfiguration;
-import org.eclipse.jetty.webapp.WebInfConfiguration;
-import org.eclipse.jetty.webapp.WebXmlConfiguration;
+import org.eclipse.jetty.webapp.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * @author Tilen Faganel
@@ -71,9 +66,7 @@ public class JettyFactory {
 
         server.addBean(createClassList());
         server.setStopAtShutdown(true);
-        server.setConnectors(new Connector[]{
-                createConnector(server)
-        });
+        server.setConnectors(createConnectors(server));
 
         return server;
     }
@@ -91,23 +84,64 @@ public class JettyFactory {
         return threadPool;
     }
 
-    protected Connector createConnector(final Server server) {
+    protected Connector[] createConnectors(final Server server) {
 
-        HttpConfiguration configuration = new HttpConfiguration();
-        configuration.setRequestHeaderSize(serverConfig.getRequestHeaderSize());
-        configuration.setResponseHeaderSize(serverConfig.getResponseHeaderSize());
+        List<ServerConnector> connectors = new ArrayList<>();
 
-        ServerConnector connector = new ServerConnector(
-                server, new HttpConnectionFactory(configuration));
+        if (!serverConfig.getForceSSL()) {
+            HttpConfiguration httpConfiguration = new HttpConfiguration();
+            httpConfiguration.setRequestHeaderSize(serverConfig.getRequestHeaderSize());
+            httpConfiguration.setResponseHeaderSize(serverConfig.getResponseHeaderSize());
 
-        connector.setPort(serverConfig.getPort());
+            ServerConnector httpConnector = new ServerConnector(server, new HttpConnectionFactory(httpConfiguration));
 
-        connector.setIdleTimeout(serverConfig.getIdleTimeout());
-        connector.setSoLingerTime(serverConfig.getSoLingerTime());
+            httpConnector.setPort(serverConfig.getPort());
 
-        log.info("Starting KumuluzEE on port " + serverConfig.getPort());
+            httpConnector.setIdleTimeout(serverConfig.getIdleTimeout());
+            httpConnector.setSoLingerTime(serverConfig.getSoLingerTime());
 
-        return connector;
+            connectors.add(httpConnector);
+        }
+
+        if (serverConfig.getEnableSSL() || serverConfig.getForceSSL()) {
+            if (StringUtils.isNullOrEmpty(serverConfig.getKeystorePath())) {
+                throw new IllegalStateException("Cannot create SSL connector; keystore path not specified.");
+            }
+
+            if (StringUtils.isNullOrEmpty(serverConfig.getKeystorePassword())) {
+                throw new IllegalStateException("Cannot create SSL connector; keystore password not specified.");
+            }
+
+            HttpConfiguration httpsConfiguration = new HttpConfiguration();
+            httpsConfiguration.setRequestHeaderSize(serverConfig.getRequestHeaderSize());
+            httpsConfiguration.setResponseHeaderSize(serverConfig.getResponseHeaderSize());
+            httpsConfiguration.addCustomizer(new SecureRequestCustomizer());
+
+            SslContextFactory sslContextFactory = new SslContextFactory();
+            sslContextFactory.setKeyStorePath(serverConfig.getKeystorePath());
+            sslContextFactory.setKeyStorePassword(serverConfig.getKeystorePassword());
+            sslContextFactory.setKeyManagerPassword(serverConfig.getKeyManagerPassword());
+
+            ServerConnector httpsConnector = new ServerConnector(
+                    server,
+                    new SslConnectionFactory(sslContextFactory, "http/1.1"),
+                    new HttpConnectionFactory(httpsConfiguration)
+            );
+
+            httpsConnector.setPort(serverConfig.getSSLPort());
+
+            connectors.add(httpsConnector);
+        }
+
+        String ports = connectors.stream()
+                .map(connector ->
+                        String.format("%d [%s]",connector.getPort(), String.join(", ", connector.getProtocols()))
+                )
+                .collect(Collectors.joining(", "));
+
+        log.info(String.format("Starting KumuluzEE on port(s): %s", ports));
+
+        return connectors.toArray(new ServerConnector[connectors.size()]);
     }
 
     protected Configuration.ClassList createClassList() {

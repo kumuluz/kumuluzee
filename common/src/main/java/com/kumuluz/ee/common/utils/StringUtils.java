@@ -20,7 +20,6 @@
 */
 package com.kumuluz.ee.common.utils;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -69,5 +68,9 @@ public class StringUtils {
         }
 
         return parsedString.toString();
+    }
+
+    public static boolean isNullOrEmpty(String s) {
+        return s == null || s.isEmpty();
     }
 }
