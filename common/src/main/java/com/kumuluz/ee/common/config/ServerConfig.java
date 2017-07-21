@@ -207,9 +207,4 @@ public class ServerConfig {
     public void setForceSSL(Boolean forceSSL) {
         this.forceSSL = forceSSL;
     }
-
-    private String getDefaultKeystorePath() {
-        String jrePath = System.getProperty("java.home");
-        return keystorePath;
-    }
 }
