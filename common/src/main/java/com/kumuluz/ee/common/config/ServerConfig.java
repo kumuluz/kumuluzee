@@ -20,37 +20,11 @@
 */
 package com.kumuluz.ee.common.config;
 
-import com.kumuluz.ee.common.utils.EnvUtils;
-
 /**
  * @author Tilen Faganel
  * @since 1.0.0
  */
 public class ServerConfig {
-
-    public static final String PORT_ENV = "PORT";
-
-    public static final String SSL_PORT_ENV = "SSL_PORT";
-
-    public static final String MIN_THREADS_ENV = "MIN_THREADS";
-
-    public static final String MAX_THREADS_ENV = "MAX_THREADS";
-
-    public static final String REQUEST_HEADER_SIZE = "REQUEST_HEADER_SIZE";
-
-    public static final String RESPONSE_HEADER_SIZE = "RESPONSE_HEADER_SIZE";
-
-    public static final String CONTEXT_PATH_ENV = "CONTEXT_PATH";
-
-    public static final String KEYSTORE_PATH_ENV = "KEYSTORE_PATH";
-
-    public static final String KEYSTORE_PASSWORD_ENV = "KEYSTORE_PASSWORD";
-
-    public static final String KEY_MANAGER_PASS_ENV = "KEY_MANAGER_PASSWORD";
-
-    public static final String ENABLE_SSL_ENV = "ENABLE_SSL";
-
-    public static final String FORCE_SSL_ENV = "FORCE_SSL";
 
     private Integer port = 8080;
 
@@ -81,19 +55,6 @@ public class ServerConfig {
     private Boolean forceSSL = false;
 
     public ServerConfig() {
-
-        EnvUtils.getEnvAsInteger(PORT_ENV, this::setPort);
-        EnvUtils.getEnvAsInteger(SSL_PORT_ENV, this::setSSLPort);
-        EnvUtils.getEnvAsInteger(MIN_THREADS_ENV, this::setMinThreads);
-        EnvUtils.getEnvAsInteger(MAX_THREADS_ENV, this::setMaxThreads);
-        EnvUtils.getEnvAsInteger(REQUEST_HEADER_SIZE, this::setRequestHeaderSize);
-        EnvUtils.getEnvAsInteger(RESPONSE_HEADER_SIZE, this::setResponseHeaderSize);
-        EnvUtils.getEnv(CONTEXT_PATH_ENV, this::setContextPath);
-        EnvUtils.getEnv(KEYSTORE_PATH_ENV, this::setKeystorePath);
-        EnvUtils.getEnv(KEYSTORE_PASSWORD_ENV, this::setKeystorePassword);
-        EnvUtils.getEnv(KEY_MANAGER_PASS_ENV, this::setKeyManagerPassword);
-        EnvUtils.getEnvAsBoolean(ENABLE_SSL_ENV, this::setEnableSSL);
-        EnvUtils.getEnvAsBoolean(FORCE_SSL_ENV, this::setForceSSL);
     }
 
     public Integer getPort() {

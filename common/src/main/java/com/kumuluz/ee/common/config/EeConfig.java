@@ -24,7 +24,10 @@ import com.kumuluz.ee.common.utils.StringUtils;
 import com.kumuluz.ee.common.wrapper.EeComponentWrapper;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 /**
  * @author Tilen Faganel
@@ -44,9 +47,42 @@ public class EeConfig {
     public void init() {
         this.version = ResourceBundle.getBundle("version").getString("version");
 
-        persistenceConfigs.add(new PersistenceConfig());
-
         ConfigurationUtil cfg = ConfigurationUtil.getInstance();
+
+        Optional<List<String>> serverCfgOpt = cfg.getMapKeys("kumuluzee.server");
+        if (serverCfgOpt.isPresent()) {
+            serverConfig = new ServerConfig();
+
+            Optional<Integer> port = cfg.getInteger("kumuluzee.server.port");
+            Optional<Integer> minThreads = cfg.getInteger("kumuluzee.server.min-threads");
+            Optional<Integer> maxThreads = cfg.getInteger("kumuluzee.server.max-threads");
+            Optional<Integer> requestHeaderSize = cfg.getInteger("kumuluzee.server.request-header-size");
+            Optional<Integer> responseHeaderSize = cfg.getInteger("kumuluzee.server.response-header-size");
+            Optional<String> contextPath = cfg.get("kumuluzee.server.context-path");
+
+            Optional<Integer> sslPort = cfg.getInteger("kumuluzee.server.ssl-port");
+            Optional<String> keystorePath = cfg.get("kumuluzee.server.keystore-path");
+            Optional<String> keystorePassword = cfg.get("kumuluzee.server.keystore-password");
+            Optional<String> keymanagerPassword = cfg.get("kumuluzee.server.keymanager-password");
+            Optional<Boolean> enableSSL = cfg.getBoolean("kumuluzee.server.enable-ssl");
+            Optional<Boolean> forceSSL = cfg.getBoolean("kumuluzee.server.force-ssl");
+
+            port.ifPresent(serverConfig::setPort);
+            minThreads.ifPresent(serverConfig::setMinThreads);
+            maxThreads.ifPresent(serverConfig::setMaxThreads);
+            requestHeaderSize.ifPresent(serverConfig::setRequestHeaderSize);
+            responseHeaderSize.ifPresent(serverConfig::setResponseHeaderSize);
+            contextPath.ifPresent(serverConfig::setContextPath);
+
+            sslPort.ifPresent(serverConfig::setSSLPort);
+            keystorePath.ifPresent(serverConfig::setKeystorePath);
+            keystorePassword.ifPresent(serverConfig::setKeystorePassword);
+            keymanagerPassword.ifPresent(serverConfig::setKeyManagerPassword);
+            enableSSL.ifPresent(serverConfig::setEnableSSL);
+            forceSSL.ifPresent(serverConfig::setForceSSL);
+        }
+
+        persistenceConfigs.add(new PersistenceConfig());
 
         Optional<Integer> dsSizeOpt = cfg.getListSize("kumuluzee.datasources");
 
