@@ -52,8 +52,8 @@ The following extensions are available with more planned soon:
 - [KumuluzEE Security](https://github.com/kumuluz/kumuluzee-security) (For easy integration with OAuth2/OpenID identity and access management providers)
 - [KumuluzEE Fault Tolerance](https://github.com/kumuluz/kumuluzee-fault-tolerance) (For implementing fault tolerance patterns with microservices including circuit breakers and decoupling microservices)
 - [KumuluzEE Event Streaming](https://github.com/kumuluz/kumuluzee-streaming) (For event streaming support using Apache Kafka)
-- [KumuluzEE Tools]( https://github.com/kumuluz) (For various tools, such as packing and running microservices as uber JARs)
 - [KumuluzEE CORS]( https://github.com/kumuluz) (For Cross-Origin Resource Sharing (CORS) support)
+- [KumuluzEE Tools]( https://github.com/kumuluz) (For various tools, such as packing and running microservices as uber JARs)
 
 
 If you already know how to use Java EE, then you already know how to use KumuluzEE. It is simple and straightforward. See the [getting started](https://github.com/kumuluz/KumuluzEE/wiki/Getting-started) wiki section to create your first light-weight standalone Java EE app in 5 minutes. Refer to [samples](https://github.com/kumuluz/kumuluzee-samples) for more examples.
