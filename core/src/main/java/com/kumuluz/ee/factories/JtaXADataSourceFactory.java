@@ -18,7 +18,7 @@
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
 */
-package com.kumuluz.ee.builders;
+package com.kumuluz.ee.factories;
 
 import com.kumuluz.ee.common.datasources.NonJtaXADataSourceWrapper;
 import com.kumuluz.ee.jta.common.datasources.JtaXADataSourceWrapper;
@@ -29,7 +29,7 @@ import javax.sql.XADataSource;
  * @author Tilen Faganel
  * @since 2.3.0
  */
-public class JtaXADataSourceBuilder {
+public class JtaXADataSourceFactory {
 
     public static NonJtaXADataSourceWrapper buildJtaXADataSourceWrapper(XADataSource xaDataSource) {
 

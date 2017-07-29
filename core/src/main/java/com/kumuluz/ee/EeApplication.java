@@ -20,8 +20,8 @@
 */
 package com.kumuluz.ee;
 
-import com.kumuluz.ee.builders.EeConfigFactory;
-import com.kumuluz.ee.builders.JtaXADataSourceBuilder;
+import com.kumuluz.ee.factories.EeConfigFactory;
+import com.kumuluz.ee.factories.JtaXADataSourceFactory;
 import com.kumuluz.ee.common.*;
 import com.kumuluz.ee.common.config.DataSourceConfig;
 import com.kumuluz.ee.common.config.EeConfig;
@@ -181,7 +181,7 @@ public class EeApplication {
                     XADataSourceWrapper xaDataSourceWrapper;
 
                     if (jtaPresent) {
-                        xaDataSourceWrapper = JtaXADataSourceBuilder.buildJtaXADataSourceWrapper(xaDataSource);
+                        xaDataSourceWrapper = JtaXADataSourceFactory.buildJtaXADataSourceWrapper(xaDataSource);
                     } else {
                         xaDataSourceWrapper = new NonJtaXADataSourceWrapper(xaDataSource);
                     }
