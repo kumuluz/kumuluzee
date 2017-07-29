@@ -52,6 +52,12 @@ public class StringUtils {
         return parsedString.toString();
     }
 
+    /**
+     * Parse lower hyphen case to upper camel case.
+     *
+     * @param s string in lower hyphen case format
+     * @return string in upper camel case format
+     */
     public static String hyphenCaseToCamelCase(String s) {
 
         List<String> words = Stream.of(s.split("-")).filter(w -> !"".equals(w)).collect(Collectors.toList());
@@ -70,6 +76,12 @@ public class StringUtils {
         return parsedString.toString();
     }
 
+    /**
+     * Check whether the string is null or empty
+     *
+     * @param s string to check.
+     * @return 'true' if string is null or empty, 'false' otherwise.
+     */
     public static boolean isNullOrEmpty(String s) {
         return s == null || s.isEmpty();
     }

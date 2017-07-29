@@ -26,146 +26,90 @@ package com.kumuluz.ee.common.config;
  */
 public class ServerConfig {
 
-    private Integer port = 8080;
+    public static class Builder {
 
-    private Integer sslPort = 8443;
+        private String contextPath = "/";
+        private Integer minThreads = 5;
+        private Integer maxThreads = 100;
+        private Boolean forceHttps = false;
 
-    private String contextPath = "/";
+        private ServerConnectorConfig.Builder http = new ServerConnectorConfig.Builder();
+        private ServerConnectorConfig.Builder https = new ServerConnectorConfig.Builder();
 
-    private Integer idleTimeout = 60 * 60 * 1000;
+        public Builder contextPath(String contextPath) {
+            this.contextPath = contextPath;
+            return this;
+        }
 
-    private Integer soLingerTime = -1;
+        public Builder minThreads(Integer minThreads) {
+            this.minThreads = minThreads;
+            return this;
+        }
 
-    private Integer minThreads = 5;
+        public Builder maxThreads(Integer maxThreads) {
+            this.maxThreads = maxThreads;
+            return this;
+        }
 
-    private Integer maxThreads = 100;
+        public Builder forceHttps(Boolean forceHttps) {
+            this.forceHttps = forceHttps;
+            return this;
+        }
 
-    private Integer requestHeaderSize = 8 * 1024;
+        public Builder http(ServerConnectorConfig.Builder http) {
+            this.http = http;
+            return this;
+        }
 
-    private Integer responseHeaderSize = 8 * 1024;
+        public Builder https(ServerConnectorConfig.Builder https) {
+            this.https = https;
+            return this;
+        }
 
-    private String keystorePath = System.getProperty("javax.net.ssl.keyStore");
+        public ServerConfig build() {
 
-    private String keystorePassword = System.getProperty("javax.net.ssl.keyStorePassword");
+            ServerConfig serverConfig = new ServerConfig();
+            serverConfig.contextPath = contextPath;
+            serverConfig.minThreads = minThreads;
+            serverConfig.maxThreads = maxThreads;
+            serverConfig.forceHttps = forceHttps;
 
-    private String keyManagerPassword;
+            serverConfig.http = http.build();
+            serverConfig.https = https.build();
 
-    private Boolean enableSSL = false;
-
-    private Boolean forceSSL = false;
-
-    public ServerConfig() {
+            return serverConfig;
+        }
     }
 
-    public Integer getPort() {
-        return port;
-    }
+    private String contextPath;
+    private Integer minThreads;
+    private Integer maxThreads;
+    private Boolean forceHttps;
 
-    public void setPort(Integer port) {
-        this.port = port;
-    }
-
-    public Integer getSSLPort() {
-        return sslPort;
-    }
-
-    public void setSSLPort(Integer sslPort) {
-        this.sslPort = sslPort;
-    }
+    private ServerConnectorConfig http;
+    private ServerConnectorConfig https;
 
     public String getContextPath() {
         return contextPath;
-    }
-
-    public void setContextPath(String contextPath) {
-        this.contextPath = contextPath;
-    }
-
-    public Integer getIdleTimeout() {
-        return idleTimeout;
-    }
-
-    public void setIdleTimeout(Integer idleTimeout) {
-        this.idleTimeout = idleTimeout;
-    }
-
-    public Integer getSoLingerTime() {
-        return soLingerTime;
-    }
-
-    public void setSoLingerTime(Integer soLingerTime) {
-        this.soLingerTime = soLingerTime;
     }
 
     public Integer getMinThreads() {
         return minThreads;
     }
 
-    public void setMinThreads(Integer minThreads) {
-        this.minThreads = minThreads;
-    }
-
     public Integer getMaxThreads() {
         return maxThreads;
     }
 
-    public void setMaxThreads(Integer maxThreads) {
-        this.maxThreads = maxThreads;
+    public Boolean getForceHttps() {
+        return forceHttps;
     }
 
-    public Integer getRequestHeaderSize() {
-        return requestHeaderSize;
+    public ServerConnectorConfig getHttp() {
+        return http;
     }
 
-    public void setRequestHeaderSize(Integer requestHeaderSize) {
-        this.requestHeaderSize = requestHeaderSize;
-    }
-
-    public Integer getResponseHeaderSize() {
-        return responseHeaderSize;
-    }
-
-    public void setResponseHeaderSize(Integer responseHeaderSize) {
-        this.responseHeaderSize = responseHeaderSize;
-    }
-
-    public String getKeystorePath() {
-        return keystorePath;
-    }
-
-    public void setKeystorePath(String keystorePath) {
-        this.keystorePath = keystorePath;
-    }
-
-    public String getKeystorePassword() {
-        return keystorePassword;
-    }
-
-    public void setKeystorePassword(String keystorePassword) {
-        this.keystorePassword = keystorePassword;
-    }
-
-    public String getKeyManagerPassword() {
-        return keyManagerPassword;
-    }
-
-    public void setKeyManagerPassword(String keyManagerPassword) {
-        this.keyManagerPassword = keyManagerPassword;
-    }
-
-    public Boolean getEnableSSL() {
-        return enableSSL;
-    }
-
-    public void setEnableSSL(Boolean enableSSL) {
-        this.enableSSL = enableSSL;
-    }
-
-    public Boolean getForceSSL() {
-        return forceSSL;
-    }
-
-    public void setForceSSL(Boolean forceSSL) {
-        this.forceSSL = forceSSL;
+    public ServerConnectorConfig getHttps() {
+        return https;
     }
 }

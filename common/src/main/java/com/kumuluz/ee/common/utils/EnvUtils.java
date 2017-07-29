@@ -35,7 +35,7 @@ public class EnvUtils {
 
         Optional.ofNullable(System.getenv(var))
                 .filter(s -> !s.isEmpty())
-                .ifPresent(consumer::accept);
+                .ifPresent(consumer);
     }
 
     public static void getEnvAsInteger(String var, Consumer<Integer> consumer) {
@@ -47,16 +47,6 @@ public class EnvUtils {
                     .ifPresent(s -> consumer.accept(Integer.parseInt(s)));
         } catch (NumberFormatException e) {
 
-            throw new KumuluzServerException(var + "is in the incorrect format", e);
-        }
-    }
-
-    public static void getEnvAsBoolean(String var, Consumer<Boolean> consumer) {
-        try {
-            Optional.ofNullable(System.getenv(var))
-                    .filter(s -> !s.isEmpty())
-                    .ifPresent(s -> consumer.accept(Boolean.parseBoolean(s)));
-        } catch (NumberFormatException e) {
             throw new KumuluzServerException(var + "is in the incorrect format", e);
         }
     }

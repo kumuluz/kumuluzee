@@ -20,6 +20,7 @@
 */
 package com.kumuluz.ee;
 
+import com.kumuluz.ee.builders.EeConfigFactory;
 import com.kumuluz.ee.builders.JtaXADataSourceBuilder;
 import com.kumuluz.ee.common.*;
 import com.kumuluz.ee.common.config.DataSourceConfig;
@@ -92,8 +93,7 @@ public class EeApplication {
         ConfigurationUtil.initialize(configImpl);
 
         if (this.eeConfig == null) {
-            this.eeConfig = new EeConfig();
-            eeConfig.init();
+            this.eeConfig = EeConfigFactory.buildEeConfig();
         }
 
         log.info("Initialized main config");
@@ -136,7 +136,7 @@ public class EeApplication {
         log.info("Config extensions initialized");
 
         // Initiate the server
-        server.getServer().setServerConfig(eeConfig.getServerConfig());
+        server.getServer().setServerConfig(eeConfig.getServer());
         server.getServer().initServer();
 
         // Depending on the server type, initiate server specific functionality

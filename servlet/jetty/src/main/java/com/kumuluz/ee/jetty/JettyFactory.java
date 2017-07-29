@@ -21,8 +21,10 @@
 package com.kumuluz.ee.jetty;
 
 import com.kumuluz.ee.common.config.ServerConfig;
+import com.kumuluz.ee.common.config.ServerConnectorConfig;
 import com.kumuluz.ee.common.utils.StringUtils;
 import org.eclipse.jetty.annotations.AnnotationConfiguration;
+import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.plus.webapp.EnvConfiguration;
 import org.eclipse.jetty.plus.webapp.PlusConfiguration;
 import org.eclipse.jetty.server.*;
@@ -48,11 +50,6 @@ public class JettyFactory {
 
     private ServerConfig serverConfig;
 
-    public JettyFactory() {
-
-        this.serverConfig = new ServerConfig();
-    }
-
     public JettyFactory(ServerConfig serverConfig) {
 
         this.serverConfig = serverConfig;
@@ -71,7 +68,7 @@ public class JettyFactory {
         return server;
     }
 
-    protected ThreadPool createThreadPool() {
+    private ThreadPool createThreadPool() {
 
         QueuedThreadPool threadPool = new QueuedThreadPool();
 
@@ -84,59 +81,76 @@ public class JettyFactory {
         return threadPool;
     }
 
-    protected Connector[] createConnectors(final Server server) {
+    private Connector[] createConnectors(final Server server) {
+
+        ServerConnectorConfig httpConfig = serverConfig.getHttp();
+        ServerConnectorConfig httpsConfig = serverConfig.getHttps();
 
         List<ServerConnector> connectors = new ArrayList<>();
 
-        if (!serverConfig.getForceSSL()) {
+        if (httpConfig.getEnabled() == null || httpConfig.getEnabled()) {
+
             HttpConfiguration httpConfiguration = new HttpConfiguration();
-            httpConfiguration.setRequestHeaderSize(serverConfig.getRequestHeaderSize());
-            httpConfiguration.setResponseHeaderSize(serverConfig.getResponseHeaderSize());
+            httpConfiguration.setRequestHeaderSize(httpConfig.getRequestHeaderSize());
+            httpConfiguration.setResponseHeaderSize(httpConfig.getResponseHeaderSize());
 
             ServerConnector httpConnector = new ServerConnector(server, new HttpConnectionFactory(httpConfiguration));
 
-            httpConnector.setPort(serverConfig.getPort());
+            httpConnector.setPort(httpConfig.getPort());
+            httpConnector.setHost(httpConfig.getAddress());
 
-            httpConnector.setIdleTimeout(serverConfig.getIdleTimeout());
-            httpConnector.setSoLingerTime(serverConfig.getSoLingerTime());
+            httpConnector.setIdleTimeout(httpConfig.getIdleTimeout());
+            httpConnector.setSoLingerTime(httpConfig.getSoLingerTime());
 
             connectors.add(httpConnector);
         }
 
-        if (serverConfig.getEnableSSL() || serverConfig.getForceSSL()) {
-            if (StringUtils.isNullOrEmpty(serverConfig.getKeystorePath())) {
+        if (httpsConfig.getEnabled() != null && httpsConfig.getEnabled()) {
+
+            if (StringUtils.isNullOrEmpty(httpsConfig.getKeystorePath())) {
                 throw new IllegalStateException("Cannot create SSL connector; keystore path not specified.");
             }
 
-            if (StringUtils.isNullOrEmpty(serverConfig.getKeystorePassword())) {
+            if (StringUtils.isNullOrEmpty(httpsConfig.getKeystorePassword())) {
                 throw new IllegalStateException("Cannot create SSL connector; keystore password not specified.");
             }
 
+            if (StringUtils.isNullOrEmpty(httpsConfig.getKeyPassword())) {
+                throw new IllegalStateException("Cannot create SSL connector; key password not specified.");
+            }
+
             HttpConfiguration httpsConfiguration = new HttpConfiguration();
-            httpsConfiguration.setRequestHeaderSize(serverConfig.getRequestHeaderSize());
-            httpsConfiguration.setResponseHeaderSize(serverConfig.getResponseHeaderSize());
+            httpsConfiguration.setRequestHeaderSize(httpsConfig.getRequestHeaderSize());
+            httpsConfiguration.setResponseHeaderSize(httpsConfig.getResponseHeaderSize());
             httpsConfiguration.addCustomizer(new SecureRequestCustomizer());
 
             SslContextFactory sslContextFactory = new SslContextFactory();
-            sslContextFactory.setKeyStorePath(serverConfig.getKeystorePath());
-            sslContextFactory.setKeyStorePassword(serverConfig.getKeystorePassword());
-            sslContextFactory.setKeyManagerPassword(serverConfig.getKeyManagerPassword());
+            sslContextFactory.setKeyStorePath(httpsConfig.getKeystorePath());
+            sslContextFactory.setKeyStorePassword(httpsConfig.getKeystorePassword());
+            sslContextFactory.setKeyManagerPassword(httpsConfig.getKeyPassword());
+
+            if (StringUtils.isNullOrEmpty(httpsConfig.getKeyAlias())) {
+                sslContextFactory.setCertAlias(httpsConfig.getKeyAlias());
+            }
 
             ServerConnector httpsConnector = new ServerConnector(
                     server,
-                    new SslConnectionFactory(sslContextFactory, "http/1.1"),
+                    new SslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.toString()),
                     new HttpConnectionFactory(httpsConfiguration)
             );
 
-            httpsConnector.setPort(serverConfig.getSSLPort());
+            httpsConnector.setPort(httpsConfig.getPort());
+            httpsConnector.setHost(httpsConfig.getAddress());
+
+            httpsConnector.setIdleTimeout(httpsConfig.getIdleTimeout());
+            httpsConnector.setSoLingerTime(httpsConfig.getSoLingerTime());
 
             connectors.add(httpsConnector);
         }
 
         String ports = connectors.stream()
                 .map(connector ->
-                        String.format("%d [%s]",connector.getPort(), String.join(", ", connector.getProtocols()))
-                )
+                        String.format("%d [%s]", connector.getPort(), String.join(", ", connector.getProtocols())))
                 .collect(Collectors.joining(", "));
 
         log.info(String.format("Starting KumuluzEE on port(s): %s", ports));
@@ -144,7 +158,7 @@ public class JettyFactory {
         return connectors.toArray(new ServerConnector[connectors.size()]);
     }
 
-    protected Configuration.ClassList createClassList() {
+    private Configuration.ClassList createClassList() {
 
         Configuration.ClassList classList = new Configuration.ClassList(new String[0]);
 
