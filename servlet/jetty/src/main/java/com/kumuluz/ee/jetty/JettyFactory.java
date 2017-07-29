@@ -88,11 +88,23 @@ public class JettyFactory {
 
         List<ServerConnector> connectors = new ArrayList<>();
 
+        if (Boolean.FALSE.equals(httpConfig.getEnabled()) && Boolean.FALSE.equals(httpsConfig.getEnabled())) {
+            throw new IllegalStateException("Both the HTTP and HTTPS connectors can not be disabled. Please enable at least one.");
+        }
+
+        if (serverConfig.getForceHttps() && !Boolean.TRUE.equals(httpsConfig.getEnabled())) {
+            throw new IllegalStateException("You must enable the HTTPS connector in order to force redirects to it (`kumuluzee.server.https.enabled` must be true).");
+        }
+
         if (httpConfig.getEnabled() == null || httpConfig.getEnabled()) {
 
             HttpConfiguration httpConfiguration = new HttpConfiguration();
             httpConfiguration.setRequestHeaderSize(httpConfig.getRequestHeaderSize());
             httpConfiguration.setResponseHeaderSize(httpConfig.getResponseHeaderSize());
+
+            if (Boolean.TRUE.equals(httpsConfig.getEnabled())) {
+                httpConfiguration.setSecurePort(httpsConfig.getPort());
+            }
 
             ServerConnector httpConnector = new ServerConnector(server, new HttpConnectionFactory(httpConfiguration));
 
