@@ -96,7 +96,9 @@ public class EeApplication {
             this.eeConfig = EeConfigFactory.buildEeConfig();
         }
 
-        log.info("Initialized main config");
+        EeConfig.initialize(this.eeConfig);
+
+        log.info("Initialized main configuration");
 
         // Loading the kumuluz server and extracting its metadata
         KumuluzServer kumuluzServer = ServerLoader.loadServletServer();

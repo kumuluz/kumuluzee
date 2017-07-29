@@ -78,6 +78,8 @@ public class EeConfig {
         }
     }
 
+    private static EeConfig instance;
+
     private ServerConfig server = new ServerConfig();
     private List<DataSourceConfig> datasources = new ArrayList<>();
     private List<XaDataSourceConfig> xaDatasources = new ArrayList<>();
@@ -89,6 +91,24 @@ public class EeConfig {
 
     public EeConfig() {
         this.version = ResourceBundle.getBundle("version").getString("version");
+    }
+
+    public static void initialize(EeConfig eeConfig) {
+
+        if (instance != null) {
+            throw new IllegalStateException("The EeConfig was already initialized.");
+        }
+
+        instance = eeConfig;
+    }
+
+    public static EeConfig getInstance() {
+
+        if (instance == null) {
+            throw new IllegalStateException("The EeConfig was not yet initialized.");
+        }
+
+        return instance;
     }
 
     public String getVersion() {
