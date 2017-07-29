@@ -22,6 +22,11 @@ public class EeConfigFactory {
     private static final String LEGACY_RESPONSE_HEADER_SIZE_ENV = "RESPONSE_HEADER_SIZE";
     private static final String LEGACY_CONTEXT_PATH_ENV = "CONTEXT_PATH";
 
+    private static final String LEGACY_DB_UNIT_ENV = "DATABASE_UNIT";
+    private static final String LEGACY_DB_URL_ENV = "DATABASE_URL";
+    private static final String LEGACY_DB_USER_ENV = "DATABASE_USER";
+    private static final String LEGACY_DB_PASS_ENV = "DATABASE_PASS";
+
     public static EeConfig buildEeConfig() {
 
         ConfigurationUtil cfg = ConfigurationUtil.getInstance();
@@ -121,6 +126,15 @@ public class EeConfigFactory {
             }
         }
 
+        PersistenceConfig.Builder persistenceBuilder = new PersistenceConfig.Builder();
+
+        EnvUtils.getEnv(LEGACY_DB_UNIT_ENV, persistenceBuilder::unitName);
+        EnvUtils.getEnv(LEGACY_DB_URL_ENV, persistenceBuilder::url);
+        EnvUtils.getEnv(LEGACY_DB_USER_ENV, persistenceBuilder::username);
+        EnvUtils.getEnv(LEGACY_DB_PASS_ENV, persistenceBuilder::password);
+
+        eeConfigBuilder.persistenceConfig(persistenceBuilder);
+
         return eeConfigBuilder.build();
     }
 
@@ -128,12 +142,12 @@ public class EeConfigFactory {
 
         ConfigurationUtil cfg = ConfigurationUtil.getInstance();
 
-        ServerConnectorConfig.Builder serverConnectorConfigBuilder = new ServerConnectorConfig.Builder();
+        ServerConnectorConfig.Builder serverConnectorBuilder = new ServerConnectorConfig.Builder();
 
-        serverConnectorConfigBuilder.port(defaultPort);
+        serverConnectorBuilder.port(defaultPort);
 
-        EnvUtils.getEnvAsInteger(LEGACY_REQUEST_HEADER_SIZE_ENV, serverConnectorConfigBuilder::requestHeaderSize);
-        EnvUtils.getEnvAsInteger(LEGACY_RESPONSE_HEADER_SIZE_ENV, serverConnectorConfigBuilder::responseHeaderSize);
+        EnvUtils.getEnvAsInteger(LEGACY_REQUEST_HEADER_SIZE_ENV, serverConnectorBuilder::requestHeaderSize);
+        EnvUtils.getEnvAsInteger(LEGACY_RESPONSE_HEADER_SIZE_ENV, serverConnectorBuilder::responseHeaderSize);
 
         Optional<List<String>> serverConnectorCfgOpt = cfg.getMapKeys(prefix);
 
@@ -152,20 +166,20 @@ public class EeConfigFactory {
             Optional<String> keyAlias = cfg.get(prefix + ".key-alias");
             Optional<String> keyPassword = cfg.get(prefix + ".key-password");
 
-            port.ifPresent(serverConnectorConfigBuilder::port);
-            address.ifPresent(serverConnectorConfigBuilder::address);
-            enabled.ifPresent(serverConnectorConfigBuilder::enabled);
-            requestHeaderSize.ifPresent(serverConnectorConfigBuilder::requestHeaderSize);
-            responseHeaderSize.ifPresent(serverConnectorConfigBuilder::responseHeaderSize);
-            idleTimeout.ifPresent(serverConnectorConfigBuilder::idleTimeout);
-            soLingerTime.ifPresent(serverConnectorConfigBuilder::soLingerTime);
+            port.ifPresent(serverConnectorBuilder::port);
+            address.ifPresent(serverConnectorBuilder::address);
+            enabled.ifPresent(serverConnectorBuilder::enabled);
+            requestHeaderSize.ifPresent(serverConnectorBuilder::requestHeaderSize);
+            responseHeaderSize.ifPresent(serverConnectorBuilder::responseHeaderSize);
+            idleTimeout.ifPresent(serverConnectorBuilder::idleTimeout);
+            soLingerTime.ifPresent(serverConnectorBuilder::soLingerTime);
 
-            keystorePath.ifPresent(serverConnectorConfigBuilder::keystorePath);
-            keystorePassword.ifPresent(serverConnectorConfigBuilder::keystorePassword);
-            keyAlias.ifPresent(serverConnectorConfigBuilder::keyAlias);
-            keyPassword.ifPresent(serverConnectorConfigBuilder::keyPassword);
+            keystorePath.ifPresent(serverConnectorBuilder::keystorePath);
+            keystorePassword.ifPresent(serverConnectorBuilder::keystorePassword);
+            keyAlias.ifPresent(serverConnectorBuilder::keyAlias);
+            keyPassword.ifPresent(serverConnectorBuilder::keyPassword);
         }
 
-        return serverConnectorConfigBuilder;
+        return serverConnectorBuilder;
     }
 }

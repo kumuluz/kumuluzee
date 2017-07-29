@@ -37,6 +37,8 @@ public class EeConfig {
         private List<DataSourceConfig.Builder> datasources = new ArrayList<>();
         private List<XaDataSourceConfig.Builder> xaDatasources = new ArrayList<>();
 
+        private PersistenceConfig.Builder persistenceConfig = new PersistenceConfig.Builder();
+
         public Builder server(ServerConfig.Builder server) {
             this.server = server;
             return this;
@@ -49,6 +51,11 @@ public class EeConfig {
 
         public Builder xaDatasource(XaDataSourceConfig.Builder xaDatasource) {
             this.xaDatasources.add(xaDatasource);
+            return this;
+        }
+
+        public Builder persistenceConfig(PersistenceConfig.Builder persistenceConfig) {
+            this.persistenceConfig = persistenceConfig;
             return this;
         }
 
@@ -65,6 +72,8 @@ public class EeConfig {
             eeConfig.datasources = Collections.unmodifiableList(constructedDatasources);
             eeConfig.xaDatasources = Collections.unmodifiableList(constructedXaDatasources);
 
+            eeConfig.persistenceConfig = persistenceConfig.build();
+
             return eeConfig;
         }
     }
@@ -73,15 +82,13 @@ public class EeConfig {
     private List<DataSourceConfig> datasources = new ArrayList<>();
     private List<XaDataSourceConfig> xaDatasources = new ArrayList<>();
 
-    private List<PersistenceConfig> persistenceConfigs = new ArrayList<>();
+    private PersistenceConfig persistenceConfig;
 
     private String version;
     private List<EeComponentWrapper> eeComponents = new ArrayList<>();
 
     public EeConfig() {
         this.version = ResourceBundle.getBundle("version").getString("version");
-
-        persistenceConfigs.add(new PersistenceConfig());
     }
 
     public String getVersion() {
@@ -90,11 +97,6 @@ public class EeConfig {
 
     public ServerConfig getServer() {
         return server;
-    }
-
-    @Deprecated
-    public List<PersistenceConfig> getPersistenceConfigs() {
-        return persistenceConfigs;
     }
 
     public List<DataSourceConfig> getDatasources() {
@@ -107,5 +109,10 @@ public class EeConfig {
 
     public List<EeComponentWrapper> getEeComponents() {
         return eeComponents;
+    }
+
+    @Deprecated
+    public PersistenceConfig getPersistenceConfig() {
+        return persistenceConfig;
     }
 }
