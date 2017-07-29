@@ -34,6 +34,7 @@ public class ServerConnectorConfig {
         private Integer port;
         private String address;
         private Boolean enabled;
+        private Boolean proxyForwarding = false;
         private Integer requestHeaderSize = 8 * 1024;
         private Integer responseHeaderSize = 8 * 1024;
         private Integer idleTimeout = 60 * 60 * 1000;
@@ -56,6 +57,11 @@ public class ServerConnectorConfig {
 
         public Builder enabled(Boolean enabled) {
             this.enabled = enabled;
+            return this;
+        }
+
+        public Builder proxyForwarding(Boolean proxyForwarding) {
+            this.proxyForwarding = proxyForwarding;
             return this;
         }
 
@@ -105,6 +111,7 @@ public class ServerConnectorConfig {
             serverConnectorConfig.port = port;
             serverConnectorConfig.address = address;
             serverConnectorConfig.enabled = enabled;
+            serverConnectorConfig.proxyForwarding = proxyForwarding;
             serverConnectorConfig.requestHeaderSize = requestHeaderSize;
             serverConnectorConfig.responseHeaderSize = responseHeaderSize;
             serverConnectorConfig.idleTimeout = idleTimeout;
@@ -121,6 +128,7 @@ public class ServerConnectorConfig {
     private Integer port;
     private String address;
     private Boolean enabled;
+    private Boolean proxyForwarding;
     private Integer requestHeaderSize;
     private Integer responseHeaderSize;
     private Integer idleTimeout;
@@ -141,6 +149,10 @@ public class ServerConnectorConfig {
 
     public Boolean getEnabled() {
         return enabled;
+    }
+
+    public Boolean getProxyForwarding() {
+        return proxyForwarding;
     }
 
     public Integer getRequestHeaderSize() {

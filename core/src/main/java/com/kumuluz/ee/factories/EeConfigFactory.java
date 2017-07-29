@@ -176,6 +176,7 @@ public class EeConfigFactory {
             Optional<Integer> port = cfg.getInteger(prefix + ".port");
             Optional<String> address = cfg.get(prefix + ".address");
             Optional<Boolean> enabled = cfg.getBoolean(prefix + ".enabled");
+            Optional<Boolean> proxyForwarding = cfg.getBoolean(prefix + ".proxy-forwarding");
             Optional<Integer> requestHeaderSize = cfg.getInteger(prefix + ".request-header-size");
             Optional<Integer> responseHeaderSize = cfg.getInteger(prefix + ".kresponse-header-size");
             Optional<Integer> idleTimeout = cfg.getInteger(prefix + ".idle-timeout");
@@ -189,6 +190,7 @@ public class EeConfigFactory {
             port.ifPresent(serverConnectorBuilder::port);
             address.ifPresent(serverConnectorBuilder::address);
             enabled.ifPresent(serverConnectorBuilder::enabled);
+            proxyForwarding.ifPresent(serverConnectorBuilder::proxyForwarding);
             requestHeaderSize.ifPresent(serverConnectorBuilder::requestHeaderSize);
             responseHeaderSize.ifPresent(serverConnectorBuilder::responseHeaderSize);
             idleTimeout.ifPresent(serverConnectorBuilder::idleTimeout);

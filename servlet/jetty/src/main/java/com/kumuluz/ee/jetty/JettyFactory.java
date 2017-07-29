@@ -102,6 +102,10 @@ public class JettyFactory {
             httpConfiguration.setRequestHeaderSize(httpConfig.getRequestHeaderSize());
             httpConfiguration.setResponseHeaderSize(httpConfig.getResponseHeaderSize());
 
+            if (Boolean.TRUE.equals(httpConfig.getProxyForwarding())) {
+                httpConfiguration.addCustomizer(new ForwardedRequestCustomizer());
+            }
+
             if (Boolean.TRUE.equals(httpsConfig.getEnabled())) {
                 httpConfiguration.setSecurePort(httpsConfig.getPort());
             }
@@ -135,6 +139,10 @@ public class JettyFactory {
             httpsConfiguration.setRequestHeaderSize(httpsConfig.getRequestHeaderSize());
             httpsConfiguration.setResponseHeaderSize(httpsConfig.getResponseHeaderSize());
             httpsConfiguration.addCustomizer(new SecureRequestCustomizer());
+
+            if (Boolean.TRUE.equals(httpsConfig.getProxyForwarding())) {
+                httpsConfiguration.addCustomizer(new ForwardedRequestCustomizer());
+            }
 
             SslContextFactory sslContextFactory = new SslContextFactory();
             sslContextFactory.setKeyStorePath(httpsConfig.getKeystorePath());
