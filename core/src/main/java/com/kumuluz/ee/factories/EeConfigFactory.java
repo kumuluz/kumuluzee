@@ -21,6 +21,7 @@
 package com.kumuluz.ee.factories;
 
 import com.kumuluz.ee.common.config.*;
+import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 import com.kumuluz.ee.common.utils.EnvUtils;
 import com.kumuluz.ee.common.utils.StringUtils;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
@@ -156,6 +157,32 @@ public class EeConfigFactory {
         eeConfigBuilder.persistenceConfig(persistenceBuilder);
 
         return eeConfigBuilder.build();
+    }
+
+    public static Boolean isEeConfigValid(EeConfig eeConfig) {
+
+        return !(eeConfig == null ||
+                eeConfig.getServer() == null ||
+                eeConfig.getServer().getContextPath() == null ||
+                eeConfig.getServer().getForceHttps() == null ||
+                eeConfig.getServer().getMinThreads() == null ||
+                eeConfig.getServer().getMaxThreads() == null ||
+                eeConfig.getServer().getHttp() == null ||
+                eeConfig.getServer().getHttps() == null ||
+                eeConfig.getServer().getHttp().getPort() == null ||
+                eeConfig.getServer().getHttp().getProxyForwarding() == null ||
+                eeConfig.getServer().getHttp().getRequestHeaderSize() == null ||
+                eeConfig.getServer().getHttp().getResponseHeaderSize() == null ||
+                eeConfig.getServer().getHttp().getIdleTimeout() == null ||
+                eeConfig.getServer().getHttp().getSoLingerTime() == null ||
+                eeConfig.getServer().getHttps().getPort() == null ||
+                eeConfig.getServer().getHttps().getProxyForwarding() == null ||
+                eeConfig.getServer().getHttps().getRequestHeaderSize() == null ||
+                eeConfig.getServer().getHttps().getResponseHeaderSize() == null ||
+                eeConfig.getServer().getHttps().getIdleTimeout() == null ||
+                eeConfig.getServer().getHttps().getSoLingerTime() == null ||
+                eeConfig.getServer().getHttps().getKeystorePath() == null ||
+                eeConfig.getServer().getHttps().getKeystorePassword() == null);
     }
 
     private static ServerConnectorConfig.Builder createServerConnectorConfigBuilder(String prefix, Integer defaultPort) {

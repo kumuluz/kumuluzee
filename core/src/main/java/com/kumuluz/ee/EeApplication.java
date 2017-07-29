@@ -94,6 +94,9 @@ public class EeApplication {
 
         if (this.eeConfig == null) {
             this.eeConfig = EeConfigFactory.buildEeConfig();
+        } else if (!EeConfigFactory.isEeConfigValid(this.eeConfig)) {
+            throw new KumuluzServerException("The programmatically supplied EeConfig is malformed." +
+                    "Please check the supplied values and the config reference to fix the missing or invalid values.");
         }
 
         EeConfig.initialize(this.eeConfig);
