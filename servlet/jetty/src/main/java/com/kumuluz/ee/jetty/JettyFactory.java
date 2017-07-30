@@ -173,6 +173,17 @@ public class JettyFactory {
                 sslContextFactory.setCertAlias(httpsConfig.getKeyAlias());
             }
 
+            if (httpsConfig.getSslProtocols() != null) {
+
+                sslContextFactory.setIncludeProtocols(httpsConfig.getSslProtocols().toArray(new String[0]));
+            }
+
+            if (httpsConfig.getSslCiphers() != null) {
+
+                sslContextFactory.setExcludeCipherSuites();
+                sslContextFactory.setIncludeCipherSuites(httpsConfig.getSslCiphers().toArray(new String[0]));
+            }
+
             if (httpsConfig.getHttp2()) {
 
                 sslContextFactory.setCipherComparator(HTTP2Cipher.COMPARATOR);

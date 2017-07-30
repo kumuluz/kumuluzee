@@ -20,6 +20,9 @@
 */
 package com.kumuluz.ee.common.config;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * @author Tilen Faganel
  * @since 2.4.0
@@ -45,6 +48,8 @@ public class ServerConnectorConfig {
         private String keystorePassword = System.getProperty("javax.net.ssl.keyStorePassword");
         private String keyAlias;
         private String keyPassword;
+        private List<String> sslProtocols;
+        private List<String> sslCiphers;
 
         public Builder port(Integer port) {
             this.port = port;
@@ -111,6 +116,16 @@ public class ServerConnectorConfig {
             return this;
         }
 
+        public Builder sslProtocols(List<String> sslProtocols) {
+            this.sslProtocols = Collections.unmodifiableList(sslProtocols);
+            return this;
+        }
+
+        public Builder sslCiphers(List<String> sslCiphers) {
+            this.sslCiphers = Collections.unmodifiableList(sslCiphers);
+            return this;
+        }
+
         public ServerConnectorConfig build() {
 
             ServerConnectorConfig serverConnectorConfig = new ServerConnectorConfig();
@@ -127,6 +142,8 @@ public class ServerConnectorConfig {
             serverConnectorConfig.keystorePassword = keystorePassword;
             serverConnectorConfig.keyAlias = keyAlias;
             serverConnectorConfig.keyPassword = keyPassword;
+            serverConnectorConfig.sslProtocols = sslProtocols;
+            serverConnectorConfig.sslCiphers = sslCiphers;
 
             return serverConnectorConfig;
         }
@@ -146,6 +163,8 @@ public class ServerConnectorConfig {
     private String keystorePassword;
     private String keyAlias;
     private String keyPassword;
+    private List<String> sslProtocols;
+    private List<String> sslCiphers;
 
     public Integer getPort() {
         return port;
@@ -197,5 +216,13 @@ public class ServerConnectorConfig {
 
     public String getKeyPassword() {
         return keyPassword;
+    }
+
+    public List<String> getSslProtocols() {
+        return sslProtocols;
+    }
+
+    public List<String> getSslCiphers() {
+        return sslCiphers;
     }
 }

@@ -26,8 +26,11 @@ import com.kumuluz.ee.common.utils.EnvUtils;
 import com.kumuluz.ee.common.utils.StringUtils;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Tilen Faganel
@@ -216,6 +219,8 @@ public class EeConfigFactory {
             Optional<String> keystorePassword = cfg.get(prefix + ".keystore-password");
             Optional<String> keyAlias = cfg.get(prefix + ".key-alias");
             Optional<String> keyPassword = cfg.get(prefix + ".key-password");
+            Optional<String> sslProtocols = cfg.get(prefix + ".ssl-protocols");
+            Optional<String> sslCiphers = cfg.get(prefix + ".ssl-ciphers");
 
             port.ifPresent(serverConnectorBuilder::port);
             address.ifPresent(serverConnectorBuilder::address);
@@ -231,6 +236,8 @@ public class EeConfigFactory {
             keystorePassword.ifPresent(serverConnectorBuilder::keystorePassword);
             keyAlias.ifPresent(serverConnectorBuilder::keyAlias);
             keyPassword.ifPresent(serverConnectorBuilder::keyPassword);
+            sslProtocols.ifPresent(p -> serverConnectorBuilder.sslProtocols(Stream.of(p.split(",")).map(String::trim).collect(Collectors.toList())));
+            sslCiphers.ifPresent(c -> serverConnectorBuilder.sslCiphers(Stream.of(c.split(",")).map(String::trim).collect(Collectors.toList())));
         }
 
         return serverConnectorBuilder;
