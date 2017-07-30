@@ -46,7 +46,7 @@ public class ConfigurationUtil {
     public static void initialize(ConfigurationImpl config) {
 
         if (instance != null) {
-            throw new IllegalStateException("");
+            throw new IllegalStateException("The ConfigurationUtil was already initialized.");
         }
 
         instance = new ConfigurationUtil(config);
@@ -55,7 +55,7 @@ public class ConfigurationUtil {
     public static ConfigurationUtil getInstance() {
 
         if (instance == null) {
-            throw new IllegalStateException("");
+            throw new IllegalStateException("The ConfigurationUtil was not yet initialized.");
         }
 
         return instance;
