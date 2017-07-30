@@ -20,6 +20,9 @@
 */
 package com.kumuluz.ee;
 
+import com.kumuluz.ee.common.runtime.EeRuntime;
+import com.kumuluz.ee.common.runtime.EeRuntimeComponent;
+import com.kumuluz.ee.common.runtime.EeRuntimeInternal;
 import com.kumuluz.ee.factories.EeConfigFactory;
 import com.kumuluz.ee.factories.JtaXADataSourceFactory;
 import com.kumuluz.ee.common.*;
@@ -46,6 +49,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import javax.sql.XADataSource;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * @author Tilen Faganel
@@ -103,6 +107,8 @@ public class EeApplication {
 
         log.info("Initialized main configuration");
 
+        log.info("Loading available EE components and extensions");
+
         // Loading the kumuluz server and extracting its metadata
         KumuluzServer kumuluzServer = ServerLoader.loadServletServer();
         processKumuluzServer(kumuluzServer);
@@ -111,8 +117,6 @@ public class EeApplication {
         List<Component> components = ComponentLoader.loadComponents();
         List<EeComponentWrapper> eeComponents = processEeComponents(components);
 
-        eeConfig.getEeComponents().addAll(eeComponents);
-
         // Loading the config extensions and extracting its metadata
         List<ConfigExtension> configExtensions = ConfigExtensionLoader.loadExtensions();
         List<ConfigExtensionWrapper> eeConfigExtensions = processEeConfigExtensions(configExtensions, eeComponents);
@@ -120,6 +124,28 @@ public class EeApplication {
         // Loading the extensions and extracting its metadata
         List<Extension> extensions = ExtensionLoader.loadExtensions();
         List<ExtensionWrapper> eeExtensions = processEeExtensions(extensions, eeComponents);
+
+        log.info("EE Components and extensions loaded");
+
+        log.info("Initializing the KumuluzEE runtime");
+
+        EeRuntimeInternal eeRuntimeInternal = new EeRuntimeInternal();
+
+        List<EeRuntimeComponent> eeRuntimeComponents = eeComponents.stream()
+                .map(e -> new EeRuntimeComponent(e.getType(), e.getName()))
+                .collect(Collectors.toList());
+
+        List<EeRuntimeComponent> serverEeRuntimeComponents = Arrays.stream(server.getProvidedEeComponents())
+                .map(c -> new EeRuntimeComponent(c, server.getName()))
+                .collect(Collectors.toList());
+
+        serverEeRuntimeComponents.addAll(eeRuntimeComponents);
+
+        eeRuntimeInternal.setEeComponents(serverEeRuntimeComponents);
+
+        EeRuntime.initialize(eeRuntimeInternal);
+
+        log.info("Initialized the KumuluzEE runtime");
 
         // Initiate the config extensions
         log.info("Initializing config extensions");
@@ -173,7 +199,7 @@ public class EeApplication {
 
             if (eeConfig.getXaDatasources().size() > 0) {
 
-                Boolean jtaPresent = eeConfig.getEeComponents().stream().anyMatch(c -> c.getType().equals(EeComponentType.JTA));
+                Boolean jtaPresent = eeRuntimeInternal.getEeComponents().stream().anyMatch(c -> c.getType().equals(EeComponentType.JTA));
 
                 for (XaDataSourceConfig xdsc : eeConfig.getXaDatasources()) {
 
@@ -195,7 +221,7 @@ public class EeApplication {
 
             // Add all included filters
             Map<String, String> filterParams = new HashMap<>();
-            filterParams.put("name", "KumuluzEE/" + eeConfig.getVersion());
+            filterParams.put("name", "KumuluzEE/" + eeRuntimeInternal.getVersion());
             servletServer.registerFilter(PoweredByFilter.class, "/*", filterParams);
         }
 
