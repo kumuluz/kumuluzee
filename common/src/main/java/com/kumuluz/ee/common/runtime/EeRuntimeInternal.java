@@ -23,6 +23,7 @@ package com.kumuluz.ee.common.runtime;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 /**
  * @author Tilen Faganel
@@ -30,8 +31,17 @@ import java.util.ResourceBundle;
  */
 public class EeRuntimeInternal {
 
+    private String instanceId = UUID.randomUUID().toString();
     private String version = ResourceBundle.getBundle("version").getString("version");
     private List<EeRuntimeComponent> eeComponents = Collections.emptyList();
+
+    public String getInstanceId() {
+        return instanceId;
+    }
+
+    public void setInstanceId(String instanceId) {
+        this.instanceId = instanceId;
+    }
 
     public String getVersion() {
         return version;

@@ -57,6 +57,10 @@ public class EeRuntime {
         return instance;
     }
 
+    public String getInstanceId() {
+        return internalRuntime.getInstanceId();
+    }
+
     public String getVersion() {
         return internalRuntime.getVersion();
     }
