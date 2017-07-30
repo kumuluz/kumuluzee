@@ -86,11 +86,7 @@ public class EeConfig {
 
     private PersistenceConfig persistenceConfig;
 
-    private String version;
-    private List<EeComponentWrapper> eeComponents = new ArrayList<>();
-
-    public EeConfig() {
-        this.version = ResourceBundle.getBundle("version").getString("version");
+    protected EeConfig() {
     }
 
     public static void initialize(EeConfig eeConfig) {
@@ -111,10 +107,6 @@ public class EeConfig {
         return instance;
     }
 
-    public String getVersion() {
-        return version;
-    }
-
     public ServerConfig getServer() {
         return server;
     }
@@ -125,10 +117,6 @@ public class EeConfig {
 
     public List<XaDataSourceConfig> getXaDatasources() {
         return xaDatasources;
-    }
-
-    public List<EeComponentWrapper> getEeComponents() {
-        return eeComponents;
     }
 
     @Deprecated

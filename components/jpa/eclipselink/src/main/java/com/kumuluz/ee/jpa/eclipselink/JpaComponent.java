@@ -24,6 +24,7 @@ import com.kumuluz.ee.common.Component;
 import com.kumuluz.ee.common.config.EeConfig;
 import com.kumuluz.ee.common.dependencies.EeComponentDef;
 import com.kumuluz.ee.common.dependencies.EeComponentType;
+import com.kumuluz.ee.common.runtime.EeRuntime;
 import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
 import com.kumuluz.ee.jpa.common.PersistenceUnitHolder;
 
@@ -44,7 +45,7 @@ public class JpaComponent implements Component {
         PersistenceUnitHolder holder = PersistenceUnitHolder.getInstance();
 
         // Check if JTA is present in the runtime
-        Boolean jtaPresent = eeConfig.getEeComponents().stream().anyMatch(c -> c.getType().equals(EeComponentType.JTA));
+        Boolean jtaPresent = EeRuntime.getInstance().getEeComponents().stream().anyMatch(c -> c.getType().equals(EeComponentType.JTA));
 
         holder.setConfig(eeConfig.getPersistenceConfig());
         holder.setProviderProperties(new EclipseLinkSettings(jtaPresent));
