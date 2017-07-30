@@ -14,10 +14,6 @@
 
     <artifactId>kumuluzee-servlet-jetty</artifactId>
 
-    <properties>
-        <jetty.version>9.4.5.v20170502</jetty.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.kumuluz.ee</groupId>
@@ -38,6 +34,18 @@
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-jndi</artifactId>
             <version>${jetty.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.jersey.connectors</groupId>
+            <artifactId>jersey-jetty-connector</artifactId>
+            <version>${jersey.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-client</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
