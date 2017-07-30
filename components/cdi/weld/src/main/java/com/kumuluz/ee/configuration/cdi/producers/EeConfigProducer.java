@@ -18,21 +18,22 @@
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
 */
-package com.kumuluz.ee.builders;
+package com.kumuluz.ee.configuration.cdi.producers;
 
-import com.kumuluz.ee.common.datasources.NonJtaXADataSourceWrapper;
-import com.kumuluz.ee.jta.common.datasources.JtaXADataSourceWrapper;
+import com.kumuluz.ee.common.config.EeConfig;
 
-import javax.sql.XADataSource;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
 
 /**
  * @author Tilen Faganel
- * @since 2.3.0
+ * @since 2.4.0
  */
-public class JtaXADataSourceBuilder {
+public class EeConfigProducer {
 
-    public static NonJtaXADataSourceWrapper buildJtaXADataSourceWrapper(XADataSource xaDataSource) {
-
-        return new JtaXADataSourceWrapper(xaDataSource);
+    @Produces
+    @ApplicationScoped
+    public EeConfig getConfigurationUtil() {
+        return EeConfig.getInstance();
     }
 }

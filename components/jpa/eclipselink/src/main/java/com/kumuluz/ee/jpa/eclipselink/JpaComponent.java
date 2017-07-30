@@ -46,7 +46,7 @@ public class JpaComponent implements Component {
         // Check if JTA is present in the runtime
         Boolean jtaPresent = eeConfig.getEeComponents().stream().anyMatch(c -> c.getType().equals(EeComponentType.JTA));
 
-        holder.setConfigs(eeConfig.getPersistenceConfigs());
+        holder.setConfig(eeConfig.getPersistenceConfig());
         holder.setProviderProperties(new EclipseLinkSettings(jtaPresent));
     }
 

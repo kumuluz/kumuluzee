@@ -18,36 +18,21 @@
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
 */
-package com.kumuluz.ee.common.utils;
+package com.kumuluz.ee.factories;
 
-import com.kumuluz.ee.common.exceptions.KumuluzServerException;
+import com.kumuluz.ee.common.datasources.NonJtaXADataSourceWrapper;
+import com.kumuluz.ee.jta.common.datasources.JtaXADataSourceWrapper;
 
-import java.util.Optional;
-import java.util.function.Consumer;
+import javax.sql.XADataSource;
 
 /**
  * @author Tilen Faganel
- * @since 1.0.0
+ * @since 2.3.0
  */
-public class EnvUtils {
+public class JtaXADataSourceFactory {
 
-    public static void getEnv(String var, Consumer<String> consumer) {
+    public static NonJtaXADataSourceWrapper buildJtaXADataSourceWrapper(XADataSource xaDataSource) {
 
-        Optional.ofNullable(System.getenv(var))
-                .filter(s -> !s.isEmpty())
-                .ifPresent(consumer);
-    }
-
-    public static void getEnvAsInteger(String var, Consumer<Integer> consumer) {
-
-        try {
-
-            Optional.ofNullable(System.getenv(var))
-                    .filter(s -> !s.isEmpty())
-                    .ifPresent(s -> consumer.accept(Integer.parseInt(s)));
-        } catch (NumberFormatException e) {
-
-            throw new KumuluzServerException(var + "is in the incorrect format", e);
-        }
+        return new JtaXADataSourceWrapper(xaDataSource);
     }
 }

@@ -20,113 +20,96 @@
 */
 package com.kumuluz.ee.common.config;
 
-import com.kumuluz.ee.common.utils.EnvUtils;
-
 /**
  * @author Tilen Faganel
  * @since 1.0.0
  */
 public class ServerConfig {
 
-    public static final String PORT_ENV = "PORT";
+    public static class Builder {
 
-    public static final String MIN_THREADS_ENV = "MIN_THREADS";
+        private String contextPath = "/";
+        private Integer minThreads = 5;
+        private Integer maxThreads = 100;
+        private Boolean forceHttps = false;
 
-    public static final String MAX_THREADS_ENV = "MAX_THREADS";
+        private ServerConnectorConfig.Builder http = new ServerConnectorConfig.Builder();
+        private ServerConnectorConfig.Builder https = new ServerConnectorConfig.Builder();
 
-    public static final String REQUEST_HEADER_SIZE = "REQUEST_HEADER_SIZE";
+        public Builder contextPath(String contextPath) {
+            this.contextPath = contextPath;
+            return this;
+        }
 
-    public static final String RESPONSE_HEADER_SIZE = "RESPONSE_HEADER_SIZE";
+        public Builder minThreads(Integer minThreads) {
+            this.minThreads = minThreads;
+            return this;
+        }
 
-    public static final String CONTEXT_PATH_ENV = "CONTEXT_PATH";
+        public Builder maxThreads(Integer maxThreads) {
+            this.maxThreads = maxThreads;
+            return this;
+        }
 
-    private Integer port = 8080;
+        public Builder forceHttps(Boolean forceHttps) {
+            this.forceHttps = forceHttps;
+            return this;
+        }
 
-    private String contextPath = "/";
+        public Builder http(ServerConnectorConfig.Builder http) {
+            this.http = http;
+            return this;
+        }
 
-    private Integer idleTimeout = 60 * 60 * 1000;
+        public Builder https(ServerConnectorConfig.Builder https) {
+            this.https = https;
+            return this;
+        }
 
-    private Integer soLingerTime = -1;
+        public ServerConfig build() {
 
-    private Integer minThreads = 5;
+            ServerConfig serverConfig = new ServerConfig();
+            serverConfig.contextPath = contextPath;
+            serverConfig.minThreads = minThreads;
+            serverConfig.maxThreads = maxThreads;
+            serverConfig.forceHttps = forceHttps;
 
-    private Integer maxThreads = 100;
+            serverConfig.http = http.build();
+            serverConfig.https = https.build();
 
-    private Integer requestHeaderSize = 8 * 1024;
-
-    private Integer responseHeaderSize = 8 * 1024;
-
-    public ServerConfig() {
-
-        EnvUtils.getEnvAsInteger(PORT_ENV, this::setPort);
-        EnvUtils.getEnvAsInteger(MIN_THREADS_ENV, this::setMinThreads);
-        EnvUtils.getEnvAsInteger(MAX_THREADS_ENV, this::setMaxThreads);
-        EnvUtils.getEnvAsInteger(REQUEST_HEADER_SIZE, this::setRequestHeaderSize);
-        EnvUtils.getEnvAsInteger(RESPONSE_HEADER_SIZE, this::setResponseHeaderSize);
-        EnvUtils.getEnv(CONTEXT_PATH_ENV, this::setContextPath);
+            return serverConfig;
+        }
     }
 
-    public Integer getPort() {
-        return port;
-    }
+    private String contextPath;
+    private Integer minThreads;
+    private Integer maxThreads;
+    private Boolean forceHttps;
 
-    public void setPort(Integer port) {
-        this.port = port;
-    }
+    private ServerConnectorConfig http;
+    private ServerConnectorConfig https;
 
     public String getContextPath() {
         return contextPath;
-    }
-
-    public void setContextPath(String contextPath) {
-        this.contextPath = contextPath;
-    }
-
-    public Integer getIdleTimeout() {
-        return idleTimeout;
-    }
-
-    public void setIdleTimeout(Integer idleTimeout) {
-        this.idleTimeout = idleTimeout;
-    }
-
-    public Integer getSoLingerTime() {
-        return soLingerTime;
-    }
-
-    public void setSoLingerTime(Integer soLingerTime) {
-        this.soLingerTime = soLingerTime;
     }
 
     public Integer getMinThreads() {
         return minThreads;
     }
 
-    public void setMinThreads(Integer minThreads) {
-        this.minThreads = minThreads;
-    }
-
     public Integer getMaxThreads() {
         return maxThreads;
     }
 
-    public void setMaxThreads(Integer maxThreads) {
-        this.maxThreads = maxThreads;
+    public Boolean getForceHttps() {
+        return forceHttps;
     }
 
-    public Integer getRequestHeaderSize() {
-        return requestHeaderSize;
+    public ServerConnectorConfig getHttp() {
+        return http;
     }
 
-    public void setRequestHeaderSize(Integer requestHeaderSize) {
-        this.requestHeaderSize = requestHeaderSize;
-    }
-
-    public Integer getResponseHeaderSize() {
-        return responseHeaderSize;
-    }
-
-    public void setResponseHeaderSize(Integer responseHeaderSize) {
-        this.responseHeaderSize = responseHeaderSize;
+    public ServerConnectorConfig getHttps() {
+        return https;
     }
 }

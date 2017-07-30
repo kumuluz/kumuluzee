@@ -35,7 +35,7 @@ import java.util.*;
 public class PersistenceUnitHolder {
 
     private PersistenceSettings providerProperties;
-    private List<PersistenceConfig> configs;
+    private PersistenceConfig config;
 
     private String defaultUnitName;
 
@@ -64,16 +64,12 @@ public class PersistenceUnitHolder {
                 properties.putAll(providerProperties.getPersistenceUnitProperties());
             }
 
-            Optional<PersistenceConfig> config = configs.stream()
-                    .filter(c -> unitName.equals(c.getUnitName()))
-                    .findFirst();
+            if (config != null && unitName.equals(config.getUnitName())) {
 
-            config.ifPresent(c -> {
-
-                Optional.ofNullable(c.getUrl()).ifPresent(u -> properties.put("javax.persistence.jdbc.url", u));
-                Optional.ofNullable(c.getUsername()).ifPresent(u -> properties.put("javax.persistence.jdbc.user", u));
-                Optional.ofNullable(c.getPassword()).ifPresent(p -> properties.put("javax.persistence.jdbc.password", p));
-            });
+                Optional.ofNullable(config.getUrl()).ifPresent(u -> properties.put("javax.persistence.jdbc.url", u));
+                Optional.ofNullable(config.getUsername()).ifPresent(u -> properties.put("javax.persistence.jdbc.user", u));
+                Optional.ofNullable(config.getPassword()).ifPresent(p -> properties.put("javax.persistence.jdbc.password", p));
+            }
 
             EntityManagerFactory factory = Persistence.createEntityManagerFactory(unitName, properties);
             TransactionType transactionType = PersistenceUtils.getEntityManagerFactoryTransactionType(factory);
@@ -90,8 +86,8 @@ public class PersistenceUnitHolder {
         return defaultUnitName;
     }
 
-    public void setConfigs(List<PersistenceConfig> configs) {
-        this.configs = configs;
+    public void setConfig(PersistenceConfig config) {
+        this.config = config;
     }
 
     public void setProviderProperties(PersistenceSettings providerProperties) {

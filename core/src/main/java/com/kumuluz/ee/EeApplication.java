@@ -20,7 +20,8 @@
 */
 package com.kumuluz.ee;
 
-import com.kumuluz.ee.builders.JtaXADataSourceBuilder;
+import com.kumuluz.ee.factories.EeConfigFactory;
+import com.kumuluz.ee.factories.JtaXADataSourceFactory;
 import com.kumuluz.ee.common.*;
 import com.kumuluz.ee.common.config.DataSourceConfig;
 import com.kumuluz.ee.common.config.EeConfig;
@@ -92,11 +93,15 @@ public class EeApplication {
         ConfigurationUtil.initialize(configImpl);
 
         if (this.eeConfig == null) {
-            this.eeConfig = new EeConfig();
-            eeConfig.init();
+            this.eeConfig = EeConfigFactory.buildEeConfig();
+        } else if (!EeConfigFactory.isEeConfigValid(this.eeConfig)) {
+            throw new KumuluzServerException("The programmatically supplied EeConfig is malformed." +
+                    "Please check the supplied values and the config reference to fix the missing or invalid values.");
         }
 
-        log.info("Initialized main config");
+        EeConfig.initialize(this.eeConfig);
+
+        log.info("Initialized main configuration");
 
         // Loading the kumuluz server and extracting its metadata
         KumuluzServer kumuluzServer = ServerLoader.loadServletServer();
@@ -136,7 +141,7 @@ public class EeApplication {
         log.info("Config extensions initialized");
 
         // Initiate the server
-        server.getServer().setServerConfig(eeConfig.getServerConfig());
+        server.getServer().setServerConfig(eeConfig.getServer());
         server.getServer().initServer();
 
         // Depending on the server type, initiate server specific functionality
@@ -179,7 +184,7 @@ public class EeApplication {
                     XADataSourceWrapper xaDataSourceWrapper;
 
                     if (jtaPresent) {
-                        xaDataSourceWrapper = JtaXADataSourceBuilder.buildJtaXADataSourceWrapper(xaDataSource);
+                        xaDataSourceWrapper = JtaXADataSourceFactory.buildJtaXADataSourceWrapper(xaDataSource);
                     } else {
                         xaDataSourceWrapper = new NonJtaXADataSourceWrapper(xaDataSource);
                     }
