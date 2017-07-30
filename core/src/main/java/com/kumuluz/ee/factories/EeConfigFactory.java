@@ -170,12 +170,14 @@ public class EeConfigFactory {
                 eeConfig.getServer().getHttp() == null ||
                 eeConfig.getServer().getHttps() == null ||
                 eeConfig.getServer().getHttp().getPort() == null ||
+                eeConfig.getServer().getHttp().getHttp2() == null ||
                 eeConfig.getServer().getHttp().getProxyForwarding() == null ||
                 eeConfig.getServer().getHttp().getRequestHeaderSize() == null ||
                 eeConfig.getServer().getHttp().getResponseHeaderSize() == null ||
                 eeConfig.getServer().getHttp().getIdleTimeout() == null ||
                 eeConfig.getServer().getHttp().getSoLingerTime() == null ||
                 eeConfig.getServer().getHttps().getPort() == null ||
+                eeConfig.getServer().getHttps().getHttp2() == null ||
                 eeConfig.getServer().getHttps().getProxyForwarding() == null ||
                 eeConfig.getServer().getHttps().getRequestHeaderSize() == null ||
                 eeConfig.getServer().getHttps().getResponseHeaderSize() == null ||
@@ -203,6 +205,7 @@ public class EeConfigFactory {
             Optional<Integer> port = cfg.getInteger(prefix + ".port");
             Optional<String> address = cfg.get(prefix + ".address");
             Optional<Boolean> enabled = cfg.getBoolean(prefix + ".enabled");
+            Optional<Boolean> http2 = cfg.getBoolean(prefix + ".http2");
             Optional<Boolean> proxyForwarding = cfg.getBoolean(prefix + ".proxy-forwarding");
             Optional<Integer> requestHeaderSize = cfg.getInteger(prefix + ".request-header-size");
             Optional<Integer> responseHeaderSize = cfg.getInteger(prefix + ".kresponse-header-size");
@@ -217,6 +220,7 @@ public class EeConfigFactory {
             port.ifPresent(serverConnectorBuilder::port);
             address.ifPresent(serverConnectorBuilder::address);
             enabled.ifPresent(serverConnectorBuilder::enabled);
+            http2.ifPresent(serverConnectorBuilder::http2);
             proxyForwarding.ifPresent(serverConnectorBuilder::proxyForwarding);
             requestHeaderSize.ifPresent(serverConnectorBuilder::requestHeaderSize);
             responseHeaderSize.ifPresent(serverConnectorBuilder::responseHeaderSize);

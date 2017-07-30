@@ -23,8 +23,12 @@ package com.kumuluz.ee.jetty;
 import com.kumuluz.ee.common.config.ServerConfig;
 import com.kumuluz.ee.common.config.ServerConnectorConfig;
 import com.kumuluz.ee.common.utils.StringUtils;
+import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
 import org.eclipse.jetty.annotations.AnnotationConfiguration;
 import org.eclipse.jetty.http.HttpVersion;
+import org.eclipse.jetty.http2.HTTP2Cipher;
+import org.eclipse.jetty.http2.server.HTTP2CServerConnectionFactory;
+import org.eclipse.jetty.http2.server.HTTP2ServerConnectionFactory;
 import org.eclipse.jetty.plus.webapp.EnvConfiguration;
 import org.eclipse.jetty.plus.webapp.PlusConfiguration;
 import org.eclipse.jetty.server.*;
@@ -110,7 +114,19 @@ public class JettyFactory {
                 httpConfiguration.setSecurePort(httpsConfig.getPort());
             }
 
-            ServerConnector httpConnector = new ServerConnector(server, new HttpConnectionFactory(httpConfiguration));
+            ServerConnector httpConnector;
+
+            HttpConnectionFactory http = new HttpConnectionFactory(httpConfiguration);
+
+            if (httpConfig.getHttp2()) {
+
+                HTTP2CServerConnectionFactory http2c = new HTTP2CServerConnectionFactory(httpConfiguration);
+
+                httpConnector = new ServerConnector(server, http, http2c);
+            } else  {
+
+                httpConnector = new ServerConnector(server, http);
+            }
 
             httpConnector.setPort(httpConfig.getPort());
             httpConnector.setHost(httpConfig.getAddress());
@@ -135,6 +151,8 @@ public class JettyFactory {
                 throw new IllegalStateException("Cannot create SSL connector; key password not specified.");
             }
 
+            ServerConnector httpsConnector;
+
             HttpConfiguration httpsConfiguration = new HttpConfiguration();
             httpsConfiguration.setRequestHeaderSize(httpsConfig.getRequestHeaderSize());
             httpsConfiguration.setResponseHeaderSize(httpsConfig.getResponseHeaderSize());
@@ -143,6 +161,8 @@ public class JettyFactory {
             if (Boolean.TRUE.equals(httpsConfig.getProxyForwarding())) {
                 httpsConfiguration.addCustomizer(new ForwardedRequestCustomizer());
             }
+
+            HttpConnectionFactory http = new HttpConnectionFactory(httpsConfiguration);
 
             SslContextFactory sslContextFactory = new SslContextFactory();
             sslContextFactory.setKeyStorePath(httpsConfig.getKeystorePath());
@@ -153,11 +173,27 @@ public class JettyFactory {
                 sslContextFactory.setCertAlias(httpsConfig.getKeyAlias());
             }
 
-            ServerConnector httpsConnector = new ServerConnector(
-                    server,
-                    new SslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.toString()),
-                    new HttpConnectionFactory(httpsConfiguration)
-            );
+            if (httpsConfig.getHttp2()) {
+
+                sslContextFactory.setCipherComparator(HTTP2Cipher.COMPARATOR);
+                sslContextFactory.setUseCipherSuitesOrder(true);
+
+                NegotiatingServerConnectionFactory.checkProtocolNegotiationAvailable();
+
+                HTTP2ServerConnectionFactory h2 = new HTTP2ServerConnectionFactory(httpsConfiguration);
+
+                ALPNServerConnectionFactory alpn = new ALPNServerConnectionFactory();
+                alpn.setDefaultProtocol(HttpVersion.HTTP_1_1.toString());
+
+                SslConnectionFactory ssl = new SslConnectionFactory(sslContextFactory, alpn.getProtocol());
+
+                httpsConnector = new ServerConnector(server, ssl, alpn, h2, http);
+            } else {
+
+                SslConnectionFactory ssl = new SslConnectionFactory(sslContextFactory, http.getProtocol());
+
+                httpsConnector = new ServerConnector(server, ssl, http);
+            }
 
             httpsConnector.setPort(httpsConfig.getPort());
             httpsConnector.setHost(httpsConfig.getAddress());

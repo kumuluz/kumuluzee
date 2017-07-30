@@ -34,6 +34,7 @@ public class ServerConnectorConfig {
         private Integer port;
         private String address;
         private Boolean enabled;
+        private Boolean http2 = false;
         private Boolean proxyForwarding = false;
         private Integer requestHeaderSize = 8 * 1024;
         private Integer responseHeaderSize = 8 * 1024;
@@ -57,6 +58,11 @@ public class ServerConnectorConfig {
 
         public Builder enabled(Boolean enabled) {
             this.enabled = enabled;
+            return this;
+        }
+
+        public Builder http2(Boolean http2) {
+            this.http2 = http2;
             return this;
         }
 
@@ -111,6 +117,7 @@ public class ServerConnectorConfig {
             serverConnectorConfig.port = port;
             serverConnectorConfig.address = address;
             serverConnectorConfig.enabled = enabled;
+            serverConnectorConfig.http2 = http2;
             serverConnectorConfig.proxyForwarding = proxyForwarding;
             serverConnectorConfig.requestHeaderSize = requestHeaderSize;
             serverConnectorConfig.responseHeaderSize = responseHeaderSize;
@@ -128,6 +135,7 @@ public class ServerConnectorConfig {
     private Integer port;
     private String address;
     private Boolean enabled;
+    private Boolean http2;
     private Boolean proxyForwarding;
     private Integer requestHeaderSize;
     private Integer responseHeaderSize;
@@ -149,6 +157,10 @@ public class ServerConnectorConfig {
 
     public Boolean getEnabled() {
         return enabled;
+    }
+
+    public Boolean getHttp2() {
+        return http2;
     }
 
     public Boolean getProxyForwarding() {
