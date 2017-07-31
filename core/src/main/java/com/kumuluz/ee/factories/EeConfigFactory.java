@@ -76,17 +76,17 @@ public class EeConfigFactory {
             minThreads.ifPresent(serverBuilder::minThreads);
             maxThreads.ifPresent(serverBuilder::maxThreads);
             forceHttps.ifPresent(serverBuilder::forceHttps);
-
-            ServerConnectorConfig.Builder httpBuilder =
-                    createServerConnectorConfigBuilder("kumuluzee.server.http",
-                            ServerConnectorConfig.Builder.DEFAULT_HTTP_PORT);
-
-            EnvUtils.getEnvAsInteger(PORT_ENV, httpBuilder::port);
-
-            serverBuilder.http(httpBuilder);
-            serverBuilder.https(createServerConnectorConfigBuilder("kumuluzee.server.https",
-                    ServerConnectorConfig.Builder.DEFAULT_HTTPS_PORT));
         }
+
+        ServerConnectorConfig.Builder httpBuilder =
+                createServerConnectorConfigBuilder("kumuluzee.server.http",
+                        ServerConnectorConfig.Builder.DEFAULT_HTTP_PORT);
+
+        EnvUtils.getEnvAsInteger(PORT_ENV, httpBuilder::port);
+
+        serverBuilder.http(httpBuilder);
+        serverBuilder.https(createServerConnectorConfigBuilder("kumuluzee.server.https",
+                ServerConnectorConfig.Builder.DEFAULT_HTTPS_PORT));
 
         eeConfigBuilder.server(serverBuilder);
 
