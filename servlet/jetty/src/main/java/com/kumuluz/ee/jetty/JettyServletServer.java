@@ -29,7 +29,10 @@ import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 import com.kumuluz.ee.common.utils.ResourceUtils;
 
 import org.eclipse.jetty.plus.jndi.Resource;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.SecuredRedirectHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppClassLoader;
@@ -134,7 +137,18 @@ public class JettyServletServer implements ServletServer {
 
         log.info("Starting KumuluzEE with context root '" + serverConfig.getContextPath() + "'");
 
-        server.setHandler(appContext);
+        // Set the secured redirect handler in case the force https option is selected
+        if (serverConfig.getForceHttps()) {
+
+            HandlerList handlers = new HandlerList();
+            handlers.setHandlers(new Handler[]
+                    { new SecuredRedirectHandler(), appContext});
+
+            server.setHandler(handlers);
+        } else {
+
+            server.setHandler(appContext);
+        }
     }
 
     @Override

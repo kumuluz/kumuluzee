@@ -26,6 +26,60 @@ package com.kumuluz.ee.common.config;
  */
 public class DataSourceConfig {
 
+    public static class Builder {
+
+        private String jndiName;
+        private String driverClass;
+        private String connectionUrl;
+        private String username;
+        private String password;
+
+        private Integer maxPoolSize;
+
+        public Builder jndiName(String jndiName) {
+            this.jndiName = jndiName;
+            return this;
+        }
+
+        public Builder driverClass(String driverClass) {
+            this.driverClass = driverClass;
+            return this;
+        }
+
+        public Builder connectionUrl(String connectionUrl) {
+            this.connectionUrl = connectionUrl;
+            return this;
+        }
+
+        public Builder username(String username) {
+            this.username = username;
+            return this;
+        }
+
+        public Builder password(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public Builder maxPoolSize(Integer maxPoolSize) {
+            this.maxPoolSize = maxPoolSize;
+            return this;
+        }
+
+        public DataSourceConfig build() {
+
+            DataSourceConfig dataSourceConfig = new DataSourceConfig();
+            dataSourceConfig.jndiName = jndiName;
+            dataSourceConfig.driverClass = driverClass;
+            dataSourceConfig.connectionUrl = connectionUrl;
+            dataSourceConfig.username = username;
+            dataSourceConfig.password = password;
+            dataSourceConfig.maxPoolSize = maxPoolSize;
+
+            return dataSourceConfig;
+        }
+    }
+
     private String jndiName;
     private String driverClass;
     private String connectionUrl;
@@ -38,47 +92,23 @@ public class DataSourceConfig {
         return jndiName;
     }
 
-    public void setJndiName(String jndiName) {
-        this.jndiName = jndiName;
-    }
-
     public String getDriverClass() {
         return driverClass;
-    }
-
-    public void setDriverClass(String driverClass) {
-        this.driverClass = driverClass;
     }
 
     public String getConnectionUrl() {
         return connectionUrl;
     }
 
-    public void setConnectionUrl(String connectionUrl) {
-        this.connectionUrl = connectionUrl;
-    }
-
     public String getUsername() {
         return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public Integer getMaxPoolSize() {
         return maxPoolSize;
-    }
-
-    public void setMaxPoolSize(Integer maxPoolSize) {
-        this.maxPoolSize = maxPoolSize;
     }
 }
