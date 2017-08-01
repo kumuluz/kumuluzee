@@ -12,49 +12,36 @@ Include the plugin in your project:
 <plugin>
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee-maven-plugin</artifactId>
-    <version>2.3.0-SNAPSHOT</version>
-    <executions>
-        <execution>
-            <id>package</id>
-            <goals>
-                <goal>package</goal>
-            </goals>
-            <configuration>
-                <finalName/>
-                <outputDirectory/>
-            </configuration>
-        </execution>
-    </executions>
+    <version>2.4.0-SNAPSHOT</version>
 </plugin>
 ```
 
 ### Goals
 
-* __loader:package__
-
-    Builds an "uber" JAR from the current project
-
-### Parameters
-
-* __finalName__
-
-    Final name of the generated "uber" JAR.
+* __kumuluzee:copy-dependencies__
     
-    __Default value is__: `${project.build.finalName}` or `${project.artifactId}-${project.version}`
+    Copy dependencies and prepare for execution in an exploded class and dependency runtime.
+
+
+* __kumuluzee:repackage__
+
+    Repackages existing JAR archives so that they can be executed from the command line using `java -jar`.
     
-* __outputDirectory__
-
-    Directory containing the generated JAR.
+    ###### Parameters
     
-    __Default value is__: `${project.build.directory}`
+    * __finalName__
+    
+        Final name of the generated "uber" JAR.
+        
+        __Default value is__: `${project.build.finalName}` or `${project.artifactId}-${project.version}`
+        
+    * __outputDirectory__
+    
+        Directory containing the generated JAR.
+        
+        __Default value is__: `${project.build.directory}`
+    
+* __kumuluzee:run__
 
-
-## Run
-Start the application using the following command:
-```cmd
-java -jar ${project.build.finalName}.jar
-```
-Example:
-```cmd
-java -jar my-app-1.0.0-SNAPSHOT.jar
-```
+    Run the application in an exploded class and dependency runtime.
+    

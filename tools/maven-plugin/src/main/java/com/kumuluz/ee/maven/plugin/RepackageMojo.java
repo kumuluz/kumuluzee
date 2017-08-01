@@ -20,26 +20,38 @@
 */
 package com.kumuluz.ee.maven.plugin;
 
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.plugins.annotations.*;
+import org.apache.maven.project.MavenProject;
 
 /**
+ * Repackages existing JAR archives so that they can be executed from the command line using {@literal java -jar}.
+ *
  * @author Benjamin Kastelic
  */
 @Mojo(
-        name = "package",
+        name = "repackage",
         defaultPhase = LifecyclePhase.PACKAGE,
         threadSafe = true,
         requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
         requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME
 )
-public class PackageMojo extends AbstractPackageMojo {
+public class RepackageMojo extends AbstractPackageMojo {
+
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
+    private MavenProject mavenProject;
+
+    @Parameter(defaultValue = "${session}", readonly = true, required = true)
+    private MavenSession mavenSession;
+
+    @Component
+    private BuildPluginManager buildPluginManager;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        repackage(/*mavenProject, mavenSession, buildPluginManager*/);
+        repackage(mavenProject, mavenSession, buildPluginManager);
     }
 }

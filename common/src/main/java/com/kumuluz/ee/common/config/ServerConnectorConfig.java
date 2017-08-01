@@ -34,7 +34,7 @@ public class ServerConnectorConfig {
         public final static Integer DEFAULT_HTTP_PORT = 8080;
         public final static Integer DEFAULT_HTTPS_PORT = 8443;
 
-        private Integer port = 8080;
+        private Integer port;
         private String address;
         private Boolean enabled;
         private Boolean http2 = false;

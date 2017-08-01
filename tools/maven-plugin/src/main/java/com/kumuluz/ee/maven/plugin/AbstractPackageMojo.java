@@ -1,11 +1,29 @@
+/*
+ *  Copyright (c) 2014-2017 Kumuluz and/or its affiliates
+ *  and other contributors as indicated by the @author tags and
+ *  the contributor list.
+ *
+ *  Licensed under the MIT License (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  https://opensource.org/licenses/MIT
+ *
+ *  The software is provided "AS IS", WITHOUT WARRANTY OF ANY KIND, express or
+ *  implied, including but not limited to the warranties of merchantability,
+ *  fitness for a particular purpose and noninfringement. in no event shall the
+ *  authors or copyright holders be liable for any claim, damages or other
+ *  liability, whether in an action of contract, tort or otherwise, arising from,
+ *  out of or in connection with the software or the use or other dealings in the
+ *  software. See the License for the specific language governing permissions and
+ *  limitations under the License.
+*/
 package com.kumuluz.ee.maven.plugin;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Component;
-import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import java.io.File;
@@ -21,50 +39,39 @@ import java.util.jar.JarFile;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
 
+/**
+ * @author Benjamin Kastelic
+ */
 public abstract class AbstractPackageMojo extends AbstractCopyDependenciesAndWebappMojo {
 
     private static final String LOADER_JAR = "META-INF/loader/kumuluzee-loader.jar";
-    //    private static final String LOADER_JAR_GAV = "com.kumuluz.ee:kumuluzee-loader:2.3.0-SNAPSHOT";
     private static final String TEMP_DIR_NAME_PREFIX = "kumuluzee-loader.";
     private static final String CLASS_SUFFIX = ".class";
 
-    @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject mavenProject;
-
-    @Parameter(defaultValue = "${session}", readonly = true, required = true)
     private MavenSession mavenSession;
-
-    @Component
     private BuildPluginManager buildPluginManager;
 
-    @Parameter(defaultValue = "${project.build.directory}", required = true)
     private String outputDirectory;
-
-    @Parameter(defaultValue = "${project.build.finalName}", required = true)
     private String finalName;
 
-    public void repackage(/*MavenProject mavenProject, MavenSession mavenSession, BuildPluginManager buildPluginManager*/)
+    public void repackage(MavenProject mavenProject, MavenSession mavenSession, BuildPluginManager buildPluginManager)
             throws MojoExecutionException {
-        if (mavenProject.getPackaging().equals("pom")) {
-            getLog().debug("Package \"goal\" could not be applied to \"pom\" mavenProject.");
-            return;
-        }
-
         this.mavenProject = mavenProject;
         this.mavenSession = mavenSession;
         this.buildPluginManager = buildPluginManager;
 
-        copyDependencies1();
+        outputDirectory = mavenProject.getBuild().getDirectory();
+        finalName = mavenProject.getBuild().getFinalName();
+
+        copyDependencies();
         unpackDependencies();
         packageJar();
         renameJars();
     }
 
-    private void copyDependencies1() throws MojoExecutionException {
-        String OUTPUT_SUBDIRECTORY_FORMAT = "%s%s%s";
-        String outputSubdirectory = String.format(OUTPUT_SUBDIRECTORY_FORMAT, "classes", File.separator, "lib");
-
-        super.copyDependencies(/*mavenProject, mavenSession, buildPluginManager, outputSubdirectory*/);
+    private void copyDependencies() throws MojoExecutionException {
+        super.copyDependencies(mavenProject, mavenSession, buildPluginManager, "classes/lib");
     }
 
 //    private void unpackDependencies() throws MojoExecutionException {
@@ -142,7 +149,7 @@ public abstract class AbstractPackageMojo extends AbstractCopyDependenciesAndWeb
 
     private String getPluginJarPath() throws MojoExecutionException {
         try {
-            ProtectionDomain protectionDomain = PackageMojo.class.getProtectionDomain();
+            ProtectionDomain protectionDomain = RepackageMojo.class.getProtectionDomain();
             CodeSource codeSource = protectionDomain.getCodeSource();
             URI location = codeSource == null ? null : codeSource.getLocation().toURI();
             return location == null ? null : location.getSchemeSpecificPart();

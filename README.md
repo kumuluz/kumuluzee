@@ -188,13 +188,13 @@ REST module pom.xml:
 ```xml
 <plugin>
     <groupId>com.kumuluz.ee</groupId>
-    <artifactId>kumuluzee-loader-maven-plugin</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <artifactId>kumuluzee-maven-plugin</artifactId>
+    <version>2.4.0-SNAPSHOT</version>
     <executions>
         <execution>
             <id>package</id>
             <goals>
-                <goal>package</goal>
+                <goal>repackage</goal>
             </goals>
             <configuration>
                 <finalName/>
@@ -204,12 +204,6 @@ REST module pom.xml:
     </executions>
 </plugin>
 ```
-
-#### Goals
-
-* __loader:package__
-
-    Builds an "uber" JAR from the current project
 
 #### Parameters
 
