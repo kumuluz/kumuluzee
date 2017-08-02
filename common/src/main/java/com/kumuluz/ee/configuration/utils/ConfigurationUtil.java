@@ -25,12 +25,15 @@ import com.kumuluz.ee.configuration.ConfigurationSource;
 import com.kumuluz.ee.configuration.enums.ConfigurationValueType;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * @author Tilen Faganel
  * @since 2.1.0
  */
 public class ConfigurationUtil {
+
+    private static final Logger log = Logger.getLogger(ConfigurationUtil.class.getName());
 
     private static ConfigurationUtil instance;
 
@@ -62,11 +65,15 @@ public class ConfigurationUtil {
     }
 
     public Optional<String> get(String key) {
+        return get(key, new HashSet<>());
+    }
+
+    private Optional<String> get(String key, Set<String> processingKeys) {
 
         for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
             Optional<String> value = configurationSource.get(key);
             if (value.isPresent()) {
-                return value;
+                return Optional.of(interpolateString(key, value.get(), processingKeys));
             }
         }
         return Optional.empty();
@@ -248,5 +255,27 @@ public class ConfigurationUtil {
         }
 
         return Optional.of(new ArrayList<>(mapKeys));
+    }
+
+    private String interpolateString(String key, String s, Set<String> processingKeys) {
+        if(processingKeys.contains(key)) {
+            log.warning("Detected cycle when interpolating configuration key: " + key);
+            return "";
+        }
+
+        processingKeys.add(key);
+
+        int startIndex;
+        while((startIndex = s.indexOf("${")) >= 0) {
+            int endIndex = s.indexOf("}", startIndex + 2);
+            String newKey = s.substring(startIndex + 2, endIndex);
+
+            String replacement = get(newKey, processingKeys).orElse("");
+            processingKeys.remove(newKey);
+
+            s = s.substring(0, startIndex) + replacement + s.substring(endIndex + 1);
+        }
+
+        return s;
     }
 }
