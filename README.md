@@ -21,7 +21,9 @@ and Docker-like environments
 - Quick startup time, low resource consumption and stateless scalability accelerates development
 - Extend your microservices with common cloud-native patterns, such as config, discovery, logging, fault tolerance, circuit-breakers, etc. KumuluzEE provides all the building blocks.
 
-The goal is to support as many Java EE components as possible. Currently the following components are supported with more being added over time:
+KumuluzEE provides support for various Java EE APIs and components. The goal is to support as many Java EE components as possible (contributions welcome). 
+
+Currently the following components are supported with more being added over time:
 
 - Servlet 3.1 (Jetty)
 - CDI 1.2 (RI Weld)
@@ -37,6 +39,9 @@ The goal is to support as many Java EE components as possible. Currently the fol
 - Bean Validation 1.1 (RI Hibernate validator)
 - JTA 1.2 (Narayana)
 
+KumuluzEE provides additional features, which are described on the [project Wiki]( https://github.com/kumuluz/kumuluzee/wiki), particularly:
+- [Configuration framework](https://github.com/kumuluz/kumuluzee/wiki/Configuration) for easy and efficient configuration of microservices from various sources, such as environment variables, configuration files (yaml), properties, etc.
+- [TLS/SSL support](https://github.com/kumuluz/kumuluzee/wiki/TLS-SSL-support) for configuring TLS/SSL.
 
 ## KumuluzEE extensions
 
