@@ -18,36 +18,44 @@
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
 */
-package com.kumuluz.ee.common.utils;
+package com.kumuluz.ee.common.runtime;
 
-import com.kumuluz.ee.common.exceptions.KumuluzServerException;
-
-import java.util.Optional;
-import java.util.function.Consumer;
+import java.util.Collections;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.UUID;
 
 /**
  * @author Tilen Faganel
- * @since 1.0.0
+ * @since 2.4.0
  */
-public class EnvUtils {
+public class EeRuntimeInternal {
 
-    public static void getEnv(String var, Consumer<String> consumer) {
+    private String instanceId = UUID.randomUUID().toString();
+    private String version = ResourceBundle.getBundle("version").getString("version");
+    private List<EeRuntimeComponent> eeComponents = Collections.emptyList();
 
-        Optional.ofNullable(System.getenv(var))
-                .filter(s -> !s.isEmpty())
-                .ifPresent(consumer);
+    public String getInstanceId() {
+        return instanceId;
     }
 
-    public static void getEnvAsInteger(String var, Consumer<Integer> consumer) {
+    public void setInstanceId(String instanceId) {
+        this.instanceId = instanceId;
+    }
 
-        try {
+    public String getVersion() {
+        return version;
+    }
 
-            Optional.ofNullable(System.getenv(var))
-                    .filter(s -> !s.isEmpty())
-                    .ifPresent(s -> consumer.accept(Integer.parseInt(s)));
-        } catch (NumberFormatException e) {
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
-            throw new KumuluzServerException(var + "is in the incorrect format", e);
-        }
+    public List<EeRuntimeComponent> getEeComponents() {
+        return eeComponents;
+    }
+
+    public void setEeComponents(List<EeRuntimeComponent> eeComponents) {
+        this.eeComponents = Collections.unmodifiableList(eeComponents);
     }
 }
