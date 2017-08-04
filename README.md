@@ -185,9 +185,7 @@ To choose your KumuluzEE extensions include them as your dependencies. You can f
 
 KumuluzEE (since version 2.4) provides support for packing and running microservices as uber JARs. It also includes a Maven plugin that correctly packages the microservice. 
 
-This functionality is part of KumuluzEE Tools.
-
-To package a Kumuluz EE microservice into an "uber" JAR, you only need to add the followin plugin declaration into your 
+To package a Kumuluz EE microservice into an "uber" JAR, you need to add the following plugin declaration into your 
 REST module pom.xml:
 
 ```xml
