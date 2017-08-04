@@ -43,6 +43,8 @@ KumuluzEE provides additional features, which are described on the [project Wiki
 - [Configuration framework](https://github.com/kumuluz/kumuluzee/wiki/Configuration) for easy and efficient configuration of microservices from various sources, such as environment variables, configuration files (yaml), properties, etc.
 - [TLS/SSL support](https://github.com/kumuluz/kumuluzee/wiki/TLS-SSL-support) for configuring TLS/SSL.
 
+KumuluzEE also provides support for *Uber JARs*. With the KumuluzEE Maven plugin, you can pack and run each microservice as a single, self-contained Uber-JAR. Details are described later in this document.
+
 ## KumuluzEE extensions
 
 In addition to the standard Java EE components, KumuluzEE also comes with several extensions that complement and extend its functionality. The extensions will follow the same modular concept as the Java EE components in which you can chose if you want to use it as well as the underlying implementation of the extension. Most extensions are geared towards creating cloud-native microservices including configuration, logging, discovery, fault tolerance including circuit-breakers, metrics, security, event streaming and more.
@@ -58,7 +60,6 @@ The following extensions are available with more planned soon:
 - [KumuluzEE Fault Tolerance](https://github.com/kumuluz/kumuluzee-fault-tolerance) (For implementing fault tolerance patterns with microservices including circuit breakers and decoupling microservices)
 - [KumuluzEE Event Streaming](https://github.com/kumuluz/kumuluzee-streaming) (For event streaming support using Apache Kafka)
 - [KumuluzEE CORS](https://github.com/kumuluz/kumuluzee-cors) (For Cross-Origin Resource Sharing (CORS) support)
-- [KumuluzEE Tools](https://github.com/kumuluz) (For various tools, such as packing and running microservices as uber JARs)
 
 If you already know how to use Java EE, then you already know how to use KumuluzEE. It is simple and straightforward. See the [getting started](https://github.com/kumuluz/KumuluzEE/wiki/Getting-started) wiki section to create your first light-weight standalone Java EE app in 5 minutes. Refer to [samples](https://github.com/kumuluz/kumuluzee-samples) for more examples.
 
