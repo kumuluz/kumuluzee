@@ -89,6 +89,9 @@ public class ServerConfig {
     private ServerConnectorConfig http;
     private ServerConnectorConfig https;
 
+    private ServerConfig() {
+    }
+
     public String getContextPath() {
         return contextPath;
     }

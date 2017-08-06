@@ -20,6 +20,10 @@
 */
 package com.kumuluz.ee.common.config;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Tilen Faganel
  * @since 2.1.0
@@ -30,10 +34,16 @@ public class DataSourceConfig {
 
         private String jndiName;
         private String driverClass;
+        private String dataSourceClass;
         private String connectionUrl;
         private String username;
         private String password;
 
+        private DataSourcePoolConfig.Builder pool = new DataSourcePoolConfig.Builder();
+
+        private Map<String, String> props = new HashMap<>();
+
+        @Deprecated
         private Integer maxPoolSize;
 
         public Builder jndiName(String jndiName) {
@@ -43,6 +53,11 @@ public class DataSourceConfig {
 
         public Builder driverClass(String driverClass) {
             this.driverClass = driverClass;
+            return this;
+        }
+
+        public Builder dataSourceClass(String dataSourceClass) {
+            this.dataSourceClass = dataSourceClass;
             return this;
         }
 
@@ -61,6 +76,17 @@ public class DataSourceConfig {
             return this;
         }
 
+        public Builder pool(DataSourcePoolConfig.Builder pool) {
+            this.pool = pool;
+            return this;
+        }
+
+        public Builder prop(String key, String value) {
+            this.props.put(key, value);
+            return this;
+        }
+
+        @Deprecated
         public Builder maxPoolSize(Integer maxPoolSize) {
             this.maxPoolSize = maxPoolSize;
             return this;
@@ -71,9 +97,15 @@ public class DataSourceConfig {
             DataSourceConfig dataSourceConfig = new DataSourceConfig();
             dataSourceConfig.jndiName = jndiName;
             dataSourceConfig.driverClass = driverClass;
+            dataSourceConfig.dataSourceClass = dataSourceClass;
             dataSourceConfig.connectionUrl = connectionUrl;
             dataSourceConfig.username = username;
             dataSourceConfig.password = password;
+
+            dataSourceConfig.pool = pool.build();
+
+            dataSourceConfig.props = Collections.unmodifiableMap(props);
+
             dataSourceConfig.maxPoolSize = maxPoolSize;
 
             return dataSourceConfig;
@@ -82,11 +114,20 @@ public class DataSourceConfig {
 
     private String jndiName;
     private String driverClass;
+    private String dataSourceClass;
     private String connectionUrl;
     private String username;
     private String password;
 
+    private DataSourcePoolConfig pool;
+
+    private Map<String, String> props;
+
+    @Deprecated
     private Integer maxPoolSize;
+
+    private DataSourceConfig() {
+    }
 
     public String getJndiName() {
         return jndiName;
@@ -94,6 +135,10 @@ public class DataSourceConfig {
 
     public String getDriverClass() {
         return driverClass;
+    }
+
+    public String getDataSourceClass() {
+        return dataSourceClass;
     }
 
     public String getConnectionUrl() {
@@ -108,6 +153,15 @@ public class DataSourceConfig {
         return password;
     }
 
+    public DataSourcePoolConfig getPool() {
+        return pool;
+    }
+
+    public Map<String, String> getProps() {
+        return props;
+    }
+
+    @Deprecated
     public Integer getMaxPoolSize() {
         return maxPoolSize;
     }
