@@ -167,7 +167,10 @@ public class JettyFactory {
             SslContextFactory sslContextFactory = new SslContextFactory();
             sslContextFactory.setKeyStorePath(httpsConfig.getKeystorePath());
             sslContextFactory.setKeyStorePassword(httpsConfig.getKeystorePassword());
-            sslContextFactory.setKeyManagerPassword(httpsConfig.getKeyPassword());
+
+            if (httpsConfig.getKeyPassword() != null) {
+                sslContextFactory.setKeyManagerPassword(httpsConfig.getKeyPassword());
+            }
 
             if (StringUtils.isNullOrEmpty(httpsConfig.getKeyAlias())) {
                 sslContextFactory.setCertAlias(httpsConfig.getKeyAlias());
