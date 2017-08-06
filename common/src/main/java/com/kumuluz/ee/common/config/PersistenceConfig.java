@@ -73,6 +73,9 @@ public class PersistenceConfig {
     private String username;
     private String password;
 
+    private PersistenceConfig() {
+    }
+
     public String getUnitName() {
         return unitName;
     }

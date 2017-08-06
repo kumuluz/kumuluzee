@@ -80,13 +80,13 @@ public class EeConfig {
 
     private static EeConfig instance;
 
-    private ServerConfig server = new ServerConfig();
-    private List<DataSourceConfig> datasources = new ArrayList<>();
-    private List<XaDataSourceConfig> xaDatasources = new ArrayList<>();
+    private ServerConfig server;
+    private List<DataSourceConfig> datasources;
+    private List<XaDataSourceConfig> xaDatasources;
 
     private PersistenceConfig persistenceConfig;
 
-    protected EeConfig() {
+    private EeConfig() {
     }
 
     public static void initialize(EeConfig eeConfig) {

@@ -20,9 +20,11 @@
 */
 package com.kumuluz.ee;
 
+import com.kumuluz.ee.common.config.DataSourcePoolConfig;
 import com.kumuluz.ee.common.runtime.EeRuntime;
 import com.kumuluz.ee.common.runtime.EeRuntimeComponent;
 import com.kumuluz.ee.common.runtime.EeRuntimeInternal;
+import com.kumuluz.ee.common.utils.StringUtils;
 import com.kumuluz.ee.factories.EeConfigFactory;
 import com.kumuluz.ee.factories.JtaXADataSourceFactory;
 import com.kumuluz.ee.common.*;
@@ -44,6 +46,7 @@ import com.kumuluz.ee.loaders.ComponentLoader;
 import com.kumuluz.ee.loaders.ConfigExtensionLoader;
 import com.kumuluz.ee.loaders.ExtensionLoader;
 import com.kumuluz.ee.loaders.ServerLoader;
+import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import javax.sql.XADataSource;
@@ -190,8 +193,43 @@ public class EeApplication {
                     if (dsc.getDriverClass() != null && !dsc.getDriverClass().isEmpty())
                         ds.setDriverClassName(dsc.getDriverClass());
 
-                    if (dsc.getMaxPoolSize() != null)
+                    if (dsc.getDataSourceClass() != null && !dsc.getDataSourceClass().isEmpty()) {
+                        ds.setDataSourceClassName(dsc.getDataSourceClass());
+                    }
+
+                    if (dsc.getMaxPoolSize() != null) {
                         ds.setMaximumPoolSize(dsc.getMaxPoolSize());
+                    }
+
+                    DataSourcePoolConfig dscp = dsc.getPool();
+
+                    ds.setAutoCommit(dscp.getAutoCommit());
+                    ds.setConnectionTimeout(dscp.getConnectionTimeout());
+                    ds.setIdleTimeout(dscp.getIdleTimeout());
+                    ds.setMaxLifetime(dscp.getMaxLifetime());
+                    ds.setMaximumPoolSize(dscp.getMaxSize());
+                    ds.setPoolName(dscp.getName());
+                    ds.setInitializationFailTimeout(dscp.getInitializationFailTimeout());
+                    ds.setIsolateInternalQueries(dscp.getIsolateInternalQueries());
+                    ds.setAllowPoolSuspension(dscp.getAllowPoolSuspension());
+                    ds.setReadOnly(dscp.getReadOnly());
+                    ds.setRegisterMbeans(dscp.getRegisterMbeans());
+                    ds.setValidationTimeout(dscp.getValidationTimeout());
+                    ds.setLeakDetectionThreshold(dscp.getLeakDetectionThreshold());
+
+                    if (dscp.getMinIdle() != null) {
+                        ds.setMinimumIdle(dscp.getMinIdle());
+                    }
+
+                    if (dscp.getConnectionInitSql() != null) {
+                        ds.setConnectionInitSql(dscp.getConnectionInitSql());
+                    }
+
+                    if (dscp.getTransactionIsolation() != null) {
+                        ds.setTransactionIsolation(dscp.getTransactionIsolation());
+                    }
+
+                    dsc.getProps().forEach(ds::addDataSourceProperty);
 
                     servletServer.registerDataSource(ds, dsc.getJndiName());
                 }

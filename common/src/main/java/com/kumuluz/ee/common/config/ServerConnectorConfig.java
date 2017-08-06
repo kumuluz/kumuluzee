@@ -166,6 +166,9 @@ public class ServerConnectorConfig {
     private List<String> sslProtocols;
     private List<String> sslCiphers;
 
+    private ServerConnectorConfig() {
+    }
+
     public Integer getPort() {
         return port;
     }
