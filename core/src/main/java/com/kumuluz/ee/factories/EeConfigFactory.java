@@ -28,6 +28,7 @@ import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -100,6 +101,7 @@ public class EeConfigFactory {
 
                 Optional<String> jndiName = cfg.get("kumuluzee.datasources[" + i + "].jndi-name");
                 Optional<String> driverClass = cfg.get("kumuluzee.datasources[" + i + "].driver-class");
+                Optional<String> dataSourceClass = cfg.get("kumuluzee.datasources[" + i + "].datasource-class");
                 Optional<String> conUrl = cfg.get("kumuluzee.datasources[" + i + "].connection-url");
                 Optional<String> user = cfg.get("kumuluzee.datasources[" + i + "].username");
                 Optional<String> pass = cfg.get("kumuluzee.datasources[" + i + "].password");
@@ -107,10 +109,67 @@ public class EeConfigFactory {
 
                 jndiName.ifPresent(dsc::jndiName);
                 driverClass.ifPresent(dsc::driverClass);
+                dataSourceClass.ifPresent(dsc::dataSourceClass);
                 conUrl.ifPresent(dsc::connectionUrl);
                 user.ifPresent(dsc::username);
                 pass.ifPresent(dsc::password);
                 maxPool.ifPresent(dsc::maxPoolSize);
+
+                Optional<List<String>> pool = cfg.getMapKeys("kumuluzee.datasources[" + i + "].pool");
+
+                if (pool.isPresent()) {
+
+                    DataSourcePoolConfig.Builder dspc = new DataSourcePoolConfig.Builder();
+
+                    Optional<Boolean> autoCommit = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.auto-commit");
+                    Optional<Integer> connectionTimeout = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.connection-timeout");
+                    Optional<Integer> idleTimeout = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.idle-timeout");
+                    Optional<Integer> maxLifetime = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.max-lifetime");
+                    Optional<Integer> minIdle = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.min-idle");
+                    Optional<Integer> maxSize = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.max-size");
+                    Optional<String> name = cfg.get("kumuluzee.datasources[" + i + "].pool.name");
+                    Optional<Integer> initializationFailTimeout = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.initialization-fail-timeout");
+                    Optional<Boolean> isolateInternalQueries = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.isolate-internal-queries");
+                    Optional<Boolean> allowPoolSuspension = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.allow-pool-suspension");
+                    Optional<Boolean> readOnly = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.read-only");
+                    Optional<Boolean> registerMbeans = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.register-mbeans");
+                    Optional<String> connectionInitSql = cfg.get("kumuluzee.datasources[" + i + "].pool.connection-init-sql");
+                    Optional<String> transactionIsolation = cfg.get("kumuluzee.datasources[" + i + "].pool.transaction-isolation");
+                    Optional<Integer> validationTimeout = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.validation-timeout");
+                    Optional<Integer> leakDetectionThreshold = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.leak-detection-threshold");
+
+                    // TODO: Change config retrieving to Double when it's implemented
+                    autoCommit.ifPresent(dspc::autoCommit);
+                    connectionTimeout.ifPresent(v -> dspc.connectionTimeout(v.longValue()));
+                    idleTimeout.ifPresent(v -> dspc.idleTimeout(v.longValue()));
+                    maxLifetime.ifPresent(v -> dspc.maxLifetime(v.longValue()));
+                    minIdle.ifPresent(dspc::minIdle);
+                    maxSize.ifPresent(dspc::maxSize);
+                    name.ifPresent(dspc::name);
+                    initializationFailTimeout.ifPresent(v -> dspc.initializationFailTimeout(v.longValue()));
+                    isolateInternalQueries.ifPresent(dspc::isolateInternalQueries);
+                    allowPoolSuspension.ifPresent(dspc::allowPoolSuspension);
+                    readOnly.ifPresent(dspc::readOnly);
+                    registerMbeans.ifPresent(dspc::registerMbeans);
+                    connectionInitSql.ifPresent(dspc::connectionInitSql);
+                    transactionIsolation.ifPresent(dspc::transactionIsolation);
+                    validationTimeout.ifPresent(v -> dspc.validationTimeout(v.longValue()));
+                    leakDetectionThreshold.ifPresent(v -> dspc.leakDetectionThreshold(v.longValue()));
+
+                    dsc.pool(dspc);
+                }
+
+                Optional<List<String>> props = cfg.getMapKeys("kumuluzee.datasources[" + i + "].props");
+
+                if (props.isPresent()) {
+
+                    for (String propName : props.get()) {
+
+                        Optional<String> propValue = cfg.get("kumuluzee.datasources[" + i + "].props." + propName);
+
+                        propValue.ifPresent(v -> dsc.prop(StringUtils.hyphenCaseToCamelCase(propName), v));
+                    }
+                }
 
                 eeConfigBuilder.datasource(dsc);
             }
@@ -187,7 +246,21 @@ public class EeConfigFactory {
                 eeConfig.getServer().getHttps().getIdleTimeout() == null ||
                 eeConfig.getServer().getHttps().getSoLingerTime() == null ||
                 eeConfig.getServer().getHttps().getKeystorePath() == null ||
-                eeConfig.getServer().getHttps().getKeystorePassword() == null);
+                eeConfig.getServer().getHttps().getKeystorePassword() == null ||
+                eeConfig.getDatasources().stream().anyMatch(ds ->
+                        (ds == null || ds.getPool() == null ||
+                                ds.getPool().getAutoCommit() == null ||
+                                ds.getPool().getConnectionTimeout() == null ||
+                                ds.getPool().getIdleTimeout() == null ||
+                                ds.getPool().getMaxLifetime() == null ||
+                                ds.getPool().getMaxSize() == null ||
+                                ds.getPool().getInitializationFailTimeout() == null ||
+                                ds.getPool().getIsolateInternalQueries() == null ||
+                                ds.getPool().getAllowPoolSuspension() == null ||
+                                ds.getPool().getReadOnly() == null ||
+                                ds.getPool().getRegisterMbeans() == null ||
+                                ds.getPool().getValidationTimeout() == null ||
+                                ds.getPool().getLeakDetectionThreshold() == null)));
     }
 
     private static ServerConnectorConfig.Builder createServerConnectorConfigBuilder(String prefix, Integer defaultPort) {
