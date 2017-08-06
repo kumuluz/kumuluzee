@@ -20,6 +20,7 @@
 */
 package com.kumuluz.ee.common.config;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,7 +71,8 @@ public class XaDataSourceConfig {
             xaDataSourceConfig.xaDatasourceClass = xaDatasourceClass;
             xaDataSourceConfig.username = username;
             xaDataSourceConfig.password = password;
-            xaDataSourceConfig.props = props;
+
+            xaDataSourceConfig.props = Collections.unmodifiableMap(props);
 
             return xaDataSourceConfig;
         }
@@ -82,6 +84,9 @@ public class XaDataSourceConfig {
     private String password;
 
     private Map<String, String> props;
+
+    private XaDataSourceConfig() {
+    }
 
     public String getJndiName() {
         return jndiName;

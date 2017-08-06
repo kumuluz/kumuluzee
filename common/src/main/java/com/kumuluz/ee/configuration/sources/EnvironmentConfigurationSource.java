@@ -32,7 +32,6 @@ import java.util.logging.Logger;
  */
 public class EnvironmentConfigurationSource implements ConfigurationSource {
 
-    private static final Logger log = Logger.getLogger(EnvironmentConfigurationSource.class.getName());
     private static EnvironmentConfigurationSource instance;
 
     public static EnvironmentConfigurationSource getInstance() {
@@ -137,43 +136,7 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
 
     @Override
     public Optional<List<String>> getMapKeys(String key) {
-
-        Set<String> mapKeys = new HashSet<>();
-
-        for (String envKey : System.getenv().keySet()) {
-
-            String mapKey = "";
-
-            // check for both supported formats of environment key names
-            if (envKey.startsWith(parseKeyNameForEnvironmentVariables(key))) {
-                int index = parseKeyNameForEnvironmentVariables(key).length() + 1;
-                if (index < envKey.length() && "_".equals(envKey.substring(index - 1, index))) {
-                    mapKey = envKey.substring(index);
-                }
-            } else if (envKey.startsWith(parseKeyNameForEnvironmentVariablesLegacy(key))) {
-                int index = parseKeyNameForEnvironmentVariablesLegacy(key).length() + 1;
-                if (index < envKey.length() && "_".equals(envKey.substring(index - 1, index))) {
-                    mapKey = envKey.substring(index);
-                }
-            }
-
-            if (!mapKey.isEmpty()) {
-
-                int index = mapKey.indexOf('_');
-                if (index > 0) {
-                    mapKey = mapKey.substring(0, index);
-                }
-
-                mapKeys.add(mapKey.toLowerCase());
-            }
-
-        }
-
-        if (mapKeys.isEmpty()) {
-            return Optional.empty();
-        }
-
-        return Optional.of(new ArrayList<>(mapKeys));
+        return Optional.empty();
     }
 
     @Override
