@@ -33,6 +33,7 @@ import java.util.Properties;
  * @since 2.4.0
  */
 public class SystemPropertyConfigurationSource implements ConfigurationSource {
+
     @Override
     public void init(ConfigurationDispatcher configurationDispatcher) {
     }
@@ -44,12 +45,26 @@ public class SystemPropertyConfigurationSource implements ConfigurationSource {
 
     @Override
     public Optional<Boolean> getBoolean(String key) {
-        return Optional.of(Boolean.getBoolean(key));
+
+        Optional<String> value = get(key);
+
+        return value.map(Boolean::valueOf);
     }
 
     @Override
     public Optional<Integer> getInteger(String key) {
-        return Optional.ofNullable(Integer.getInteger(key));
+
+        Optional<String> value = get(key);
+
+        if (value.isPresent()) {
+            try {
+                return Optional.of(Integer.valueOf(value.get()));
+            } catch (NumberFormatException e) {
+                return Optional.empty();
+            }
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -99,6 +114,7 @@ public class SystemPropertyConfigurationSource implements ConfigurationSource {
 
     @Override
     public Optional<List<String>> getMapKeys(String key) {
+
         List<String> mapKeys = new ArrayList<>();
 
         Properties p = System.getProperties();
