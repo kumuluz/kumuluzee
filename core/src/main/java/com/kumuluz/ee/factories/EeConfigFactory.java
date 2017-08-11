@@ -58,6 +58,12 @@ public class EeConfigFactory {
 
         EeConfig.Builder eeConfigBuilder = new EeConfig.Builder();
 
+        Optional<String> appName = cfg.get("kumuluzee.name");
+        Optional<String> appVersion = cfg.get("kumuluzee.version");
+
+        appName.ifPresent(eeConfigBuilder::name);
+        appVersion.ifPresent(eeConfigBuilder::version);
+
         ServerConfig.Builder serverBuilder = new ServerConfig.Builder();
 
         Optional<List<String>> serverCfgOpt = cfg.getMapKeys("kumuluzee.server");
@@ -68,11 +74,13 @@ public class EeConfigFactory {
 
         if (serverCfgOpt.isPresent()) {
 
+            Optional<String> baseUrl = cfg.get("kumuluzee.server.base-url");
             Optional<String> contextPath = cfg.get("kumuluzee.server.context-path");
             Optional<Integer> minThreads = cfg.getInteger("kumuluzee.server.min-threads");
             Optional<Integer> maxThreads = cfg.getInteger("kumuluzee.server.max-threads");
             Optional<Boolean> forceHttps = cfg.getBoolean("kumuluzee.server.force-https");
 
+            baseUrl.ifPresent(serverBuilder::baseUrl);
             contextPath.ifPresent(serverBuilder::contextPath);
             minThreads.ifPresent(serverBuilder::minThreads);
             maxThreads.ifPresent(serverBuilder::maxThreads);
@@ -90,6 +98,19 @@ public class EeConfigFactory {
                 ServerConnectorConfig.Builder.DEFAULT_HTTPS_PORT));
 
         eeConfigBuilder.server(serverBuilder);
+
+        Optional<List<String>> envCfgOpt = cfg.getMapKeys("kumuluzee.env");
+
+        if (envCfgOpt.isPresent()) {
+
+            EnvConfig.Builder envBuilder = new EnvConfig.Builder();
+
+            Optional<String> envName = cfg.get("kumuluzee.env.name");
+
+            envName.ifPresent(envBuilder::name);
+
+            eeConfigBuilder.env(envBuilder);
+        }
 
         Optional<Integer> dsSizeOpt = cfg.getListSize("kumuluzee.datasources");
 
@@ -127,7 +148,7 @@ public class EeConfigFactory {
                     Optional<Integer> maxLifetime = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.max-lifetime");
                     Optional<Integer> minIdle = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.min-idle");
                     Optional<Integer> maxSize = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.max-size");
-                    Optional<String> name = cfg.get("kumuluzee.datasources[" + i + "].pool.name");
+                    Optional<String> poolName = cfg.get("kumuluzee.datasources[" + i + "].pool.name");
                     Optional<Integer> initializationFailTimeout = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.initialization-fail-timeout");
                     Optional<Boolean> isolateInternalQueries = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.isolate-internal-queries");
                     Optional<Boolean> allowPoolSuspension = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.allow-pool-suspension");
@@ -145,7 +166,7 @@ public class EeConfigFactory {
                     maxLifetime.ifPresent(v -> dspc.maxLifetime(v.longValue()));
                     minIdle.ifPresent(dspc::minIdle);
                     maxSize.ifPresent(dspc::maxSize);
-                    name.ifPresent(dspc::name);
+                    poolName.ifPresent(dspc::name);
                     initializationFailTimeout.ifPresent(v -> dspc.initializationFailTimeout(v.longValue()));
                     isolateInternalQueries.ifPresent(dspc::isolateInternalQueries);
                     allowPoolSuspension.ifPresent(dspc::allowPoolSuspension);
