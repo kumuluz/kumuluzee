@@ -31,6 +31,7 @@ import java.lang.reflect.Method;
  * @author Tilen Faganel
  * @since 2.3.0
  */
+@Deprecated
 public class XADataSourceBuilder {
 
     private XaDataSourceConfig xaDataSourceConfig;

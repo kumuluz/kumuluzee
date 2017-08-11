@@ -48,10 +48,16 @@
         <jta.version>1.2</jta.version>
 
         <jandex.version>2.0.3.Final</jandex.version>
-        <hikari.version>2.6.1</hikari.version>
         <yamlbeans.version>1.11</yamlbeans.version>
         <yaml.version>1.18</yaml.version>
         <junit.version>4.12</junit.version>
+
+        <fungal.version>0.11.0.Final</fungal.version>
+        <ironjacamar.version>1.4.5.Final</ironjacamar.version>
+        <shrinkwrap.version>1.2.0</shrinkwrap.version>
+        <shrinkwrap-descriptors.version>2.0.0</shrinkwrap-descriptors.version>
+        <jnpserver.version>5.0.5.Final</jnpserver.version>
+        <jboss-common-core.version>2.5.0.Final</jboss-common-core.version>
 
         <uel-version>3.0.0</uel-version>
         <weld.version>2.4.3.Final</weld.version>
@@ -101,6 +107,17 @@
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>jboss</id>
+            <url>http://repository.jboss.org/nexus/content/groups/public</url>
+        </repository>
+        <repository>
+            <id>fungal</id>
+            <url>http://jesperpedersen.github.com/fungal/maven2</url>
+        </repository>
+    </repositories>
 
     <dependencyManagement>
         <dependencies>
@@ -366,11 +383,6 @@
                 <groupId>org.jboss</groupId>
                 <artifactId>jandex</artifactId>
                 <version>${jandex.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.zaxxer</groupId>
-                <artifactId>HikariCP</artifactId>
-                <version>${hikari.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.yaml</groupId>

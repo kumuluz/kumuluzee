@@ -34,7 +34,14 @@ public class DataSourceConfig {
         private String username;
         private String password;
 
+        private Integer initialPoolSize;
+        private Integer minPoolSize;
         private Integer maxPoolSize;
+
+        private String checkConnectionSql;
+
+        private Integer blockingTimeoutMillis;
+        private Integer idleTimeoutMinutes;
 
         public Builder jndiName(String jndiName) {
             this.jndiName = jndiName;
@@ -61,8 +68,33 @@ public class DataSourceConfig {
             return this;
         }
 
+        public Builder initialPoolSize(Integer initialPoolSize) {
+            this.initialPoolSize = initialPoolSize;
+            return this;
+        }
+
+        public Builder minPoolSize(Integer minPoolSize) {
+            this.minPoolSize = minPoolSize;
+            return this;
+        }
+
         public Builder maxPoolSize(Integer maxPoolSize) {
             this.maxPoolSize = maxPoolSize;
+            return this;
+        }
+
+        public Builder checkConnectionSql(String checkConnectionSql) {
+            this.checkConnectionSql = checkConnectionSql;
+            return this;
+        }
+
+        public Builder blockingTimeoutMillis(Integer blockingTimeoutMillis) {
+            this.blockingTimeoutMillis = blockingTimeoutMillis;
+            return this;
+        }
+
+        public Builder idleTimeoutMinutes(Integer idleTimeoutMinutes) {
+            this.idleTimeoutMinutes = idleTimeoutMinutes;
             return this;
         }
 
@@ -74,7 +106,12 @@ public class DataSourceConfig {
             dataSourceConfig.connectionUrl = connectionUrl;
             dataSourceConfig.username = username;
             dataSourceConfig.password = password;
+            dataSourceConfig.initialPoolSize = initialPoolSize;
+            dataSourceConfig.minPoolSize = minPoolSize;
             dataSourceConfig.maxPoolSize = maxPoolSize;
+            dataSourceConfig.checkConnectionSql = checkConnectionSql;
+            dataSourceConfig.blockingTimeoutMillis = blockingTimeoutMillis;
+            dataSourceConfig.idleTimeoutMinutes = idleTimeoutMinutes;
 
             return dataSourceConfig;
         }
@@ -86,7 +123,14 @@ public class DataSourceConfig {
     private String username;
     private String password;
 
+    private Integer initialPoolSize;
+    private Integer minPoolSize;
     private Integer maxPoolSize;
+
+    private String checkConnectionSql;
+
+    private Integer blockingTimeoutMillis;
+    private Integer idleTimeoutMinutes;
 
     public String getJndiName() {
         return jndiName;
@@ -108,7 +152,27 @@ public class DataSourceConfig {
         return password;
     }
 
+    public Integer getInitialPoolSize() {
+        return initialPoolSize;
+    }
+
+    public Integer getMinPoolSize() {
+        return minPoolSize;
+    }
+
     public Integer getMaxPoolSize() {
         return maxPoolSize;
+    }
+
+    public String getCheckConnectionSql() {
+        return checkConnectionSql;
+    }
+
+    public Integer getBlockingTimeoutMillis() {
+        return blockingTimeoutMillis;
+    }
+
+    public Integer getIdleTimeoutMinutes() {
+        return idleTimeoutMinutes;
     }
 }

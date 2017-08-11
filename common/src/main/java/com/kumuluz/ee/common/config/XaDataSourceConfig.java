@@ -38,6 +38,15 @@ public class XaDataSourceConfig {
 
         private Map<String, String> props = new HashMap<>();
 
+        private Integer initialPoolSize;
+        private Integer minPoolSize;
+        private Integer maxPoolSize;
+
+        private String checkConnectionSql;
+
+        private Integer blockingTimeoutMillis;
+        private Integer idleTimeoutMinutes;
+
         public Builder jndiName(String jndiName) {
             this.jndiName = jndiName;
             return this;
@@ -63,6 +72,36 @@ public class XaDataSourceConfig {
             return this;
         }
 
+        public Builder initialPoolSize(Integer initialPoolSize) {
+            this.initialPoolSize = initialPoolSize;
+            return this;
+        }
+
+        public Builder minPoolSize(Integer minPoolSize) {
+            this.minPoolSize = minPoolSize;
+            return this;
+        }
+
+        public Builder maxPoolSize(Integer maxPoolSize) {
+            this.maxPoolSize = maxPoolSize;
+            return this;
+        }
+
+        public Builder checkConnectionSql(String checkConnectionSql) {
+            this.checkConnectionSql = checkConnectionSql;
+            return this;
+        }
+
+        public Builder blockingTimeoutMillis(Integer blockingTimeoutMillis) {
+            this.blockingTimeoutMillis = blockingTimeoutMillis;
+            return this;
+        }
+
+        public Builder idleTimeoutMinutes(Integer idleTimeoutMinutes) {
+            this.idleTimeoutMinutes = idleTimeoutMinutes;
+            return this;
+        }
+
         public XaDataSourceConfig build() {
 
             XaDataSourceConfig xaDataSourceConfig = new XaDataSourceConfig();
@@ -71,6 +110,12 @@ public class XaDataSourceConfig {
             xaDataSourceConfig.username = username;
             xaDataSourceConfig.password = password;
             xaDataSourceConfig.props = props;
+            xaDataSourceConfig.initialPoolSize = initialPoolSize;
+            xaDataSourceConfig.minPoolSize = minPoolSize;
+            xaDataSourceConfig.maxPoolSize = maxPoolSize;
+            xaDataSourceConfig.checkConnectionSql = checkConnectionSql;
+            xaDataSourceConfig.blockingTimeoutMillis = blockingTimeoutMillis;
+            xaDataSourceConfig.idleTimeoutMinutes = idleTimeoutMinutes;
 
             return xaDataSourceConfig;
         }
@@ -82,6 +127,15 @@ public class XaDataSourceConfig {
     private String password;
 
     private Map<String, String> props;
+
+    private Integer initialPoolSize;
+    private Integer minPoolSize;
+    private Integer maxPoolSize;
+
+    private String checkConnectionSql;
+
+    private Integer blockingTimeoutMillis;
+    private Integer idleTimeoutMinutes;
 
     public String getJndiName() {
         return jndiName;
@@ -101,5 +155,29 @@ public class XaDataSourceConfig {
 
     public Map<String, String> getProps() {
         return props;
+    }
+
+    public Integer getInitialPoolSize() {
+        return initialPoolSize;
+    }
+
+    public Integer getMinPoolSize() {
+        return minPoolSize;
+    }
+
+    public Integer getMaxPoolSize() {
+        return maxPoolSize;
+    }
+
+    public String getCheckConnectionSql() {
+        return checkConnectionSql;
+    }
+
+    public Integer getBlockingTimeoutMillis() {
+        return blockingTimeoutMillis;
+    }
+
+    public Integer getIdleTimeoutMinutes() {
+        return idleTimeoutMinutes;
     }
 }

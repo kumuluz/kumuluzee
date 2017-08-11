@@ -53,10 +53,10 @@ public class StringUtils {
     }
 
     /**
-     * Parse lower hyphen case to upper camel case.
+     * Parse lower hyphen case to camel case.
      *
      * @param s string in lower hyphen case format
-     * @return string in upper camel case format
+     * @return string in camel case format
      */
     public static String hyphenCaseToCamelCase(String s) {
 
@@ -77,6 +77,21 @@ public class StringUtils {
     }
 
     /**
+     * Parse lower hyphen case to upper camel case.
+     *
+     * @param s string in lower hyphen case format
+     * @return string in upper camel case format
+     */
+    public static String hyphenCaseToUpperCamelCase(String s) {
+        StringBuilder parsedString = new StringBuilder();
+
+        Stream.of(s.split("-")).filter(w -> !"".equals(w))
+                .forEach(w -> parsedString.append(Character.toUpperCase(w.charAt(0))).append(w.substring(1)));
+
+        return parsedString.toString();
+    }
+
+    /**
      * Check whether the string is null or empty
      *
      * @param s string to check.
@@ -85,4 +100,16 @@ public class StringUtils {
     public static boolean isNullOrEmpty(String s) {
         return s == null || s.isEmpty();
     }
+
+    /**
+     * Splits a string separated by a regex into a list of strings
+     *
+     * @param s string to be splitted
+     * @param regex string used to split previous param
+     * @return string list containing the parts of the first parameter separated by the regex
+     */
+    public static List<String> splitToList(String s, String regex) {
+        return Stream.of(s.split(regex)).map(String::trim).collect(Collectors.toList());
+    }
+
 }

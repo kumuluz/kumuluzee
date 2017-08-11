@@ -20,33 +20,26 @@
 */
 package com.kumuluz.ee;
 
+import com.kumuluz.ee.common.*;
+import com.kumuluz.ee.common.config.EeConfig;
+import com.kumuluz.ee.common.dependencies.*;
+import com.kumuluz.ee.common.exceptions.KumuluzServerException;
+import com.kumuluz.ee.common.filters.JcaServletListener;
+import com.kumuluz.ee.common.filters.PoweredByFilter;
 import com.kumuluz.ee.common.runtime.EeRuntime;
 import com.kumuluz.ee.common.runtime.EeRuntimeComponent;
 import com.kumuluz.ee.common.runtime.EeRuntimeInternal;
-import com.kumuluz.ee.factories.EeConfigFactory;
-import com.kumuluz.ee.factories.JtaXADataSourceFactory;
-import com.kumuluz.ee.common.*;
-import com.kumuluz.ee.common.config.DataSourceConfig;
-import com.kumuluz.ee.common.config.EeConfig;
-import com.kumuluz.ee.common.config.XaDataSourceConfig;
-import com.kumuluz.ee.common.datasources.XADataSourceBuilder;
-import com.kumuluz.ee.common.datasources.NonJtaXADataSourceWrapper;
-import com.kumuluz.ee.common.datasources.XADataSourceWrapper;
-import com.kumuluz.ee.common.dependencies.*;
-import com.kumuluz.ee.common.exceptions.KumuluzServerException;
-import com.kumuluz.ee.common.filters.PoweredByFilter;
 import com.kumuluz.ee.common.utils.ResourceUtils;
 import com.kumuluz.ee.common.wrapper.*;
 import com.kumuluz.ee.configuration.ConfigurationSource;
 import com.kumuluz.ee.configuration.utils.ConfigurationImpl;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
+import com.kumuluz.ee.factories.EeConfigFactory;
 import com.kumuluz.ee.loaders.ComponentLoader;
 import com.kumuluz.ee.loaders.ConfigExtensionLoader;
 import com.kumuluz.ee.loaders.ExtensionLoader;
 import com.kumuluz.ee.loaders.ServerLoader;
-import com.zaxxer.hikari.HikariDataSource;
 
-import javax.sql.XADataSource;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -174,50 +167,11 @@ public class EeApplication {
         if (server.getServer() instanceof ServletServer) {
 
             ServletServer servletServer = (ServletServer) server.getServer();
-
             servletServer.initWebContext();
 
-            // Create and register datasources to the underlying server
-            if (eeConfig.getDatasources().size() > 0) {
-
-                for (DataSourceConfig dsc : eeConfig.getDatasources()) {
-
-                    HikariDataSource ds = new HikariDataSource();
-                    ds.setJdbcUrl(dsc.getConnectionUrl());
-                    ds.setUsername(dsc.getUsername());
-                    ds.setPassword(dsc.getPassword());
-
-                    if (dsc.getDriverClass() != null && !dsc.getDriverClass().isEmpty())
-                        ds.setDriverClassName(dsc.getDriverClass());
-
-                    if (dsc.getMaxPoolSize() != null)
-                        ds.setMaximumPoolSize(dsc.getMaxPoolSize());
-
-                    servletServer.registerDataSource(ds, dsc.getJndiName());
-                }
-            }
-
-            if (eeConfig.getXaDatasources().size() > 0) {
-
-                Boolean jtaPresent = eeRuntimeInternal.getEeComponents().stream().anyMatch(c -> c.getType().equals(EeComponentType.JTA));
-
-                for (XaDataSourceConfig xdsc : eeConfig.getXaDatasources()) {
-
-                    XADataSourceBuilder XADataSourceBuilder = new XADataSourceBuilder(xdsc);
-
-                    XADataSource xaDataSource = XADataSourceBuilder.constructXaDataSource();
-
-                    XADataSourceWrapper xaDataSourceWrapper;
-
-                    if (jtaPresent) {
-                        xaDataSourceWrapper = JtaXADataSourceFactory.buildJtaXADataSourceWrapper(xaDataSource);
-                    } else {
-                        xaDataSourceWrapper = new NonJtaXADataSourceWrapper(xaDataSource);
-                    }
-
-                    servletServer.registerDataSource(xaDataSourceWrapper, xdsc.getJndiName());
-                }
-            }
+            // Add ServletListener
+            Boolean jtaPresent = eeRuntimeInternal.getEeComponents().stream().anyMatch(c -> c.getType().equals(EeComponentType.JTA));
+            servletServer.registerListener(new JcaServletListener(eeRuntimeInternal, eeConfig, jtaPresent));
 
             // Add all included filters
             Map<String, String> filterParams = new HashMap<>();

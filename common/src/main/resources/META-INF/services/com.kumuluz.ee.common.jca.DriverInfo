@@ -1,0 +1,9 @@
+com.kumuluz.ee.common.jca.drivers.DB2DriverInfo
+com.kumuluz.ee.common.jca.drivers.DerbyDriverInfo
+com.kumuluz.ee.common.jca.drivers.H2DriverInfo
+com.kumuluz.ee.common.jca.drivers.MariaDBDriverInfo
+com.kumuluz.ee.common.jca.drivers.MySQLDriverInfo
+com.kumuluz.ee.common.jca.drivers.OracleDriverInfo
+com.kumuluz.ee.common.jca.drivers.PostgreSQLDriverInfo
+com.kumuluz.ee.common.jca.drivers.SQLServerDriverInfo
+com.kumuluz.ee.common.jca.drivers.SybaseDriverInfo

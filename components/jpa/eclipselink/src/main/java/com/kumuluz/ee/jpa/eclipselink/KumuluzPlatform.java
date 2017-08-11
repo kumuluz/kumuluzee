@@ -22,6 +22,7 @@ package com.kumuluz.ee.jpa.eclipselink;
 
 import org.eclipse.persistence.platform.server.ServerPlatformBase;
 import org.eclipse.persistence.sessions.DatabaseSession;
+import org.eclipse.persistence.sessions.JNDIConnector;
 
 /**
  * @author Marcos Koch Salvador
@@ -36,6 +37,11 @@ public class KumuluzPlatform extends ServerPlatformBase {
     @Override
     public Class<?> getExternalTransactionControllerClass() {
         return KumuluzTransactionController.class;
+    }
+
+    @Override
+    public int getJNDIConnectorLookupType() {
+        return JNDIConnector.STRING_LOOKUP;
     }
 
 }

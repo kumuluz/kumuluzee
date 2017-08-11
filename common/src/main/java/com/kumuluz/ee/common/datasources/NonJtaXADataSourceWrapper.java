@@ -34,6 +34,7 @@ import java.util.logging.Logger;
  * @author Tilen Faganel
  * @since 2.3.0
  */
+@Deprecated
 public class NonJtaXADataSourceWrapper implements XADataSourceWrapper {
 
     protected XADataSource xaDataSource;

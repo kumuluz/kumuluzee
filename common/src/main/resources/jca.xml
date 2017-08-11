@@ -1,0 +1,399 @@
+<deployment>
+
+	<!-- Bean Validation
+
+         PS: Keep this element commented until the BeanValidation JCA deployment could be activated on presence respective Kumuluz Component.
+
+	<bean name="BeanValidation" class="org.jboss.jca.core.bv.BeanValidation">
+		<depends>NamingServer</depends>
+	</bean>
+	-->
+	
+	<!-- This class replaces JBoss Stdio dependency -->
+	<bean name="KumuluzStdio" class="com.kumuluz.ee.logs.SysoutPrintStream">
+	</bean>
+
+	<!-- Thread group -->
+	<bean name="ThreadGroup" class="java.lang.ThreadGroup">
+		<constructor>
+			<parameter>workmanager</parameter>
+		</constructor>
+		<ignoreStop />
+		<ignoreDestroy />
+	</bean>
+
+	<!-- Thread factory -->
+	<bean name="ThreadFactory" interface="java.util.concurrent.ThreadFactory"
+		class="org.jboss.threads.JBossThreadFactory">
+		<constructor>
+			<parameter>
+				<inject bean="ThreadGroup" />
+			</parameter>
+			<parameter>false</parameter>
+			<parameter>5</parameter>
+			<parameter>work</parameter>
+			<parameter>
+				<null />
+			</parameter>
+			<parameter>
+				<null />
+			</parameter>
+		</constructor>
+	</bean>
+
+	<!-- Rejecting executor -->
+	<bean name="RejectingExecutor">
+		<constructor factoryMethod="rejectingExecutor"
+			factoryClass="org.jboss.threads.JBossExecutors">
+		</constructor>
+	</bean>
+
+	<!-- TimeUnit -->
+	<bean name="KeepAliveTimeUnit">
+		<constructor factoryMethod="valueOf" factoryClass="java.util.concurrent.TimeUnit">
+			<parameter>SECONDS</parameter>
+		</constructor>
+	</bean>
+
+	<!-- Short running thread pool -->
+	<bean name="ShortRunningThreadPool" class="org.jboss.threads.QueueExecutor">
+		<constructor>
+			<!-- Core threads -->
+			<parameter>20</parameter>
+			<!-- Max threads -->
+			<parameter>100</parameter>
+			<!-- 60 seconds keepalive -->
+			<parameter>60</parameter>
+			<parameter>
+				<inject bean="KeepAliveTimeUnit" />
+			</parameter>
+			<!-- Queue size -->
+			<parameter>1024</parameter>
+			<!-- Thread factory -->
+			<parameter>
+				<inject bean="ThreadFactory" />
+			</parameter>
+			<!-- Blocking -->
+			<parameter>true</parameter>
+			<!-- Handoff executor -->
+			<parameter>
+				<inject bean="RejectingExecutor" />
+			</parameter>
+		</constructor>
+		<destroy method="shutdown" />
+	</bean>
+
+	<!-- Long running thread pool -->
+	<bean name="LongRunningThreadPool" class="org.jboss.threads.QueueExecutor">
+		<constructor>
+			<!-- Core threads -->
+			<parameter>20</parameter>
+			<!-- Max threads -->
+			<parameter>100</parameter>
+			<!-- 60 seconds keepalive -->
+			<parameter>60</parameter>
+			<parameter>
+				<inject bean="KeepAliveTimeUnit" />
+			</parameter>
+			<!-- Queue size -->
+			<parameter>1024</parameter>
+			<!-- Thread factory -->
+			<parameter>
+				<inject bean="ThreadFactory" />
+			</parameter>
+			<!-- Blocking -->
+			<parameter>true</parameter>
+			<!-- Handoff executor -->
+			<parameter>
+				<inject bean="RejectingExecutor" />
+			</parameter>
+		</constructor>
+		<destroy method="shutdown" />
+	</bean>
+
+	<!-- Callback -->
+	<bean name="Callback" interface="org.jboss.jca.core.spi.security.Callback"
+		class="org.jboss.jca.core.security.DefaultCallback" />
+
+	<!-- PicketBox -->
+	<bean name="PicketBox"
+		class="org.jboss.jca.core.security.picketbox.PicketBoxSecurityIntegration">
+	</bean>
+
+	<!-- Idle remover -->
+	<bean name="IdleRemover">
+		<constructor
+			factoryClass="org.jboss.jca.core.connectionmanager.pool.idle.IdleRemover"
+			factoryMethod="getInstance">
+		</constructor>
+	</bean>
+
+	<!-- Connection validator -->
+	<bean name="ConnectionValidator">
+		<constructor
+			factoryClass="org.jboss.jca.core.connectionmanager.pool.validator.ConnectionValidator"
+			factoryMethod="getInstance">
+		</constructor>
+	</bean>
+
+	<!-- Work Manager -->
+	<bean name="WorkManager" interface="org.jboss.jca.core.api.workmanager.WorkManager"
+		class="org.jboss.jca.core.workmanager.WorkManagerImpl">
+
+		<!-- The name -->
+		<property name="Name">Default</property>
+
+		<!-- The short running thread pool -->
+		<property name="ShortRunningThreadPool">
+			<inject bean="ShortRunningThreadPool" />
+		</property>
+
+		<!-- The long running thread pool -->
+		<property name="LongRunningThreadPool">
+			<inject bean="LongRunningThreadPool" />
+		</property>
+
+		<!-- The XA terminator -->
+		<property name="XATerminator">
+			<inject bean="TransactionIntegration" property="XATerminator" />
+		</property>
+
+		<!-- The callback security module -->
+		<property name="CallbackSecurity">
+			<inject bean="Callback" />
+		</property>
+
+		<!-- The security integration module -->
+		<property name="SecurityIntegration">
+			<inject bean="PicketBox" />
+		</property>
+
+		<destroy method="shutdown" />
+	</bean>
+
+	<!-- Work Manager Coordinator -->
+	<bean name="WorkManagerCoordinator">
+		<constructor factoryClass="org.jboss.jca.core.workmanager.WorkManagerCoordinator"
+			factoryMethod="getInstance" />
+
+		<property name="DefaultWorkManager">
+			<inject bean="WorkManager" />
+		</property>
+
+		<incallback method="registerWorkManager" />
+		<uncallback method="unregisterWorkManager" />
+	</bean>
+
+	<!-- Default Bootstrap context -->
+	<bean name="DefaultBootstrapContext"
+		interface="org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext"
+		class="org.jboss.jca.core.bootstrapcontext.BaseCloneableBootstrapContext">
+
+		<!-- The Name -->
+		<property name="Name">Default</property>
+
+		<!-- The Transaction Synchronization Registry -->
+		<property name="TransactionSynchronizationRegistry">
+			<inject bean="TransactionSynchronizationRegistry" />
+		</property>
+
+		<!-- The Work Manager -->
+		<property name="WorkManagerName">
+			<inject bean="WorkManager" property="Name" />
+		</property>
+
+		<!-- The XA terminator -->
+		<property name="XATerminator">
+			<inject bean="TransactionIntegration" property="XATerminator" />
+		</property>
+	</bean>
+
+	<!-- Bootstrap Context Coordinator -->
+	<bean name="BootstrapContextCoordinator">
+		<constructor
+			factoryClass="org.jboss.jca.core.bootstrapcontext.BootstrapContextCoordinator"
+			factoryMethod="getInstance" />
+
+		<property name="DefaultBootstrapContext">
+			<inject bean="DefaultBootstrapContext" />
+		</property>
+
+		<incallback method="registerBootstrapContext" />
+		<uncallback method="unregisterBootstrapContext" />
+	</bean>
+
+	<!-- Explicit JNDI strategy -->
+	<bean name="ExplicitJndiStrategy" interface="org.jboss.jca.core.spi.naming.JndiStrategy"
+		class="org.jboss.jca.core.naming.ExplicitJndiStrategy" />
+
+	<!-- Simple JNDI strategy -->
+	<bean name="SimpleJndiStrategy" interface="org.jboss.jca.core.spi.naming.JndiStrategy"
+		class="org.jboss.jca.core.naming.SimpleJndiStrategy" />
+
+	<!-- MDR -->
+	<bean name="MDR" interface="org.jboss.jca.core.spi.mdr.MetadataRepository"
+		class="org.jboss.jca.core.mdr.SimpleMetadataRepository" />
+
+	<!-- CCM -->
+	<bean name="CCM"
+		interface="org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager"
+		class="org.jboss.jca.core.connectionmanager.ccm.CachedConnectionManagerImpl">
+		<constructor>
+			<parameter>
+				<inject bean="TransactionIntegration" />
+			</parameter>
+		</constructor>
+		<property name="Debug">false</property>
+		<property name="Error">false</property>
+	</bean>
+
+	<!-- Resource adapter repository -->
+	<bean name="ResourceAdapterRepository" interface="org.jboss.jca.core.spi.rar.ResourceAdapterRepository"
+		class="org.jboss.jca.core.rar.SimpleResourceAdapterRepository">
+		<property name="MetadataRepository">
+			<inject bean="MDR" />
+		</property>
+		<property name="TransactionIntegration">
+			<null />
+		</property>
+	</bean>
+
+	<!-- Management repository -->
+	<bean name="ManagementRepository"
+		class="org.jboss.jca.core.api.management.ManagementRepository" />
+
+	<!-- SubjectFactory -->
+	<bean name="DefaultSecurityDomain" interface="org.jboss.jca.core.spi.security.SubjectFactory"
+		class="org.jboss.jca.core.security.DefaultSubjectFactory">
+		<property name="SecurityDomain">DefaultSecurityDomain</property>
+		<property name="UserName">user</property>
+		<property name="Password">password</property>
+	</bean>
+
+	<!-- Deployer configuration -->
+	<bean name="DeployerConfiguration" class="org.jboss.jca.deployers.fungal.RAConfiguration">
+		<property name="ArchiveValidation">true</property>
+		<property name="ArchiveValidationFailOnWarn">false</property>
+		<property name="ArchiveValidationFailOnError">true</property>
+		<property name="BeanValidation">false</property>
+
+		<property name="PrintStream">
+			<inject bean="KumuluzStdio" />
+		</property>
+
+		<property name="JndiStrategy">
+			<inject bean="ExplicitJndiStrategy" />
+		</property>
+		<property name="TransactionIntegration">
+			<inject bean="TransactionIntegration" />
+		</property>
+		<property name="MetadataRepository">
+			<inject bean="MDR" />
+		</property>
+		<property name="ManagementRepository">
+			<inject bean="ManagementRepository" />
+		</property>
+		<property name="ResourceAdapterRepository">
+			<inject bean="ResourceAdapterRepository" />
+		</property>
+		<property name="CachedConnectionManager">
+			<inject bean="CCM" />
+		</property>
+	</bean>
+
+	<!-- Activator configuration -->
+	<bean name="ActivatorConfiguration" class="org.jboss.jca.deployers.fungal.RAConfiguration">
+		<property name="ArchiveValidation">true</property>
+		<property name="ArchiveValidationFailOnWarn">false</property>
+		<property name="ArchiveValidationFailOnError">true</property>
+		<property name="BeanValidation">false</property>
+		
+		<property name="PrintStream">
+			<inject bean="KumuluzStdio" />
+		</property>
+		
+		<property name="JndiStrategy">
+			<inject bean="SimpleJndiStrategy" />
+		</property>
+		<property name="TransactionIntegration">
+			<inject bean="TransactionIntegration" />
+		</property>
+		<property name="MetadataRepository">
+			<inject bean="MDR" />
+		</property>
+		<property name="ManagementRepository">
+			<inject bean="ManagementRepository" />
+		</property>
+		<property name="ResourceAdapterRepository">
+			<inject bean="ResourceAdapterRepository" />
+		</property>
+		<property name="CachedConnectionManager">
+			<inject bean="CCM" />
+		</property>
+	</bean>
+
+	<!-- RA deployer -->
+	<bean name="RADeployer" interface="com.github.fungal.spi.deployers.Deployer"
+		class="org.jboss.jca.deployers.fungal.RADeployer">
+		
+		<property name="Configuration">
+			<inject bean="DeployerConfiguration" />
+		</property>
+		<property name="Kernel">
+			<inject bean="Kernel" />
+		</property>
+		
+		<!--
+		<depends>BeanValidation</depends>
+		<depends>JBossStdioContextSelector</depends>
+		-->
+		
+		<depends>IdleRemover</depends>
+		<depends>ConnectionValidator</depends>
+	</bean>
+
+	<!-- -ra.xml deployer -->
+	<bean name="RaXmlDeployer" interface="com.github.fungal.spi.deployers.Deployer"
+		class="org.jboss.jca.deployers.fungal.RaXmlDeployer">
+		<property name="Configuration">
+			<inject bean="DeployerConfiguration" />
+		</property>
+		<property name="Kernel">
+			<inject bean="Kernel" />
+		</property>
+		
+		<!--
+		<depends>BeanValidation</depends>
+		<depends>JBossStdioContextSelector</depends>
+		-->
+		
+		<depends>IdleRemover</depends>
+		<depends>ConnectionValidator</depends>
+	</bean>
+
+	<!-- RA activator -->
+	<bean name="RAActivator" class="org.jboss.jca.deployers.fungal.RAActivator">
+		<property name="Configuration">
+			<inject bean="ActivatorConfiguration" />
+		</property>
+		<property name="Enabled">true</property>
+		<property name="Kernel">
+			<inject bean="Kernel" />
+		</property>
+		<property name="ExcludeArchives">
+			<set elementClass="java.lang.String">
+				<value>jdbc-local.rar</value>
+				<value>jdbc-xa.rar</value>
+			</set>
+		</property>
+		
+		<!--
+		<depends>BeanValidation</depends>
+		<depends>JBossStdioContextSelector</depends>
+		-->
+		
+		<depends>IdleRemover</depends>
+		<depends>ConnectionValidator</depends>
+	</bean>
+
+</deployment>

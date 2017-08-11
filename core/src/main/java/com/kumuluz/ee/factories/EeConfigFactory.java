@@ -103,14 +103,30 @@ public class EeConfigFactory {
                 Optional<String> conUrl = cfg.get("kumuluzee.datasources[" + i + "].connection-url");
                 Optional<String> user = cfg.get("kumuluzee.datasources[" + i + "].username");
                 Optional<String> pass = cfg.get("kumuluzee.datasources[" + i + "].password");
+
+                Optional<Integer> initialPool = cfg.getInteger("kumuluzee.datasources[" + i + "].initial-pool-size");
+                Optional<Integer> minPool = cfg.getInteger("kumuluzee.datasources[" + i + "].min-pool-size");
                 Optional<Integer> maxPool = cfg.getInteger("kumuluzee.datasources[" + i + "].max-pool-size");
+
+                Optional<String> checkConnectionSql = cfg.get("kumuluzee.datasources[" + i + "].check-connection-sql");
+
+                Optional<Integer> blockingTimeoutMillis = cfg.getInteger("kumuluzee.datasources[" + i + "].blocking-timeout-millis");
+                Optional<Integer> idleTimeoutMinutes = cfg.getInteger("kumuluzee.datasources[" + i + "].idle-timeout-minutes");
 
                 jndiName.ifPresent(dsc::jndiName);
                 driverClass.ifPresent(dsc::driverClass);
                 conUrl.ifPresent(dsc::connectionUrl);
                 user.ifPresent(dsc::username);
                 pass.ifPresent(dsc::password);
+
+                initialPool.ifPresent(dsc::initialPoolSize);
+                minPool.ifPresent(dsc::minPoolSize);
                 maxPool.ifPresent(dsc::maxPoolSize);
+
+                checkConnectionSql.ifPresent(dsc::checkConnectionSql);
+
+                blockingTimeoutMillis.ifPresent(dsc::blockingTimeoutMillis);
+                idleTimeoutMinutes.ifPresent(dsc::idleTimeoutMinutes);
 
                 eeConfigBuilder.datasource(dsc);
             }
@@ -142,9 +158,27 @@ public class EeConfigFactory {
 
                         Optional<String> propValue = cfg.get("kumuluzee.xa-datasources[" + i + "].props." + propName);
 
-                        propValue.ifPresent(v -> xdsc.prop(StringUtils.hyphenCaseToCamelCase(propName), v));
+                        propValue.ifPresent(v -> xdsc.prop(StringUtils.hyphenCaseToUpperCamelCase(propName), v));
                     }
                 }
+
+                Optional<Integer> initialPool = cfg.getInteger("kumuluzee.xa-datasources[" + i + "].initial-pool-size");
+                Optional<Integer> minPool = cfg.getInteger("kumuluzee.xa-datasources[" + i + "].min-pool-size");
+                Optional<Integer> maxPool = cfg.getInteger("kumuluzee.xa-datasources[" + i + "].max-pool-size");
+
+                Optional<String> checkConnectionSql = cfg.get("kumuluzee.xa-datasources[" + i + "].check-connection-sql");
+
+                Optional<Integer> blockingTimeoutMillis = cfg.getInteger("kumuluzee.xa-datasources[" + i + "].blocking-timeout-millis");
+                Optional<Integer> idleTimeoutMinutes = cfg.getInteger("kumuluzee.xa-datasources[" + i + "].idle-timeout-minutes");
+
+                initialPool.ifPresent(xdsc::initialPoolSize);
+                minPool.ifPresent(xdsc::minPoolSize);
+                maxPool.ifPresent(xdsc::maxPoolSize);
+
+                checkConnectionSql.ifPresent(xdsc::checkConnectionSql);
+
+                blockingTimeoutMillis.ifPresent(xdsc::blockingTimeoutMillis);
+                idleTimeoutMinutes.ifPresent(xdsc::idleTimeoutMinutes);
 
                 eeConfigBuilder.xaDatasource(xdsc);
             }
