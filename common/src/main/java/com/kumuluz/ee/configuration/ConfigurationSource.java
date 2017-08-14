@@ -39,6 +39,8 @@ public interface ConfigurationSource {
 
     Optional<Integer> getInteger(String key);
 
+    Optional<Long> getLong(String key);
+
     Optional<Double> getDouble(String key);
 
     Optional<Float> getFloat(String key);

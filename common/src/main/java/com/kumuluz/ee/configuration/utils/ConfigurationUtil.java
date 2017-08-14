@@ -94,6 +94,17 @@ public class ConfigurationUtil {
         return Optional.empty();
     }
 
+    public Optional<Long> getLong(String key) {
+
+        for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
+            Optional<Long> value = configurationSource.getLong(key);
+            if (value.isPresent()) {
+                return value;
+            }
+        }
+        return Optional.empty();
+    }
+
     public Optional<Double> getDouble(String key) {
 
         for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
@@ -190,6 +201,12 @@ public class ConfigurationUtil {
         try {
             Integer.valueOf(value.get());
             return Optional.of(ConfigurationValueType.INTEGER);
+        } catch (NumberFormatException ignored) {
+        }
+
+        try {
+            Long.valueOf(value.get());
+            return Optional.of(ConfigurationValueType.LONG);
         } catch (NumberFormatException ignored) {
         }
 
