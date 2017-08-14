@@ -82,6 +82,22 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
     }
 
     @Override
+    public Optional<Long> getLong(String key) {
+
+        Optional<String> value = get(key);
+
+        if (value.isPresent()) {
+            try {
+                return Optional.of(Long.valueOf(value.get()));
+            } catch (NumberFormatException e) {
+                return Optional.empty();
+            }
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @Override
     public Optional<Double> getDouble(String key) {
 
         Optional<String> value = get(key);
