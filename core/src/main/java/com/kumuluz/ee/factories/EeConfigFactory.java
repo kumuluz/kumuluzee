@@ -143,39 +143,38 @@ public class EeConfigFactory {
                     DataSourcePoolConfig.Builder dspc = new DataSourcePoolConfig.Builder();
 
                     Optional<Boolean> autoCommit = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.auto-commit");
-                    Optional<Integer> connectionTimeout = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.connection-timeout");
-                    Optional<Integer> idleTimeout = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.idle-timeout");
-                    Optional<Integer> maxLifetime = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.max-lifetime");
+                    Optional<Long> connectionTimeout = cfg.getLong("kumuluzee.datasources[" + i + "].pool.connection-timeout");
+                    Optional<Long> idleTimeout = cfg.getLong("kumuluzee.datasources[" + i + "].pool.idle-timeout");
+                    Optional<Long> maxLifetime = cfg.getLong("kumuluzee.datasources[" + i + "].pool.max-lifetime");
                     Optional<Integer> minIdle = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.min-idle");
                     Optional<Integer> maxSize = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.max-size");
                     Optional<String> poolName = cfg.get("kumuluzee.datasources[" + i + "].pool.name");
-                    Optional<Integer> initializationFailTimeout = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.initialization-fail-timeout");
+                    Optional<Long> initializationFailTimeout = cfg.getLong("kumuluzee.datasources[" + i + "].pool.initialization-fail-timeout");
                     Optional<Boolean> isolateInternalQueries = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.isolate-internal-queries");
                     Optional<Boolean> allowPoolSuspension = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.allow-pool-suspension");
                     Optional<Boolean> readOnly = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.read-only");
                     Optional<Boolean> registerMbeans = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.register-mbeans");
                     Optional<String> connectionInitSql = cfg.get("kumuluzee.datasources[" + i + "].pool.connection-init-sql");
                     Optional<String> transactionIsolation = cfg.get("kumuluzee.datasources[" + i + "].pool.transaction-isolation");
-                    Optional<Integer> validationTimeout = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.validation-timeout");
-                    Optional<Integer> leakDetectionThreshold = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.leak-detection-threshold");
+                    Optional<Long> validationTimeout = cfg.getLong("kumuluzee.datasources[" + i + "].pool.validation-timeout");
+                    Optional<Long> leakDetectionThreshold = cfg.getLong("kumuluzee.datasources[" + i + "].pool.leak-detection-threshold");
 
-                    // TODO: Change config retrieving to Double when it's implemented
                     autoCommit.ifPresent(dspc::autoCommit);
-                    connectionTimeout.ifPresent(v -> dspc.connectionTimeout(v.longValue()));
-                    idleTimeout.ifPresent(v -> dspc.idleTimeout(v.longValue()));
-                    maxLifetime.ifPresent(v -> dspc.maxLifetime(v.longValue()));
+                    connectionTimeout.ifPresent(dspc::connectionTimeout);
+                    idleTimeout.ifPresent(dspc::idleTimeout);
+                    maxLifetime.ifPresent(dspc::maxLifetime);
                     minIdle.ifPresent(dspc::minIdle);
                     maxSize.ifPresent(dspc::maxSize);
                     poolName.ifPresent(dspc::name);
-                    initializationFailTimeout.ifPresent(v -> dspc.initializationFailTimeout(v.longValue()));
+                    initializationFailTimeout.ifPresent(dspc::initializationFailTimeout);
                     isolateInternalQueries.ifPresent(dspc::isolateInternalQueries);
                     allowPoolSuspension.ifPresent(dspc::allowPoolSuspension);
                     readOnly.ifPresent(dspc::readOnly);
                     registerMbeans.ifPresent(dspc::registerMbeans);
                     connectionInitSql.ifPresent(dspc::connectionInitSql);
                     transactionIsolation.ifPresent(dspc::transactionIsolation);
-                    validationTimeout.ifPresent(v -> dspc.validationTimeout(v.longValue()));
-                    leakDetectionThreshold.ifPresent(v -> dspc.leakDetectionThreshold(v.longValue()));
+                    validationTimeout.ifPresent(dspc::validationTimeout);
+                    leakDetectionThreshold.ifPresent(dspc::leakDetectionThreshold);
 
                     dsc.pool(dspc);
                 }
