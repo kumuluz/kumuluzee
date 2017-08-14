@@ -93,9 +93,12 @@ public class EeConfigFactory {
 
         EnvUtils.getEnvAsInteger(PORT_ENV, httpBuilder::port);
 
+        ServerConnectorConfig.Builder httpsBuilder =
+                createServerConnectorConfigBuilder("kumuluzee.server.https",
+                        ServerConnectorConfig.Builder.DEFAULT_HTTPS_PORT);
+
         serverBuilder.http(httpBuilder);
-        serverBuilder.https(createServerConnectorConfigBuilder("kumuluzee.server.https",
-                ServerConnectorConfig.Builder.DEFAULT_HTTPS_PORT));
+        serverBuilder.https(httpsBuilder);
 
         eeConfigBuilder.server(serverBuilder);
 
@@ -244,6 +247,8 @@ public class EeConfigFactory {
     public static Boolean isEeConfigValid(EeConfig eeConfig) {
 
         return !(eeConfig == null ||
+                eeConfig.getVersion() == null ||
+                eeConfig.getEnv() == null ||
                 eeConfig.getServer() == null ||
                 eeConfig.getServer().getContextPath() == null ||
                 eeConfig.getServer().getForceHttps() == null ||
