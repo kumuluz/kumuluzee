@@ -57,6 +57,7 @@ The following extensions are available with more planned soon:
 - [KumuluzEE Discovery](https://github.com/kumuluz/kumuluzee-discovery) (For dynamic service discovery (etcd or Consul). Fully compatible with Kubernetes)
 - [KumuluzEE Metrics](https://github.com/kumuluz) (For easy collection and reporting of performance metrics)
 - [KumuluzEE Security](https://github.com/kumuluz/kumuluzee-security) (For easy integration with OAuth2/OpenID identity and access management providers)
+- [KumuluzEE Health](https://github.com/kumuluz) (For implementing health checks and exposing microservice health information)
 - [KumuluzEE Fault Tolerance](https://github.com/kumuluz/kumuluzee-fault-tolerance) (For implementing fault tolerance patterns with microservices including circuit breakers and decoupling microservices)
 - [KumuluzEE Event Streaming](https://github.com/kumuluz/kumuluzee-streaming) (For event streaming support using Apache Kafka)
 - [KumuluzEE CORS](https://github.com/kumuluz/kumuluzee-cors) (For Cross-Origin Resource Sharing (CORS) support)
