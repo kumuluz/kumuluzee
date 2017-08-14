@@ -68,17 +68,6 @@ public class ConfigurationUtil {
         return get(key, new HashSet<>());
     }
 
-    private Optional<String> get(String key, Set<String> processingKeys) {
-
-        for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
-            Optional<String> value = configurationSource.get(key);
-            if (value.isPresent()) {
-                return Optional.of(interpolateString(key, value.get(), processingKeys));
-            }
-        }
-        return Optional.empty();
-    }
-
     public Optional<Boolean> getBoolean(String key) {
 
         for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
@@ -170,19 +159,6 @@ public class ConfigurationUtil {
         config.getConfigurationSources().get(0).set(key, value);
     }
 
-    public void subscribe(String key, ConfigurationListener listener) {
-
-        config.getDispatcher().subscribe(listener);
-
-        for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
-            configurationSource.watch(key);
-        }
-    }
-
-    public void unsubscribe(ConfigurationListener listener) {
-        config.getDispatcher().unsubscribe(listener);
-    }
-
     public Optional<ConfigurationValueType> getType(String key) {
 
         // check if key type is a list or a map
@@ -255,6 +231,32 @@ public class ConfigurationUtil {
         }
 
         return Optional.of(new ArrayList<>(mapKeys));
+    }
+
+    public void subscribe(String key, ConfigurationListener listener) {
+
+        config.getDispatcher().subscribe(listener);
+
+        for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
+            configurationSource.watch(key);
+        }
+    }
+
+    public void unsubscribe(ConfigurationListener listener) {
+        config.getDispatcher().unsubscribe(listener);
+    }
+
+    //// Private methods
+
+    private Optional<String> get(String key, Set<String> processingKeys) {
+
+        for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
+            Optional<String> value = configurationSource.get(key);
+            if (value.isPresent()) {
+                return Optional.of(interpolateString(key, value.get(), processingKeys));
+            }
+        }
+        return Optional.empty();
     }
 
     private String interpolateString(String key, String s, Set<String> processingKeys) {
