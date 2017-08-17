@@ -41,9 +41,9 @@
 
 package com.kumuluz.ee.logs;
 
-import com.kumuluz.ee.logs.jul.JULLogCommons;
-import com.kumuluz.ee.logs.jul.JULLogConfigurator;
-import com.kumuluz.ee.logs.jul.JULLogger;
+import com.kumuluz.ee.logs.jul.JavaUtilLogCommons;
+import com.kumuluz.ee.logs.jul.JavaUtilLogConfigurator;
+import com.kumuluz.ee.logs.jul.JavaUtilLogger;
 
 import java.util.*;
 
@@ -148,9 +148,9 @@ public class LogUtil {
         }
 
         if (loggerImpl.isEmpty() || logCommonsImpl.isEmpty() || logConfiguratorsConfigImpl.isEmpty()) {
-            loggerInstance = new JULLogger();
-            logCommonsInstance = new JULLogCommons();
-            logConfigurator = new JULLogConfigurator();
+            loggerInstance = new JavaUtilLogger();
+            logCommonsInstance = new JavaUtilLogCommons();
+            logConfigurator = new JavaUtilLogConfigurator();
         } else {
             loggerInstance = loggerImpl.get(0);
             logCommonsInstance = logCommonsImpl.get(0);

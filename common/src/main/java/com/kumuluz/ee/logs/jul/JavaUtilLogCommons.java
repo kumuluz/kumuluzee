@@ -23,7 +23,7 @@ package com.kumuluz.ee.logs.jul;
 
 import com.kumuluz.ee.logs.LogCommons;
 import com.kumuluz.ee.logs.enums.LogLevel;
-import com.kumuluz.ee.logs.jul.utils.JULLogUtil;
+import com.kumuluz.ee.logs.jul.utils.JavaUtilLogUtil;
 import com.kumuluz.ee.logs.markers.CommonsMarker;
 import com.kumuluz.ee.logs.markers.Marker;
 import com.kumuluz.ee.logs.markers.StatusMarker;
@@ -39,7 +39,7 @@ import com.kumuluz.ee.logs.types.LogResourceMessage;
  *
  * @author Marko Skrjanec
  */
-public class JULLogCommons implements LogCommons {
+public class JavaUtilLogCommons implements LogCommons {
 
     private static final String METRIC_RESPONSE_TIME = "response-time";
 
@@ -47,11 +47,11 @@ public class JULLogCommons implements LogCommons {
 
     private java.util.logging.Logger logger;
 
-    public JULLogCommons() {
+    public JavaUtilLogCommons() {
 
     }
 
-    private JULLogCommons(String logName) {
+    private JavaUtilLogCommons(String logName) {
         logger = java.util.logging.Logger.getLogger(logName);
     }
 
@@ -61,8 +61,8 @@ public class JULLogCommons implements LogCommons {
     }
 
     @Override
-    public JULLogCommons getCommonsLogger(String logName) {
-        JULLogCommons julLogCommons = new JULLogCommons(logName);
+    public JavaUtilLogCommons getCommonsLogger(String logName) {
+        JavaUtilLogCommons julLogCommons = new JavaUtilLogCommons(logName);
         return julLogCommons;
     }
 
@@ -181,10 +181,10 @@ public class JULLogCommons implements LogCommons {
         String markerString = parentMarker == null ? marker.toString() : marker + "[ " + parentMarker + " ]";
 
         if (logMessage != null && logMessage.getFields() != null) {
-            logger.log(JULLogUtil.convertToJULLevel(level), markerString + " " + message + " " +
+            logger.log(JavaUtilLogUtil.convertToJULLevel(level), markerString + " " + message + " " +
                     logMessage.getFields());
         } else {
-            logger.log(JULLogUtil.convertToJULLevel(level), markerString + " " + message);
+            logger.log(JavaUtilLogUtil.convertToJULLevel(level), markerString + " " + message);
         }
     }
 }

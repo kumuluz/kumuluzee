@@ -23,14 +23,14 @@ package com.kumuluz.ee.logs.jul;
 
 import com.kumuluz.ee.logs.LogConfigurator;
 import com.kumuluz.ee.logs.enums.LogLevel;
-import com.kumuluz.ee.logs.jul.utils.JULLogUtil;
+import com.kumuluz.ee.logs.jul.utils.JavaUtilLogUtil;
 
 import java.util.logging.LogManager;
 
 /**
  * @Author Marko Skrjanec
  */
-public class JULLogConfigurator implements LogConfigurator {
+public class JavaUtilLogConfigurator implements LogConfigurator {
 
     @Override
     public void init() {
@@ -39,11 +39,11 @@ public class JULLogConfigurator implements LogConfigurator {
 
     @Override
     public void setLevel(String logName, LogLevel logLevel) {
-        LogManager.getLogManager().getLogger(logName).setLevel(JULLogUtil.convertToJULLevel(logLevel));
+        LogManager.getLogManager().getLogger(logName).setLevel(JavaUtilLogUtil.convertToJULLevel(logLevel));
     }
 
     @Override
     public LogLevel getLevel(String logName) {
-        return JULLogUtil.convertFromJULLevel(LogManager.getLogManager().getLogger(logName).getLevel());
+        return JavaUtilLogUtil.convertFromJULLevel(LogManager.getLogManager().getLogger(logName).getLevel());
     }
 }

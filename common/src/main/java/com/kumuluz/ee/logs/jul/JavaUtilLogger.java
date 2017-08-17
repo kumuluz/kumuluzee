@@ -23,26 +23,26 @@ package com.kumuluz.ee.logs.jul;
 
 import com.kumuluz.ee.logs.Logger;
 import com.kumuluz.ee.logs.enums.LogLevel;
-import com.kumuluz.ee.logs.jul.utils.JULLogUtil;
+import com.kumuluz.ee.logs.jul.utils.JavaUtilLogUtil;
 import com.kumuluz.ee.logs.messages.LogMessage;
 
 /**
  * @author Marko Skrjanec
  */
-public class JULLogger implements Logger {
+public class JavaUtilLogger implements Logger {
 
     private java.util.logging.Logger logger;
 
-    public JULLogger() {
+    public JavaUtilLogger() {
     }
 
-    private JULLogger(String logName) {
+    private JavaUtilLogger(String logName) {
         logger = java.util.logging.Logger.getLogger(logName);
     }
 
     @Override
     public Logger getLogger(String logName) {
-        JULLogger julLogger = new JULLogger(logName);
+        JavaUtilLogger julLogger = new JavaUtilLogger(logName);
         return julLogger;
     }
 
@@ -53,22 +53,22 @@ public class JULLogger implements Logger {
 
     @Override
     public void log(LogLevel level, String message) {
-        logger.log(JULLogUtil.convertToJULLevel(level), message);
+        logger.log(JavaUtilLogUtil.convertToJULLevel(level), message);
     }
 
     @Override
     public void log(LogLevel level, String message, Object... args) {
-        logger.log(JULLogUtil.convertToJULLevel(level), message, args);
+        logger.log(JavaUtilLogUtil.convertToJULLevel(level), message, args);
     }
 
     @Override
     public void log(LogLevel level, String message, Throwable thrown) {
-        logger.log(JULLogUtil.convertToJULLevel(level), message, thrown);
+        logger.log(JavaUtilLogUtil.convertToJULLevel(level), message, thrown);
     }
 
     @Override
     public void log(LogLevel level, Throwable thrown) {
-        logger.log(JULLogUtil.convertToJULLevel(level), thrown.getMessage(), thrown.getCause());
+        logger.log(JavaUtilLogUtil.convertToJULLevel(level), thrown.getMessage(), thrown.getCause());
     }
 
     @Override
@@ -79,11 +79,11 @@ public class JULLogger implements Logger {
     @Override
     public void log(LogLevel level, LogMessage message, Throwable thrown) {
         if (message == null) {
-            logger.log(JULLogUtil.convertToJULLevel(level), message.toString(), thrown);
+            logger.log(JavaUtilLogUtil.convertToJULLevel(level), message.toString(), thrown);
         } else if (message.getFields() == null) {
-            logger.log(JULLogUtil.convertToJULLevel(level), message.getMessage(), thrown);
+            logger.log(JavaUtilLogUtil.convertToJULLevel(level), message.getMessage(), thrown);
         } else {
-            logger.log(JULLogUtil.convertToJULLevel(level),
+            logger.log(JavaUtilLogUtil.convertToJULLevel(level),
                     message.getMessage() + " " + message.getFields().toString(), thrown);
         }
     }

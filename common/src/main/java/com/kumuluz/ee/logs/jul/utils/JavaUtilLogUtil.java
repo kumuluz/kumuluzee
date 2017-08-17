@@ -28,7 +28,7 @@ import java.util.logging.Level;
 /**
  * @author Marko Skrjanec
  */
-public class JULLogUtil {
+public class JavaUtilLogUtil {
 
     public static final String JUL_LOGGER_NAME = "JULLogger";
 
