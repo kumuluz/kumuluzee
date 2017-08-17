@@ -41,6 +41,10 @@
 
 package com.kumuluz.ee.logs;
 
+import com.kumuluz.ee.logs.jul.JULLogCommons;
+import com.kumuluz.ee.logs.jul.JULLogConfigurator;
+import com.kumuluz.ee.logs.jul.JULLogger;
+
 import java.util.*;
 
 /**
@@ -127,24 +131,30 @@ public class LogUtil {
         List<LogConfigurator> logConfiguratorsConfigImpl = new ArrayList<>();
         ServiceLoader.load(LogConfigurator.class).forEach(logConfiguratorsConfigImpl::add);
 
-        if (loggerImpl.isEmpty() || loggerImpl.size() > 1) {
+        if (loggerImpl.size() > 1) {
             throw new IllegalArgumentException(
                     " Please provide exactly one implementation " +
                             " of class com.kumuluz.ee.logs.Logger");
         }
 
-        if (logCommonsImpl.isEmpty() || logCommonsImpl.size() > 1) {
+        if (logCommonsImpl.size() > 1) {
             throw new IllegalArgumentException(" Please provide exactly one implementation " +
                     "of class com.kumuluz.ee.logs.LogCommons");
         }
 
-        if (logConfiguratorsConfigImpl.isEmpty() || logConfiguratorsConfigImpl.size() > 1) {
+        if (logConfiguratorsConfigImpl.size() > 1) {
             throw new IllegalArgumentException(" Please provide exactly one implementation " +
                     "of class com.kumuluz.ee.logs.LogConfigurator");
         }
 
-        loggerInstance = loggerImpl.get(0);
-        logCommonsInstance = logCommonsImpl.get(0);
-        logConfigurator = logConfiguratorsConfigImpl.get(0);
+        if (loggerImpl.isEmpty() || logCommonsImpl.isEmpty() || logConfiguratorsConfigImpl.isEmpty()) {
+            loggerInstance = new JULLogger();
+            logCommonsInstance = new JULLogCommons();
+            logConfigurator = new JULLogConfigurator();
+        } else {
+            loggerInstance = loggerImpl.get(0);
+            logCommonsInstance = logCommonsImpl.get(0);
+            logConfigurator = logConfiguratorsConfigImpl.get(0);
+        }
     }
 }
