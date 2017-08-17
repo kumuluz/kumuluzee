@@ -34,6 +34,8 @@ import com.kumuluz.ee.logs.types.LogMethodMessage;
 import com.kumuluz.ee.logs.types.LogResourceContext;
 import com.kumuluz.ee.logs.types.LogResourceMessage;
 
+import java.util.HashMap;
+
 /**
  * LogCommons implementation with JUL.
  *
@@ -132,8 +134,11 @@ public class JavaUtilLogCommons implements LogCommons {
     public void logResourceEnd(LogResourceContext logResourceContext) {
         if (logResourceContext.isMetricsEnabled() != null && logResourceContext.isMetricsEnabled()) {
             if (logResourceContext.getInvokeEndMessage() == null) {
-                logResourceContext.setInvokeEndMessage(new SimpleLogMessage());
+                SimpleLogMessage message = new SimpleLogMessage();
+                message.setFields(new HashMap<>());
+                logResourceContext.setInvokeEndMessage(message);
             }
+
             logResourceContext.getInvokeEndMessage().getFields().put(METRIC_RESPONSE_TIME,
                     logResourceContext.getLogMetrics().getTimeElapsed().toString());
 
