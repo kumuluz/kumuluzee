@@ -32,8 +32,10 @@ import javax.interceptor.InvocationContext;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -62,6 +64,21 @@ public class ConfigBundleInterceptor {
             targetClass = targetClass.getSuperclass();
         }
 
+        processConfigBundleBeanSetters(target, targetClass, getKeyPrefix(targetClass, null), new HashSet<>());
+
+        return ic.proceed();
+    }
+
+    /**
+     * Processes and invokes all setters in Bean anotated with @ConfigBundle
+     *
+     * @param target      target object
+     * @param targetClass target class
+     * @throws Exception
+     */
+    private void processConfigBundleBeanSetters(Object target, Class targetClass, String keyPrefix,
+                                                Set<Class> processedClasses) throws Exception {
+
         ConfigurationUtil configurationUtil = ConfigurationUtil.getInstance();
 
         // invoke setters for fields which are defined in configuration
@@ -71,69 +88,89 @@ public class ConfigBundleInterceptor {
 
                 if (m.getParameters()[0].getType().equals(String.class)) {
 
-                    Optional<String> value = configurationUtil.get(getKeyName(targetClass, m.getName()));
+                    Optional<String> value = configurationUtil.get(getKeyName(targetClass, m.getName(), keyPrefix));
 
                     if (value.isPresent()) {
                         m.invoke(target, value.get());
                     }
 
-                    deployWatcher(target, targetClass, m, getKeyName(targetClass, m.getName()));
+                    deployWatcher(target, targetClass, m, getKeyName(targetClass, m.getName(), keyPrefix));
 
                 } else if (m.getParameters()[0].getType().equals(Boolean.class)) {
 
-                    Optional<Boolean> value = configurationUtil.getBoolean(getKeyName(targetClass, m.getName()));
+                    Optional<Boolean> value = configurationUtil.getBoolean(getKeyName(targetClass, m.getName(),
+                            keyPrefix));
 
                     if (value.isPresent()) {
                         m.invoke(target, value.get());
                     }
 
-                    deployWatcher(target, targetClass, m, getKeyName(targetClass, m.getName()));
+                    deployWatcher(target, targetClass, m, getKeyName(targetClass, m.getName(), keyPrefix));
 
                 } else if (m.getParameters()[0].getType().equals(Float.class)) {
 
-                    Optional<Float> value = configurationUtil.getFloat(getKeyName(targetClass, m.getName()));
+                    Optional<Float> value = configurationUtil.getFloat(getKeyName(targetClass, m.getName(), keyPrefix));
 
                     if (value.isPresent()) {
                         m.invoke(target, value.get());
                     }
 
-                    deployWatcher(target, targetClass, m, getKeyName(targetClass, m.getName()));
+                    deployWatcher(target, targetClass, m, getKeyName(targetClass, m.getName(), keyPrefix));
 
                 } else if (m.getParameters()[0].getType().equals(Double.class)) {
 
-                    Optional<Double> value = configurationUtil.getDouble(getKeyName(targetClass, m.getName()));
+                    Optional<Double> value = configurationUtil.getDouble(getKeyName(targetClass, m.getName(),
+                            keyPrefix));
 
                     if (value.isPresent()) {
                         m.invoke(target, value.get());
                     }
 
-                    deployWatcher(target, targetClass, m, getKeyName(targetClass, m.getName()));
+                    deployWatcher(target, targetClass, m, getKeyName(targetClass, m.getName(), keyPrefix));
 
                 } else if (m.getParameters()[0].getType().equals(Integer.class)) {
 
-                    Optional<Integer> value = configurationUtil.getInteger(getKeyName(targetClass, m.getName()));
+                    Optional<Integer> value = configurationUtil.getInteger(getKeyName(targetClass, m.getName(),
+                            keyPrefix));
 
                     if (value.isPresent()) {
                         m.invoke(target, value.get());
                     }
 
-                    deployWatcher(target, targetClass, m, getKeyName(targetClass, m.getName()));
+                    deployWatcher(target, targetClass, m, getKeyName(targetClass, m.getName(), keyPrefix));
 
                 } else if (m.getParameters()[0].getType().equals(Long.class)) {
 
-                    Optional<Long> value = configurationUtil.getLong(getKeyName(targetClass, m.getName()));
+                    Optional<Long> value = configurationUtil.getLong(getKeyName(targetClass, m.getName(), keyPrefix));
 
                     if (value.isPresent()) {
                         m.invoke(target, value.get());
                     }
 
-                    deployWatcher(target, targetClass, m, getKeyName(targetClass, m.getName()));
+                    deployWatcher(target, targetClass, m, getKeyName(targetClass, m.getName(), keyPrefix));
 
+                } else {
+
+                    Object nestedTarget = m.getParameters()[0].getType().getConstructor().newInstance();
+                    Class nestedTargetClass = nestedTarget.getClass();
+
+                    if (processedClasses.contains(nestedTargetClass)) {
+                        log.warning("There is a cycle in the configuration class tree. ConfigBundle class may not " +
+                                "be populated as expected.");
+                    } else {
+
+                        processedClasses.add(nestedTargetClass);
+
+                        // invoke setter method with initialised instance
+                        m.invoke(target, nestedTarget);
+
+                        processConfigBundleBeanSetters(nestedTarget, nestedTargetClass, getKeyName
+                                (targetClass, m.getName(), keyPrefix), processedClasses);
+                    }
                 }
             }
         }
 
-        return ic.proceed();
     }
 
     /**
@@ -143,15 +180,10 @@ public class ConfigBundleInterceptor {
      * @param setter      name of the setter method
      * @return key in format prefix.key-name
      */
-    private String getKeyName(Class targetClass, String setter) throws Exception {
+    private String getKeyName(Class targetClass, String setter, String keyPrefix) throws Exception {
 
         String key;
-
-        // get prefix
-        String prefix = ((ConfigBundle) targetClass.getAnnotation(ConfigBundle.class)).value();
-        if (prefix.isEmpty()) {
-            prefix = StringUtils.camelCaseToHyphenCase(targetClass.getSimpleName());
-        }
+        String prefix = keyPrefix;
 
         // get ConfigValue
         Field field = targetClass.getDeclaredField(setterToField(setter));
@@ -169,6 +201,30 @@ public class ConfigBundleInterceptor {
 
         return key;
 
+    }
+
+    /**
+     * Generate key prefix from annotation, class name, or parent prefix in case of nested classes.
+     *
+     * @param targetClass target class
+     * @param keyPrefix   key prefix used in nested classes
+     * @return key prefix
+     */
+    private String getKeyPrefix(Class targetClass, String keyPrefix) {
+
+        String prefix;
+
+        if (keyPrefix != null) {
+            prefix = keyPrefix;
+        } else {
+            prefix = ((ConfigBundle) targetClass.getAnnotation(ConfigBundle.class)).value();
+        }
+
+        if (prefix.isEmpty()) {
+            prefix = StringUtils.camelCaseToHyphenCase(targetClass.getSimpleName());
+        }
+
+        return prefix;
     }
 
     /**
