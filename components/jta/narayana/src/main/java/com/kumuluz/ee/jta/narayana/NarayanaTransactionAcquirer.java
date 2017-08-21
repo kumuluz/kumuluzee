@@ -25,6 +25,7 @@ import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.kumuluz.ee.jta.common.TransactionAcquirer;
 
 import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.UserTransaction;
 
 /**
@@ -49,4 +50,8 @@ public class NarayanaTransactionAcquirer implements TransactionAcquirer {
         return jtaEnvironment.getTransactionManager();
     }
 
+    @Override
+    public TransactionSynchronizationRegistry getTransactionSynchronizationRegistry() {
+        return jtaEnvironment.getTransactionSynchronizationRegistry();
+    }
 }

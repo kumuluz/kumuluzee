@@ -21,12 +21,17 @@
 package com.kumuluz.ee.jpa.common.injection;
 
 import com.kumuluz.ee.jpa.common.TransactionType;
+import com.kumuluz.ee.jpa.common.jta.TxScopedEntityManagerFactory;
+import com.kumuluz.ee.jta.common.JtaTransactionHolder;
+import com.kumuluz.ee.jpa.common.jta.TxScopedEntityManager;
 import org.jboss.weld.injection.spi.ResourceReference;
 import org.jboss.weld.injection.spi.ResourceReferenceFactory;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.SynchronizationType;
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
 
 /**
  * @author Tilen Faganel
@@ -34,12 +39,13 @@ import javax.persistence.SynchronizationType;
  */
 public class PersistenceContextResourceFactory implements ResourceReferenceFactory<EntityManager> {
 
+    private String unitName;
     private EntityManagerFactory emf;
     private SynchronizationType sync;
     private TransactionType transactionType;
 
-    public PersistenceContextResourceFactory(EntityManagerFactory emf, TransactionType transactionType, SynchronizationType sync) {
-
+    public PersistenceContextResourceFactory(String unitName, EntityManagerFactory emf, TransactionType transactionType, SynchronizationType sync) {
+        this.unitName = unitName;
         this.emf = emf;
         this.sync = sync;
         this.transactionType = transactionType;
@@ -48,14 +54,15 @@ public class PersistenceContextResourceFactory implements ResourceReferenceFacto
     @Override
     public ResourceReference<EntityManager> createResource() {
 
-        EntityManager em;
+        EntityManagerWrapper emWrapper;
 
         if (transactionType == TransactionType.JTA) {
-            em = (EntityManager) TransactionalEntityManagerProxy.newInstance(emf.createEntityManager(sync));
+
+            emWrapper = TxScopedEntityManagerFactory.buildEntityManagerWrapper(unitName, emf, sync);
         } else {
-            em = emf.createEntityManager();
+            emWrapper = new NonTxEntityManagerWrapper(emf.createEntityManager());
         }
 
-        return new PersistenceContextResource(em);
+        return new PersistenceContextResource(emWrapper);
     }
 }

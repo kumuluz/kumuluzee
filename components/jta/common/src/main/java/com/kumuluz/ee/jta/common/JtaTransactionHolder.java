@@ -22,6 +22,7 @@ package com.kumuluz.ee.jta.common;
 
 import javax.transaction.Status;
 import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.UserTransaction;
 import java.util.Arrays;
 import java.util.List;
@@ -67,4 +68,8 @@ public class JtaTransactionHolder {
         return transactionAcquirer.getUserTransaction();
     }
 
+    public TransactionSynchronizationRegistry getTransactionSynchronizationRegistry() {
+        validateTransactionAcquirer();
+        return transactionAcquirer.getTransactionSynchronizationRegistry();
+    }
 }
