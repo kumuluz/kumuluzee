@@ -21,6 +21,7 @@
 package com.kumuluz.ee.jta.common;
 
 import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.UserTransaction;
 
 /**
@@ -33,4 +34,5 @@ public interface TransactionAcquirer {
 
     TransactionManager getTransactionManager();
 
+    TransactionSynchronizationRegistry getTransactionSynchronizationRegistry();
 }

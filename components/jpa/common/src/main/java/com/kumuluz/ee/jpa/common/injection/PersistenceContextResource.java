@@ -30,22 +30,22 @@ import javax.persistence.EntityManager;
  */
 public class PersistenceContextResource implements ResourceReference<EntityManager> {
 
-    private EntityManager em;
+    private EntityManagerWrapper entityManagerWrapper;
 
-    public PersistenceContextResource(EntityManager em) {
+    public PersistenceContextResource(EntityManagerWrapper entityManagerWrapper) {
 
-        this.em = em;
+        this.entityManagerWrapper = entityManagerWrapper;
     }
 
     @Override
     public EntityManager getInstance() {
 
-        return em;
+        return entityManagerWrapper.getEntityManager();
     }
 
     @Override
     public void release() {
 
-        em.close();
+        entityManagerWrapper.close();
     }
 }
