@@ -28,6 +28,7 @@ public class ServerConfig {
 
     public static class Builder {
 
+        private String baseUrl;
         private String contextPath = "/";
         private Integer minThreads = 5;
         private Integer maxThreads = 100;
@@ -35,6 +36,11 @@ public class ServerConfig {
 
         private ServerConnectorConfig.Builder http = new ServerConnectorConfig.Builder();
         private ServerConnectorConfig.Builder https = new ServerConnectorConfig.Builder();
+
+        public Builder baseUrl(String baseUrl) {
+            this.baseUrl = baseUrl;
+            return this;
+        }
 
         public Builder contextPath(String contextPath) {
             this.contextPath = contextPath;
@@ -69,6 +75,7 @@ public class ServerConfig {
         public ServerConfig build() {
 
             ServerConfig serverConfig = new ServerConfig();
+            serverConfig.baseUrl = baseUrl;
             serverConfig.contextPath = contextPath;
             serverConfig.minThreads = minThreads;
             serverConfig.maxThreads = maxThreads;
@@ -81,6 +88,7 @@ public class ServerConfig {
         }
     }
 
+    private String baseUrl;
     private String contextPath;
     private Integer minThreads;
     private Integer maxThreads;
@@ -88,6 +96,13 @@ public class ServerConfig {
 
     private ServerConnectorConfig http;
     private ServerConnectorConfig https;
+
+    private ServerConfig() {
+    }
+
+    public String getBaseUrl() {
+        return baseUrl;
+    }
 
     public String getContextPath() {
         return contextPath;

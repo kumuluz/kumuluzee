@@ -18,26 +18,35 @@
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
 */
-package com.kumuluz.ee.common.dependencies;
+package com.kumuluz.ee.common.config;
 
 /**
  * @author Tilen Faganel
- * @since 2.3.0
+ * @since 2.4.0
  */
-public enum EeExtensionType {
+public class EnvConfig {
 
-    CONFIG("Config"),
-    DISCOVERY("Discovery"),
-    SECURITY("Security"),
-    FAULT_TOLERANCE("Fault Tolerance"),
-    LOGS("Logs"),
-    STREAMING("Streaming"),
-    CORS("Cors");
+    public static class Builder {
 
-    private final String name;
+        private String name;
 
-    EeExtensionType(String name) {
-        this.name = name;
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public EnvConfig build() {
+
+            EnvConfig envConfig = new EnvConfig();
+            envConfig.name = name;
+
+            return envConfig;
+        }
+    }
+
+    private String name;
+
+    private EnvConfig() {
     }
 
     public String getName() {

@@ -23,6 +23,7 @@ package com.kumuluz.ee.configuration.utils;
 import com.kumuluz.ee.configuration.ConfigurationSource;
 import com.kumuluz.ee.configuration.sources.EnvironmentConfigurationSource;
 import com.kumuluz.ee.configuration.sources.FileConfigurationSource;
+import com.kumuluz.ee.configuration.sources.SystemPropertyConfigurationSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +49,7 @@ public class ConfigurationImpl {
         // specify sources
         configurationSources = new ArrayList<>();
         configurationSources.add(new EnvironmentConfigurationSource());
+        configurationSources.add(new SystemPropertyConfigurationSource());
         configurationSources.add(new FileConfigurationSource());
 
         dispatcher = new ConfigurationDispatcher();

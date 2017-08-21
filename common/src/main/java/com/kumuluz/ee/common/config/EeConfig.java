@@ -20,8 +20,6 @@
 */
 package com.kumuluz.ee.common.config;
 
-import com.kumuluz.ee.common.wrapper.EeComponentWrapper;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -33,11 +31,30 @@ public class EeConfig {
 
     public static class Builder {
 
+        private String name;
+        private String version = "1.0.0";
+
+        private EnvConfig.Builder env = new EnvConfig.Builder();
         private ServerConfig.Builder server = new ServerConfig.Builder();
         private List<DataSourceConfig.Builder> datasources = new ArrayList<>();
         private List<XaDataSourceConfig.Builder> xaDatasources = new ArrayList<>();
 
         private PersistenceConfig.Builder persistenceConfig = new PersistenceConfig.Builder();
+
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder version(String version) {
+            this.version = version;
+            return this;
+        }
+
+        public Builder env(EnvConfig.Builder env) {
+            this.env = env;
+            return this;
+        }
 
         public Builder server(ServerConfig.Builder server) {
             this.server = server;
@@ -68,6 +85,9 @@ public class EeConfig {
                     xaDatasources.stream().map(XaDataSourceConfig.Builder::build).collect(Collectors.toList());
 
             EeConfig eeConfig = new EeConfig();
+            eeConfig.name = name;
+            eeConfig.version = version;
+            eeConfig.env = env.build();
             eeConfig.server = server.build();
             eeConfig.datasources = Collections.unmodifiableList(constructedDatasources);
             eeConfig.xaDatasources = Collections.unmodifiableList(constructedXaDatasources);
@@ -80,13 +100,17 @@ public class EeConfig {
 
     private static EeConfig instance;
 
-    private ServerConfig server = new ServerConfig();
-    private List<DataSourceConfig> datasources = new ArrayList<>();
-    private List<XaDataSourceConfig> xaDatasources = new ArrayList<>();
+    private String name;
+    private String version;
+
+    private EnvConfig env;
+    private ServerConfig server;
+    private List<DataSourceConfig> datasources;
+    private List<XaDataSourceConfig> xaDatasources;
 
     private PersistenceConfig persistenceConfig;
 
-    protected EeConfig() {
+    private EeConfig() {
     }
 
     public static void initialize(EeConfig eeConfig) {
@@ -105,6 +129,18 @@ public class EeConfig {
         }
 
         return instance;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public EnvConfig getEnv() {
+        return env;
     }
 
     public ServerConfig getServer() {

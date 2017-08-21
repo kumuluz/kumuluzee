@@ -23,23 +23,16 @@ package com.kumuluz.ee.configuration.sources;
 import com.kumuluz.ee.configuration.ConfigurationSource;
 import com.kumuluz.ee.configuration.utils.ConfigurationDispatcher;
 
-import java.util.*;
-import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Properties;
 
 /**
- * @author Tilen Faganel
- * @since 2.1.0
+ * @author Urban Malc
+ * @since 2.4.0
  */
-public class EnvironmentConfigurationSource implements ConfigurationSource {
-
-    private static EnvironmentConfigurationSource instance;
-
-    public static EnvironmentConfigurationSource getInstance() {
-        if (instance == null) {
-            instance = new EnvironmentConfigurationSource();
-        }
-        return instance;
-    }
+public class SystemPropertyConfigurationSource implements ConfigurationSource {
 
     @Override
     public void init(ConfigurationDispatcher configurationDispatcher) {
@@ -47,14 +40,7 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
 
     @Override
     public Optional<String> get(String key) {
-
-        String value = System.getenv(parseKeyNameForEnvironmentVariables(key));
-
-        if (value == null) {
-            value = System.getenv(parseKeyNameForEnvironmentVariablesLegacy(key));
-        }
-
-        return (value == null) ? Optional.empty() : Optional.of(value);
+        return Optional.ofNullable(System.getProperty(key));
     }
 
     @Override
@@ -99,7 +85,6 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
 
     @Override
     public Optional<Double> getDouble(String key) {
-
         Optional<String> value = get(key);
 
         if (value.isPresent()) {
@@ -115,7 +100,6 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
 
     @Override
     public Optional<Float> getFloat(String key) {
-
         Optional<String> value = get(key);
 
         if (value.isPresent()) {
@@ -132,18 +116,12 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
 
     @Override
     public Optional<Integer> getListSize(String key) {
+        int listSize = 0;
+        while(get(key + "[" + listSize + "]").isPresent()) {
+            listSize++;
+        }
 
-        int listSize = -1;
-        int index = -1;
-        String value;
-
-        do {
-            listSize += 1;
-            index += 1;
-            value = System.getenv(parseKeyNameForEnvironmentVariables(key + "[" + index + "]"));
-        } while (value != null);
-
-        if (listSize > 0) {
+        if(listSize > 0) {
             return Optional.of(listSize);
         } else {
             return Optional.empty();
@@ -152,7 +130,35 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
 
     @Override
     public Optional<List<String>> getMapKeys(String key) {
-        return Optional.empty();
+
+        List<String> mapKeys = new ArrayList<>();
+
+        Properties p = System.getProperties();
+        for(String propertyKey : p.stringPropertyNames()) {
+            String mapKey = "";
+
+            if(propertyKey.startsWith(key)) {
+                int index = key.length() + 1;
+                if(index < propertyKey.length() && propertyKey.charAt(index-1) == '.') {
+                    mapKey = propertyKey.substring(index);
+                }
+            }
+
+            if(!mapKey.isEmpty()) {
+                int index = mapKey.indexOf(".");
+                if(index > 0) {
+                    mapKey = mapKey.substring(0, index);
+                }
+
+                mapKeys.add(mapKey);
+            }
+        }
+
+        if(mapKeys.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(mapKeys);
     }
 
     @Override
@@ -177,17 +183,5 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
 
     @Override
     public void set(String key, Float value) {
-    }
-
-    private String parseKeyNameForEnvironmentVariables(String key) {
-
-        return key.toUpperCase().replaceAll("\\[", "").replaceAll("\\]", "")
-                .replaceAll("-", "").replaceAll("\\.", "_");
-
-    }
-
-    private String parseKeyNameForEnvironmentVariablesLegacy(String key) {
-
-        return key.toUpperCase().replaceAll("\\.", "_");
     }
 }

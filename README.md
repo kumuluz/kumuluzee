@@ -21,7 +21,9 @@ and Docker-like environments
 - Quick startup time, low resource consumption and stateless scalability accelerates development
 - Extend your microservices with common cloud-native patterns, such as config, discovery, logging, fault tolerance, circuit-breakers, etc. KumuluzEE provides all the building blocks.
 
-The goal is to support as many Java EE components as possible. Currently the following components are supported with more being added over time:
+KumuluzEE provides support for various Java EE APIs and components. The goal is to support as many Java EE components as possible (contributions welcome). 
+
+Currently the following components are supported with more being added over time:
 
 - Servlet 3.1 (Jetty)
 - CDI 1.2 (RI Weld)
@@ -37,6 +39,11 @@ The goal is to support as many Java EE components as possible. Currently the fol
 - Bean Validation 1.1 (RI Hibernate validator)
 - JTA 1.2 (Narayana)
 
+KumuluzEE provides additional features, which are described on the [project Wiki]( https://github.com/kumuluz/kumuluzee/wiki), particularly:
+- [Configuration framework](https://github.com/kumuluz/kumuluzee/wiki/Configuration) for easy and efficient configuration of microservices from various sources, such as environment variables, configuration files (yaml), properties, etc.
+- [TLS/SSL support](https://github.com/kumuluz/kumuluzee/wiki/TLS-SSL-support) for configuring TLS/SSL.
+
+KumuluzEE also provides support for **Uber JARs**. With the KumuluzEE Maven plugin, you can pack and run each microservice as a single, self-contained Uber-JAR. Details are described later in this document.
 
 ## KumuluzEE extensions
 
@@ -50,11 +57,10 @@ The following extensions are available with more planned soon:
 - [KumuluzEE Discovery](https://github.com/kumuluz/kumuluzee-discovery) (For dynamic service discovery (etcd or Consul). Fully compatible with Kubernetes)
 - [KumuluzEE Metrics](https://github.com/kumuluz) (For easy collection and reporting of performance metrics)
 - [KumuluzEE Security](https://github.com/kumuluz/kumuluzee-security) (For easy integration with OAuth2/OpenID identity and access management providers)
+- [KumuluzEE Health](https://github.com/kumuluz) (For implementing health checks and exposing microservice health information)
 - [KumuluzEE Fault Tolerance](https://github.com/kumuluz/kumuluzee-fault-tolerance) (For implementing fault tolerance patterns with microservices including circuit breakers and decoupling microservices)
 - [KumuluzEE Event Streaming](https://github.com/kumuluz/kumuluzee-streaming) (For event streaming support using Apache Kafka)
-- [KumuluzEE CORS]( https://github.com/kumuluz) (For Cross-Origin Resource Sharing (CORS) support)
-- [KumuluzEE Tools]( https://github.com/kumuluz) (For various tools, such as packing and running microservices as uber JARs)
-
+- [KumuluzEE CORS](https://github.com/kumuluz/kumuluzee-cors) (For Cross-Origin Resource Sharing (CORS) support)
 
 If you already know how to use Java EE, then you already know how to use KumuluzEE. It is simple and straightforward. See the [getting started](https://github.com/kumuluz/KumuluzEE/wiki/Getting-started) wiki section to create your first light-weight standalone Java EE app in 5 minutes. Refer to [samples](https://github.com/kumuluz/kumuluzee-samples) for more examples.
 
@@ -180,9 +186,7 @@ To choose your KumuluzEE extensions include them as your dependencies. You can f
 
 KumuluzEE (since version 2.4) provides support for packing and running microservices as uber JARs. It also includes a Maven plugin that correctly packages the microservice. 
 
-This functionality is part of KumuluzEE Tools.
-
-To package a Kumuluz EE microservice into an "uber" JAR, you only need to add the followin plugin declaration into your 
+To package a Kumuluz EE microservice into an "uber" JAR, you need to add the following plugin declaration into your 
 REST module pom.xml:
 
 ```xml

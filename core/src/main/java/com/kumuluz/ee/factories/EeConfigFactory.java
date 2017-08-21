@@ -28,6 +28,7 @@ import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -57,6 +58,12 @@ public class EeConfigFactory {
 
         EeConfig.Builder eeConfigBuilder = new EeConfig.Builder();
 
+        Optional<String> appName = cfg.get("kumuluzee.name");
+        Optional<String> appVersion = cfg.get("kumuluzee.version");
+
+        appName.ifPresent(eeConfigBuilder::name);
+        appVersion.ifPresent(eeConfigBuilder::version);
+
         ServerConfig.Builder serverBuilder = new ServerConfig.Builder();
 
         Optional<List<String>> serverCfgOpt = cfg.getMapKeys("kumuluzee.server");
@@ -67,11 +74,13 @@ public class EeConfigFactory {
 
         if (serverCfgOpt.isPresent()) {
 
+            Optional<String> baseUrl = cfg.get("kumuluzee.server.base-url");
             Optional<String> contextPath = cfg.get("kumuluzee.server.context-path");
             Optional<Integer> minThreads = cfg.getInteger("kumuluzee.server.min-threads");
             Optional<Integer> maxThreads = cfg.getInteger("kumuluzee.server.max-threads");
             Optional<Boolean> forceHttps = cfg.getBoolean("kumuluzee.server.force-https");
 
+            baseUrl.ifPresent(serverBuilder::baseUrl);
             contextPath.ifPresent(serverBuilder::contextPath);
             minThreads.ifPresent(serverBuilder::minThreads);
             maxThreads.ifPresent(serverBuilder::maxThreads);
@@ -84,11 +93,27 @@ public class EeConfigFactory {
 
         EnvUtils.getEnvAsInteger(PORT_ENV, httpBuilder::port);
 
+        ServerConnectorConfig.Builder httpsBuilder =
+                createServerConnectorConfigBuilder("kumuluzee.server.https",
+                        ServerConnectorConfig.Builder.DEFAULT_HTTPS_PORT);
+
         serverBuilder.http(httpBuilder);
-        serverBuilder.https(createServerConnectorConfigBuilder("kumuluzee.server.https",
-                ServerConnectorConfig.Builder.DEFAULT_HTTPS_PORT));
+        serverBuilder.https(httpsBuilder);
 
         eeConfigBuilder.server(serverBuilder);
+
+        Optional<List<String>> envCfgOpt = cfg.getMapKeys("kumuluzee.env");
+
+        if (envCfgOpt.isPresent()) {
+
+            EnvConfig.Builder envBuilder = new EnvConfig.Builder();
+
+            Optional<String> envName = cfg.get("kumuluzee.env.name");
+
+            envName.ifPresent(envBuilder::name);
+
+            eeConfigBuilder.env(envBuilder);
+        }
 
         Optional<Integer> dsSizeOpt = cfg.getListSize("kumuluzee.datasources");
 
@@ -100,6 +125,7 @@ public class EeConfigFactory {
 
                 Optional<String> jndiName = cfg.get("kumuluzee.datasources[" + i + "].jndi-name");
                 Optional<String> driverClass = cfg.get("kumuluzee.datasources[" + i + "].driver-class");
+                Optional<String> dataSourceClass = cfg.get("kumuluzee.datasources[" + i + "].datasource-class");
                 Optional<String> conUrl = cfg.get("kumuluzee.datasources[" + i + "].connection-url");
                 Optional<String> user = cfg.get("kumuluzee.datasources[" + i + "].username");
                 Optional<String> pass = cfg.get("kumuluzee.datasources[" + i + "].password");
@@ -107,10 +133,66 @@ public class EeConfigFactory {
 
                 jndiName.ifPresent(dsc::jndiName);
                 driverClass.ifPresent(dsc::driverClass);
+                dataSourceClass.ifPresent(dsc::dataSourceClass);
                 conUrl.ifPresent(dsc::connectionUrl);
                 user.ifPresent(dsc::username);
                 pass.ifPresent(dsc::password);
                 maxPool.ifPresent(dsc::maxPoolSize);
+
+                Optional<List<String>> pool = cfg.getMapKeys("kumuluzee.datasources[" + i + "].pool");
+
+                if (pool.isPresent()) {
+
+                    DataSourcePoolConfig.Builder dspc = new DataSourcePoolConfig.Builder();
+
+                    Optional<Boolean> autoCommit = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.auto-commit");
+                    Optional<Long> connectionTimeout = cfg.getLong("kumuluzee.datasources[" + i + "].pool.connection-timeout");
+                    Optional<Long> idleTimeout = cfg.getLong("kumuluzee.datasources[" + i + "].pool.idle-timeout");
+                    Optional<Long> maxLifetime = cfg.getLong("kumuluzee.datasources[" + i + "].pool.max-lifetime");
+                    Optional<Integer> minIdle = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.min-idle");
+                    Optional<Integer> maxSize = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.max-size");
+                    Optional<String> poolName = cfg.get("kumuluzee.datasources[" + i + "].pool.name");
+                    Optional<Long> initializationFailTimeout = cfg.getLong("kumuluzee.datasources[" + i + "].pool.initialization-fail-timeout");
+                    Optional<Boolean> isolateInternalQueries = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.isolate-internal-queries");
+                    Optional<Boolean> allowPoolSuspension = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.allow-pool-suspension");
+                    Optional<Boolean> readOnly = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.read-only");
+                    Optional<Boolean> registerMbeans = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.register-mbeans");
+                    Optional<String> connectionInitSql = cfg.get("kumuluzee.datasources[" + i + "].pool.connection-init-sql");
+                    Optional<String> transactionIsolation = cfg.get("kumuluzee.datasources[" + i + "].pool.transaction-isolation");
+                    Optional<Long> validationTimeout = cfg.getLong("kumuluzee.datasources[" + i + "].pool.validation-timeout");
+                    Optional<Long> leakDetectionThreshold = cfg.getLong("kumuluzee.datasources[" + i + "].pool.leak-detection-threshold");
+
+                    autoCommit.ifPresent(dspc::autoCommit);
+                    connectionTimeout.ifPresent(dspc::connectionTimeout);
+                    idleTimeout.ifPresent(dspc::idleTimeout);
+                    maxLifetime.ifPresent(dspc::maxLifetime);
+                    minIdle.ifPresent(dspc::minIdle);
+                    maxSize.ifPresent(dspc::maxSize);
+                    poolName.ifPresent(dspc::name);
+                    initializationFailTimeout.ifPresent(dspc::initializationFailTimeout);
+                    isolateInternalQueries.ifPresent(dspc::isolateInternalQueries);
+                    allowPoolSuspension.ifPresent(dspc::allowPoolSuspension);
+                    readOnly.ifPresent(dspc::readOnly);
+                    registerMbeans.ifPresent(dspc::registerMbeans);
+                    connectionInitSql.ifPresent(dspc::connectionInitSql);
+                    transactionIsolation.ifPresent(dspc::transactionIsolation);
+                    validationTimeout.ifPresent(dspc::validationTimeout);
+                    leakDetectionThreshold.ifPresent(dspc::leakDetectionThreshold);
+
+                    dsc.pool(dspc);
+                }
+
+                Optional<List<String>> props = cfg.getMapKeys("kumuluzee.datasources[" + i + "].props");
+
+                if (props.isPresent()) {
+
+                    for (String propName : props.get()) {
+
+                        Optional<String> propValue = cfg.get("kumuluzee.datasources[" + i + "].props." + propName);
+
+                        propValue.ifPresent(v -> dsc.prop(StringUtils.hyphenCaseToCamelCase(propName), v));
+                    }
+                }
 
                 eeConfigBuilder.datasource(dsc);
             }
@@ -165,6 +247,8 @@ public class EeConfigFactory {
     public static Boolean isEeConfigValid(EeConfig eeConfig) {
 
         return !(eeConfig == null ||
+                eeConfig.getVersion() == null ||
+                eeConfig.getEnv() == null ||
                 eeConfig.getServer() == null ||
                 eeConfig.getServer().getContextPath() == null ||
                 eeConfig.getServer().getForceHttps() == null ||
@@ -187,7 +271,21 @@ public class EeConfigFactory {
                 eeConfig.getServer().getHttps().getIdleTimeout() == null ||
                 eeConfig.getServer().getHttps().getSoLingerTime() == null ||
                 eeConfig.getServer().getHttps().getKeystorePath() == null ||
-                eeConfig.getServer().getHttps().getKeystorePassword() == null);
+                eeConfig.getServer().getHttps().getKeystorePassword() == null ||
+                eeConfig.getDatasources().stream().anyMatch(ds ->
+                        (ds == null || ds.getPool() == null ||
+                                ds.getPool().getAutoCommit() == null ||
+                                ds.getPool().getConnectionTimeout() == null ||
+                                ds.getPool().getIdleTimeout() == null ||
+                                ds.getPool().getMaxLifetime() == null ||
+                                ds.getPool().getMaxSize() == null ||
+                                ds.getPool().getInitializationFailTimeout() == null ||
+                                ds.getPool().getIsolateInternalQueries() == null ||
+                                ds.getPool().getAllowPoolSuspension() == null ||
+                                ds.getPool().getReadOnly() == null ||
+                                ds.getPool().getRegisterMbeans() == null ||
+                                ds.getPool().getValidationTimeout() == null ||
+                                ds.getPool().getLeakDetectionThreshold() == null)));
     }
 
     private static ServerConnectorConfig.Builder createServerConnectorConfigBuilder(String prefix, Integer defaultPort) {
