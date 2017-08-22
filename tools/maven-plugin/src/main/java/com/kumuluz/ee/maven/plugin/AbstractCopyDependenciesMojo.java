@@ -48,6 +48,9 @@ public abstract class AbstractCopyDependenciesMojo extends AbstractMojo {
     @Parameter(defaultValue = "${session}", readonly = true, required = true)
     protected MavenSession session;
 
+    @Parameter
+    private String webappDir;
+
     @Component
     protected BuildPluginManager buildPluginManager;
 
@@ -104,9 +107,15 @@ public abstract class AbstractCopyDependenciesMojo extends AbstractMojo {
         // search for src/main/webapp
         if (!webappExists) {
 
-            Path sourceWebApp = Paths.get(baseDirectory, "src", "main", "webapp");
+            Path sourceWebApp = webappDir == null ?
+                    Paths.get(baseDirectory, "src", "main", "webapp") :
+                    Paths.get(baseDirectory, webappDir);
+
+            getLog().info(sourceWebApp.toAbsolutePath().toString());
 
             if (Files.isDirectory(sourceWebApp)) {
+
+                String sourceWebAppDir = webappDir == null ? "src/main/webapp" : webappDir;
 
                 executeMojo(
                         plugin(
@@ -119,7 +128,7 @@ public abstract class AbstractCopyDependenciesMojo extends AbstractMojo {
                                 element(name("outputDirectory"), "${basedir}/target/classes/webapp"),
                                 element(name("resources"),
                                         element(name("resource"),
-                                                element(name("directory"), "src/main/webapp"),
+                                                element(name("directory"), sourceWebAppDir),
                                                 element(name("filtering"), "true")
                                         ))
                         ),

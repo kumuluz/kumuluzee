@@ -21,14 +21,11 @@
 package com.kumuluz.ee.factories;
 
 import com.kumuluz.ee.common.config.*;
-import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 import com.kumuluz.ee.common.utils.EnvUtils;
 import com.kumuluz.ee.common.utils.StringUtils;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -113,6 +110,19 @@ public class EeConfigFactory {
             envName.ifPresent(envBuilder::name);
 
             eeConfigBuilder.env(envBuilder);
+        }
+
+        Optional<List<String>> loaderCfgOpt = cfg.getMapKeys("kumuluzee.dev");
+
+        if (loaderCfgOpt.isPresent()) {
+
+            DevConfig.Builder devBuilder = new DevConfig.Builder();
+
+            Optional<String> webappDir = cfg.get("kumuluzee.dev.webapp-dir");
+
+            webappDir.ifPresent(devBuilder::webappDir);
+
+            eeConfigBuilder.dev(devBuilder);
         }
 
         Optional<Integer> dsSizeOpt = cfg.getListSize("kumuluzee.datasources");
@@ -249,6 +259,7 @@ public class EeConfigFactory {
         return !(eeConfig == null ||
                 eeConfig.getVersion() == null ||
                 eeConfig.getEnv() == null ||
+                eeConfig.getDev() == null ||
                 eeConfig.getServer() == null ||
                 eeConfig.getServer().getContextPath() == null ||
                 eeConfig.getServer().getForceHttps() == null ||

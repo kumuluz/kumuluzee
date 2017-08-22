@@ -20,6 +20,8 @@
 */
 package com.kumuluz.ee.common.utils;
 
+import com.kumuluz.ee.common.config.DevConfig;
+import com.kumuluz.ee.common.config.EeConfig;
 import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 
 import java.io.IOException;
@@ -60,7 +62,13 @@ public class ResourceUtils {
                 if (Files.isDirectory(resourceRootPath) && resourceRootPath.getFileName().toString().equals("classes")
                         && resourceRootPath.getParent() != null && resourceRootPath.getParent().getFileName().toString().equals("target")) {
 
-                    Path sourceWebApp = resourceRootPath.getParent().resolveSibling(Paths.get( "src", "main", "webapp"));
+                    DevConfig devConfig = EeConfig.getInstance().getDev();
+
+                    Path sibling = devConfig.getWebappDir() == null ?
+                            Paths.get( "src", "main", "webapp") :
+                            Paths.get(devConfig.getWebappDir());
+
+                    Path sourceWebApp = resourceRootPath.getParent().resolveSibling(sibling);
 
                     if (Files.isDirectory(sourceWebApp)) {
 
