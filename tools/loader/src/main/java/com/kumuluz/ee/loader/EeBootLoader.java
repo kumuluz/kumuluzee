@@ -20,25 +20,37 @@
 */
 package com.kumuluz.ee.loader;
 
+import com.kumuluz.ee.loader.exception.EeClassLoaderException;
+
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
 /**
  * @author Benjamin Kastelic
- * @since 2.4.0
+ *
  */
 public class EeBootLoader {
 
-    // Main class name
-    private final static String MAIN_CLASS = "com.kumuluz.ee.EeApplication";
-
     public static void main(String[] args) throws Throwable {
-        launch(args);
+
+        try {
+            ResourceBundle bootLoaderProperties = ResourceBundle.getBundle("META-INF/kumuluzee/boot-loader");
+
+            String mainClass = bootLoaderProperties.getString("main-class");
+
+            launch(args, mainClass);
+        } catch (MissingResourceException e) {
+
+            throw new EeClassLoaderException("KumuluzEE Boot Loader config properties are malformed or missing.", e);
+        }
     }
 
     /**
      * Start the boot procedure.
      * Use the {@link EeClassLoader} EeClassLoader to find, load and start the main class.
      */
-    private static void launch(String[] args) throws Throwable {
+    private static void launch(String[] args, String mainClass) throws Throwable {
         EeClassLoader classLoader = new EeClassLoader();
-        classLoader.invokeMain(MAIN_CLASS, args);
+        classLoader.invokeMain(mainClass, args);
     }
 }

@@ -23,11 +23,13 @@ package com.kumuluz.ee.maven.plugin;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
@@ -48,6 +50,9 @@ public abstract class AbstractPackageMojo extends AbstractCopyDependenciesMojo {
     private MavenProject mavenProject;
     private MavenSession mavenSession;
     private BuildPluginManager buildPluginManager;
+
+    @Parameter(defaultValue = "com.kumuluz.ee.EeApplication")
+    private String mainClass;
 
     private String buildDirectory;
     private String outputDirectory;
@@ -119,6 +124,20 @@ public abstract class AbstractPackageMojo extends AbstractCopyDependenciesMojo {
             loaderJar.close();
 
             Files.delete(tmpJar);
+
+            // Create the boot loader config file
+            Path loaderConf = Paths.get(outputDirectory, "META-INF", "kumuluzee", "boot-loader.properties");
+
+            Path loaderConfParent = loaderConf.getParent();
+
+            if (!Files.exists(loaderConfParent)) {
+
+                Files.createDirectories(loaderConfParent);
+            }
+
+            String loaderConfContent = "main-class=" + mainClass;
+
+            Files.write(loaderConf, loaderConfContent.getBytes(StandardCharsets.UTF_8));
 
         } catch (IOException e) {
             throw new MojoExecutionException("Failed to unpack kumuluzee-loader dependency: " + e.getMessage() + ".");
