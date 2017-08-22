@@ -2,6 +2,10 @@ package com.kumuluz.ee.jpa.common.injection;
 
 import javax.persistence.EntityManager;
 
+/**
+ * @author Tilen Faganel
+ * @since 2.4.0
+ */
 public class NonTxEntityManagerWrapper implements EntityManagerWrapper {
 
     private EntityManager em;
