@@ -40,13 +40,6 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
  */
 public abstract class AbstractCopyDependenciesMojo extends AbstractMojo {
 
-    private static final String WEB_XML_CONTENT =
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-            "<web-app xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
-            "         xsi:schemaLocation=\"http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd\"\n" +
-            "         version=\"3.1\" xmlns=\"http://xmlns.jcp.org/xml/ns/javaee\">\n" +
-            "</web-app>";
-
     private MavenProject mavenProject;
     private MavenSession mavenSession;
     private BuildPluginManager buildPluginManager;
@@ -97,7 +90,6 @@ public abstract class AbstractCopyDependenciesMojo extends AbstractMojo {
     private void copyOrCreateWebapp() throws MojoExecutionException {
 
         boolean webappExists = false;
-        boolean webappEmpty = false;
 
         // search for target/classes/webapp
         Path outputWebApp = Paths.get(outputDirectory, "webapp");
@@ -133,29 +125,18 @@ public abstract class AbstractCopyDependenciesMojo extends AbstractMojo {
                 );
 
                 // check if webapp resources were successfully copied
-                if (Files.isDirectory(sourceWebApp)) {
+                if (Files.isDirectory(outputWebApp)) {
 
                     webappExists = true;
-
-                    try {
-
-                        webappEmpty = !Files.list(sourceWebApp).findFirst().isPresent();
-                    } catch (IOException e) {
-                        throw new MojoExecutionException("Could not read the output directory content.", e);
-                    }
                 }
             }
         }
 
-        if (!webappExists || webappEmpty) {
+        if (!webappExists) {
 
             try {
 
-                Path outputWebXml = Paths.get(outputDirectory, "webapp", "WEB-INF", "web.xml");
-
-                Files.createDirectories(outputWebXml.getParent());
-
-                Files.write(outputWebXml, WEB_XML_CONTENT.getBytes(StandardCharsets.UTF_8));
+                Files.createDirectories(outputWebApp);
 
             } catch (IOException e) {
 
