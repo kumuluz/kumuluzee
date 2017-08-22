@@ -28,6 +28,7 @@ import org.apache.maven.project.MavenProject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
@@ -74,9 +75,9 @@ public abstract class AbstractPackageMojo extends AbstractCopyDependenciesMojo {
         try {
 
             // get plugin JAR
-            String pluginJarPath = getPluginJarPath();
+            URI pluginJarURI = getPluginJarPath();
 
-            Path pluginJarFile = Paths.get(pluginJarPath);
+            Path pluginJarFile = Paths.get(pluginJarURI);
 
             FileSystem pluginJarFs = FileSystems.newFileSystem(pluginJarFile, null);
 
@@ -133,7 +134,7 @@ public abstract class AbstractPackageMojo extends AbstractCopyDependenciesMojo {
         }
     }
 
-    private String getPluginJarPath() throws MojoExecutionException {
+    private URI getPluginJarPath() throws MojoExecutionException {
 
         try {
 
@@ -145,7 +146,7 @@ public abstract class AbstractPackageMojo extends AbstractCopyDependenciesMojo {
                 throw new MojoExecutionException("Failed to retrieve plugin JAR file path. Unobtainable Code Source.");
             }
 
-            return codeSource.getLocation().toURI().getSchemeSpecificPart();
+            return codeSource.getLocation().toURI();
         } catch (URISyntaxException e) {
             throw new MojoExecutionException("Failed to retrieve plugin JAR file path.", e);
         }
