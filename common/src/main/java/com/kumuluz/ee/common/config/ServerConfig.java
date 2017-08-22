@@ -30,6 +30,7 @@ public class ServerConfig {
 
         private String baseUrl;
         private String contextPath = "/";
+        private Boolean dirBrowsing = false;
         private Integer minThreads = 5;
         private Integer maxThreads = 100;
         private Boolean forceHttps = false;
@@ -44,6 +45,11 @@ public class ServerConfig {
 
         public Builder contextPath(String contextPath) {
             this.contextPath = contextPath;
+            return this;
+        }
+
+        public Builder dirBrowsing(Boolean dirBrowsing) {
+            this.dirBrowsing = dirBrowsing;
             return this;
         }
 
@@ -77,6 +83,7 @@ public class ServerConfig {
             ServerConfig serverConfig = new ServerConfig();
             serverConfig.baseUrl = baseUrl;
             serverConfig.contextPath = contextPath;
+            serverConfig.dirBrowsing = dirBrowsing;
             serverConfig.minThreads = minThreads;
             serverConfig.maxThreads = maxThreads;
             serverConfig.forceHttps = forceHttps;
@@ -90,6 +97,7 @@ public class ServerConfig {
 
     private String baseUrl;
     private String contextPath;
+    private Boolean dirBrowsing;
     private Integer minThreads;
     private Integer maxThreads;
     private Boolean forceHttps;
@@ -106,6 +114,10 @@ public class ServerConfig {
 
     public String getContextPath() {
         return contextPath;
+    }
+
+    public Boolean getDirBrowsing() {
+        return dirBrowsing;
     }
 
     public Integer getMinThreads() {
