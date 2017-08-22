@@ -34,6 +34,7 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
  * Run the application in an exploded class and dependency runtime.
  *
  * @author Benjamin Kastelic
+ * @since 2.4.0
  */
 @Mojo(
         name = "run",
@@ -41,13 +42,13 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
         requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
         requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME
 )
-public class RunExplodedMojo extends AbstractCopyDependenciesAndWebappMojo {
+public class RunExplodedMojo extends AbstractCopyDependenciesMojo {
 
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    private MavenProject mavenProject;
+    private MavenProject project;
 
     @Parameter(defaultValue = "${session}", readonly = true, required = true)
-    private MavenSession mavenSession;
+    private MavenSession session;
 
     @Component
     private BuildPluginManager buildPluginManager;
@@ -56,7 +57,7 @@ public class RunExplodedMojo extends AbstractCopyDependenciesAndWebappMojo {
     public void execute() throws MojoExecutionException {
         final String CLASSPATH_FORMAT = "target%1$sclasses%2$starget%1$sdependency%1$s*";
 
-        copyDependencies(mavenProject, mavenSession, buildPluginManager);
+        copyDependencies(project, session, buildPluginManager);
 
         executeMojo(
                 plugin(
@@ -71,7 +72,7 @@ public class RunExplodedMojo extends AbstractCopyDependenciesAndWebappMojo {
                                 element(name("argument"), "-classpath"),
                                 element(name("argument"), String.format(CLASSPATH_FORMAT, File.separator, File.pathSeparator)))
                 ),
-                executionEnvironment(mavenProject, mavenSession, buildPluginManager)
+                executionEnvironment(project, session, buildPluginManager)
         );
     }
 }

@@ -20,21 +20,32 @@
 */
 package com.kumuluz.ee.maven.plugin;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
 
 /**
  * @author Benjamin Kastelic
+ * @since 2.4.0
  */
-public abstract class AbstractCopyDependenciesAndWebappMojo extends AbstractMojo {
+public abstract class AbstractCopyDependenciesMojo extends AbstractMojo {
+
+    private static final String WEB_XML_CONTENT =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+            "<web-app xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+            "         xsi:schemaLocation=\"http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd\"\n" +
+            "         version=\"3.1\" xmlns=\"http://xmlns.jcp.org/xml/ns/javaee\">\n" +
+            "</web-app>";
 
     private MavenProject mavenProject;
     private MavenSession mavenSession;
@@ -45,17 +56,19 @@ public abstract class AbstractCopyDependenciesAndWebappMojo extends AbstractMojo
 
     public void copyDependencies(MavenProject mavenProject, MavenSession mavenSession, BuildPluginManager buildPluginManager)
             throws MojoExecutionException {
+
         copyDependencies(mavenProject, mavenSession, buildPluginManager, null);
     }
 
     public void copyDependencies(MavenProject mavenProject, MavenSession mavenSession,
                                  BuildPluginManager buildPluginManager, String outputSubdirectory)
             throws MojoExecutionException {
+
         this.mavenProject = mavenProject;
         this.mavenSession = mavenSession;
         this.buildPluginManager = buildPluginManager;
 
-        outputDirectory = mavenProject.getBuild().getDirectory();
+        outputDirectory = mavenProject.getBuild().getOutputDirectory();
         baseDirectory = mavenProject.getBasedir().getAbsolutePath();
 
         String outputDirectory = outputSubdirectory == null
@@ -66,8 +79,7 @@ public abstract class AbstractCopyDependenciesAndWebappMojo extends AbstractMojo
                 plugin(
                         groupId("org.apache.maven.plugins"),
                         artifactId("maven-dependency-plugin"),
-
-                        version("3.0.1")
+                        version(MojoConstants.MAVEN_DEPENDENCY_PLUGIN_VERSION)
                 ),
                 goal("copy-dependencies"),
                 configuration(
@@ -83,43 +95,30 @@ public abstract class AbstractCopyDependenciesAndWebappMojo extends AbstractMojo
     }
 
     private void copyOrCreateWebapp() throws MojoExecutionException {
-        final String webXmlContent =
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<web-app xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
-                "         xsi:schemaLocation=\"http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd\"\n" +
-                "         version=\"3.1\" xmlns=\"http://xmlns.jcp.org/xml/ns/javaee\">\n" +
-                "</web-app>";
 
         boolean webappExists = false;
         boolean webappEmpty = false;
 
         // search for target/classes/webapp
-        File targetWebapp = new File(outputDirectory + "/classes/webapp");
-        if (targetWebapp.isDirectory() && targetWebapp.exists()) {
-            webappExists = true;
+        Path outputWebApp = Paths.get(outputDirectory, "webapp");
 
-            if (targetWebapp.list().length <= 0) {
-                webappEmpty = true;
-            }
+        if (Files.isDirectory(outputWebApp)) {
+
+            webappExists = true;
         }
 
         // search for src/main/webapp
         if (!webappExists) {
-            File sourceWebapp = new File(baseDirectory + "/src/main/webapp");
-            if (sourceWebapp.isDirectory() && sourceWebapp.exists()) {
-                webappExists = true;
 
-                if (sourceWebapp.list().length <= 0) {
-                    webappEmpty = true;
-                }
-            }
+            Path sourceWebApp = Paths.get(baseDirectory, "src", "main", "webapp");
 
-            if (webappExists) {
+            if (Files.isDirectory(sourceWebApp)) {
+
                 executeMojo(
                         plugin(
                                 groupId("org.apache.maven.plugins"),
                                 artifactId("maven-resources-plugin"),
-                                version("3.0.2")
+                                version(MojoConstants.MAVEN_RESOURCE_PLUGIN_VERSION)
                         ),
                         goal("copy-resources"),
                         configuration(
@@ -132,27 +131,35 @@ public abstract class AbstractCopyDependenciesAndWebappMojo extends AbstractMojo
                         ),
                         executionEnvironment(mavenProject, mavenSession, buildPluginManager)
                 );
-            }
 
-            // check if webapp resources were sucessfully copied
-            targetWebapp = new File(outputDirectory + "/classes/webapp");
-            if (targetWebapp.isDirectory() && targetWebapp.exists()) {
-                webappExists = true;
+                // check if webapp resources were successfully copied
+                if (Files.isDirectory(sourceWebApp)) {
 
-                if (targetWebapp.list().length <= 0) {
-                    webappEmpty = true;
+                    webappExists = true;
+
+                    try {
+
+                        webappEmpty = !Files.list(sourceWebApp).findFirst().isPresent();
+                    } catch (IOException e) {
+                        throw new MojoExecutionException("Could not read the output directory content.", e);
+                    }
                 }
             }
         }
 
         if (!webappExists || webappEmpty) {
+
             try {
-                File targetWebXml = new File(outputDirectory + "/classes/webapp/WEB-INF/web.xml");
-                targetWebXml.getParentFile().mkdirs();
-                targetWebXml.createNewFile();
-                FileUtils.writeStringToFile(targetWebXml, webXmlContent, "UTF-8");
-            } catch (Exception e) {
-                // Ignore ...
+
+                Path outputWebXml = Paths.get(outputDirectory, "webapp", "WEB-INF", "web.xml");
+
+                Files.createDirectories(outputWebXml.getParent());
+
+                Files.write(outputWebXml, WEB_XML_CONTENT.getBytes(StandardCharsets.UTF_8));
+
+            } catch (IOException e) {
+
+                throw new MojoExecutionException("Could not create the necessary `webapp` directory. Please check the target folder permissions.", e);
             }
         }
     }

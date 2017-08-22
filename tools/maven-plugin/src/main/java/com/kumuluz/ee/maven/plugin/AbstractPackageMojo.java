@@ -20,38 +20,36 @@
 */
 package com.kumuluz.ee.maven.plugin;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
+import java.net.URISyntaxException;
+import java.nio.file.*;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
-import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
 
 /**
  * @author Benjamin Kastelic
+ * @since 2.4.0
  */
-public abstract class AbstractPackageMojo extends AbstractCopyDependenciesAndWebappMojo {
+public abstract class AbstractPackageMojo extends AbstractCopyDependenciesMojo {
 
     private static final String LOADER_JAR = "META-INF/loader/kumuluzee-loader.jar";
-    private static final String TEMP_DIR_NAME_PREFIX = "kumuluzee-loader.";
+    private static final String TEMP_DIR_NAME_PREFIX = "kumuluzee-loader";
     private static final String CLASS_SUFFIX = ".class";
 
     private MavenProject mavenProject;
     private MavenSession mavenSession;
     private BuildPluginManager buildPluginManager;
 
+    private String buildDirectory;
     private String outputDirectory;
     private String finalName;
 
@@ -61,7 +59,8 @@ public abstract class AbstractPackageMojo extends AbstractCopyDependenciesAndWeb
         this.mavenSession = mavenSession;
         this.buildPluginManager = buildPluginManager;
 
-        outputDirectory = mavenProject.getBuild().getDirectory();
+        buildDirectory = mavenProject.getBuild().getDirectory();
+        outputDirectory = mavenProject.getBuild().getOutputDirectory();
         finalName = mavenProject.getBuild().getFinalName();
 
         copyDependencies();
@@ -71,110 +70,91 @@ public abstract class AbstractPackageMojo extends AbstractCopyDependenciesAndWeb
     }
 
     private void copyDependencies() throws MojoExecutionException {
-        super.copyDependencies(mavenProject, mavenSession, buildPluginManager, "classes/lib");
+        super.copyDependencies(mavenProject, mavenSession, buildPluginManager, "lib");
     }
 
-//    private void unpackDependencies() throws MojoExecutionException {
-//        ExecutionEnvironment executionEnvironment = executionEnvironment(mavenProject, mavenSession, buildPluginManager);
-//
-//        try {
-//            executeMojo(
-//                    plugin(
-//                            groupId("org.apache.maven.plugins"),
-//                            artifactId("maven-dependency-plugin"),
-//                            version("3.0.1")
-//                    ),
-//                    goal("unpack"),
-//                    configuration(
-//                            element("artifact", LOADER_JAR_GAV),
-//                            element("excludes", "META-INF/**"),
-//                            element("outputDirectory", "${project.build.directory}/classes")
-//                    ),
-//                    executionEnvironment
-//            );
-//        } catch (MojoExecutionException e) {
-//            unpackDependenciesFallback();
-//        }
-//    }
-
     private void unpackDependencies() throws MojoExecutionException {
+
         getLog().info("Unpacking kumuluzee-loader dependency.");
 
         try {
+
             // get plugin JAR
             String pluginJarPath = getPluginJarPath();
-            JarFile pluginJar = new JarFile(new File(pluginJarPath));
 
-            // extract loader JAR from plugin JAR
-            JarEntry pluginJarloaderJarEntry = pluginJar.getJarEntry(LOADER_JAR);
-            InputStream loaderJarInputStream = pluginJar.getInputStream(pluginJarloaderJarEntry);
+            Path pluginJarFile = Paths.get(pluginJarPath);
 
-            File tmpDirectory = new File(System.getProperty("java.io.tmpdir"), "EeBootLoader");
-            if (!tmpDirectory.exists()) {
-                tmpDirectory.mkdir();
-            }
-            chmod777(tmpDirectory);
+            FileSystem pluginJarFs = FileSystems.newFileSystem(pluginJarFile, null);
 
-            File tmpLoaderJarFile = File.createTempFile(TEMP_DIR_NAME_PREFIX, null, tmpDirectory);
-            tmpLoaderJarFile.deleteOnExit();
-            chmod777(tmpLoaderJarFile);
+            Path loaderJarFile = pluginJarFs.getPath(LOADER_JAR);
+            Path tmpJar = Files.createTempFile(TEMP_DIR_NAME_PREFIX, ".tmp");
 
-            FileUtils.copyInputStreamToFile(loaderJarInputStream, tmpLoaderJarFile);
+            Files.copy(loaderJarFile, tmpJar, StandardCopyOption.REPLACE_EXISTING);
 
-            // extract loader JAR contents
-            JarFile loaderJar = new JarFile(tmpLoaderJarFile);
-            loaderJar
-                    .stream()
-                    .parallel()
+            JarFile loaderJar = new JarFile(tmpJar.toFile());
+
+            loaderJar.stream().parallel()
                     .filter(loaderJarEntry -> loaderJarEntry.getName().toLowerCase().endsWith(CLASS_SUFFIX))
                     .forEach(loaderJarEntry -> {
                         try {
-                            File file = new File(outputDirectory, "classes" + File.separator + loaderJarEntry.getName());
-                            if (file.getParentFile() != null) {
-                                file.getParentFile().mkdirs();
+
+                            Path outputPath = Paths.get(outputDirectory, loaderJarEntry.getName());
+
+                            Path outputPathParent = outputPath.getParent();
+
+                            if (outputPathParent != null) {
+
+                                Files.createDirectories(outputPathParent);
                             }
 
                             InputStream inputStream = loaderJar.getInputStream(loaderJarEntry);
-                            FileUtils.copyInputStreamToFile(inputStream, file);
-                        } catch (IOException e) {
-                            // ignore
+
+                            Files.copy(inputStream, outputPath, StandardCopyOption.REPLACE_EXISTING);
+
+                            inputStream.close();
+                        } catch (IOException ignored) {
                         }
                     });
 
             loaderJar.close();
+
+            Files.delete(tmpJar);
+
         } catch (IOException e) {
             throw new MojoExecutionException("Failed to unpack kumuluzee-loader dependency: " + e.getMessage() + ".");
         }
     }
 
     private String getPluginJarPath() throws MojoExecutionException {
+
         try {
+
             ProtectionDomain protectionDomain = RepackageMojo.class.getProtectionDomain();
             CodeSource codeSource = protectionDomain.getCodeSource();
-            URI location = codeSource == null ? null : codeSource.getLocation().toURI();
-            return location == null ? null : location.getSchemeSpecificPart();
-        } catch (Exception e) {
-            throw new MojoExecutionException("Failed to retrieve plugin JAR file path.");
+
+            if (codeSource == null) {
+
+                throw new MojoExecutionException("Failed to retrieve plugin JAR file path. Unobtainable Code Source.");
+            }
+
+            return codeSource.getLocation().toURI().getSchemeSpecificPart();
+        } catch (URISyntaxException e) {
+            throw new MojoExecutionException("Failed to retrieve plugin JAR file path.", e);
         }
     }
 
-    private void chmod777(File file) {
-        file.setReadable(true, false);
-        file.setWritable(true, false);
-        file.setExecutable(true, false);
-    }
-
     private void packageJar() throws MojoExecutionException {
+
         executeMojo(
                 plugin(
                         groupId("org.apache.maven.plugins"),
                         artifactId("maven-jar-plugin"),
-                        version("3.0.2")
+                        version(MojoConstants.MAVEN_JAR_PLUGIN_VERSION)
                 ),
                 goal("jar"),
                 configuration(
                         element("finalName", finalName),
-                        element("outputDirectory", outputDirectory),
+                        element("outputDirectory", buildDirectory),
                         element("classifier", "uber"),
                         element("forceCreation", "true"),
                         element("archive",
@@ -188,26 +168,32 @@ public abstract class AbstractPackageMojo extends AbstractCopyDependenciesAndWeb
     }
 
     private void renameJars() throws MojoExecutionException {
+
         try {
-            File sourceFile1 = new File(outputDirectory, finalName + ".jar");
-            if (sourceFile1.exists()) {
+
+            Path sourcePath1 = Paths.get(buildDirectory, finalName + ".jar");
+
+            if (Files.exists(sourcePath1)) {
+
                 Files.move(
-                        sourceFile1.toPath(),
-                        sourceFile1.toPath().resolveSibling(finalName + ".jar.original"),
+                        sourcePath1,
+                        sourcePath1.resolveSibling(finalName + ".jar.original"),
                         StandardCopyOption.REPLACE_EXISTING
                 );
             }
 
-            File sourceFile2 = new File(outputDirectory, finalName + "-uber.jar");
-            if (sourceFile2.exists()) {
+            Path sourcePath2 = Paths.get(buildDirectory, finalName + "-uber.jar");
+
+            if (Files.exists(sourcePath2)) {
+
                 Files.move(
-                        sourceFile2.toPath(),
-                        sourceFile2.toPath().resolveSibling(finalName + ".jar"),
+                        sourcePath2,
+                        sourcePath2.resolveSibling(finalName + ".jar"),
                         StandardCopyOption.REPLACE_EXISTING
                 );
             }
-        } catch (Exception e) {
-            throw new MojoExecutionException("Unable to rename final build artifact.");
+        } catch (IOException e) {
+            throw new MojoExecutionException("Unable to rename the final build artifact.");
         }
     }
 }

@@ -34,6 +34,7 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
  * Run the application in an executable JAR archive runtime.
  *
  * @author Benjamin Kastelic
+ * @since 2.4.0
  */
 //@Mojo(
 //        name = "run-jar",
@@ -44,10 +45,10 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
 public class RunJarMojo extends AbstractPackageMojo {
 
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    private MavenProject mavenProject;
+    private MavenProject project;
 
     @Parameter(defaultValue = "${session}", readonly = true, required = true)
-    private MavenSession mavenSession;
+    private MavenSession session;
 
     @Component
     private BuildPluginManager buildPluginManager;
@@ -60,7 +61,7 @@ public class RunJarMojo extends AbstractPackageMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        repackage(mavenProject, mavenSession, buildPluginManager);
+        repackage(project, session, buildPluginManager);
 
         executeMojo(
                 plugin(
@@ -76,7 +77,7 @@ public class RunJarMojo extends AbstractPackageMojo {
                                 element(name("argument"), outputDirectory + "/" + finalName + ".jar")
                         )
                 ),
-                executionEnvironment(mavenProject, mavenSession, buildPluginManager)
+                executionEnvironment(project, session, buildPluginManager)
         );
     }
 }

@@ -22,6 +22,7 @@ package com.kumuluz.ee.loader.exception;
 
 /**
  * @author Benjamin Kastelic
+ * @since 2.4.0
  */
 public class EeClassLoaderException extends Exception {
 

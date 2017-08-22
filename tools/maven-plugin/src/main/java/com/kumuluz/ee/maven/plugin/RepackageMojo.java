@@ -26,11 +26,13 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.project.MavenProject;
+import org.sonatype.aether.RepositorySystemSession;
 
 /**
  * Repackages existing JAR archives so that they can be executed from the command line using {@literal java -jar}.
  *
  * @author Benjamin Kastelic
+ * @since 2.4.0
  */
 @Mojo(
         name = "repackage",
@@ -42,16 +44,17 @@ import org.apache.maven.project.MavenProject;
 public class RepackageMojo extends AbstractPackageMojo {
 
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    private MavenProject mavenProject;
+    private MavenProject project;
 
     @Parameter(defaultValue = "${session}", readonly = true, required = true)
-    private MavenSession mavenSession;
+    private MavenSession session;
 
     @Component
     private BuildPluginManager buildPluginManager;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        repackage(mavenProject, mavenSession, buildPluginManager);
+
+        repackage(project, session, buildPluginManager);
     }
 }

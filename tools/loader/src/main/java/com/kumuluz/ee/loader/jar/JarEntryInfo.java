@@ -30,9 +30,10 @@ import java.net.URL;
 import java.util.jar.JarEntry;
 
 /**
- * @author Benjamin Kastelic
- *
  * Class with JAR entry information. Keeps JAR file and entry object.
+ *
+ * @author Benjamin Kastelic
+ * @since 2.4.0
  */
 public class JarEntryInfo {
 

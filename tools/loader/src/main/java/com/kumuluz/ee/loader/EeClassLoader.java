@@ -39,6 +39,7 @@ import java.util.logging.Logger;
 
 /**
  * @author Benjamin Kastelic
+ * @since 2.4.0
  */
 public class EeClassLoader extends ClassLoader {
 
@@ -195,8 +196,11 @@ public class EeClassLoader extends ClassLoader {
     }
 
     private List<JarEntryInfo> findJarEntries(String name) {
+
         List<JarEntryInfo> jarEntryInfoList = new ArrayList<>();
+
         for (JarFileInfo jarFileInfo : jarFiles) {
+
             JarFile jarFile = jarFileInfo.getJarFile();
             JarEntry jarEntry = jarFile.getJarEntry(name);
             if (jarEntry != null) {

@@ -30,6 +30,7 @@ import org.apache.maven.project.MavenProject;
  * Copy dependencies and prepare for execution in an exploded class and dependency runtime.
  *
  * @author Benjamin Kastelic
+ * @since 2.4.0
  */
 @Mojo(
         name = "copy-dependencies",
@@ -37,19 +38,19 @@ import org.apache.maven.project.MavenProject;
         requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
         requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME
 )
-public class CopyDependenciesAndWebappMojo extends AbstractCopyDependenciesAndWebappMojo {
+public class CopyDependenciesMojo extends AbstractCopyDependenciesMojo {
 
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    private MavenProject mavenProject;
+    private MavenProject project;
 
     @Parameter(defaultValue = "${session}", readonly = true, required = true)
-    private MavenSession mavenSession;
+    private MavenSession session;
 
     @Component
     private BuildPluginManager buildPluginManager;
 
     @Override
     public void execute() throws MojoExecutionException {
-        copyDependencies(mavenProject, mavenSession, buildPluginManager);
+        copyDependencies(project, session, buildPluginManager);
     }
 }

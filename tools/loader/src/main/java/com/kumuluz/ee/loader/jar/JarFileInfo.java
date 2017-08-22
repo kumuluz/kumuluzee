@@ -30,9 +30,10 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 /**
- * @author Benjamin Kastelic
- *
  * Class that holds JAR file information.
+ *
+ * @author Benjamin Kastelic
+ * @since 2.4.0
  */
 public class JarFileInfo {
 

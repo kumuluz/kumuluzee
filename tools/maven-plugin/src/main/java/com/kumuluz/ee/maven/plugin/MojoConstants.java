@@ -18,27 +18,17 @@
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
 */
-package com.kumuluz.ee.loader;
+package com.kumuluz.ee.maven.plugin;
+
+import java.util.ResourceBundle;
 
 /**
- * @author Benjamin Kastelic
+ * @author Tilen Faganel
  * @since 2.4.0
  */
-public class EeBootLoader {
+public class MojoConstants {
 
-    // Main class name
-    private final static String MAIN_CLASS = "com.kumuluz.ee.EeApplication";
-
-    public static void main(String[] args) throws Throwable {
-        launch(args);
-    }
-
-    /**
-     * Start the boot procedure.
-     * Use the {@link EeClassLoader} EeClassLoader to find, load and start the main class.
-     */
-    private static void launch(String[] args) throws Throwable {
-        EeClassLoader classLoader = new EeClassLoader();
-        classLoader.invokeMain(MAIN_CLASS, args);
-    }
+    public static final String MAVEN_JAR_PLUGIN_VERSION = ResourceBundle.getBundle("plugin-versions").getString("maven-jar-plugin.version");
+    public static final String MAVEN_RESOURCE_PLUGIN_VERSION = ResourceBundle.getBundle("plugin-versions").getString("maven-resources-plugin.version");
+    public static final String MAVEN_DEPENDENCY_PLUGIN_VERSION = ResourceBundle.getBundle("plugin-versions").getString("maven-dependency-plugin.version");
 }
