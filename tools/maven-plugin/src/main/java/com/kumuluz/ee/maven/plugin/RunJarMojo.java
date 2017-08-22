@@ -44,15 +44,6 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
 //)
 public class RunJarMojo extends AbstractPackageMojo {
 
-    @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    private MavenProject project;
-
-    @Parameter(defaultValue = "${session}", readonly = true, required = true)
-    private MavenSession session;
-
-    @Component
-    private BuildPluginManager buildPluginManager;
-
     @Parameter(defaultValue = "${project.build.directory}")
     private String outputDirectory;
 
@@ -61,7 +52,8 @@ public class RunJarMojo extends AbstractPackageMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        repackage(project, session, buildPluginManager);
+
+        repackage();
 
         executeMojo(
                 plugin(

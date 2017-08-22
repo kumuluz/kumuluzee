@@ -40,17 +40,8 @@ import org.apache.maven.project.MavenProject;
 )
 public class CopyDependenciesMojo extends AbstractCopyDependenciesMojo {
 
-    @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    private MavenProject project;
-
-    @Parameter(defaultValue = "${session}", readonly = true, required = true)
-    private MavenSession session;
-
-    @Component
-    private BuildPluginManager buildPluginManager;
-
     @Override
     public void execute() throws MojoExecutionException {
-        copyDependencies(project, session, buildPluginManager);
+        copyDependencies();
     }
 }

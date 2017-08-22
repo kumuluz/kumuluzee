@@ -44,20 +44,12 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
 )
 public class RunExplodedMojo extends AbstractCopyDependenciesMojo {
 
-    @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    private MavenProject project;
-
-    @Parameter(defaultValue = "${session}", readonly = true, required = true)
-    private MavenSession session;
-
-    @Component
-    private BuildPluginManager buildPluginManager;
-
     @Override
     public void execute() throws MojoExecutionException {
+
         final String CLASSPATH_FORMAT = "target%1$sclasses%2$starget%1$sdependency%1$s*";
 
-        copyDependencies(project, session, buildPluginManager);
+        copyDependencies();
 
         executeMojo(
                 plugin(

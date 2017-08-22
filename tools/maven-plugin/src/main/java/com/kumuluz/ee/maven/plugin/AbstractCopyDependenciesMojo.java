@@ -24,6 +24,8 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import java.io.IOException;
@@ -40,29 +42,29 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
  */
 public abstract class AbstractCopyDependenciesMojo extends AbstractMojo {
 
-    private MavenProject mavenProject;
-    private MavenSession mavenSession;
-    private BuildPluginManager buildPluginManager;
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
+    protected MavenProject project;
+
+    @Parameter(defaultValue = "${session}", readonly = true, required = true)
+    protected MavenSession session;
+
+    @Component
+    protected BuildPluginManager buildPluginManager;
 
     private String outputDirectory;
     private String baseDirectory;
 
-    public void copyDependencies(MavenProject mavenProject, MavenSession mavenSession, BuildPluginManager buildPluginManager)
+    protected void copyDependencies()
             throws MojoExecutionException {
 
-        copyDependencies(mavenProject, mavenSession, buildPluginManager, null);
+        copyDependencies(null);
     }
 
-    public void copyDependencies(MavenProject mavenProject, MavenSession mavenSession,
-                                 BuildPluginManager buildPluginManager, String outputSubdirectory)
+    protected void copyDependencies(String outputSubdirectory)
             throws MojoExecutionException {
 
-        this.mavenProject = mavenProject;
-        this.mavenSession = mavenSession;
-        this.buildPluginManager = buildPluginManager;
-
-        outputDirectory = mavenProject.getBuild().getOutputDirectory();
-        baseDirectory = mavenProject.getBasedir().getAbsolutePath();
+        outputDirectory = project.getBuild().getOutputDirectory();
+        baseDirectory = project.getBasedir().getAbsolutePath();
 
         String outputDirectory = outputSubdirectory == null
                 ? this.outputDirectory + "/dependency"
@@ -81,7 +83,7 @@ public abstract class AbstractCopyDependenciesMojo extends AbstractMojo {
                         element("excludeArtifactIds", "kumuluzee-loader"),
                         element("outputDirectory", outputDirectory)
                 ),
-                executionEnvironment(mavenProject, mavenSession, buildPluginManager)
+                executionEnvironment(project, session, buildPluginManager)
         );
 
         copyOrCreateWebapp();
@@ -121,7 +123,7 @@ public abstract class AbstractCopyDependenciesMojo extends AbstractMojo {
                                                 element(name("filtering"), "true")
                                         ))
                         ),
-                        executionEnvironment(mavenProject, mavenSession, buildPluginManager)
+                        executionEnvironment(project, session, buildPluginManager)
                 );
 
                 // check if webapp resources were successfully copied

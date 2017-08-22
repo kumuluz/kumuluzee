@@ -47,10 +47,6 @@ public abstract class AbstractPackageMojo extends AbstractCopyDependenciesMojo {
     private static final String TEMP_DIR_NAME_PREFIX = "kumuluzee-loader";
     private static final String CLASS_SUFFIX = ".class";
 
-    private MavenProject mavenProject;
-    private MavenSession mavenSession;
-    private BuildPluginManager buildPluginManager;
-
     @Parameter(defaultValue = "com.kumuluz.ee.EeApplication")
     private String mainClass;
 
@@ -58,24 +54,17 @@ public abstract class AbstractPackageMojo extends AbstractCopyDependenciesMojo {
     private String outputDirectory;
     private String finalName;
 
-    public void repackage(MavenProject mavenProject, MavenSession mavenSession, BuildPluginManager buildPluginManager)
+    protected void repackage()
             throws MojoExecutionException {
-        this.mavenProject = mavenProject;
-        this.mavenSession = mavenSession;
-        this.buildPluginManager = buildPluginManager;
 
-        buildDirectory = mavenProject.getBuild().getDirectory();
-        outputDirectory = mavenProject.getBuild().getOutputDirectory();
-        finalName = mavenProject.getBuild().getFinalName();
+        buildDirectory = project.getBuild().getDirectory();
+        outputDirectory = project.getBuild().getOutputDirectory();
+        finalName = project.getBuild().getFinalName();
 
-        copyDependencies();
+        copyDependencies("lib");
         unpackDependencies();
         packageJar();
         renameJars();
-    }
-
-    private void copyDependencies() throws MojoExecutionException {
-        super.copyDependencies(mavenProject, mavenSession, buildPluginManager, "lib");
     }
 
     private void unpackDependencies() throws MojoExecutionException {
@@ -182,7 +171,7 @@ public abstract class AbstractPackageMojo extends AbstractCopyDependenciesMojo {
                                 )
                         )
                 ),
-                executionEnvironment(mavenProject, mavenSession, buildPluginManager)
+                executionEnvironment(project, session, buildPluginManager)
         );
     }
 

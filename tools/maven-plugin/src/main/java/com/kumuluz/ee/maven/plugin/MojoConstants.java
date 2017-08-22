@@ -28,7 +28,7 @@ import java.util.ResourceBundle;
  */
 public class MojoConstants {
 
-    public static final String MAVEN_JAR_PLUGIN_VERSION = ResourceBundle.getBundle("plugin-versions").getString("maven-jar-plugin.version");
-    public static final String MAVEN_RESOURCE_PLUGIN_VERSION = ResourceBundle.getBundle("plugin-versions").getString("maven-resources-plugin.version");
-    public static final String MAVEN_DEPENDENCY_PLUGIN_VERSION = ResourceBundle.getBundle("plugin-versions").getString("maven-dependency-plugin.version");
+    public static final String MAVEN_JAR_PLUGIN_VERSION = ResourceBundle.getBundle("META-INF/kumuluzee/plugin-versions").getString("maven-jar-plugin.version");
+    public static final String MAVEN_RESOURCE_PLUGIN_VERSION = ResourceBundle.getBundle("META-INF/kumuluzee/plugin-versions").getString("maven-resources-plugin.version");
+    public static final String MAVEN_DEPENDENCY_PLUGIN_VERSION = ResourceBundle.getBundle("META-INF/kumuluzee/plugin-versions").getString("maven-dependency-plugin.version");
 }
