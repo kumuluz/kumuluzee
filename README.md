@@ -193,7 +193,7 @@ REST module pom.xml:
 <plugin>
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee-maven-plugin</artifactId>
-    <version>2.4.0-SNAPSHOT</version>
+    <version>${kumuluz.version}</version>
     <executions>
         <execution>
             <id>package</id>
@@ -203,6 +203,8 @@ REST module pom.xml:
             <configuration>
                 <finalName/>
                 <outputDirectory/>
+                <mainClass/>
+                <webappDir/>
             </configuration>
         </execution>
     </executions>
