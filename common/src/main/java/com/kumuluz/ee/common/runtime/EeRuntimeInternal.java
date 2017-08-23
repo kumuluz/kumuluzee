@@ -32,7 +32,7 @@ import java.util.UUID;
 public class EeRuntimeInternal {
 
     private String instanceId = UUID.randomUUID().toString();
-    private String version = ResourceBundle.getBundle("version").getString("version");
+    private String version = ResourceBundle.getBundle("META-INF/kumuluzee/versions").getString("version");
     private List<EeRuntimeComponent> eeComponents = Collections.emptyList();
 
     public String getInstanceId() {
