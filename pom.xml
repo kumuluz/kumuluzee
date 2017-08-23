@@ -15,6 +15,7 @@
         <module>components</module>
         <module>bom</module>
         <module>profiles</module>
+        <module>tools</module>
     </modules>
 
     <name>KumuluzEE</name>
@@ -52,6 +53,14 @@
         <yamlbeans.version>1.11</yamlbeans.version>
         <yaml.version>1.18</yaml.version>
         <junit.version>4.12</junit.version>
+        <maven.plugin.api.version>3.5.0</maven.plugin.api.version>
+        <maven-plugin-annotations.version>3.5</maven-plugin-annotations.version>
+        <mojo-executor.version>2.3.0</mojo-executor.version>
+
+        <maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
+        <maven-resources-plugin.version>3.0.2</maven-resources-plugin.version>
+        <maven-plugin-plugin.version>3.5</maven-plugin-plugin.version>
+        <maven-dependency-plugin.version>3.0.1</maven-dependency-plugin.version>
 
         <uel-version>3.0.0</uel-version>
         <weld.version>2.4.3.Final</weld.version>
@@ -287,6 +296,23 @@
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-microProfile-1.0</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-tools</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-loader</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <type>maven-plugin</type>
             </dependency>
 
             <!-- Java EE specification dependencies-->

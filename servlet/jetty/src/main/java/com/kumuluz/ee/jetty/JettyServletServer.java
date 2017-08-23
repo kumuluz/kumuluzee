@@ -109,15 +109,24 @@ public class JettyServletServer implements ServletServer {
     public void initWebContext() {
 
         if (server == null)
-            throw new IllegalStateException("Jetty has to be initialized before adding a web " +
-                    "context");
+            throw new IllegalStateException("Jetty has to be initialized before adding a web context");
 
         if (server.isStarted() || server.isStarting())
             throw new IllegalStateException("Jetty cannot be started before adding a web context");
 
         appContext = new WebAppContext();
 
-        appContext.setAttribute(JettyAttributes.jarPattern, ClasspathAttributes.exploded);
+        if (ResourceUtils.isRunningInJar()) {
+            appContext.setAttribute(JettyAttributes.jarPattern, ClasspathAttributes.jar);
+
+            try {
+                appContext.setClassLoader(getClass().getClassLoader());
+            } catch (Exception e) {
+                throw new IllegalStateException("Unable to set custom classloader for Jetty");
+            }
+        } else {
+            appContext.setAttribute(JettyAttributes.jarPattern, ClasspathAttributes.exploded);
+        }
 
         appContext.setParentLoaderPriority(true);
 

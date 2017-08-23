@@ -18,17 +18,17 @@
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
 */
-package com.kumuluz.ee.common.attributes;
+package com.kumuluz.ee.maven.plugin;
+
+import java.util.ResourceBundle;
 
 /**
  * @author Tilen Faganel
- * @since 1.0.0
+ * @since 2.4.0
  */
-public class ClasspathAttributes {
+public class MojoConstants {
 
-    public static final String jar = "^((?!lib|/lib).)*$";
-
-    public static final String exploded = ".*/classes/.*";
-
-    public static final String exploded_test = ".*/test-classes/.*";
+    public static final String MAVEN_JAR_PLUGIN_VERSION = ResourceBundle.getBundle("META-INF/kumuluzee/plugin-versions").getString("maven-jar-plugin.version");
+    public static final String MAVEN_RESOURCE_PLUGIN_VERSION = ResourceBundle.getBundle("META-INF/kumuluzee/plugin-versions").getString("maven-resources-plugin.version");
+    public static final String MAVEN_DEPENDENCY_PLUGIN_VERSION = ResourceBundle.getBundle("META-INF/kumuluzee/plugin-versions").getString("maven-dependency-plugin.version");
 }

@@ -18,17 +18,38 @@
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
 */
-package com.kumuluz.ee.common.attributes;
+package com.kumuluz.ee.common.config;
 
 /**
  * @author Tilen Faganel
- * @since 1.0.0
+ * @since 2.4.0
  */
-public class ClasspathAttributes {
+public class DevConfig {
 
-    public static final String jar = "^((?!lib|/lib).)*$";
+    public static class Builder {
 
-    public static final String exploded = ".*/classes/.*";
+        private String webappDir;
 
-    public static final String exploded_test = ".*/test-classes/.*";
+        public Builder webappDir(String webappDir) {
+            this.webappDir = webappDir;
+            return this;
+        }
+
+        public DevConfig build() {
+
+            DevConfig devConfig = new DevConfig();
+            devConfig.webappDir = webappDir;
+
+            return devConfig;
+        }
+    }
+
+    private String webappDir;
+
+    private DevConfig() {
+    }
+
+    public String getWebappDir() {
+        return webappDir;
+    }
 }

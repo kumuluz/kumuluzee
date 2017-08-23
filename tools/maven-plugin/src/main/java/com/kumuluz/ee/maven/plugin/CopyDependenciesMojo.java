@@ -18,17 +18,30 @@
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
 */
-package com.kumuluz.ee.common.attributes;
+package com.kumuluz.ee.maven.plugin;
+
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugin.BuildPluginManager;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.*;
+import org.apache.maven.project.MavenProject;
 
 /**
- * @author Tilen Faganel
- * @since 1.0.0
+ * Copy dependencies and prepare for execution in an exploded class and dependency runtime.
+ *
+ * @author Benjamin Kastelic
+ * @since 2.4.0
  */
-public class ClasspathAttributes {
+@Mojo(
+        name = "copy-dependencies",
+        defaultPhase = LifecyclePhase.PACKAGE,
+        requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
+        requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME
+)
+public class CopyDependenciesMojo extends AbstractCopyDependenciesMojo {
 
-    public static final String jar = "^((?!lib|/lib).)*$";
-
-    public static final String exploded = ".*/classes/.*";
-
-    public static final String exploded_test = ".*/test-classes/.*";
+    @Override
+    public void execute() throws MojoExecutionException {
+        copyDependencies();
+    }
 }

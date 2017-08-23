@@ -568,15 +568,6 @@ public class EeApplication {
 
     private void checkRequirements() {
 
-        if (ResourceUtils.getProjectWebResources() == null) {
-
-            throw new IllegalStateException("No 'webapp' directory found in the projects " +
-                    "resources folder. Please add it to your resources even if it will be empty " +
-                    "so that the servlet server can bind to it. If you have added it and still " +
-                    "see this error please make sure you have at least one file/class in your " +
-                    "projects as some IDEs don't build the project if its empty");
-        }
-
         if (ResourceUtils.isRunningInJar()) {
 
             log.info("KumuluzEE running inside a JAR runtime.");

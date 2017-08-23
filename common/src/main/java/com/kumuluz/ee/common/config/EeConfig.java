@@ -35,6 +35,7 @@ public class EeConfig {
         private String version = "1.0.0";
 
         private EnvConfig.Builder env = new EnvConfig.Builder();
+        private DevConfig.Builder dev = new DevConfig.Builder();
         private ServerConfig.Builder server = new ServerConfig.Builder();
         private List<DataSourceConfig.Builder> datasources = new ArrayList<>();
         private List<XaDataSourceConfig.Builder> xaDatasources = new ArrayList<>();
@@ -53,6 +54,11 @@ public class EeConfig {
 
         public Builder env(EnvConfig.Builder env) {
             this.env = env;
+            return this;
+        }
+
+        public Builder dev(DevConfig.Builder dev) {
+            this.dev = dev;
             return this;
         }
 
@@ -88,6 +94,7 @@ public class EeConfig {
             eeConfig.name = name;
             eeConfig.version = version;
             eeConfig.env = env.build();
+            eeConfig.dev = dev.build();
             eeConfig.server = server.build();
             eeConfig.datasources = Collections.unmodifiableList(constructedDatasources);
             eeConfig.xaDatasources = Collections.unmodifiableList(constructedXaDatasources);
@@ -104,6 +111,7 @@ public class EeConfig {
     private String version;
 
     private EnvConfig env;
+    private DevConfig dev;
     private ServerConfig server;
     private List<DataSourceConfig> datasources;
     private List<XaDataSourceConfig> xaDatasources;
@@ -141,6 +149,10 @@ public class EeConfig {
 
     public EnvConfig getEnv() {
         return env;
+    }
+
+    public DevConfig getDev() {
+        return dev;
     }
 
     public ServerConfig getServer() {

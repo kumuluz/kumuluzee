@@ -18,17 +18,38 @@
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
 */
-package com.kumuluz.ee.common.attributes;
+package com.kumuluz.ee.loader.exception;
 
 /**
- * @author Tilen Faganel
- * @since 1.0.0
+ * @author Benjamin Kastelic
+ * @since 2.4.0
  */
-public class ClasspathAttributes {
+public class EeClassLoaderException extends Exception {
 
-    public static final String jar = "^((?!lib|/lib).)*$";
+    public EeClassLoaderException(String message) {
+        super(message);
+    }
 
-    public static final String exploded = ".*/classes/.*";
+    public EeClassLoaderException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-    public static final String exploded_test = ".*/test-classes/.*";
+    public String getMessageAll() {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (Throwable e = this;  e != null;  e = e.getCause()) {
+            if (stringBuilder.length() > 0) {
+                stringBuilder.append(" / ");
+            }
+
+            String message = e.getMessage();
+            if (message == null  ||  message.length() == 0) {
+                message = e.getClass().getSimpleName();
+            }
+
+            stringBuilder.append(message);
+        }
+
+        return stringBuilder.toString();
+    }
 }
