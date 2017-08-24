@@ -36,4 +36,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ConfigBundle {
     @Nonbinding String value() default "";
+
+    @Nonbinding boolean watch() default false;
 }
