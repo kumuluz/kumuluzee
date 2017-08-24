@@ -29,19 +29,18 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Priority;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
  * Interceptor class for ConfigBundle annotation.
  *
  * @author Tilen Faganel
+ * @author Jan Meznaric
  * @since 2.1.0
  */
 @Interceptor
@@ -50,6 +49,9 @@ import java.util.logging.Logger;
 public class ConfigBundleInterceptor {
 
     private static final Logger log = Logger.getLogger(ConfigBundleInterceptor.class.getName());
+    private static final ConfigurationUtil configurationUtil = ConfigurationUtil.getInstance();
+    private final Class[] primitives = {String.class, Boolean.class, Float.class, Double.class, Integer.class, Long
+            .class};
 
     /**
      * Method initialises class fields from configuration.
@@ -64,7 +66,10 @@ public class ConfigBundleInterceptor {
             targetClass = targetClass.getSuperclass();
         }
 
-        processConfigBundleBeanSetters(target, targetClass, getKeyPrefix(targetClass, null), new HashSet<>());
+        ConfigBundle configBundleAnnotation = (ConfigBundle) targetClass.getDeclaredAnnotation(ConfigBundle.class);
+
+        processConfigBundleBeanSetters(target, targetClass, getKeyPrefix(targetClass, null), new HashMap<>(),
+                configBundleAnnotation.watch());
 
         return ic.proceed();
     }
@@ -76,101 +81,147 @@ public class ConfigBundleInterceptor {
      * @param targetClass target class
      * @throws Exception
      */
-    private void processConfigBundleBeanSetters(Object target, Class targetClass, String keyPrefix,
-                                                Set<Class> processedClasses) throws Exception {
+    private void processConfigBundleBeanSetters(Object target, Class targetClass, String keyPrefix, Map<Class, Class>
+            processedClassRelations, boolean watchAllFields) throws Exception {
 
-        ConfigurationUtil configurationUtil = ConfigurationUtil.getInstance();
-
-        // invoke setters for fields which are defined in configuration
+        // invoke setters
         for (Method m : targetClass.getMethods()) {
 
             if (m.getName().substring(0, 3).equals("set") && m.getParameters().length == 1) {
 
-                if (m.getParameters()[0].getType().equals(String.class)) {
+                Class parameterType = m.getParameters()[0].getType();
 
-                    Optional<String> value = configurationUtil.get(getKeyName(targetClass, m.getName(), keyPrefix));
-
-                    if (value.isPresent()) {
-                        m.invoke(target, value.get());
+                // get field annotation
+                Field field = targetClass.getDeclaredField(setterToField(m.getName()));
+                ConfigValue fieldAnnotation = null;
+                boolean watchNestedClass = watchAllFields;
+                if (watchAllFields == false) {
+                    if (field != null) {
+                        fieldAnnotation = field.getAnnotation(ConfigValue.class);
                     }
+                    if (fieldAnnotation != null) {
+                        watchNestedClass = fieldAnnotation.watch();
+                    }
+                }
 
-                    deployWatcher(target, targetClass, m, getKeyName(targetClass, m.getName(), keyPrefix));
+                // process primitives
+                if (Arrays.asList(primitives).contains(parameterType)) {
 
-                } else if (m.getParameters()[0].getType().equals(Boolean.class)) {
-
-                    Optional<Boolean> value = configurationUtil.getBoolean(getKeyName(targetClass, m.getName(),
+                    Optional<String> value = getValueOfPrimitive(parameterType, getKeyName(targetClass, m.getName(),
                             keyPrefix));
 
                     if (value.isPresent()) {
                         m.invoke(target, value.get());
                     }
 
-                    deployWatcher(target, targetClass, m, getKeyName(targetClass, m.getName(), keyPrefix));
-
-                } else if (m.getParameters()[0].getType().equals(Float.class)) {
-
-                    Optional<Float> value = configurationUtil.getFloat(getKeyName(targetClass, m.getName(), keyPrefix));
-
-                    if (value.isPresent()) {
-                        m.invoke(target, value.get());
+                    if (watchAllFields || (fieldAnnotation != null && fieldAnnotation.watch())) {
+                        deployWatcher(target, m, getKeyName(targetClass, m.getName(), keyPrefix));
                     }
 
-                    deployWatcher(target, targetClass, m, getKeyName(targetClass, m.getName(), keyPrefix));
+                    // process nested objeccts
+                } else if (!parameterType.isArray()) {
 
-                } else if (m.getParameters()[0].getType().equals(Double.class)) {
+                    processedClassRelations.put(targetClass, parameterType);
 
-                    Optional<Double> value = configurationUtil.getDouble(getKeyName(targetClass, m.getName(),
-                            keyPrefix));
+                    Object nestedTarget = processNestedObject(targetClass, m, parameterType, keyPrefix,
+                            processedClassRelations, -1, watchNestedClass);
 
-                    if (value.isPresent()) {
-                        m.invoke(target, value.get());
-                    }
+                    // invoke setter method with initialised instance
+                    m.invoke(target, nestedTarget);
 
-                    deployWatcher(target, targetClass, m, getKeyName(targetClass, m.getName(), keyPrefix));
-
-                } else if (m.getParameters()[0].getType().equals(Integer.class)) {
-
-                    Optional<Integer> value = configurationUtil.getInteger(getKeyName(targetClass, m.getName(),
-                            keyPrefix));
-
-                    if (value.isPresent()) {
-                        m.invoke(target, value.get());
-                    }
-
-                    deployWatcher(target, targetClass, m, getKeyName(targetClass, m.getName(), keyPrefix));
-
-                } else if (m.getParameters()[0].getType().equals(Long.class)) {
-
-                    Optional<Long> value = configurationUtil.getLong(getKeyName(targetClass, m.getName(), keyPrefix));
-
-                    if (value.isPresent()) {
-                        m.invoke(target, value.get());
-                    }
-
-                    deployWatcher(target, targetClass, m, getKeyName(targetClass, m.getName(), keyPrefix));
-
+                    // process arrays
                 } else {
 
-                    Object nestedTarget = m.getParameters()[0].getType().getConstructor().newInstance();
-                    Class nestedTargetClass = nestedTarget.getClass();
+                    Class componentType = parameterType.getComponentType();
 
-                    if (processedClasses.contains(nestedTargetClass)) {
-                        log.warning("There is a cycle in the configuration class tree. ConfigBundle class may not " +
-                                "be populated as expected.");
+                    Object array = Array.newInstance(componentType, configurationUtil.getListSize(getKeyName
+                            (targetClass, m.getName(), keyPrefix)).orElse(0));
+
+                    if (Arrays.asList(primitives).contains(componentType)) {
+                        for (int i = 0; i < Array.getLength(array); i++) {
+                            Array.set(array, i, getValueOfPrimitive(componentType, getKeyName(targetClass, m.getName(),
+                                    keyPrefix) + "[" + i + "]").orElse(null));
+                        }
                     } else {
+                        for (int i = 0; i < Array.getLength(array); i++) {
+                            Array.set(array, i, processNestedObject(targetClass, m, componentType, keyPrefix,
+                                    processedClassRelations, i, watchNestedClass));
 
-                        processedClasses.add(nestedTargetClass);
-
-                        // invoke setter method with initialised instance
-                        m.invoke(target, nestedTarget);
-
-                        processConfigBundleBeanSetters(nestedTarget, nestedTargetClass, getKeyName
-                                (targetClass, m.getName(), keyPrefix), processedClasses);
+                        }
                     }
+
+                    m.invoke(target, array);
+
                 }
             }
         }
 
+    }
+
+    /**
+     * Get value of a primitive configuration type
+     *
+     * @param type
+     * @param key
+     * @return
+     */
+    private Optional getValueOfPrimitive(Class type, String key) {
+
+        if (type.equals(String.class)) {
+            return configurationUtil.get(key);
+        } else if (type.equals(Boolean.class)) {
+            return configurationUtil.getBoolean(key);
+        } else if (type.equals(Float.class)) {
+            return configurationUtil.getFloat(key);
+        } else if (type.equals(Double.class)) {
+            return configurationUtil.getDouble(key);
+        } else if (type.equals(Integer.class)) {
+            return configurationUtil.getInteger(key);
+        } else if (type.equals(Long.class)) {
+            return configurationUtil.getLong(key);
+        } else {
+            return Optional.empty();
+        }
+
+    }
+
+    /**
+     * Create new instance for nested class, check for cycles and populate nested instance.
+     *
+     * @param targetClass
+     * @param method
+     * @param parameterType
+     * @param keyPrefix               Prefix used for generation of configuration key.
+     * @param processedClassRelations Relations of nested classes that have already been procees. Needed for
+     *                                detecting cycles.
+     * @param arrayIndex              Array index for arrays of nested objects.
+     * @return
+     * @throws Exception
+     */
+    private Object processNestedObject(Class targetClass, Method method, Class parameterType, String keyPrefix,
+                                       Map<Class, Class> processedClassRelations, int arrayIndex, boolean
+                                               watchAllFields)
+            throws Exception {
+
+        Object nestedTarget = parameterType.getConstructor().newInstance();
+        Class nestedTargetClass = nestedTarget.getClass();
+
+        if (processedClassRelations.containsKey(nestedTargetClass) && processedClassRelations.get(nestedTargetClass)
+                .equals(targetClass)) {
+            log.warning("There is a cycle in the configuration class tree. ConfigBundle class may not " +
+                    "be populated as expected.");
+        } else {
+
+            String key = getKeyName(targetClass, method.getName(), keyPrefix);
+
+            if (arrayIndex >= 0) {
+                key += "[" + arrayIndex + "]";
+            }
+
+            processConfigBundleBeanSetters(nestedTarget, nestedTargetClass, key, processedClassRelations,
+                    watchAllFields);
+        }
+        return nestedTarget;
     }
 
     /**
@@ -212,13 +263,11 @@ public class ConfigBundleInterceptor {
      */
     private String getKeyPrefix(Class targetClass, String keyPrefix) {
 
-        String prefix;
-
         if (keyPrefix != null) {
-            prefix = keyPrefix;
-        } else {
-            prefix = ((ConfigBundle) targetClass.getAnnotation(ConfigBundle.class)).value();
+            return keyPrefix;
         }
+
+        String prefix = ((ConfigBundle) targetClass.getAnnotation(ConfigBundle.class)).value();
 
         if (prefix.isEmpty()) {
             prefix = StringUtils.camelCaseToHyphenCase(targetClass.getSimpleName());
@@ -250,73 +299,59 @@ public class ConfigBundleInterceptor {
     /**
      * Subscribes to an event dispatcher and starts a watch for a given key.
      *
-     * @param target      target instance
-     * @param targetClass target class
-     * @param method      method to invoke
-     * @param watchedKey  watched key
+     * @param target     target instance
+     * @param method     method to invoke
+     * @param watchedKey watched key
      * @throws Exception
      */
-    private void deployWatcher(Object target, Class targetClass, Method method, String watchedKey) throws Exception {
+    private void deployWatcher(Object target, Method method, String watchedKey) throws Exception {
 
-        String setter = method.getName();
+        configurationUtil.subscribe(watchedKey, (key, value) -> {
 
-        Field field = targetClass.getDeclaredField(setterToField(setter));
+            if (Objects.equals(watchedKey, key)) {
 
-        ConfigValue fieldAnnotation = null;
-
-        if (field != null) {
-            fieldAnnotation = field.getAnnotation(ConfigValue.class);
-        }
-
-        if (fieldAnnotation != null && fieldAnnotation.watch()) {
-
-            ConfigurationUtil.getInstance().subscribe(watchedKey, (key, value) -> {
-
-                if (Objects.equals(watchedKey, key)) {
-
-                    try {
-                        if (String.class.equals(method.getParameters()[0].getType())) {
-                            method.invoke(target, value);
-                        } else if (Boolean.class.equals(method.getParameters()[0].getType())) {
-                            method.invoke(target, Boolean.parseBoolean(value));
-                        } else if (Float.class.equals(method.getParameters()[0].getType())) {
-                            try {
-                                method.invoke(target, Float.parseFloat(value));
-                            } catch (NumberFormatException e) {
-                                log.severe("Exception while storing new value: Number format exception. " +
-                                        "Expected: Float. Value: " + value);
-                            }
-                        } else if (Double.class.equals(method.getParameters()[0].getType())) {
-                            try {
-                                method.invoke(target, Double.parseDouble(value));
-                            } catch (NumberFormatException e) {
-                                log.severe("Exception while storing new value: Number format exception. Expected:" +
-                                        " Double. Value: " + value);
-                            }
-                        } else if (Integer.class.equals(method.getParameters()[0].getType())) {
-                            try {
-                                method.invoke(target, Integer.parseInt(value));
-                            } catch (NumberFormatException e) {
-                                log.severe("Exception while storing new value: Number format exception. Expected:" +
-                                        " Integer. Value: " + value);
-                            }
-                        } else if (Long.class.equals(method.getParameters()[0].getType())) {
-                            try {
-                                method.invoke(target, Long.parseLong(value));
-                            } catch (NumberFormatException e) {
-                                log.severe("Exception while storing new value: Number format exception. Expected:" +
-                                        " Long. Value: " + value);
-                            }
+                try {
+                    if (String.class.equals(method.getParameters()[0].getType())) {
+                        method.invoke(target, value);
+                    } else if (Boolean.class.equals(method.getParameters()[0].getType())) {
+                        method.invoke(target, Boolean.parseBoolean(value));
+                    } else if (Float.class.equals(method.getParameters()[0].getType())) {
+                        try {
+                            method.invoke(target, Float.parseFloat(value));
+                        } catch (NumberFormatException e) {
+                            log.severe("Exception while storing new value: Number format exception. " +
+                                    "Expected: Float. Value: " + value);
                         }
-                    } catch (IllegalAccessException e) {
-                        log.severe("Illegal access exception: " + e.toString());
-                    } catch (InvocationTargetException e) {
-                        log.severe("Invocation target exception: " + e.toString());
+                    } else if (Double.class.equals(method.getParameters()[0].getType())) {
+                        try {
+                            method.invoke(target, Double.parseDouble(value));
+                        } catch (NumberFormatException e) {
+                            log.severe("Exception while storing new value: Number format exception. Expected:" +
+                                    " Double. Value: " + value);
+                        }
+                    } else if (Integer.class.equals(method.getParameters()[0].getType())) {
+                        try {
+                            method.invoke(target, Integer.parseInt(value));
+                        } catch (NumberFormatException e) {
+                            log.severe("Exception while storing new value: Number format exception. Expected:" +
+                                    " Integer. Value: " + value);
+                        }
+                    } else if (Long.class.equals(method.getParameters()[0].getType())) {
+                        try {
+                            method.invoke(target, Long.parseLong(value));
+                        } catch (NumberFormatException e) {
+                            log.severe("Exception while storing new value: Number format exception. Expected:" +
+                                    " Long. Value: " + value);
+                        }
                     }
-
+                } catch (IllegalAccessException e) {
+                    log.severe("Illegal access exception: " + e.toString());
+                } catch (InvocationTargetException e) {
+                    log.severe("Invocation target exception: " + e.toString());
                 }
-            });
-        }
+
+            }
+        });
     }
 }
 
