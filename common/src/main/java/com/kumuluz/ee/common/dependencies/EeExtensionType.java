@@ -32,6 +32,7 @@ public enum EeExtensionType {
     FAULT_TOLERANCE("Fault Tolerance"),
     LOGS("Logs"),
     STREAMING("Streaming"),
+    METRICS("Metrics"),
     CORS("Cors");
 
     private final String name;
