@@ -29,10 +29,11 @@ public enum EeExtensionType {
     CONFIG("Config"),
     DISCOVERY("Discovery"),
     SECURITY("Security"),
-    CIRCUIT_BREAKER("Circuit Breaker"),
+    FAULT_TOLERANCE("Fault Tolerance"),
     LOGS("Logs"),
     STREAMING("Streaming"),
-    METRICS("Metrics");
+    METRICS("Metrics"),
+    CORS("Cors");
 
     private final String name;
 

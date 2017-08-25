@@ -15,7 +15,7 @@ cache:
   - $HOME/.m2
 
 install: mvn clean install -DskipTests=true -V -U
-script: mvn test
+script: mvn test -Dkumuluzee.plugin.test.skip=true
 
 after_success:
 # Deploy to OSSHR

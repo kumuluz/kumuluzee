@@ -21,6 +21,7 @@
 package com.kumuluz.ee.jta.common.datasources;
 
 import com.kumuluz.ee.jta.common.JtaTransactionHolder;
+import com.kumuluz.ee.jta.common.utils.TxUtils;
 
 import javax.sql.XAConnection;
 import javax.transaction.RollbackException;
@@ -598,7 +599,7 @@ public class JtaXAConnectionWrapper implements Connection {
                 transactionManager = JtaTransactionHolder.getInstance().getTransactionManager();
             }
 
-            if (JtaTransactionHolder.TRANSACTION_ACTIVE_STATUS.contains(transactionManager.getStatus())) {
+            if (TxUtils.isActive(transactionManager)) {
 
                 transactionManager.getTransaction().enlistResource(xaConnection.getXAResource());
                 transactionManager.getTransaction().registerSynchronization(new Synchronization() {

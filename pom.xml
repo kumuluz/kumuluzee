@@ -7,7 +7,7 @@
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee</artifactId>
     <packaging>pom</packaging>
-    <version>2.3.0-SNAPSHOT</version>
+    <version>2.4.0-SNAPSHOT</version>
     <modules>
         <module>common</module>
         <module>core</module>
@@ -15,6 +15,7 @@
         <module>components</module>
         <module>bom</module>
         <module>profiles</module>
+        <module>tools</module>
     </modules>
 
     <name>KumuluzEE</name>
@@ -48,10 +49,31 @@
         <jta.version>1.2</jta.version>
 
         <jandex.version>2.0.3.Final</jandex.version>
-        <hikari.version>2.6.1</hikari.version>
-        <yamlbeans.version>1.11</yamlbeans.version>
+        <hikari.version>2.6.3</hikari.version>
         <yaml.version>1.18</yaml.version>
         <junit.version>4.12</junit.version>
+        <maven.plugin.api.version>3.5.0</maven.plugin.api.version>
+        <maven-plugin-annotations.version>3.5</maven-plugin-annotations.version>
+        <mojo-executor.version>2.3.0</mojo-executor.version>
+
+        <maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
+        <maven-resources-plugin.version>3.0.2</maven-resources-plugin.version>
+        <maven-plugin-plugin.version>3.5</maven-plugin-plugin.version>
+        <maven-dependency-plugin.version>3.0.1</maven-dependency-plugin.version>
+
+        <uel-version>3.0.0</uel-version>
+        <weld.version>2.4.4.Final</weld.version>
+        <hibernate.validator.version>5.4.1.Final</hibernate.validator.version>
+        <jersey.version>2.25.1</jersey.version>
+        <jackson.version>2.9.0</jackson.version>
+        <metro.version>2.3.1</metro.version>
+        <hibernate.version>5.2.10.Final</hibernate.version>
+        <eclipselink.version>2.6.4</eclipselink.version>
+        <mojarra.version>2.2.14</mojarra.version>
+        <jsonp.version>1.0.4</jsonp.version>
+        <jetty.version>9.4.6.v20170531</jetty.version>
+        <narayana.version>5.6.4.Final</narayana.version>
+        <jboss-transaction-spi.version>7.6.0.Final</jboss-transaction-spi.version>
     </properties>
 
     <scm>
@@ -273,6 +295,23 @@
                 <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-microProfile-1.0</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-tools</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-loader</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <type>maven-plugin</type>
             </dependency>
 
             <!-- Java EE specification dependencies-->

@@ -61,7 +61,7 @@ public class JpaService implements JpaInjectionServices {
 
         PersistenceWrapper wrapper = holder.getEntityManagerFactory(unitName);
 
-        return new PersistenceContextResourceFactory(wrapper.getEntityManagerFactory(),
+        return new PersistenceContextResourceFactory(unitName, wrapper.getEntityManagerFactory(),
                 wrapper.getTransactionType(), pc.synchronization());
     }
 

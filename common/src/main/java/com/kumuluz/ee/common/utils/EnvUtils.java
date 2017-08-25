@@ -35,7 +35,7 @@ public class EnvUtils {
 
         Optional.ofNullable(System.getenv(var))
                 .filter(s -> !s.isEmpty())
-                .ifPresent(consumer::accept);
+                .ifPresent(consumer);
     }
 
     public static void getEnvAsInteger(String var, Consumer<Integer> consumer) {

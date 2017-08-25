@@ -119,6 +119,16 @@ public class ConfigBundleInterceptor {
 
                     deployWatcher(target, targetClass, m, getKeyName(targetClass, m.getName()));
 
+                } else if (m.getParameters()[0].getType().equals(Long.class)) {
+
+                    Optional<Long> value = configurationUtil.getLong(getKeyName(targetClass, m.getName()));
+
+                    if (value.isPresent()) {
+                        m.invoke(target, value.get());
+                    }
+
+                    deployWatcher(target, targetClass, m, getKeyName(targetClass, m.getName()));
+
                 }
             }
         }
@@ -233,6 +243,13 @@ public class ConfigBundleInterceptor {
                             } catch (NumberFormatException e) {
                                 log.severe("Exception while storing new value: Number format exception. Expected:" +
                                         " Integer. Value: " + value);
+                            }
+                        } else if (Long.class.equals(method.getParameters()[0].getType())) {
+                            try {
+                                method.invoke(target, Long.parseLong(value));
+                            } catch (NumberFormatException e) {
+                                log.severe("Exception while storing new value: Number format exception. Expected:" +
+                                        " Long. Value: " + value);
                             }
                         }
                     } catch (IllegalAccessException e) {

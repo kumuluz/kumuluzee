@@ -18,21 +18,38 @@
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
 */
-package com.kumuluz.ee.builders;
-
-import com.kumuluz.ee.common.datasources.NonJtaXADataSourceWrapper;
-import com.kumuluz.ee.jta.common.datasources.JtaXADataSourceWrapper;
-
-import javax.sql.XADataSource;
+package com.kumuluz.ee.common.config;
 
 /**
  * @author Tilen Faganel
- * @since 2.3.0
+ * @since 2.4.0
  */
-public class JtaXADataSourceBuilder {
+public class EnvConfig {
 
-    public static NonJtaXADataSourceWrapper buildJtaXADataSourceWrapper(XADataSource xaDataSource) {
+    public static class Builder {
 
-        return new JtaXADataSourceWrapper(xaDataSource);
+        private String name;
+
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public EnvConfig build() {
+
+            EnvConfig envConfig = new EnvConfig();
+            envConfig.name = name;
+
+            return envConfig;
+        }
+    }
+
+    private String name;
+
+    private EnvConfig() {
+    }
+
+    public String getName() {
+        return name;
     }
 }

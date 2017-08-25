@@ -20,6 +20,7 @@
 */
 package com.kumuluz.ee.common.config;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,43 +30,78 @@ import java.util.Map;
  */
 public class XaDataSourceConfig {
 
+    public static class Builder {
+
+        private String jndiName;
+        private String xaDatasourceClass;
+        private String username;
+        private String password;
+
+        private Map<String, String> props = new HashMap<>();
+
+        public Builder jndiName(String jndiName) {
+            this.jndiName = jndiName;
+            return this;
+        }
+
+        public Builder xaDatasourceClass(String xaDatasourceClass) {
+            this.xaDatasourceClass = xaDatasourceClass;
+            return this;
+        }
+
+        public Builder username(String username) {
+            this.username = username;
+            return this;
+        }
+
+        public Builder password(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public Builder prop(String key, String value) {
+            this.props.put(key, value);
+            return this;
+        }
+
+        public XaDataSourceConfig build() {
+
+            XaDataSourceConfig xaDataSourceConfig = new XaDataSourceConfig();
+            xaDataSourceConfig.jndiName = jndiName;
+            xaDataSourceConfig.xaDatasourceClass = xaDatasourceClass;
+            xaDataSourceConfig.username = username;
+            xaDataSourceConfig.password = password;
+
+            xaDataSourceConfig.props = Collections.unmodifiableMap(props);
+
+            return xaDataSourceConfig;
+        }
+    }
+
     private String jndiName;
     private String xaDatasourceClass;
     private String username;
     private String password;
 
-    private Map<String, String> props = new HashMap<>();
+    private Map<String, String> props;
+
+    private XaDataSourceConfig() {
+    }
 
     public String getJndiName() {
         return jndiName;
-    }
-
-    public void setJndiName(String jndiName) {
-        this.jndiName = jndiName;
     }
 
     public String getXaDatasourceClass() {
         return xaDatasourceClass;
     }
 
-    public void setXaDatasourceClass(String xaDatasourceClass) {
-        this.xaDatasourceClass = xaDatasourceClass;
-    }
-
     public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public String getPassword() {
         return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public Map<String, String> getProps() {

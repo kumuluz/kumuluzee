@@ -58,6 +58,7 @@ public class FileConfigurationSource implements ConfigurationSource {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void init(ConfigurationDispatcher configurationDispatcher) {
 
         // read yaml file to Map<String, Object>
@@ -100,9 +101,9 @@ public class FileConfigurationSource implements ConfigurationSource {
 
                     properties = new Properties();
                     properties.load(inputStream);
-                }
 
-                inputStream.close();
+                    inputStream.close();
+                }
             } catch (Exception e) {
                 log.info("Properties file not found.");
             }
@@ -162,6 +163,22 @@ public class FileConfigurationSource implements ConfigurationSource {
     }
 
     @Override
+    public Optional<Long> getLong(String key) {
+
+        Optional<String> value = get(key);
+
+        if (value.isPresent()) {
+            try {
+                return Optional.of(Long.valueOf(value.get()));
+            } catch (NumberFormatException e) {
+                return Optional.empty();
+            }
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @Override
     public Optional<Double> getDouble(String key) {
 
         Optional<String> value = get(key);
@@ -208,6 +225,7 @@ public class FileConfigurationSource implements ConfigurationSource {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Optional<List<String>> getMapKeys(String key) {
 
         Object o = getValue(key);

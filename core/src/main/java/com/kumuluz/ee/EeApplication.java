@@ -20,7 +20,13 @@
 */
 package com.kumuluz.ee;
 
-import com.kumuluz.ee.builders.JtaXADataSourceBuilder;
+import com.kumuluz.ee.common.config.DataSourcePoolConfig;
+import com.kumuluz.ee.common.runtime.EeRuntime;
+import com.kumuluz.ee.common.runtime.EeRuntimeComponent;
+import com.kumuluz.ee.common.runtime.EeRuntimeInternal;
+import com.kumuluz.ee.common.utils.StringUtils;
+import com.kumuluz.ee.factories.EeConfigFactory;
+import com.kumuluz.ee.factories.JtaXADataSourceFactory;
 import com.kumuluz.ee.common.*;
 import com.kumuluz.ee.common.config.DataSourceConfig;
 import com.kumuluz.ee.common.config.EeConfig;
@@ -40,11 +46,13 @@ import com.kumuluz.ee.loaders.ComponentLoader;
 import com.kumuluz.ee.loaders.ConfigExtensionLoader;
 import com.kumuluz.ee.loaders.ExtensionLoader;
 import com.kumuluz.ee.loaders.ServerLoader;
+import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import javax.sql.XADataSource;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * @author Tilen Faganel
@@ -92,11 +100,17 @@ public class EeApplication {
         ConfigurationUtil.initialize(configImpl);
 
         if (this.eeConfig == null) {
-            this.eeConfig = new EeConfig();
-            eeConfig.init();
+            this.eeConfig = EeConfigFactory.buildEeConfig();
+        } else if (!EeConfigFactory.isEeConfigValid(this.eeConfig)) {
+            throw new KumuluzServerException("The programmatically supplied EeConfig is malformed." +
+                    "Please check the supplied values and the config reference to fix the missing or invalid values.");
         }
 
-        log.info("Initialized main config");
+        EeConfig.initialize(this.eeConfig);
+
+        log.info("Initialized main configuration");
+
+        log.info("Loading available EE components and extensions");
 
         // Loading the kumuluz server and extracting its metadata
         KumuluzServer kumuluzServer = ServerLoader.loadServletServer();
@@ -106,8 +120,6 @@ public class EeApplication {
         List<Component> components = ComponentLoader.loadComponents();
         List<EeComponentWrapper> eeComponents = processEeComponents(components);
 
-        eeConfig.getEeComponents().addAll(eeComponents);
-
         // Loading the config extensions and extracting its metadata
         List<ConfigExtension> configExtensions = ConfigExtensionLoader.loadExtensions();
         List<ConfigExtensionWrapper> eeConfigExtensions = processEeConfigExtensions(configExtensions, eeComponents);
@@ -115,6 +127,28 @@ public class EeApplication {
         // Loading the extensions and extracting its metadata
         List<Extension> extensions = ExtensionLoader.loadExtensions();
         List<ExtensionWrapper> eeExtensions = processEeExtensions(extensions, eeComponents);
+
+        log.info("EE Components and extensions loaded");
+
+        log.info("Initializing the KumuluzEE runtime");
+
+        EeRuntimeInternal eeRuntimeInternal = new EeRuntimeInternal();
+
+        List<EeRuntimeComponent> eeRuntimeComponents = eeComponents.stream()
+                .map(e -> new EeRuntimeComponent(e.getType(), e.getName()))
+                .collect(Collectors.toList());
+
+        List<EeRuntimeComponent> serverEeRuntimeComponents = Arrays.stream(server.getProvidedEeComponents())
+                .map(c -> new EeRuntimeComponent(c, server.getName()))
+                .collect(Collectors.toList());
+
+        serverEeRuntimeComponents.addAll(eeRuntimeComponents);
+
+        eeRuntimeInternal.setEeComponents(serverEeRuntimeComponents);
+
+        EeRuntime.initialize(eeRuntimeInternal);
+
+        log.info("Initialized the KumuluzEE runtime");
 
         // Initiate the config extensions
         log.info("Initializing config extensions");
@@ -136,7 +170,7 @@ public class EeApplication {
         log.info("Config extensions initialized");
 
         // Initiate the server
-        server.getServer().setServerConfig(eeConfig.getServerConfig());
+        server.getServer().setServerConfig(eeConfig.getServer());
         server.getServer().initServer();
 
         // Depending on the server type, initiate server specific functionality
@@ -159,8 +193,43 @@ public class EeApplication {
                     if (dsc.getDriverClass() != null && !dsc.getDriverClass().isEmpty())
                         ds.setDriverClassName(dsc.getDriverClass());
 
-                    if (dsc.getMaxPoolSize() != null)
+                    if (dsc.getDataSourceClass() != null && !dsc.getDataSourceClass().isEmpty()) {
+                        ds.setDataSourceClassName(dsc.getDataSourceClass());
+                    }
+
+                    if (dsc.getMaxPoolSize() != null) {
                         ds.setMaximumPoolSize(dsc.getMaxPoolSize());
+                    }
+
+                    DataSourcePoolConfig dscp = dsc.getPool();
+
+                    ds.setAutoCommit(dscp.getAutoCommit());
+                    ds.setConnectionTimeout(dscp.getConnectionTimeout());
+                    ds.setIdleTimeout(dscp.getIdleTimeout());
+                    ds.setMaxLifetime(dscp.getMaxLifetime());
+                    ds.setMaximumPoolSize(dscp.getMaxSize());
+                    ds.setPoolName(dscp.getName());
+                    ds.setInitializationFailTimeout(dscp.getInitializationFailTimeout());
+                    ds.setIsolateInternalQueries(dscp.getIsolateInternalQueries());
+                    ds.setAllowPoolSuspension(dscp.getAllowPoolSuspension());
+                    ds.setReadOnly(dscp.getReadOnly());
+                    ds.setRegisterMbeans(dscp.getRegisterMbeans());
+                    ds.setValidationTimeout(dscp.getValidationTimeout());
+                    ds.setLeakDetectionThreshold(dscp.getLeakDetectionThreshold());
+
+                    if (dscp.getMinIdle() != null) {
+                        ds.setMinimumIdle(dscp.getMinIdle());
+                    }
+
+                    if (dscp.getConnectionInitSql() != null) {
+                        ds.setConnectionInitSql(dscp.getConnectionInitSql());
+                    }
+
+                    if (dscp.getTransactionIsolation() != null) {
+                        ds.setTransactionIsolation(dscp.getTransactionIsolation());
+                    }
+
+                    dsc.getProps().forEach(ds::addDataSourceProperty);
 
                     servletServer.registerDataSource(ds, dsc.getJndiName());
                 }
@@ -168,7 +237,7 @@ public class EeApplication {
 
             if (eeConfig.getXaDatasources().size() > 0) {
 
-                Boolean jtaPresent = eeConfig.getEeComponents().stream().anyMatch(c -> c.getType().equals(EeComponentType.JTA));
+                Boolean jtaPresent = eeRuntimeInternal.getEeComponents().stream().anyMatch(c -> c.getType().equals(EeComponentType.JTA));
 
                 for (XaDataSourceConfig xdsc : eeConfig.getXaDatasources()) {
 
@@ -179,7 +248,7 @@ public class EeApplication {
                     XADataSourceWrapper xaDataSourceWrapper;
 
                     if (jtaPresent) {
-                        xaDataSourceWrapper = JtaXADataSourceBuilder.buildJtaXADataSourceWrapper(xaDataSource);
+                        xaDataSourceWrapper = JtaXADataSourceFactory.buildJtaXADataSourceWrapper(xaDataSource);
                     } else {
                         xaDataSourceWrapper = new NonJtaXADataSourceWrapper(xaDataSource);
                     }
@@ -190,7 +259,7 @@ public class EeApplication {
 
             // Add all included filters
             Map<String, String> filterParams = new HashMap<>();
-            filterParams.put("name", "KumuluzEE/" + eeConfig.getVersion());
+            filterParams.put("name", "KumuluzEE/" + eeRuntimeInternal.getVersion());
             servletServer.registerFilter(PoweredByFilter.class, "/*", filterParams);
         }
 
@@ -498,15 +567,6 @@ public class EeApplication {
     }
 
     private void checkRequirements() {
-
-        if (ResourceUtils.getProjectWebResources() == null) {
-
-            throw new IllegalStateException("No 'webapp' directory found in the projects " +
-                    "resources folder. Please add it to your resources even if it will be empty " +
-                    "so that the servlet server can bind to it. If you have added it and still " +
-                    "see this error please make sure you have at least one file/class in your " +
-                    "projects as some IDEs don't build the project if its empty");
-        }
 
         if (ResourceUtils.isRunningInJar()) {
 

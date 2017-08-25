@@ -28,4 +28,6 @@ public class JettyAttributes {
 
     public static final String jarPattern = "org.eclipse.jetty.server.webapp" +
             ".ContainerIncludeJarPattern";
+
+    public static final String dirBrowsing = "org.eclipse.jetty.servlet.Default.dirAllowed";
 }

@@ -20,7 +20,16 @@
 */
 package com.kumuluz.ee.common.utils;
 
+import com.kumuluz.ee.common.config.DevConfig;
+import com.kumuluz.ee.common.config.EeConfig;
+import com.kumuluz.ee.common.exceptions.KumuluzServerException;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * @author Tilen Faganel
@@ -30,24 +39,71 @@ public class ResourceUtils {
 
     public static String getProjectWebResources() {
 
-        URL webapp = ResourceUtils.class.getClassLoader().getResource("webapp");
+        // First check the `webapp` directory in the compiled resources
+        URL webApp = ResourceUtils.class.getClassLoader().getResource("webapp");
 
-        if (webapp != null) {
+        if (webApp != null) {
 
-            return webapp.toString();
+            return webApp.toString();
         }
 
-        return null;
+        // Next check if running inside an IDE and try to find the `src/main/webapp` dir
+        URL resourceRoot = ResourceUtils.class.getClassLoader().getResource(".");
+
+        if (resourceRoot != null) {
+
+            try {
+
+                Path resourceRootPath = Paths.get(resourceRoot.toURI());
+
+                // If running with maven
+                if (Files.isDirectory(resourceRootPath) && resourceRootPath.getFileName().toString().equals("classes")
+                        && resourceRootPath.getParent() != null && resourceRootPath.getParent().getFileName().toString().equals("target")) {
+
+                    DevConfig devConfig = EeConfig.getInstance().getDev();
+
+                    Path sibling = devConfig.getWebappDir() == null ?
+                            Paths.get( "src", "main", "webapp") :
+                            Paths.get(devConfig.getWebappDir());
+
+                    Path sourceWebApp = resourceRootPath.getParent().resolveSibling(sibling);
+
+                    if (Files.isDirectory(sourceWebApp)) {
+
+                        return sourceWebApp.toString();
+                    }
+                }
+            } catch (URISyntaxException e) {
+
+                throw new KumuluzServerException("Could not retrieve the class loaders' resource dir.", e);
+            }
+        }
+
+        // Finally if nothing is found, create a temp directory and delete it on shutdown
+        try {
+
+            final Path tempWebApp = Files.createTempDirectory("kumuluzee-tmp-webapp");
+
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+
+                try {
+                    Files.delete(tempWebApp);
+                } catch (IOException ignored) {
+                }
+            }));
+
+            return tempWebApp.toString();
+        } catch (IOException e) {
+
+            throw new KumuluzServerException("Could not initialize a temporary webapp directory.", e);
+        }
     }
 
     public static boolean isRunningInJar() {
 
         URL jar = ResourceUtils.class.getClassLoader().getResource("webapp");
 
-        if (jar == null)
-            throw new IllegalStateException("Base resource folder does not exists. Please check " +
-                    "your project configuration and make sure you are using maven");
-
-        return jar.toString().toLowerCase().startsWith("jar:");
+        return (jar == null || jar.toString().toLowerCase().startsWith("jar:"))
+                && ResourceUtils.class.getClassLoader().getClass().getName().equals("com.kumuluz.ee.loader.EeClassLoader");
     }
 }

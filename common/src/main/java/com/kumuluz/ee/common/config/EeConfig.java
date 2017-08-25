@@ -20,11 +20,8 @@
 */
 package com.kumuluz.ee.common.config;
 
-import com.kumuluz.ee.common.utils.StringUtils;
-import com.kumuluz.ee.common.wrapper.EeComponentWrapper;
-import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
-
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Tilen Faganel
@@ -32,93 +29,134 @@ import java.util.*;
  */
 public class EeConfig {
 
+    public static class Builder {
+
+        private String name;
+        private String version = "1.0.0";
+
+        private EnvConfig.Builder env = new EnvConfig.Builder();
+        private DevConfig.Builder dev = new DevConfig.Builder();
+        private ServerConfig.Builder server = new ServerConfig.Builder();
+        private List<DataSourceConfig.Builder> datasources = new ArrayList<>();
+        private List<XaDataSourceConfig.Builder> xaDatasources = new ArrayList<>();
+
+        private PersistenceConfig.Builder persistenceConfig = new PersistenceConfig.Builder();
+
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder version(String version) {
+            this.version = version;
+            return this;
+        }
+
+        public Builder env(EnvConfig.Builder env) {
+            this.env = env;
+            return this;
+        }
+
+        public Builder dev(DevConfig.Builder dev) {
+            this.dev = dev;
+            return this;
+        }
+
+        public Builder server(ServerConfig.Builder server) {
+            this.server = server;
+            return this;
+        }
+
+        public Builder datasource(DataSourceConfig.Builder datasource) {
+            this.datasources.add(datasource);
+            return this;
+        }
+
+        public Builder xaDatasource(XaDataSourceConfig.Builder xaDatasource) {
+            this.xaDatasources.add(xaDatasource);
+            return this;
+        }
+
+        public Builder persistenceConfig(PersistenceConfig.Builder persistenceConfig) {
+            this.persistenceConfig = persistenceConfig;
+            return this;
+        }
+
+        public EeConfig build() {
+
+            List<DataSourceConfig> constructedDatasources =
+                    datasources.stream().map(DataSourceConfig.Builder::build).collect(Collectors.toList());
+
+            List<XaDataSourceConfig> constructedXaDatasources =
+                    xaDatasources.stream().map(XaDataSourceConfig.Builder::build).collect(Collectors.toList());
+
+            EeConfig eeConfig = new EeConfig();
+            eeConfig.name = name;
+            eeConfig.version = version;
+            eeConfig.env = env.build();
+            eeConfig.dev = dev.build();
+            eeConfig.server = server.build();
+            eeConfig.datasources = Collections.unmodifiableList(constructedDatasources);
+            eeConfig.xaDatasources = Collections.unmodifiableList(constructedXaDatasources);
+
+            eeConfig.persistenceConfig = persistenceConfig.build();
+
+            return eeConfig;
+        }
+    }
+
+    private static EeConfig instance;
+
+    private String name;
     private String version;
 
-    private ServerConfig serverConfig = new ServerConfig();
-    private List<PersistenceConfig> persistenceConfigs = new ArrayList<>();
-    private List<DataSourceConfig> datasources = new ArrayList<>();
-    private List<XaDataSourceConfig> xaDatasources = new ArrayList<>();
+    private EnvConfig env;
+    private DevConfig dev;
+    private ServerConfig server;
+    private List<DataSourceConfig> datasources;
+    private List<XaDataSourceConfig> xaDatasources;
 
-    private List<EeComponentWrapper> eeComponents = new ArrayList<>();
+    private PersistenceConfig persistenceConfig;
 
-    public void init() {
-        this.version = ResourceBundle.getBundle("version").getString("version");
+    private EeConfig() {
+    }
 
-        persistenceConfigs.add(new PersistenceConfig());
+    public static void initialize(EeConfig eeConfig) {
 
-        ConfigurationUtil cfg = ConfigurationUtil.getInstance();
-
-        Optional<Integer> dsSizeOpt = cfg.getListSize("kumuluzee.datasources");
-
-        if (dsSizeOpt.isPresent()) {
-
-            for (int i = 0; i < dsSizeOpt.get(); i++) {
-
-                DataSourceConfig dsc = new DataSourceConfig();
-
-                Optional<String> jndiName = cfg.get("kumuluzee.datasources[" + i + "].jndi-name");
-                Optional<String> driverClass = cfg.get("kumuluzee.datasources[" + i + "].driver-class");
-                Optional<String> conUrl = cfg.get("kumuluzee.datasources[" + i + "].connection-url");
-                Optional<String> user = cfg.get("kumuluzee.datasources[" + i + "].username");
-                Optional<String> pass = cfg.get("kumuluzee.datasources[" + i + "].password");
-                Optional<Integer> maxPool = cfg.getInteger("kumuluzee.datasources[" + i + "].max-pool-size");
-
-                jndiName.ifPresent(dsc::setJndiName);
-                driverClass.ifPresent(dsc::setDriverClass);
-                conUrl.ifPresent(dsc::setConnectionUrl);
-                user.ifPresent(dsc::setUsername);
-                pass.ifPresent(dsc::setPassword);
-                maxPool.ifPresent(dsc::setMaxPoolSize);
-
-                datasources.add(dsc);
-            }
+        if (instance != null) {
+            throw new IllegalStateException("The EeConfig was already initialized.");
         }
 
-        Optional<Integer> xDsSizeOpt = cfg.getListSize("kumuluzee.xa-datasources");
+        instance = eeConfig;
+    }
 
-        if (xDsSizeOpt.isPresent()) {
+    public static EeConfig getInstance() {
 
-            for (int i = 0; i < xDsSizeOpt.get(); i++) {
-
-                XaDataSourceConfig xdsc = new XaDataSourceConfig();
-
-                Optional<String> jndiName = cfg.get("kumuluzee.xa-datasources[" + i + "].jndi-name");
-                Optional<String> xaDatasourceClass = cfg.get("kumuluzee.xa-datasources[" + i + "].xa-datasource-class");
-                Optional<String> user = cfg.get("kumuluzee.xa-datasources[" + i + "].username");
-                Optional<String> pass = cfg.get("kumuluzee.xa-datasources[" + i + "].password");
-
-                jndiName.ifPresent(xdsc::setJndiName);
-                xaDatasourceClass.ifPresent(xdsc::setXaDatasourceClass);
-                user.ifPresent(xdsc::setUsername);
-                pass.ifPresent(xdsc::setPassword);
-
-                Optional<List<String>> props = cfg.getMapKeys("kumuluzee.xa-datasources[" + i + "].props");
-
-                if (props.isPresent()) {
-
-                    for (String propName : props.get()) {
-
-                        Optional<String> propValue = cfg.get("kumuluzee.xa-datasources[" + i + "].props." + propName);
-
-                        propValue.ifPresent(v -> xdsc.getProps().put(StringUtils.hyphenCaseToCamelCase(propName), v));
-                    }
-                }
-
-                xaDatasources.add(xdsc);
-            }
+        if (instance == null) {
+            throw new IllegalStateException("The EeConfig was not yet initialized.");
         }
+
+        return instance;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getVersion() {
         return version;
     }
 
-    public ServerConfig getServerConfig() {
-        return serverConfig;
+    public EnvConfig getEnv() {
+        return env;
     }
 
-    public List<PersistenceConfig> getPersistenceConfigs() {
-        return persistenceConfigs;
+    public DevConfig getDev() {
+        return dev;
+    }
+
+    public ServerConfig getServer() {
+        return server;
     }
 
     public List<DataSourceConfig> getDatasources() {
@@ -129,7 +167,8 @@ public class EeConfig {
         return xaDatasources;
     }
 
-    public List<EeComponentWrapper> getEeComponents() {
-        return eeComponents;
+    @Deprecated
+    public PersistenceConfig getPersistenceConfig() {
+        return persistenceConfig;
     }
 }

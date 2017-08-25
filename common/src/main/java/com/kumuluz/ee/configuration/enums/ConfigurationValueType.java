@@ -27,6 +27,7 @@ package com.kumuluz.ee.configuration.enums;
 public enum ConfigurationValueType {
     STRING,
     INTEGER,
+    LONG,
     DOUBLE,
     FLOAT,
     BOOLEAN,
