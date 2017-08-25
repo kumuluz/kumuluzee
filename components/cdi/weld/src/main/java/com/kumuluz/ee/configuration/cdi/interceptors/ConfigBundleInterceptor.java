@@ -75,30 +75,36 @@ public class ConfigBundleInterceptor {
     }
 
     /**
-     * Processes and invokes all setters in Bean anotated with @ConfigBundle
+     * Processes and invokes all setters in Bean annotated with @ConfigBundle
      *
-     * @param target      target object
-     * @param targetClass target class
+     * @param target                  target object
+     * @param targetClass             target class
+     * @param keyPrefix               a prefix for generating key names
+     * @param processedClassRelations class pairs that have already been processed (for cycle detection)
+     * @param watchAllFields          if true, enable watch on all fields
      * @throws Exception
      */
     private void processConfigBundleBeanSetters(Object target, Class targetClass, String keyPrefix, Map<Class, Class>
             processedClassRelations, boolean watchAllFields) throws Exception {
 
         // invoke setters
-        for (Method m : targetClass.getMethods()) {
+        for (Method method : targetClass.getMethods()) {
 
-            if (m.getName().substring(0, 3).equals("set") && m.getParameters().length == 1) {
+            if (method.getName().substring(0, 3).equals("set") && method.getParameters().length == 1) {
 
-                Class parameterType = m.getParameters()[0].getType();
+                Class parameterType = method.getParameters()[0].getType();
 
-                // get field annotation
-                Field field = targetClass.getDeclaredField(setterToField(m.getName()));
+                // get field annotation - @ConfigValue
+                Field field = targetClass.getDeclaredField(setterToField(method.getName()));
                 ConfigValue fieldAnnotation = null;
+                if (field != null) {
+                    fieldAnnotation = field.getAnnotation(ConfigValue.class);
+                }
+
+                // watch nested class or list if all fields in the bean are annotated with watch or if a field is
+                // annnotated with watch
                 boolean watchNestedClass = watchAllFields;
-                if (watchAllFields == false) {
-                    if (field != null) {
-                        fieldAnnotation = field.getAnnotation(ConfigValue.class);
-                    }
+                if (watchNestedClass == false) {
                     if (fieldAnnotation != null) {
                         watchNestedClass = fieldAnnotation.watch();
                     }
@@ -107,15 +113,15 @@ public class ConfigBundleInterceptor {
                 // process primitives
                 if (Arrays.asList(primitives).contains(parameterType)) {
 
-                    Optional<String> value = getValueOfPrimitive(parameterType, getKeyName(targetClass, m.getName(),
-                            keyPrefix));
+                    Optional<String> value = getValueOfPrimitive(parameterType, getKeyName(targetClass, method
+                            .getName(), keyPrefix));
 
                     if (value.isPresent()) {
-                        m.invoke(target, value.get());
+                        method.invoke(target, value.get());
                     }
 
                     if (watchAllFields || (fieldAnnotation != null && fieldAnnotation.watch())) {
-                        deployWatcher(target, m, getKeyName(targetClass, m.getName(), keyPrefix));
+                        deployWatcher(target, method, getKeyName(targetClass, method.getName(), keyPrefix));
                     }
 
                     // process nested objeccts
@@ -123,11 +129,11 @@ public class ConfigBundleInterceptor {
 
                     processedClassRelations.put(targetClass, parameterType);
 
-                    Object nestedTarget = processNestedObject(targetClass, m, parameterType, keyPrefix,
+                    Object nestedTarget = processNestedObject(targetClass, method, parameterType, keyPrefix,
                             processedClassRelations, -1, watchNestedClass);
 
                     // invoke setter method with initialised instance
-                    m.invoke(target, nestedTarget);
+                    method.invoke(target, nestedTarget);
 
                     // process arrays
                 } else {
@@ -135,22 +141,25 @@ public class ConfigBundleInterceptor {
                     Class componentType = parameterType.getComponentType();
 
                     Object array = Array.newInstance(componentType, configurationUtil.getListSize(getKeyName
-                            (targetClass, m.getName(), keyPrefix)).orElse(0));
+                            (targetClass, method.getName(), keyPrefix)).orElse(0));
 
+                    // process list of primitives
                     if (Arrays.asList(primitives).contains(componentType)) {
                         for (int i = 0; i < Array.getLength(array); i++) {
-                            Array.set(array, i, getValueOfPrimitive(componentType, getKeyName(targetClass, m.getName(),
-                                    keyPrefix) + "[" + i + "]").orElse(null));
+                            Array.set(array, i, getValueOfPrimitive(componentType, getKeyName(targetClass, method
+                                    .getName(), keyPrefix) + "[" + i + "]").get());
                         }
+
+                        // process list of nested classes
                     } else {
                         for (int i = 0; i < Array.getLength(array); i++) {
-                            Array.set(array, i, processNestedObject(targetClass, m, componentType, keyPrefix,
+                            Array.set(array, i, processNestedObject(targetClass, method, componentType, keyPrefix,
                                     processedClassRelations, i, watchNestedClass));
 
                         }
                     }
 
-                    m.invoke(target, array);
+                    method.invoke(target, array);
 
                 }
             }
@@ -159,10 +168,10 @@ public class ConfigBundleInterceptor {
     }
 
     /**
-     * Get value of a primitive configuration type
+     * Returns a value of a primitive configuration type
      *
-     * @param type
-     * @param key
+     * @param type configuration value type
+     * @param key  configuration value key
      * @return
      */
     private Optional getValueOfPrimitive(Class type, String key) {
@@ -186,26 +195,26 @@ public class ConfigBundleInterceptor {
     }
 
     /**
-     * Create new instance for nested class, check for cycles and populate nested instance.
+     * Create a new instance for nested class, check for cycles and populate nested instance.
      *
-     * @param targetClass
-     * @param method
-     * @param parameterType
-     * @param keyPrefix               Prefix used for generation of configuration key.
-     * @param processedClassRelations Relations of nested classes that have already been procees. Needed for
-     *                                detecting cycles.
-     * @param arrayIndex              Array index for arrays of nested objects.
+     * @param targetClass             target class
+     * @param method                  processed method
+     * @param parameterType           parameter type
+     * @param keyPrefix               prefix used for generation of a configuration key
+     * @param processedClassRelations class pairs that have already been processed (for cycle detection)
+     * @param arrayIndex              array index for arrays of nested objects
+     * @param watchAllFields          if true, enable watch on all fields
      * @return
      * @throws Exception
      */
     private Object processNestedObject(Class targetClass, Method method, Class parameterType, String keyPrefix,
                                        Map<Class, Class> processedClassRelations, int arrayIndex, boolean
-                                               watchAllFields)
-            throws Exception {
+                                               watchAllFields) throws Exception {
 
         Object nestedTarget = parameterType.getConstructor().newInstance();
         Class nestedTargetClass = nestedTarget.getClass();
 
+        // check for cycles
         if (processedClassRelations.containsKey(nestedTargetClass) && processedClassRelations.get(nestedTargetClass)
                 .equals(targetClass)) {
             log.warning("There is a cycle in the configuration class tree. ConfigBundle class may not " +
@@ -221,6 +230,7 @@ public class ConfigBundleInterceptor {
             processConfigBundleBeanSetters(nestedTarget, nestedTargetClass, key, processedClassRelations,
                     watchAllFields);
         }
+
         return nestedTarget;
     }
 
@@ -229,6 +239,7 @@ public class ConfigBundleInterceptor {
      *
      * @param targetClass target class
      * @param setter      name of the setter method
+     * @param keyPrefix   prefix used for generation of a configuration key
      * @return key in format prefix.key-name
      */
     private String getKeyName(Class targetClass, String setter, String keyPrefix) throws Exception {
@@ -255,10 +266,10 @@ public class ConfigBundleInterceptor {
     }
 
     /**
-     * Generate key prefix from annotation, class name, or parent prefix in case of nested classes.
+     * Generate a key prefix from annotation, class name, or parent prefix in case of nested classes.
      *
      * @param targetClass target class
-     * @param keyPrefix   key prefix used in nested classes
+     * @param keyPrefix   prefix used for generation of a configuration key
      * @return key prefix
      */
     private String getKeyPrefix(Class targetClass, String keyPrefix) {
