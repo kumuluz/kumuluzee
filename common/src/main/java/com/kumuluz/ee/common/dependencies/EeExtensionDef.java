@@ -35,5 +35,5 @@ public @interface EeExtensionDef {
 
     String name();
 
-    EeExtensionType type();
+    String group();
 }

@@ -22,15 +22,13 @@ package com.kumuluz.ee.loaders;
 
 import com.kumuluz.ee.common.ConfigExtension;
 import com.kumuluz.ee.common.dependencies.EeExtensionDef;
-import com.kumuluz.ee.common.dependencies.EeExtensionType;
+import com.kumuluz.ee.common.dependencies.EeExtensionGroup;
 import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 /**
  * @author Tilen Faganel
@@ -61,11 +59,11 @@ public class ConfigExtensionLoader {
                 throw new KumuluzServerException(msg);
             }
 
-            if (!eeExtensionDef.type().equals(EeExtensionType.CONFIG)) {
+            if (!eeExtensionDef.group().equalsIgnoreCase(EeExtensionGroup.CONFIG)) {
 
                 String msg = "The found class \"" + e.getClass().getSimpleName() + "\" does not have the correct " +
-                        "extension type defined. The interface \"ConfigExtension\" requires that the supporting " +
-                        " definition annotations specifies the extension type of \"CONFIG\". ";
+                        "extension group defined. The interface \"ConfigExtension\" requires that the supporting " +
+                        " definition annotations specifies the extension group of \"config\". ";
 
                 log.severe(msg);
 
