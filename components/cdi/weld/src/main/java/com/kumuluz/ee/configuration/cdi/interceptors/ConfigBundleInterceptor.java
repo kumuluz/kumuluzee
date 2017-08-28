@@ -82,10 +82,13 @@ public class ConfigBundleInterceptor {
      * @param keyPrefix               a prefix for generating key names
      * @param processedClassRelations class pairs that have already been processed (for cycle detection)
      * @param watchAllFields          if true, enable watch on all fields
+     * @return returns true, if at least one field was successfully populated from configuration sources
      * @throws Exception
      */
-    private void processConfigBundleBeanSetters(Object target, Class targetClass, String keyPrefix, Map<Class, Class>
+    private boolean processConfigBundleBeanSetters(Object target, Class targetClass, String keyPrefix, Map<Class, Class>
             processedClassRelations, boolean watchAllFields) throws Exception {
+
+        boolean isConfigBundleEmpty = true;
 
         // invoke setters
         for (Method method : targetClass.getMethods()) {
@@ -102,7 +105,7 @@ public class ConfigBundleInterceptor {
                 }
 
                 // watch nested class or list if all fields in the bean are annotated with watch or if a field is
-                // annnotated with watch
+                // annotated with watch
                 boolean watchNestedClass = watchAllFields;
                 if (watchNestedClass == false) {
                     if (fieldAnnotation != null) {
@@ -117,6 +120,7 @@ public class ConfigBundleInterceptor {
                             .getName(), keyPrefix));
 
                     if (value.isPresent()) {
+                        isConfigBundleEmpty = false;
                         method.invoke(target, value.get());
                     }
 
@@ -164,7 +168,7 @@ public class ConfigBundleInterceptor {
                 }
             }
         }
-
+        return isConfigBundleEmpty;
     }
 
     /**
@@ -227,8 +231,12 @@ public class ConfigBundleInterceptor {
                 key += "[" + arrayIndex + "]";
             }
 
-            processConfigBundleBeanSetters(nestedTarget, nestedTargetClass, key, processedClassRelations,
-                    watchAllFields);
+            boolean isEmpty = processConfigBundleBeanSetters(nestedTarget, nestedTargetClass, key,
+                    processedClassRelations, watchAllFields);
+
+            if (isEmpty) {
+                return null;
+            }
         }
 
         return nestedTarget;
