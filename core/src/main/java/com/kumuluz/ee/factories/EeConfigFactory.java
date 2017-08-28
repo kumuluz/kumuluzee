@@ -57,9 +57,11 @@ public class EeConfigFactory {
 
         Optional<String> appName = cfg.get("kumuluzee.name");
         Optional<String> appVersion = cfg.get("kumuluzee.version");
+        Optional<Boolean> appDebug = cfg.getBoolean("kumuluzee.debug");
 
         appName.ifPresent(eeConfigBuilder::name);
         appVersion.ifPresent(eeConfigBuilder::version);
+        appDebug.ifPresent(eeConfigBuilder::debug);
 
         ServerConfig.Builder serverBuilder = new ServerConfig.Builder();
 
@@ -260,6 +262,7 @@ public class EeConfigFactory {
 
         return !(eeConfig == null ||
                 eeConfig.getVersion() == null ||
+                eeConfig.getDebug() == null ||
                 eeConfig.getEnv() == null ||
                 eeConfig.getDev() == null ||
                 eeConfig.getServer() == null ||

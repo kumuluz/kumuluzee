@@ -33,6 +33,7 @@ public class EeConfig {
 
         private String name;
         private String version = "1.0.0";
+        private Boolean debug = false;
 
         private EnvConfig.Builder env = new EnvConfig.Builder();
         private DevConfig.Builder dev = new DevConfig.Builder();
@@ -49,6 +50,11 @@ public class EeConfig {
 
         public Builder version(String version) {
             this.version = version;
+            return this;
+        }
+
+        public Builder debug(Boolean debug) {
+            this.debug = debug;
             return this;
         }
 
@@ -93,6 +99,7 @@ public class EeConfig {
             EeConfig eeConfig = new EeConfig();
             eeConfig.name = name;
             eeConfig.version = version;
+            eeConfig.debug = debug;
             eeConfig.env = env.build();
             eeConfig.dev = dev.build();
             eeConfig.server = server.build();
@@ -109,6 +116,7 @@ public class EeConfig {
 
     private String name;
     private String version;
+    private Boolean debug;
 
     private EnvConfig env;
     private DevConfig dev;
@@ -145,6 +153,10 @@ public class EeConfig {
 
     public String getVersion() {
         return version;
+    }
+
+    public Boolean getDebug() {
+        return debug;
     }
 
     public EnvConfig getEnv() {
