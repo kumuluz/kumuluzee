@@ -18,15 +18,19 @@
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
 */
-/**
- * Copyright (c) Sunesis d.o.o.
- */
-package com.kumuluz.ee.logs.cdi;
+package com.kumuluz.ee.common;
+
+import java.util.Optional;
+import java.util.logging.Handler;
+import java.util.logging.LogManager;
 
 /**
- * @author Rok Povse
- * @author Marko Skrjanec
+ * @author Tilen Faganel
+ * @since 2.4.0
  */
-public enum LogParams {
-    METRICS,
+public interface LogsExtension extends Extension {
+
+    Optional<Class<? extends LogManager>> getJavaUtilLogManagerClass();
+
+    Optional<Handler> getJavaUtilLogHandlerClass();
 }

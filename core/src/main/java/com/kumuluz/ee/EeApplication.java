@@ -24,7 +24,6 @@ import com.kumuluz.ee.common.config.DataSourcePoolConfig;
 import com.kumuluz.ee.common.runtime.EeRuntime;
 import com.kumuluz.ee.common.runtime.EeRuntimeComponent;
 import com.kumuluz.ee.common.runtime.EeRuntimeInternal;
-import com.kumuluz.ee.common.utils.StringUtils;
 import com.kumuluz.ee.factories.EeConfigFactory;
 import com.kumuluz.ee.factories.JtaXADataSourceFactory;
 import com.kumuluz.ee.common.*;
@@ -42,15 +41,14 @@ import com.kumuluz.ee.common.wrapper.*;
 import com.kumuluz.ee.configuration.ConfigurationSource;
 import com.kumuluz.ee.configuration.utils.ConfigurationImpl;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
-import com.kumuluz.ee.loaders.ComponentLoader;
-import com.kumuluz.ee.loaders.ConfigExtensionLoader;
-import com.kumuluz.ee.loaders.ExtensionLoader;
-import com.kumuluz.ee.loaders.ServerLoader;
-import com.zaxxer.hikari.HikariConfig;
+import com.kumuluz.ee.loaders.*;
+import com.kumuluz.ee.logs.impl.JavaUtilDefaultLogConfigurator;
 import com.zaxxer.hikari.HikariDataSource;
 
 import javax.sql.XADataSource;
 import java.util.*;
+import java.util.logging.Handler;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -60,7 +58,7 @@ import java.util.stream.Collectors;
  */
 public class EeApplication {
 
-    private Logger log = Logger.getLogger(EeApplication.class.getSimpleName());
+    private Logger log;
 
     private EeConfig eeConfig;
 
@@ -85,16 +83,7 @@ public class EeApplication {
 
     private void initialize() {
 
-        log.info("Initializing KumuluzEE");
-
-        log.info("Checking for requirements");
-
-        checkRequirements();
-
-        log.info("Checks passed");
-
-        log.info("Initializing main configuration");
-
+        // Initialize the configuration
         ConfigurationImpl configImpl = new ConfigurationImpl();
 
         ConfigurationUtil.initialize(configImpl);
@@ -107,6 +96,46 @@ public class EeApplication {
         }
 
         EeConfig.initialize(this.eeConfig);
+
+        // Loading the logs extension and set up logging bridges before any actual logging is done
+        Optional<LogsExtension> logsExtensionOptional = LogsExtensionLoader.loadExtension();
+
+        if (logsExtensionOptional.isPresent()) {
+
+            LogsExtension logsExtension = logsExtensionOptional.get();
+
+            logsExtension.load();
+
+            Optional<Class<? extends LogManager>> logManager = logsExtension.getJavaUtilLogManagerClass();
+            Optional<Handler> logHandler = logsExtension.getJavaUtilLogHandlerClass();
+
+            if (logManager.isPresent()) {
+
+                System.setProperty("java.util.logging.manager", logManager.get().getName());
+            } else logHandler.ifPresent(JavaUtilDefaultLogConfigurator::initSoleHandler);
+        } else {
+
+            JavaUtilDefaultLogConfigurator.init();
+        }
+
+        // Create the main class logger
+        log = Logger.getLogger(EeApplication.class.getSimpleName());
+
+        // Signal the configuration impl that logging is up and running
+        configImpl.postInit();
+
+        for (ConfigurationSource configurationSource : configImpl.getConfigurationSources()) {
+
+            log.info("Initialized configuration source: " + configurationSource.getClass().getSimpleName());
+        }
+
+        log.info("Initializing KumuluzEE");
+
+        log.info("Checking for requirements");
+
+        checkRequirements();
+
+        log.info("Checks passed");
 
         log.info("Initialized main configuration");
 
@@ -122,11 +151,14 @@ public class EeApplication {
 
         // Loading the config extensions and extracting its metadata
         List<ConfigExtension> configExtensions = ConfigExtensionLoader.loadExtensions();
-        List<ConfigExtensionWrapper> eeConfigExtensions = processEeConfigExtensions(configExtensions, eeComponents);
+        List<ExtensionWrapper<ConfigExtension>> eeConfigExtensions = processSingleEeExtensions(configExtensions, eeComponents);
+
+        List<LogsExtension> logsExtensions = logsExtensionOptional.map(Collections::singletonList).orElseGet(Collections::emptyList);
+        List<ExtensionWrapper<LogsExtension>> eeLogsExtensions = processGroupEeExtensions(logsExtensions, eeComponents);
 
         // Loading the extensions and extracting its metadata
         List<Extension> extensions = ExtensionLoader.loadExtensions();
-        List<ExtensionWrapper> eeExtensions = processEeExtensions(extensions, eeComponents);
+        List<ExtensionWrapper<Extension>> eeExtensions = processGroupEeExtensions(extensions, eeComponents);
 
         log.info("EE Components and extensions loaded");
 
@@ -153,13 +185,12 @@ public class EeApplication {
         // Initiate the config extensions
         log.info("Initializing config extensions");
 
-        for (ConfigExtensionWrapper extension : eeConfigExtensions) {
+        for (ExtensionWrapper<ConfigExtension> extension : eeConfigExtensions) {
 
-            log.info("Found config extension implemented by " + extension.getExtension().getClass().getDeclaredAnnotation
-                    (EeExtensionDef.class).name());
+            log.info("Found config extension implemented by " + extension.getName());
 
-            extension.getExtension().init(server, eeConfig);
             extension.getExtension().load();
+            extension.getExtension().init(server, eeConfig);
 
             ConfigurationSource source = extension.getExtension().getConfigurationSource();
 
@@ -168,6 +199,13 @@ public class EeApplication {
         }
 
         log.info("Config extensions initialized");
+
+        for (ExtensionWrapper<LogsExtension> extension : eeLogsExtensions) {
+
+            log.info("Found logs extension implemented by " + extension.getName());
+
+            extension.getExtension().init(server, eeConfig);
+        }
 
         // Initiate the server
         server.getServer().setServerConfig(eeConfig.getServer());
@@ -279,13 +317,13 @@ public class EeApplication {
         // Initiate the other extensions
         log.info("Initializing extensions");
 
-        for (ExtensionWrapper extension : eeExtensions) {
+        for (ExtensionWrapper<Extension> extension : eeExtensions) {
 
             log.info("Found extension implemented by " + extension.getExtension().getClass()
                     .getDeclaredAnnotation(EeExtensionDef.class).name());
 
-            extension.getExtension().init(server, eeConfig);
             extension.getExtension().load();
+            extension.getExtension().init(server, eeConfig);
         }
 
         log.info("Extensions Initialized");
@@ -419,23 +457,23 @@ public class EeApplication {
         return new ArrayList<>(eeComp.values());
     }
 
-    private List<ExtensionWrapper> processEeExtensions(List<Extension> extensions, List<EeComponentWrapper> wrappedComponents) {
+    private <E extends Extension> List<ExtensionWrapper<E>> processGroupEeExtensions(List<E> extensions, List<EeComponentWrapper> wrappedComponents) {
 
-        Map<EeExtensionType, ExtensionWrapper> eeExt = new HashMap<>();
+        Map<String, ExtensionWrapper<E>> eeExt = new HashMap<>();
 
         // Wrap extensions with their metadata and check for duplicates
-        for (Extension e : extensions) {
+        for (E e : extensions) {
 
             EeExtensionDef def = e.getClass().getDeclaredAnnotation(EeExtensionDef.class);
 
             if (def != null) {
 
-                if (eeExt.containsKey(def.type())) {
+                if (eeExt.containsKey(def.group())) {
 
-                    String msg = "Found multiple implementations (" + eeExt.get(def.type()).getName() +
-                            ", " + def.name() + ") of the same EE extension (" + def.type().getName() + "). " +
+                    String msg = "Found multiple implementations (" + eeExt.get(def.group()).getName() +
+                            ", " + def.name() + ") of the same EE extension group (" + def.group() + "). " +
                             "Please check to make sure you only include a single implementation of a specific " +
-                            "EE extension.";
+                            "EE extension group.";
 
                     log.severe(msg);
 
@@ -446,11 +484,11 @@ public class EeApplication {
                         (EeComponentDependency.class);
                 EeComponentOptional[] optionals = e.getClass().getDeclaredAnnotationsByType(EeComponentOptional.class);
 
-                eeExt.put(def.type(), new ExtensionWrapper(e, def.name(), def.type(), dependencies, optionals));
+                eeExt.put(def.group(), new ExtensionWrapper<>(e, def.name(), def.group(), dependencies, optionals));
             }
         }
 
-        List<ExtensionWrapper> extensionWrappers = new ArrayList<>(eeExt.values());
+        List<ExtensionWrapper<E>> extensionWrappers = new ArrayList<>(eeExt.values());
 
         log.info("Processing EE extension dependencies");
 
@@ -459,31 +497,31 @@ public class EeApplication {
         return extensionWrappers;
     }
 
-    private List<ConfigExtensionWrapper> processEeConfigExtensions(List<ConfigExtension> extensions, List<EeComponentWrapper> wrappedComponents) {
+    private <E extends Extension> List<ExtensionWrapper<E>> processSingleEeExtensions(List<E> extensions, List<EeComponentWrapper> wrappedComponents) {
 
-        List<ConfigExtensionWrapper> extensionWrappers = new ArrayList<>();
+        List<ExtensionWrapper<E>> extensionWrappers = new ArrayList<>();
 
-        for (ConfigExtension c : extensions) {
+        for (E e : extensions) {
 
-            EeExtensionDef def = c.getClass().getDeclaredAnnotation(EeExtensionDef.class);
+            EeExtensionDef def = e.getClass().getDeclaredAnnotation(EeExtensionDef.class);
 
             if (def != null) {
 
-                EeComponentDependency[] dependencies = c.getClass().getDeclaredAnnotationsByType(EeComponentDependency.class);
-                EeComponentOptional[] optionals = c.getClass().getDeclaredAnnotationsByType(EeComponentOptional.class);
+                EeComponentDependency[] dependencies = e.getClass().getDeclaredAnnotationsByType(EeComponentDependency.class);
+                EeComponentOptional[] optionals = e.getClass().getDeclaredAnnotationsByType(EeComponentOptional.class);
 
-                extensionWrappers.add(new ConfigExtensionWrapper(c, def.name(), def.type(), dependencies, optionals));
+                extensionWrappers.add(new ExtensionWrapper<>(e, def.name(), def.group(), dependencies, optionals));
             }
         }
 
-        log.info("Processing EE config extension dependencies");
+        log.info("Processing EE single extensions dependencies");
 
         processEeExtensionDependencies(extensionWrappers, wrappedComponents);
 
         return extensionWrappers;
     }
 
-    private void processEeExtensionDependencies(List<? extends ExtensionWrapper> extensions, List<EeComponentWrapper> components) {
+    private <E extends Extension> void processEeExtensionDependencies(List<ExtensionWrapper<E>> extensions, List<EeComponentWrapper> components) {
 
         // Check if all dependencies are fulfilled
         for (ExtensionWrapper ext : extensions) {
@@ -505,8 +543,8 @@ public class EeApplication {
 
                 if (depCompName == null) {
 
-                    String msg = "EE extension implementation dependency unfulfilled. The EE extension " +
-                            ext.getType().getName() + " requires " + dep.value().getName() +
+                    String msg = "EE extension implementation dependency unfulfilled. The EE extension group " +
+                            ext.getGroup() + "implemented by " + ext.getName() + " requires " + dep.value().getName() +
                             " implemented by one of the following implementations: " +
                             Arrays.toString(dep.implementations()) + ". Please make sure you use one of the " +
                             "implementations required by this component.";
@@ -520,8 +558,8 @@ public class EeApplication {
                 if (dep.implementations().length > 0 &&
                         !Arrays.asList(dep.implementations()).contains(depCompName)) {
 
-                    String msg = "EE extension implementation dependency unfulfilled. The EE extension " +
-                            ext.getType().getName() + " implemented by " + ext.getName() + " requires component " +
+                    String msg = "EE extension implementation dependency unfulfilled. The EE extension group " +
+                            ext.getGroup() + " implemented by " + ext.getName() + " requires component " +
                             dep.value().getName() + " implemented by one of the following implementations: " +
                             Arrays.toString(dep.implementations()) + ". Please make sure you use one of the " +
                             "component implementations required by this component.";
@@ -552,8 +590,8 @@ public class EeApplication {
                 if (depCompName != null && dep.implementations().length > 0 &&
                         !Arrays.asList(dep.implementations()).contains(depCompName)) {
 
-                    String msg = "EE extension optional implementation dependency unfulfilled. The EE extension " +
-                            ext.getType().getName() + "implemented by " + ext.getName() + " requires component " +
+                    String msg = "EE extension optional implementation dependency unfulfilled. The EE extension group " +
+                            ext.getGroup() + "implemented by " + ext.getName() + " requires component " +
                             dep.value().getName() + " implemented by one of the following implementations: " +
                             Arrays.toString(dep.implementations()) + ". Please make sure you use one of the " +
                             "component implementations required by this component.";

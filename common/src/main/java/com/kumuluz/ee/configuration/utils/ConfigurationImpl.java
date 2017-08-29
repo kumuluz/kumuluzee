@@ -35,10 +35,13 @@ import java.util.logging.Logger;
  */
 public class ConfigurationImpl {
 
-    private static final Logger log = Logger.getLogger(ConfigurationImpl.class.getName());
-
+    private Logger utilLogger;
     private ConfigurationDispatcher dispatcher;
-    private List<ConfigurationSource> configurationSources = new ArrayList<>();
+    private List<ConfigurationSource> configurationSources;
+
+    private EnvironmentConfigurationSource environmentConfigurationSource;
+    private SystemPropertyConfigurationSource systemPropertyConfigurationSource;
+    private FileConfigurationSource fileConfigurationSource;
 
     public ConfigurationImpl() {
         init();
@@ -46,19 +49,38 @@ public class ConfigurationImpl {
 
     private void init() {
 
+        environmentConfigurationSource = new EnvironmentConfigurationSource();
+        systemPropertyConfigurationSource = new SystemPropertyConfigurationSource();
+        fileConfigurationSource = new FileConfigurationSource();
+
         // specify sources
         configurationSources = new ArrayList<>();
-        configurationSources.add(new EnvironmentConfigurationSource());
-        configurationSources.add(new SystemPropertyConfigurationSource());
-        configurationSources.add(new FileConfigurationSource());
+        configurationSources.add(environmentConfigurationSource);
+        configurationSources.add(systemPropertyConfigurationSource);
+        configurationSources.add(fileConfigurationSource);
 
         dispatcher = new ConfigurationDispatcher();
 
         // initialise sources
         for (ConfigurationSource configurationSource : configurationSources) {
-            log.info("Initializing configuration source: " + configurationSource.getClass().getSimpleName());
-            configurationSource.init(dispatcher );
+
+            configurationSource.init(dispatcher);
         }
+    }
+
+    public void postInit() {
+
+        fileConfigurationSource.postInit();
+
+        utilLogger = Logger.getLogger(ConfigurationUtil.class.getName());
+    }
+
+    public Boolean isUtilLoggerAvailable() {
+        return utilLogger != null;
+    }
+
+    public Logger getUtilLogger() {
+        return utilLogger;
     }
 
     public ConfigurationDispatcher getDispatcher() {

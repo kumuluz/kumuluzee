@@ -22,15 +22,13 @@ package com.kumuluz.ee.loaders;
 
 import com.kumuluz.ee.common.Extension;
 import com.kumuluz.ee.common.dependencies.EeExtensionDef;
-import com.kumuluz.ee.common.dependencies.EeExtensionType;
+import com.kumuluz.ee.common.dependencies.EeExtensionGroup;
 import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 /**
  * @author Jan Meznarič
@@ -61,11 +59,20 @@ public class ExtensionLoader {
                 throw new KumuluzServerException(msg);
             }
 
-            if (eeExtensionDef.type().equals(EeExtensionType.CONFIG)) {
+            if (eeExtensionDef.group().equalsIgnoreCase(EeExtensionGroup.CONFIG)) {
 
                 String msg = "The found class \"" + e.getClass().getSimpleName() + "\" does not have the correct " +
-                        "extension type defined. The extension type \"CONFIG\" requires that the class implements " +
+                        "extension group defined. The extension group \"config\" requires that the class implements " +
                         "the \"ConfigExtension\" interface.";
+
+                log.severe(msg);
+
+                throw new KumuluzServerException(msg);
+            } else if (eeExtensionDef.group().equalsIgnoreCase(EeExtensionGroup.LOGS)) {
+
+                String msg = "The found class \"" + e.getClass().getSimpleName() + "\" does not have the correct " +
+                        "extension group defined. The extension group \"logs\" requires that the class implements " +
+                        "the \"LogsExtension\" interface.";
 
                 log.severe(msg);
 
@@ -79,8 +86,6 @@ public class ExtensionLoader {
     }
 
     private static List<Extension> scanForAvailableExtensions() {
-
-        log.finest("Scanning for available extensions in the runtime");
 
         List<Extension> extensions = new ArrayList<>();
 
