@@ -49,6 +49,7 @@
         <jta.version>1.2</jta.version>
 
         <jandex.version>2.0.3.Final</jandex.version>
+        <jboss-logging.version>3.3.0.Final</jboss-logging.version>
         <hikari.version>2.6.3</hikari.version>
         <yaml.version>1.18</yaml.version>
         <junit.version>4.12</junit.version>
@@ -391,6 +392,11 @@
                 <groupId>org.jboss</groupId>
                 <artifactId>jandex</artifactId>
                 <version>${jandex.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.logging</groupId>
+                <artifactId>jboss-logging</artifactId>
+                <version>${jboss-logging.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.zaxxer</groupId>
