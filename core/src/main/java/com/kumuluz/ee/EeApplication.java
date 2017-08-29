@@ -121,6 +121,14 @@ public class EeApplication {
         // Create the main class logger
         log = Logger.getLogger(EeApplication.class.getSimpleName());
 
+        // Signal the configuration impl that logging is up and running
+        configImpl.postInit();
+
+        for (ConfigurationSource configurationSource : configImpl.getConfigurationSources()) {
+
+            log.info("Initialized configuration source: " + configurationSource.getClass().getSimpleName());
+        }
+
         log.info("Initializing KumuluzEE");
 
         log.info("Checking for requirements");
@@ -128,11 +136,6 @@ public class EeApplication {
         checkRequirements();
 
         log.info("Checks passed");
-
-        for (ConfigurationSource configurationSource : configImpl.getConfigurationSources()) {
-
-            log.info("Initializing configuration source: " + configurationSource.getClass().getSimpleName());
-        }
 
         log.info("Initialized main configuration");
 

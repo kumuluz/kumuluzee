@@ -22,6 +22,7 @@ package com.kumuluz.ee.configuration.sources;
 
 import com.kumuluz.ee.configuration.ConfigurationSource;
 import com.kumuluz.ee.configuration.utils.ConfigurationDispatcher;
+import com.kumuluz.ee.logs.LogDeferrer;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
@@ -35,8 +36,8 @@ import java.util.logging.Logger;
  */
 public class FileConfigurationSource implements ConfigurationSource {
 
-    // TODO:
-//    private static final Logger log = Logger.getLogger(FileConfigurationSource.class.getName());
+    private Logger log;
+    private LogDeferrer<Logger> logDeferrer;
 
     private String ymlFileName;
     private String yamlFileName;
@@ -48,6 +49,18 @@ public class FileConfigurationSource implements ConfigurationSource {
         this.ymlFileName = "config.yml";
         this.yamlFileName = "config.yaml";
         this.propertiesFileName = "config.properties";
+
+        this.logDeferrer = new LogDeferrer<>();
+
+        this.logDeferrer.init(() -> Logger.getLogger(FileConfigurationSource.class.getName()));
+    }
+
+    public void postInit() {
+
+        logDeferrer.execute();
+        logDeferrer = null;
+
+        log = Logger.getLogger(FileConfigurationSource.class.getName());
     }
 
     @Override
@@ -66,24 +79,23 @@ public class FileConfigurationSource implements ConfigurationSource {
 
             if (file != null) {
 
-                //TODO:
-                //log.info("Loading configuration from YAML file.");
+                logDeferrer.defer(l -> l.info("Loading configuration from YAML file.") );
 
                 Object yamlParsed = yaml.load(file);
 
                 if (yamlParsed instanceof Map) {
                     config = (Map<String, Object>) yamlParsed;
                 } else {
-                    //TODO:
-                    //log.info("Configuration YAML is malformed as it contains an array at the root level. Skipping.");
+
+                    logDeferrer.defer(l -> l.info("Configuration YAML is malformed as it contains an array at the root level. Skipping."));
                 }
 
                 file.close();
             }
         } catch (IOException e) {
-            // TODO:
-//            log.info("Couldn't successfully process the YAML configuration file." +
-//                    "All your properties may not be correctly loaded");
+            logDeferrer.defer(l ->
+                    l.info("Couldn't successfully process the YAML configuration file." +
+                    "All your properties may not be correctly loaded"));
         }
 
         // parse yaml file to Map<String, Object>
@@ -94,8 +106,7 @@ public class FileConfigurationSource implements ConfigurationSource {
 
                 if (inputStream != null) {
 
-                    //TODO:
-                    //log.info("Loading configuration from .properties file " + propertiesFileName);
+                    logDeferrer.defer(l -> l.info("Loading configuration from .properties file " + propertiesFileName));
 
                     properties = new Properties();
                     properties.load(inputStream);
@@ -103,18 +114,17 @@ public class FileConfigurationSource implements ConfigurationSource {
                     inputStream.close();
                 }
             } catch (Exception e) {
-                //TODO:
-//                log.info("Properties file not found.");
+
+                logDeferrer.defer(l -> l.info("Properties file not found."));
             }
 
         }
 
-        //TODO:
-//        if (config != null || properties != null) {
-//            log.info("Configuration successfully read.");
-//        } else {
-//            log.info("Unable to load configuration from file. No configuration files were found.");
-//        }
+        if (config != null || properties != null) {
+            logDeferrer.defer(l -> l.info("Configuration successfully read."));
+        } else {
+            logDeferrer.defer(l -> l.info("Unable to load configuration from file. No configuration files were found."));
+        }
     }
 
     @Override
@@ -311,8 +321,11 @@ public class FileConfigurationSource implements ConfigurationSource {
                 try {
                     arrayIndex = Integer.parseInt(splittedKey.substring(openingBracket + 1, closingBracket));
                 } catch (NumberFormatException e) {
-                    //TODO:
-//                    log.severe("Cannot cast array index.");
+
+                    if (log != null) {
+                        log.severe("Cannot cast array index.");
+                    }
+
                     return null;
                 }
 
