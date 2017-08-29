@@ -32,15 +32,6 @@ import java.util.logging.Logger;
  */
 public class EnvironmentConfigurationSource implements ConfigurationSource {
 
-    private static EnvironmentConfigurationSource instance;
-
-    public static EnvironmentConfigurationSource getInstance() {
-        if (instance == null) {
-            instance = new EnvironmentConfigurationSource();
-        }
-        return instance;
-    }
-
     @Override
     public void init(ConfigurationDispatcher configurationDispatcher) {
     }
