@@ -33,7 +33,7 @@ import java.util.logging.Logger;
  */
 public class ConfigurationUtil {
 
-    private static final Logger log = Logger.getLogger(ConfigurationUtil.class.getName());
+//    private static final Logger log = Logger.getLogger(ConfigurationUtil.class.getName());
 
     private static ConfigurationUtil instance;
 
@@ -260,8 +260,11 @@ public class ConfigurationUtil {
     }
 
     private String interpolateString(String key, String s, Set<String> processingKeys) {
+
         if(processingKeys.contains(key)) {
-            log.warning("Detected cycle when interpolating configuration key: " + key);
+
+//            log.warning("Detected cycle when interpolating configuration key: " + key);
+
             return "";
         }
 

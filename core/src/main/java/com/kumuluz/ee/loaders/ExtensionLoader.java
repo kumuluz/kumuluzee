@@ -68,17 +68,16 @@ public class ExtensionLoader {
                 log.severe(msg);
 
                 throw new KumuluzServerException(msg);
+            } else if (eeExtensionDef.group().equalsIgnoreCase(EeExtensionGroup.LOGS)) {
+
+                String msg = "The found class \"" + e.getClass().getSimpleName() + "\" does not have the correct " +
+                        "extension group defined. The extension group \"logs\" requires that the class implements " +
+                        "the \"LogsExtension\" interface.";
+
+                log.severe(msg);
+
+                throw new KumuluzServerException(msg);
             }
-//            else if (eeExtensionDef.group().equalsIgnoreCase(EeExtensionGroup.LOGS)) {
-//
-//                String msg = "The found class \"" + e.getClass().getSimpleName() + "\" does not have the correct " +
-//                        "extension group defined. The extension group \"logs\" requires that the class implements " +
-//                        "the \"LogsExtension\" interface.";
-//
-//                log.severe(msg);
-//
-//                throw new KumuluzServerException(msg);
-//            }
         }
 
         log.info("Extension loading complete");
@@ -87,8 +86,6 @@ public class ExtensionLoader {
     }
 
     private static List<Extension> scanForAvailableExtensions() {
-
-        log.finest("Scanning for available extensions in the runtime");
 
         List<Extension> extensions = new ArrayList<>();
 
