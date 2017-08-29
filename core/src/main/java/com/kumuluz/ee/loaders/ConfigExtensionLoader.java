@@ -36,7 +36,7 @@ import java.util.logging.Logger;
  */
 public class ConfigExtensionLoader {
 
-    private static final Logger log = Logger.getLogger(ExtensionLoader.class.getSimpleName());
+    private static final Logger log = Logger.getLogger(ConfigExtensionLoader.class.getSimpleName());
 
     public static List<ConfigExtension> loadExtensions() {
 
@@ -71,14 +71,12 @@ public class ConfigExtensionLoader {
             }
         }
 
-        log.info("Extension loading complete");
+        log.info("Config extension loading complete");
 
         return extensions;
     }
 
     private static List<ConfigExtension> scanForAvailableExtensions() {
-
-        log.finest("Scanning for available extensions in the runtime");
 
         List<ConfigExtension> extensions = new ArrayList<>();
 

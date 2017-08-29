@@ -35,8 +35,6 @@ import java.util.logging.Logger;
  */
 public class ConfigurationImpl {
 
-    private static final Logger log = Logger.getLogger(ConfigurationImpl.class.getName());
-
     private ConfigurationDispatcher dispatcher;
     private List<ConfigurationSource> configurationSources = new ArrayList<>();
 
@@ -56,8 +54,8 @@ public class ConfigurationImpl {
 
         // initialise sources
         for (ConfigurationSource configurationSource : configurationSources) {
-            log.info("Initializing configuration source: " + configurationSource.getClass().getSimpleName());
-            configurationSource.init(dispatcher );
+
+            configurationSource.init(dispatcher);
         }
     }
 

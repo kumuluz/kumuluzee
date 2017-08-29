@@ -41,14 +41,14 @@ import com.kumuluz.ee.common.wrapper.*;
 import com.kumuluz.ee.configuration.ConfigurationSource;
 import com.kumuluz.ee.configuration.utils.ConfigurationImpl;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
-import com.kumuluz.ee.loaders.ComponentLoader;
-import com.kumuluz.ee.loaders.ConfigExtensionLoader;
-import com.kumuluz.ee.loaders.ExtensionLoader;
-import com.kumuluz.ee.loaders.ServerLoader;
+import com.kumuluz.ee.loaders.*;
+import com.kumuluz.ee.logs.impl.JavaUtilDefaultLogConfigurator;
 import com.zaxxer.hikari.HikariDataSource;
 
 import javax.sql.XADataSource;
 import java.util.*;
+import java.util.logging.Handler;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -58,7 +58,7 @@ import java.util.stream.Collectors;
  */
 public class EeApplication {
 
-    private Logger log = Logger.getLogger(EeApplication.class.getSimpleName());
+    private Logger log;
 
     private EeConfig eeConfig;
 
@@ -83,16 +83,7 @@ public class EeApplication {
 
     private void initialize() {
 
-        log.info("Initializing KumuluzEE");
-
-        log.info("Checking for requirements");
-
-        checkRequirements();
-
-        log.info("Checks passed");
-
-        log.info("Initializing main configuration");
-
+        // Initialize the configuration
         ConfigurationImpl configImpl = new ConfigurationImpl();
 
         ConfigurationUtil.initialize(configImpl);
@@ -105,6 +96,43 @@ public class EeApplication {
         }
 
         EeConfig.initialize(this.eeConfig);
+
+        // Loading the logs extension and set up logging bridges before any actual logging is done
+        Optional<LogsExtension> logsExtensionOptional = LogsExtensionLoader.loadExtension();
+
+        if (logsExtensionOptional.isPresent()) {
+
+            LogsExtension logsExtension = logsExtensionOptional.get();
+
+            logsExtension.load();
+
+            Optional<Class<? extends LogManager>> logManager = logsExtension.getJavaUtilLogManagerClass();
+            Optional<Handler> logHandler = logsExtension.getJavaUtilLogHandlerClass();
+
+            if (logManager.isPresent()) {
+
+                System.setProperty("java.util.logging.manager", logManager.get().getName());
+            } else logHandler.ifPresent(JavaUtilDefaultLogConfigurator::initSoleHandler);
+        } else {
+
+            JavaUtilDefaultLogConfigurator.init();
+        }
+
+        // Create the main class logger
+        log = Logger.getLogger(EeApplication.class.getSimpleName());
+
+        log.info("Initializing KumuluzEE");
+
+        log.info("Checking for requirements");
+
+        checkRequirements();
+
+        log.info("Checks passed");
+
+        for (ConfigurationSource configurationSource : configImpl.getConfigurationSources()) {
+
+            log.info("Initializing configuration source: " + configurationSource.getClass().getSimpleName());
+        }
 
         log.info("Initialized main configuration");
 
@@ -121,6 +149,9 @@ public class EeApplication {
         // Loading the config extensions and extracting its metadata
         List<ConfigExtension> configExtensions = ConfigExtensionLoader.loadExtensions();
         List<ExtensionWrapper<ConfigExtension>> eeConfigExtensions = processSingleEeExtensions(configExtensions, eeComponents);
+
+        List<LogsExtension> logsExtensions = logsExtensionOptional.map(Collections::singletonList).orElseGet(Collections::emptyList);
+        List<ExtensionWrapper<LogsExtension>> eeLogsExtensions = processGroupEeExtensions(logsExtensions, eeComponents);
 
         // Loading the extensions and extracting its metadata
         List<Extension> extensions = ExtensionLoader.loadExtensions();
@@ -153,11 +184,10 @@ public class EeApplication {
 
         for (ExtensionWrapper<ConfigExtension> extension : eeConfigExtensions) {
 
-            log.info("Found config extension implemented by " + extension.getExtension().getClass().getDeclaredAnnotation
-                    (EeExtensionDef.class).name());
+            log.info("Found config extension implemented by " + extension.getName());
 
-            extension.getExtension().init(server, eeConfig);
             extension.getExtension().load();
+            extension.getExtension().init(server, eeConfig);
 
             ConfigurationSource source = extension.getExtension().getConfigurationSource();
 
@@ -166,6 +196,13 @@ public class EeApplication {
         }
 
         log.info("Config extensions initialized");
+
+        for (ExtensionWrapper<LogsExtension> extension : eeLogsExtensions) {
+
+            log.info("Found logs extension implemented by " + extension.getName());
+
+            extension.getExtension().init(server, eeConfig);
+        }
 
         // Initiate the server
         server.getServer().setServerConfig(eeConfig.getServer());
@@ -282,8 +319,8 @@ public class EeApplication {
             log.info("Found extension implemented by " + extension.getExtension().getClass()
                     .getDeclaredAnnotation(EeExtensionDef.class).name());
 
-            extension.getExtension().init(server, eeConfig);
             extension.getExtension().load();
+            extension.getExtension().init(server, eeConfig);
         }
 
         log.info("Extensions Initialized");

@@ -32,7 +32,7 @@ import java.util.Optional;
  */
 public interface Extension {
 
-    void init(KumuluzServerWrapper server, EeConfig eeConfig);
-
     void load();
+
+    void init(KumuluzServerWrapper server, EeConfig eeConfig);
 }
