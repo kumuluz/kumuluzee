@@ -3,8 +3,8 @@
 
 > Lightweight open-source framework for developing microservices using standard Java EE technologies and migrating Java EE to cloud-native architecture.
 
-KumuluzEE is a lightweight framework for developing microservices using standard Java EE technologies and migrating existing Java EE applications to microservices. KumuluzEE packages microservices as standalone JARs KumuluzEE microservices are lightweight and optimized for size and start-up time.
-They fit perfectly with Docker containers.
+KumuluzEE is a lightweight framework for developing microservices using standard Java EE technologies and migrating existing Java EE applications to microservices. KumuluzEE packages microservices as standalone JARs. KumuluzEE microservices are lightweight and optimized for size and start-up time.
+They fit perfectly with Docker containers. KumuluzEE microservices are fully compatible with Kubernetes. 
 
 KumuluzEE also provides extensions for developing common patterns in cloud-native architectures, including configuration, logging, discovery, fault tolerance with circuit-breakers, metrics, security, event streaming and more.
 
@@ -43,7 +43,7 @@ KumuluzEE provides additional features, which are described on the [project Wiki
 - [Configuration framework](https://github.com/kumuluz/kumuluzee/wiki/Configuration) for easy and efficient configuration of microservices from various sources, such as environment variables, configuration files (yaml), properties, etc.
 - [TLS/SSL support](https://github.com/kumuluz/kumuluzee/wiki/TLS-SSL-support) for configuring TLS/SSL.
 
-KumuluzEE also provides support for **Uber JARs**. With the KumuluzEE Maven plugin, you can pack and run each microservice as a single, self-contained Uber-JAR. Details are described later in this document.
+KumuluzEE also provides support for [**Uber JARs**](https://github.com/kumuluz/kumuluzee/wiki/Uber-JAR-support). With the KumuluzEE Maven plugin, you can pack and run each microservice as a single, self-contained Uber-JAR. Details are described later in this document.
 
 ## KumuluzEE extensions
 
