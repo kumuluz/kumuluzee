@@ -137,7 +137,9 @@ public class ConfigBundleInterceptor {
                             processedClassRelations, -1, watchNestedClass);
 
                     // invoke setter method with initialised instance
-                    method.invoke(target, nestedTarget);
+                    if (nestedTarget != null) {
+                        method.invoke(target, nestedTarget);
+                    }
 
                     // process arrays
                 } else {
@@ -157,8 +159,11 @@ public class ConfigBundleInterceptor {
                         // process list of nested classes
                     } else {
                         for (int i = 0; i < Array.getLength(array); i++) {
-                            Array.set(array, i, processNestedObject(targetClass, method, componentType, keyPrefix,
-                                    processedClassRelations, i, watchNestedClass));
+                            Object nestedTarget = processNestedObject(targetClass, method, componentType, keyPrefix,
+                                    processedClassRelations, i, watchNestedClass);
+                            if (nestedTarget != null) {
+                                Array.set(array, i, nestedTarget);
+                            }
 
                         }
                     }
