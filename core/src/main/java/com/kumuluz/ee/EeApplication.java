@@ -104,15 +104,15 @@ public class EeApplication {
 
             LogsExtension logsExtension = logsExtensionOptional.get();
 
-            logsExtension.load();
-
             Optional<Class<? extends LogManager>> logManager = logsExtension.getJavaUtilLogManagerClass();
-            Optional<Handler> logHandler = logsExtension.getJavaUtilLogHandlerClass();
+            Optional<Handler> logHandler = logsExtension.getJavaUtilLogHandler();
 
             if (logManager.isPresent()) {
 
                 System.setProperty("java.util.logging.manager", logManager.get().getName());
             } else logHandler.ifPresent(JavaUtilDefaultLogConfigurator::initSoleHandler);
+
+            logsExtension.load();
         } else {
 
             JavaUtilDefaultLogConfigurator.init();

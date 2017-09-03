@@ -32,5 +32,5 @@ public interface LogsExtension extends Extension {
 
     Optional<Class<? extends LogManager>> getJavaUtilLogManagerClass();
 
-    Optional<Handler> getJavaUtilLogHandlerClass();
+    Optional<Handler> getJavaUtilLogHandler();
 }

@@ -52,6 +52,7 @@ public class FileConfigurationSource implements ConfigurationSource {
         this.propertiesFileName = "config.properties";
         
         String configurationFileName = System.getProperty("com.kumuluz.ee.configuration.file");
+
         if (configurationFileName != null && !configurationFileName.isEmpty()) {
             this.ymlFileName = configurationFileName;
             this.yamlFileName = configurationFileName;
