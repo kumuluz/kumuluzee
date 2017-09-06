@@ -51,7 +51,7 @@ public class ConfigBundleInterceptor {
     private static final Logger log = Logger.getLogger(ConfigBundleInterceptor.class.getName());
     private static final ConfigurationUtil configurationUtil = ConfigurationUtil.getInstance();
     private final Class[] primitives = {String.class, Boolean.class, Float.class, Double.class, Integer.class, Long
-            .class};
+            .class, boolean.class, float.class, double.class, int.class, long.class};
 
     /**
      * Method initialises class fields from configuration.
@@ -187,15 +187,15 @@ public class ConfigBundleInterceptor {
 
         if (type.equals(String.class)) {
             return configurationUtil.get(key);
-        } else if (type.equals(Boolean.class)) {
+        } else if (type.equals(Boolean.class) || type.equals(boolean.class)) {
             return configurationUtil.getBoolean(key);
-        } else if (type.equals(Float.class)) {
+        } else if (type.equals(Float.class) || type.equals(float.class)) {
             return configurationUtil.getFloat(key);
-        } else if (type.equals(Double.class)) {
+        } else if (type.equals(Double.class) || type.equals(double.class)) {
             return configurationUtil.getDouble(key);
-        } else if (type.equals(Integer.class)) {
+        } else if (type.equals(Integer.class) || type.equals(int.class)) {
             return configurationUtil.getInteger(key);
-        } else if (type.equals(Long.class)) {
+        } else if (type.equals(Long.class) || type.equals(long.class)) {
             return configurationUtil.getLong(key);
         } else {
             return Optional.empty();
@@ -337,30 +337,35 @@ public class ConfigBundleInterceptor {
                 try {
                     if (String.class.equals(method.getParameters()[0].getType())) {
                         method.invoke(target, value);
-                    } else if (Boolean.class.equals(method.getParameters()[0].getType())) {
+                    } else if (Boolean.class.equals(method.getParameters()[0].getType()) || boolean.class.equals(method
+                            .getParameters()[0].getType())) {
                         method.invoke(target, Boolean.parseBoolean(value));
-                    } else if (Float.class.equals(method.getParameters()[0].getType())) {
+                    } else if (Float.class.equals(method.getParameters()[0].getType()) || float.class.equals(method
+                            .getParameters()[0].getType())) {
                         try {
                             method.invoke(target, Float.parseFloat(value));
                         } catch (NumberFormatException e) {
                             log.severe("Exception while storing new value: Number format exception. " +
                                     "Expected: Float. Value: " + value);
                         }
-                    } else if (Double.class.equals(method.getParameters()[0].getType())) {
+                    } else if (Double.class.equals(method.getParameters()[0].getType()) || double.class.equals(method
+                            .getParameters()[0].getType())) {
                         try {
                             method.invoke(target, Double.parseDouble(value));
                         } catch (NumberFormatException e) {
                             log.severe("Exception while storing new value: Number format exception. Expected:" +
                                     " Double. Value: " + value);
                         }
-                    } else if (Integer.class.equals(method.getParameters()[0].getType())) {
+                    } else if (Integer.class.equals(method.getParameters()[0].getType()) || int.class.equals(method
+                            .getParameters()[0].getType())) {
                         try {
                             method.invoke(target, Integer.parseInt(value));
                         } catch (NumberFormatException e) {
                             log.severe("Exception while storing new value: Number format exception. Expected:" +
                                     " Integer. Value: " + value);
                         }
-                    } else if (Long.class.equals(method.getParameters()[0].getType())) {
+                    } else if (Long.class.equals(method.getParameters()[0].getType()) || long.class.equals(method
+                            .getParameters()[0].getType())) {
                         try {
                             method.invoke(target, Long.parseLong(value));
                         } catch (NumberFormatException e) {
