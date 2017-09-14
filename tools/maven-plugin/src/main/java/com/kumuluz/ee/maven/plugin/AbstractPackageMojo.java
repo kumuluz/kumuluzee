@@ -61,7 +61,7 @@ public abstract class AbstractPackageMojo extends AbstractCopyDependenciesMojo {
         outputDirectory = project.getBuild().getOutputDirectory();
         finalName = project.getBuild().getFinalName();
 
-        copyDependencies("lib");
+        copyDependencies("classes/lib");
         unpackDependencies();
         packageJar();
         renameJars();

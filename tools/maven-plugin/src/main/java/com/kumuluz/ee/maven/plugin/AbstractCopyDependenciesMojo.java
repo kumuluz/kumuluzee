@@ -29,7 +29,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -63,10 +62,14 @@ public abstract class AbstractCopyDependenciesMojo extends AbstractMojo {
         copyDependencies(null);
     }
 
+    /**
+     * Copies dependencies to /target/dependency or to target/{outputSubdirectory} if the outputSubdirectory parameter is
+     * provided
+     */
     protected void copyDependencies(String outputSubdirectory)
             throws MojoExecutionException {
 
-        outputDirectory = project.getBuild().getOutputDirectory();
+        outputDirectory = project.getBuild().getDirectory();
         baseDirectory = project.getBasedir().getAbsolutePath();
 
         String outputDirectory = outputSubdirectory == null
@@ -97,7 +100,7 @@ public abstract class AbstractCopyDependenciesMojo extends AbstractMojo {
         boolean webappExists = false;
 
         // search for target/classes/webapp
-        Path outputWebApp = Paths.get(outputDirectory, "webapp");
+        Path outputWebApp = Paths.get(outputDirectory, "classes/webapp");
 
         if (Files.isDirectory(outputWebApp)) {
 
