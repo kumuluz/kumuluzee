@@ -50,6 +50,8 @@ public class EeClassLoader extends ClassLoader {
      */
     private static final String TMP_DIRECTORY = "EeClassLoader";
 
+    private final Thread mainThread = Thread.currentThread();
+
     private File tempDir;
     private List<JarFileInfo> jarFiles;
     private Set<File> deleteOnExit;
@@ -111,7 +113,15 @@ public class EeClassLoader extends ClassLoader {
             return;
         }
 
-        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                LOG.info("Shutting down and cleaning up ...");
+                mainThread.join();
+                shutdown();
+            } catch (InterruptedException e) {
+                LOG.severe("Failed to shutdown and clean up gracefully.");
+            }
+        }));
 
         LOG.info(String.format("Initialised KumuluzEE classloader @%dms", System.currentTimeMillis() - startTime));
 //        LOG.info("Initialised KumuluzEE classloader");
@@ -281,7 +291,6 @@ public class EeClassLoader extends ClassLoader {
      * Called on shutdown to cleanup temporary files.
      */
     private void shutdown() {
-        LOG.info("Shutting down and cleaning up ...");
         for (JarFileInfo jarFileInfo : jarFiles) {
             try {
                 jarFileInfo.getJarFile().close();
@@ -289,7 +298,7 @@ public class EeClassLoader extends ClassLoader {
                 // Ignore. In the worst case temp files will accumulate.
             }
             File file = jarFileInfo.getFileDeleteOnExit();
-            if (file != null  &&  !file.delete()) {
+            if (file != null && !file.delete()) {
                 deleteOnExit.add(file);
             }
         }
