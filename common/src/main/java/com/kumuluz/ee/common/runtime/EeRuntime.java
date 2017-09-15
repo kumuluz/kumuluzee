@@ -68,4 +68,8 @@ public class EeRuntime {
     public List<EeRuntimeComponent> getEeComponents() {
         return internalRuntime.getEeComponents();
     }
+
+    public List<EeRuntimeExtension> getEeExtensions() {
+        return internalRuntime.getEeExtensions();
+    }
 }

@@ -34,6 +34,7 @@ public class EeRuntimeInternal {
     private String instanceId = UUID.randomUUID().toString();
     private String version = ResourceBundle.getBundle("META-INF/kumuluzee/versions").getString("version");
     private List<EeRuntimeComponent> eeComponents = Collections.emptyList();
+    private List<EeRuntimeExtension> eeExtensions = Collections.emptyList();
 
     public String getInstanceId() {
         return instanceId;
@@ -57,5 +58,13 @@ public class EeRuntimeInternal {
 
     public void setEeComponents(List<EeRuntimeComponent> eeComponents) {
         this.eeComponents = Collections.unmodifiableList(eeComponents);
+    }
+
+    public List<EeRuntimeExtension> getEeExtensions() {
+        return eeExtensions;
+    }
+
+    public void setEeExtensions(List<EeRuntimeExtension> eeExtensions) {
+        this.eeExtensions = Collections.unmodifiableList(eeExtensions);
     }
 }

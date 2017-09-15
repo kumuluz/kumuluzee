@@ -23,6 +23,7 @@ package com.kumuluz.ee;
 import com.kumuluz.ee.common.config.DataSourcePoolConfig;
 import com.kumuluz.ee.common.runtime.EeRuntime;
 import com.kumuluz.ee.common.runtime.EeRuntimeComponent;
+import com.kumuluz.ee.common.runtime.EeRuntimeExtension;
 import com.kumuluz.ee.common.runtime.EeRuntimeInternal;
 import com.kumuluz.ee.factories.EeConfigFactory;
 import com.kumuluz.ee.factories.JtaXADataSourceFactory;
@@ -177,6 +178,17 @@ public class EeApplication {
         serverEeRuntimeComponents.addAll(eeRuntimeComponents);
 
         eeRuntimeInternal.setEeComponents(serverEeRuntimeComponents);
+
+        List<EeRuntimeExtension> eeRuntimeExtensions = eeExtensions.stream()
+                .map(e -> new EeRuntimeExtension(e.getGroup(), e.getName())).collect(Collectors.toList());
+
+        eeRuntimeExtensions.addAll(eeConfigExtensions.stream()
+                .map(e -> new EeRuntimeExtension(e.getGroup(), e.getName())).collect(Collectors.toList()));
+
+        eeRuntimeExtensions.addAll(eeLogsExtensions.stream()
+                .map(e -> new EeRuntimeExtension(e.getGroup(), e.getName())).collect(Collectors.toList()));
+
+        eeRuntimeInternal.setEeExtensions(eeRuntimeExtensions);
 
         EeRuntime.initialize(eeRuntimeInternal);
 
