@@ -24,7 +24,7 @@ package com.kumuluz.ee.loader.exception;
  * @author Benjamin Kastelic
  * @since 2.4.0
  */
-public class EeClassLoaderException extends Exception {
+public class EeClassLoaderException extends RuntimeException {
 
     public EeClassLoaderException(String message) {
         super(message);

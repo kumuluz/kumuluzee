@@ -50,6 +50,8 @@ public class EeClassLoader extends ClassLoader {
      */
     private static final String TMP_DIRECTORY = "EeClassLoader";
 
+    private Boolean DEBUG = false;
+
     private final Thread mainThread = Thread.currentThread();
 
     private File tempDir;
@@ -71,8 +73,16 @@ public class EeClassLoader extends ClassLoader {
     public EeClassLoader(ClassLoader parent) {
         super(parent);
 
+        String debugString = System.getProperty("com.kumuluz.ee.loader.debug");
+
+        if (debugString != null) {
+
+            DEBUG = Boolean.valueOf(debugString);
+        }
+
         long startTime = System.currentTimeMillis();
-        LOG.info("Initialising KumuluzEE classloader");
+
+        debug("Initialising KumuluzEE classloader");
 
         classes = new HashMap<>();
         jarFiles = new ArrayList<>();
@@ -90,18 +100,23 @@ public class EeClassLoader extends ClassLoader {
         try {
             mainJarURLString = URLDecoder.decode(mainJarURL.getFile(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            LOG.severe(String.format("Failed to decode URL: %s %s", mainJarURL, e.toString()));
-            return;
+
+            String msg = String.format("Failed to decode URL: %s %s", mainJarURL, e.toString());
+
+            throw new EeClassLoaderException(msg, e);
         }
 
         File mainJarFile = new File(mainJarURLString);
 
         try {
             jarFileInfo = new JarFileInfo(new JarFile(mainJarFile), mainJarFile.getName(), null, protectionDomain, null);
-            LOG.fine(String.format("Loading from main JAR: '%s' PROTOCOL: '%s'", mainJarURLString, protocol));
+
+            debug(String.format("Loading from main JAR: '%s' PROTOCOL: '%s'", mainJarURLString, protocol));
         } catch (IOException e) {
-            LOG.severe(String.format("Not a JAR: %s %s", mainJarURLString, e.toString()));
-            return;
+
+            String msg = String.format("Not a JAR: %s %s", mainJarURLString, e.toString());
+
+            throw new EeClassLoaderException(msg, e);
         }
 
         // load main JAR:
@@ -109,8 +124,10 @@ public class EeClassLoader extends ClassLoader {
             // start recursive JAR loading
             loadJar(jarFileInfo);
         } catch (Exception e) {
-            LOG.severe(String.format("Not a valid URL: %s %s", mainJarURL, e.toString()));
-            return;
+
+            String msg = String.format("Not a valid URL: %s %s", mainJarURL, e.toString());
+
+            throw new EeClassLoaderException(msg, e);
         }
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -123,8 +140,7 @@ public class EeClassLoader extends ClassLoader {
             }
         }));
 
-        LOG.info(String.format("Initialised KumuluzEE classloader @%dms", System.currentTimeMillis() - startTime));
-//        LOG.info("Initialised KumuluzEE classloader");
+        debug(String.format("Initialised KumuluzEE classloader @%dms", System.currentTimeMillis() - startTime));
     }
 
     private File createTempFile(JarEntryInfo jarEntryInfo) throws EeClassLoaderException {
@@ -174,7 +190,9 @@ public class EeClassLoader extends ClassLoader {
                     try {
                         JarEntryInfo jarEntryInfo = new JarEntryInfo(jarFileInfo, je);
                         File tempFile = createTempFile(jarEntryInfo);
-                        LOG.fine(String.format("Loading inner JAR %s from temp file %s", jarEntryInfo.getJarEntry(), getFilenameForLog(tempFile)));
+
+                        debug(String.format("Loading inner JAR %s from temp file %s", jarEntryInfo.getJarEntry(), getFilenameForLog(tempFile)));
+
                         // Construct ProtectionDomain for this inner JAR:
                         URL url = tempFile.toURI().toURL();
                         ProtectionDomain pdParent = jarFileInfo.getProtectionDomain();
@@ -248,7 +266,9 @@ public class EeClassLoader extends ClassLoader {
                 //   - in the partial name: abc/aNative.dll   <-- do not load this one!
                 String[] token = jarEntryName.split("/"); // the last token is library name
                 if (token.length > 0 && token[token.length - 1].equals(name)) {
-                    LOG.fine(String.format("Loading native library '%s' found as '%s' in JAR %s", libraryName, jarEntryName, jarFileInfo.getSimpleName()));
+
+                    debug(String.format("Loading native library '%s' found as '%s' in JAR %s", libraryName, jarEntryName, jarFileInfo.getSimpleName()));
+
                     return new JarEntryInfo(jarFileInfo, jarEntry);
                 }
             }
@@ -283,7 +303,9 @@ public class EeClassLoader extends ClassLoader {
             throw new EeClassLoaderException(className);
         }
         classes.put(className, clazz);
-        LOG.fine(String.format("Loaded %s by %s from JAR %s", className, getClass().getName(), jarSimpleName));
+
+        debug(String.format("Loaded %s by %s from JAR %s", className, getClass().getName(), jarSimpleName));
+
         return clazz;
     }
 
@@ -291,6 +313,9 @@ public class EeClassLoader extends ClassLoader {
      * Called on shutdown to cleanup temporary files.
      */
     private void shutdown() {
+
+        debug("Shutting down and cleaning up ...");
+
         for (JarFileInfo jarFileInfo : jarFiles) {
             try {
                 jarFileInfo.getJarFile().close();
@@ -335,7 +360,8 @@ public class EeClassLoader extends ClassLoader {
                     deleteOnExit.add(file);
                 }
             }
-            LOG.fine(String.format("Deleted %d old temp files listed in %s", count, configFile.getAbsolutePath()));
+
+            debug(String.format("Deleted %d old temp files listed in %s", count, configFile.getAbsolutePath()));
         } catch (IOException e) {
             // Ignore. This file may not exist.
         } finally {
@@ -358,11 +384,15 @@ public class EeClassLoader extends ClassLoader {
      */
     private void persistNewTemp(File configFile) {
         if (deleteOnExit.size() == 0) {
-            LOG.fine("No temp file names to persist on exit.");
+
+            debug("No temp file names to persist on exit.");
+
             configFile.delete(); // do not pollute disk
             return;
         }
-        LOG.fine(String.format("Persisting %d temp file names into %s", deleteOnExit.size(), configFile.getAbsolutePath()));
+
+        debug(String.format("Persisting %d temp file names into %s", deleteOnExit.size(), configFile.getAbsolutePath()));
+
         BufferedWriter writer = null;
         try {
             writer = new BufferedWriter(new FileWriter(configFile));
@@ -371,7 +401,8 @@ public class EeClassLoader extends ClassLoader {
                     String filePath = file.getCanonicalPath();
                     writer.write(filePath);
                     writer.newLine();
-                    LOG.warning(String.format("JVM failed to release %s", filePath));
+
+                    debug(String.format("JVM failed to release %s", filePath));
                 }
             }
         } catch (IOException e) {
@@ -398,9 +429,13 @@ public class EeClassLoader extends ClassLoader {
      * Invokes main() method on class with provided parameters.
      */
     public void invokeMain(String className, String[] args) throws Throwable {
+
         Class<?> clazz = loadClass(className);
-        LOG.fine(String.format("Launch: %s.main(); Loader: %s", className, clazz.getClassLoader()));
+
+        debug(String.format("Launch: %s.main(); Loader: %s", className, clazz.getClassLoader()));
+
         Method method = clazz.getMethod("main", String[].class);
+
         if (method == null) {
             throw new NoSuchMethodException("The main() method in class \"" + className + "\" not found.");
         }
@@ -414,11 +449,13 @@ public class EeClassLoader extends ClassLoader {
 
     @Override
     protected synchronized Class<?> loadClass(String className, boolean bResolve) throws ClassNotFoundException {
-        LOG.fine(String.format("LOADING %s (resolve=%b)", className, bResolve));
+
+        debug(String.format("LOADING %s (resolve=%b)", className, bResolve));
 
         Thread.currentThread().setContextClassLoader(this); // !!!
 
         Class<?> clazz = null;
+
         try {
             // Step 1. This class is already loaded by system classloader.
             if (getClass().getName().equals(className)) {
@@ -427,7 +464,9 @@ public class EeClassLoader extends ClassLoader {
             // Step 2. Already loaded class.
             clazz = findLoadedClass(className);
             if (clazz != null) {
-                LOG.fine(String.format("Class %s already loaded", className));
+
+                debug(String.format("Class %s already loaded", className));
+
                 return clazz;
             }
             // Step 3. Load from JAR.
@@ -437,9 +476,9 @@ public class EeClassLoader extends ClassLoader {
                     return clazz;
                 } catch (EeClassLoaderException e) {
                     if (e.getCause() == null) {
-                        LOG.fine(String.format("Not found %s in JAR by %s: %s", className, getClass().getName(), e.getMessage()));
+                        debug(String.format("Not found %s in JAR by %s: %s", className, getClass().getName(), e.getMessage()));
                     } else {
-                        LOG.fine(String.format("Error loading %s in JAR by %s: %s", className, getClass().getName(), e.getCause()));
+                        debug(String.format("Error loading %s in JAR by %s: %s", className, getClass().getName(), e.getCause()));
                     }
                     // keep looking...
                 }
@@ -448,7 +487,9 @@ public class EeClassLoader extends ClassLoader {
             try {
                 ClassLoader classLoader = getParent();
                 clazz = classLoader.loadClass(className);
-                LOG.fine(String.format("Loaded %s by %s", className, classLoader.getClass().getName()));
+
+                debug(String.format("Loaded %s by %s", className, classLoader.getClass().getName()));
+
                 return clazz;
             } catch (ClassNotFoundException e) {
                 // Ignore
@@ -464,17 +505,24 @@ public class EeClassLoader extends ClassLoader {
 
     @Override
     protected URL findResource(String name) {
-        LOG.fine(String.format("findResource: %s", name));
+
+        debug(String.format("findResource: %s", name));
+
         if (isLaunchedFromJar()) {
             JarEntryInfo inf = findJarEntry(normalizeResourceName(name));
             if (inf != null) {
                 URL url = inf.getURL();
-                LOG.fine(String.format("found resource: %s", url));
+
+                debug(String.format("found resource: %s", url));
+
                 return url;
             }
-            LOG.fine(String.format("not found resource: %s", name));
+
+            debug(String.format("not found resource: %s", name));
+
             return null;
         }
+
         return super.findResource(name);
     }
 
@@ -485,7 +533,9 @@ public class EeClassLoader extends ClassLoader {
 
     @Override
     public Enumeration<URL> findResources(String name) throws IOException {
-        LOG.fine(String.format("getResources: %s", name));
+
+        debug(String.format("getResources: %s", name));
+
         if (isLaunchedFromJar()) {
             List<JarEntryInfo> jarEntries = findJarEntries(normalizeResourceName(name));
             List<URL> urls = new ArrayList<>();
@@ -497,22 +547,28 @@ public class EeClassLoader extends ClassLoader {
             }
             return Collections.enumeration(urls);
         }
+
         return super.findResources(name);
     }
 
     @Override
     protected String findLibrary(String name) {
-        LOG.fine(String.format("findLibrary: %s", name));
+
+        debug(String.format("findLibrary: %s", name));
+
         if (isLaunchedFromJar()) {
             JarEntryInfo jarEntryInfo = findJarNativeEntry(name);
             if (jarEntryInfo != null) {
                 try {
                     File file = createTempFile(jarEntryInfo);
-                    LOG.fine(String.format("Loading native library %s from temp file %s", jarEntryInfo.getJarEntry(), getFilenameForLog(file)));
+
+                    debug(String.format("Loading native library %s from temp file %s", jarEntryInfo.getJarEntry(), getFilenameForLog(file)));
+
                     deleteOnExit.add(file);
                     return file.getAbsolutePath();
                 } catch (EeClassLoaderException e) {
-                    LOG.severe(String.format("Failure to load native library %s: %s", name, e.toString()));
+
+                    debug(String.format("Failure to load native library %s: %s", name, e.toString()));
                 }
             }
             return null;
@@ -572,6 +628,13 @@ public class EeClassLoader extends ClassLoader {
         } catch (IOException e) {
             // In form "C:\DOCUME~1\..."
             return file.getAbsolutePath();
+        }
+    }
+
+    private void debug(String msg) {
+
+        if (DEBUG) {
+            System.out.println(msg);
         }
     }
 }
