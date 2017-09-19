@@ -50,7 +50,7 @@ KumuluzEE also provides support for [**Uber JARs**](https://github.com/kumuluz/k
 In addition to the standard Java EE components, KumuluzEE also comes with several extensions that complement and extend its functionality. The extensions will follow the same modular concept as the Java EE components in which you can chose if you want to use it as well as the underlying implementation of the extension. Most extensions are geared towards creating cloud-native microservices including configuration, logging, discovery, fault tolerance including circuit-breakers, metrics, security, event streaming and more.
 The following extensions are available with more planned soon:
 
-- [KumuluzEE Config](https://github.com/kumuluz/kumuluzee/wiki/Configuration) (File and environment variables built-in)
+- [KumuluzEE Config](https://github.com/kumuluz/kumuluzee/wiki/Configuration) (File and environment variables)
 - [KumuluzEE Config with config server](https://github.com/kumuluz/kumuluzee-config) (Config server etcd/Consul)
 - [KumuluzEE REST](https://github.com/kumuluz/kumuluzee-rest) (For implementation of common, advanced and flexible REST API functionalities and patterns. Includes support for exposing JPA entities through REST)
 - [KumuluzEE Logs](https://github.com/kumuluz/kumuluzee-logs) (For advanced microservice framework for logging)
