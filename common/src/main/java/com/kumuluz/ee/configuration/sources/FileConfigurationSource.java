@@ -287,6 +287,11 @@ public class FileConfigurationSource implements ConfigurationSource {
     public void set(String key, Float value) {
     }
 
+    @Override
+    public int getOrdinal() {
+        return getInteger(CONFIG_ORDINAL).orElse(100);
+    }
+
     /**
      * Returns true, if key represents an array.
      *
