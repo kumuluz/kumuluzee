@@ -184,4 +184,9 @@ public class SystemPropertyConfigurationSource implements ConfigurationSource {
     @Override
     public void set(String key, Float value) {
     }
+
+    @Override
+    public int getOrdinal() {
+        return getInteger(CONFIG_ORDINAL).orElse(400);
+    }
 }

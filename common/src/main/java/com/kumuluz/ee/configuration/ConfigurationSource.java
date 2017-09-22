@@ -31,6 +31,8 @@ import java.util.Optional;
  */
 public interface ConfigurationSource {
 
+    String CONFIG_ORDINAL = "config_ordinal";
+
     void init(ConfigurationDispatcher configurationDispatcher);
 
     Optional<String> get(String key);
@@ -60,4 +62,8 @@ public interface ConfigurationSource {
     void set(String key, Double value);
 
     void set(String key, Float value);
+
+    default int getOrdinal() {
+        return getInteger(CONFIG_ORDINAL).orElse(100);
+    }
 }

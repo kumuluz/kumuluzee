@@ -29,4 +29,8 @@ import com.kumuluz.ee.configuration.ConfigurationSource;
 public interface ConfigExtension extends Extension {
 
     ConfigurationSource getConfigurationSource();
+
+    default ConfigurationSource[] getConfigurationSources() {
+        return null;
+    }
 }
