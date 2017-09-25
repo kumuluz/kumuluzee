@@ -225,8 +225,8 @@ public class EeApplication {
         }
 
         if (microprofileConfigPresent) {
-            log.info("MicroProfile Config present. Configuration will use priorities according to their" +
-                    " specification.");
+            log.info("MicroProfile Config present. Configuration will use configuration source priorities according " +
+                    "to the specification.");
             configImpl.getConfigurationSources().sort(Comparator.comparingInt(ConfigurationSource::getOrdinal)
                     .reversed());
         }
