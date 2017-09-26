@@ -38,6 +38,8 @@ public interface ServletServer extends KumuluzServer {
 
     void registerServlet(Class<? extends Servlet> servletClass, String mapping, Map<String, String> parameters);
 
+    void registerServlet(Class<? extends Servlet> servletClass, String mapping, Map<String, String> parameters, int initOrder);
+
     void registerListener(EventListener listener);
 
     void registerFilter(Class<? extends Filter> filterClass, String pathSpec);
