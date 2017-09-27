@@ -22,6 +22,9 @@ package com.kumuluz.ee.common;
 
 import com.kumuluz.ee.configuration.ConfigurationSource;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * @author Tilen Faganel
  * @since 2.3.0
@@ -34,7 +37,7 @@ public interface ConfigExtension extends Extension {
     @Deprecated
     ConfigurationSource getConfigurationSource();
 
-    default ConfigurationSource[] getConfigurationSources() {
-        return new ConfigurationSource[0];
+    default List<ConfigurationSource> getConfigurationSources() {
+        return Collections.emptyList();
     }
 }

@@ -278,7 +278,7 @@ public class FileConfigurationSource implements ConfigurationSource {
     }
 
     @Override
-    public int getOrdinal() {
+    public Integer getOrdinal() {
         return getInteger(CONFIG_ORDINAL).orElse(100);
     }
 

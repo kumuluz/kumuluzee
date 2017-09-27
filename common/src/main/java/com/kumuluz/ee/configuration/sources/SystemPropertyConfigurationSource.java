@@ -186,7 +186,7 @@ public class SystemPropertyConfigurationSource implements ConfigurationSource {
     }
 
     @Override
-    public int getOrdinal() {
+    public Integer getOrdinal() {
         return getInteger(CONFIG_ORDINAL).orElse(400);
     }
 }
