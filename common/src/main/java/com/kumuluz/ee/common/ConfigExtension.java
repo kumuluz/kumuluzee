@@ -28,9 +28,13 @@ import com.kumuluz.ee.configuration.ConfigurationSource;
  */
 public interface ConfigExtension extends Extension {
 
+    /**
+     * @deprecated Use {@link #getConfigurationSources()} instead.
+     */
+    @Deprecated
     ConfigurationSource getConfigurationSource();
 
     default ConfigurationSource[] getConfigurationSources() {
-        return null;
+        return new ConfigurationSource[0];
     }
 }
