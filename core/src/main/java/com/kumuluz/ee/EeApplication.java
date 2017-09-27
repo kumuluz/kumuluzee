@@ -200,20 +200,15 @@ public class EeApplication {
         // Initiate the config extensions
         log.info("Initializing config extensions");
 
-        boolean microprofileConfigPresent = false;
         for (ExtensionWrapper<ConfigExtension> extension : eeConfigExtensions) {
 
             log.info("Found config extension implemented by " + extension.getName());
-
-            if ("MicroProfile".equals(extension.getName())) {
-                microprofileConfigPresent = true;
-            }
 
             extension.getExtension().load();
             extension.getExtension().init(server, eeConfig);
 
             ConfigurationSource[] sources = extension.getExtension().getConfigurationSources();
-            if (sources == null) {
+            if (sources == null || sources.length == 0) {
                 sources = new ConfigurationSource[1];
                 sources[0] = extension.getExtension().getConfigurationSource();
             }
@@ -224,12 +219,7 @@ public class EeApplication {
             }
         }
 
-        if (microprofileConfigPresent) {
-            log.info("MicroProfile Config present. Configuration will use configuration source priorities according " +
-                    "to the specification.");
-            configImpl.getConfigurationSources().sort(Comparator.comparingInt(ConfigurationSource::getOrdinal)
-                    .reversed());
-        }
+        configImpl.getConfigurationSources().sort(Comparator.comparingInt(ConfigurationSource::getOrdinal).reversed());
 
         log.info("Config extensions initialized");
 
