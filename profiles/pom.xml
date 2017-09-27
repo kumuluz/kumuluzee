@@ -18,6 +18,7 @@
     <modules>
         <module>micro-profile</module>
         <module>micro-profile-1.0</module>
+        <module>micro-profile-1.1</module>
     </modules>
 
     <artifactId>kumuluzee-profiles</artifactId>
