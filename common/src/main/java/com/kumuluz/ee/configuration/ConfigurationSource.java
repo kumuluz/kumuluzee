@@ -63,7 +63,7 @@ public interface ConfigurationSource {
 
     void set(String key, Float value);
 
-    default int getOrdinal() {
+    default Integer getOrdinal() {
         return getInteger(CONFIG_ORDINAL).orElse(100);
     }
 }

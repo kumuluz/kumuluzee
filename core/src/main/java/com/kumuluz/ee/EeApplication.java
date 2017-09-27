@@ -207,10 +207,9 @@ public class EeApplication {
             extension.getExtension().load();
             extension.getExtension().init(server, eeConfig);
 
-            ConfigurationSource[] sources = extension.getExtension().getConfigurationSources();
-            if (sources == null || sources.length == 0) {
-                sources = new ConfigurationSource[1];
-                sources[0] = extension.getExtension().getConfigurationSource();
+            List<ConfigurationSource> sources = extension.getExtension().getConfigurationSources();
+            if (sources == null || sources.size() == 0) {
+                sources = Collections.singletonList(extension.getExtension().getConfigurationSource());
             }
 
             for (ConfigurationSource source : sources) {
