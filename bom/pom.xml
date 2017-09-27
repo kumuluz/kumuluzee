@@ -22,6 +22,10 @@
                 <artifactId>kumuluzee-micro-profile</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-microProfile-1.1</artifactId>
+            </dependency>
 
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
