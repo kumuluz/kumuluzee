@@ -214,7 +214,7 @@ public class EeApplication {
 
             for (ConfigurationSource source : sources) {
                 source.init(configImpl.getDispatcher());
-                configImpl.getConfigurationSources().add(1, source);
+                configImpl.getConfigurationSources().add(source);
             }
         }
 
