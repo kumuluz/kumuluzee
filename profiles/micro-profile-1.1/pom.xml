@@ -19,6 +19,10 @@
 
     <artifactId>kumuluzee-microProfile-1.1</artifactId>
 
+    <properties>
+        <version.kumuluzee-config-mp>1.1.0-SNAPSHOT</version.kumuluzee-config-mp>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.kumuluz.ee</groupId>
@@ -39,6 +43,12 @@
         <dependency>
             <groupId>com.kumuluz.ee</groupId>
             <artifactId>kumuluzee-json-p-jsonp</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.kumuluz.ee.config</groupId>
+            <artifactId>kumuluzee-config-mp</artifactId>
+            <version>${version.kumuluzee-config-mp}</version>
         </dependency>
     </dependencies>
 
