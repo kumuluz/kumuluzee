@@ -12,6 +12,8 @@ KumuluzEE has been designed to use the standard Java EE technologies and APIs wi
 
 KumuluzEE is Eclipse MicroProfile compliant and provides support for MicroProfile 1.0 and MicroProfile 1.1. It implements MicroProfile Config 1.1, MicroProfile Health 1.0, MicroProfile Fault Tolerance 1.0 and MicroProfile Metrics 1.0 APIs.
 
+## Features
+
 Primary features:
 
 - No need for a traditional application server. Run your app anywhere Java runs as well as in PaaS
@@ -24,6 +26,8 @@ and Docker-like environments
 - Extend your microservices with common cloud-native patterns, such as config, discovery, logging, fault tolerance, circuit-breakers, etc. KumuluzEE provides all the building blocks.
 
 KumuluzEE provides support for various Java EE APIs and components. The goal is to support as many Java EE components as possible (contributions welcome). 
+
+## Java EE components
 
 Currently the following components are supported with more being added over time:
 
@@ -40,6 +44,8 @@ Currently the following components are supported with more being added over time
 - WebSocket 1.1 (Jetty)
 - Bean Validation 1.1 (RI Hibernate validator)
 - JTA 1.2 (Narayana)
+
+## Additional features
 
 KumuluzEE provides additional features, which are described on the [project Wiki]( https://github.com/kumuluz/kumuluzee/wiki), particularly:
 - [Configuration framework](https://github.com/kumuluz/kumuluzee/wiki/Configuration) for easy and efficient configuration of microservices from various sources, such as environment variables, configuration files (yaml), properties, etc.
