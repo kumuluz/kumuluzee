@@ -36,6 +36,7 @@ import org.eclipse.jetty.server.handler.SecuredRedirectHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
+import org.eclipse.jetty.webapp.WebDescriptor;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -44,6 +45,7 @@ import javax.naming.*;
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
+import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 
 /**
@@ -264,10 +266,6 @@ public class JettyServletServer implements ServletServer {
         } catch (NamingException e) {
             throw new IllegalArgumentException("Unable to create naming data source entry with jndi name " + jndiName + "", e);
         }
-    }
-
-    public ServletHolder[] getRegisteredServlets() {
-        return appContext.getServletHandler().getServlets();
     }
 
     private JettyFactory createJettyFactory() {
