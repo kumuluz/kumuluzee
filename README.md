@@ -10,6 +10,8 @@ KumuluzEE also provides extensions for developing common patterns in cloud-nativ
 
 KumuluzEE has been designed to use the standard Java EE technologies and APIs with optional extensions for easier development of cloud-native microservices. Therefore, it is particularly suitable for existing enterprise Java EE developers, who would like to leverage their skills, but progressively move from monolithic to microservice design patterns.
 
+KumuluzEE is Eclipse MicroProfile compliant and provides support for MicroProfile 1.0 and MicroProfile 1.1. It implements MicroProfile Config 1.1, MicroProfile Health 1.0, MicroProfile Fault Tolerance 1.0 and MicroProfile Metrics 1.0 APIs.
+
 Primary features:
 
 - No need for a traditional application server. Run your app anywhere Java runs as well as in PaaS
@@ -64,6 +66,18 @@ The following extensions are available with more planned soon:
 
 If you already know how to use Java EE, then you already know how to use KumuluzEE. It is simple and straightforward. See the [getting started](https://github.com/kumuluz/KumuluzEE/wiki/Getting-started) wiki section to create your first light-weight standalone Java EE app in 5 minutes. Refer to [samples](https://github.com/kumuluz/kumuluzee-samples) for more examples.
 
+## MicroProfile
+
+KumuluzEE is Eclipse MicroProfile compliant and provides support for:
+- MicroProfile 1.0 
+- MicroProfile 1.1
+
+It implements the following MicroProfile APIs:
+- [MicroProfile Config 1.1](https://github.com/kumuluz/kumuluzee-config-mp)
+- [MicroProfile Health 1.0](https://github.com/kumuluz/kumuluzee-health)
+- [MicroProfile Fault Tolerance 1.0](https://github.com/kumuluz/kumuluzee-fault-tolerance)
+- [MicroProfile Metrics 1.0](https://github.com/kumuluz/kumuluzee-metrics)
+
 ## Usage
 
 KumuluzEE ships with a BOM (bill of materials) which you can use to easily add the various components you need without worrying about the versions and their compatibility as it is required that all components are the same version. 
@@ -88,11 +102,21 @@ Using maven add the BOM module of the library as a dependency to your project. T
 Now you can either choose any single combinations of Java EE components or use one of the common pre-built profiles that
 ship as part of KumuluzEE. You can chose any of the following profiles:
 
+MicroProfile 1.0
 ```xml
 <!-- MicroProfile 1.0 -->
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee-microProfile-1.0</artifactId>
+</dependency>
+```
+
+MicroProfile 1.1
+```xml
+<!-- MicroProfile 1.1 -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-microProfile-1.1</artifactId>
 </dependency>
 ```
 
@@ -182,11 +206,11 @@ To choose your Java EE components with fine grain control include them as your d
 
 To choose your KumuluzEE extensions include them as your dependencies. You can find the available implementations and options at their respected project pages.
 
-## Pack and run microservice as uber JAR
+## Pack and run microservice as Uber JAR
 
-KumuluzEE (since version 2.4) provides support for packing and running microservices as uber JARs. It also includes a Maven plugin that correctly packages the microservice. 
+KumuluzEE (since version 2.4) provides support for packing and running microservices as Uber JARs. It also includes a Maven plugin that correctly packages the microservice. 
 
-To package a Kumuluz EE microservice into an "uber" JAR, you need to add the following plugin declaration into your 
+To package a Kumuluz EE microservice into an Uber JAR, you need to add the following plugin declaration into your 
 REST module pom.xml:
 
 ```xml
