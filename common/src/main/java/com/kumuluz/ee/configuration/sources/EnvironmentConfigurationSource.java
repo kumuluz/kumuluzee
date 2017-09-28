@@ -170,6 +170,11 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
     public void set(String key, Float value) {
     }
 
+    @Override
+    public Integer getOrdinal() {
+        return getInteger(CONFIG_ORDINAL).orElse(300);
+    }
+
     private String parseKeyNameForEnvironmentVariables(String key) {
 
         return key.toUpperCase().replaceAll("\\[", "").replaceAll("\\]", "")

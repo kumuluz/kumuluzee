@@ -42,6 +42,7 @@ public class FileConfigurationSource implements ConfigurationSource {
     private String ymlFileName;
     private String yamlFileName;
     private String propertiesFileName;
+    private String microProfilePropertiesFileName;
     private Map<String, Object> config;
     private Properties properties;
 
@@ -50,7 +51,8 @@ public class FileConfigurationSource implements ConfigurationSource {
         this.ymlFileName = "config.yml";
         this.yamlFileName = "config.yaml";
         this.propertiesFileName = "config.properties";
-        
+        this.microProfilePropertiesFileName = "META-INF/microprofile-config.properties";
+
         String configurationFileName = System.getProperty("com.kumuluz.ee.configuration.file");
 
         if (configurationFileName != null && !configurationFileName.isEmpty()) {
@@ -88,7 +90,7 @@ public class FileConfigurationSource implements ConfigurationSource {
 
             if (file != null) {
 
-                logDeferrer.defer(l -> l.info("Loading configuration from YAML file.") );
+                logDeferrer.defer(l -> l.info("Loading configuration from YAML file."));
 
                 Object yamlParsed = yaml.load(file);
 
@@ -96,7 +98,8 @@ public class FileConfigurationSource implements ConfigurationSource {
                     config = (Map<String, Object>) yamlParsed;
                 } else {
 
-                    logDeferrer.defer(l -> l.info("Configuration YAML is malformed as it contains an array at the root level. Skipping."));
+                    logDeferrer.defer(l -> l.info("Configuration YAML is malformed as it contains an array at the " +
+                            "root level. Skipping."));
                 }
 
                 file.close();
@@ -104,35 +107,22 @@ public class FileConfigurationSource implements ConfigurationSource {
         } catch (IOException e) {
             logDeferrer.defer(l ->
                     l.info("Couldn't successfully process the YAML configuration file." +
-                    "All your properties may not be correctly loaded"));
+                            "All your properties may not be correctly loaded"));
         }
 
-        // parse yaml file to Map<String, Object>
+        // parse properties file
         if (config == null) {
-
-            try {
-                InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propertiesFileName);
-
-                if (inputStream != null) {
-
-                    logDeferrer.defer(l -> l.info("Loading configuration from .properties file " + propertiesFileName));
-
-                    properties = new Properties();
-                    properties.load(inputStream);
-
-                    inputStream.close();
-                }
-            } catch (Exception e) {
-
-                logDeferrer.defer(l -> l.info("Properties file not found."));
+            loadProperties(propertiesFileName);
+            if (properties == null) {
+                loadProperties(microProfilePropertiesFileName);
             }
-
         }
 
         if (config != null || properties != null) {
             logDeferrer.defer(l -> l.info("Configuration successfully read."));
         } else {
-            logDeferrer.defer(l -> l.info("Unable to load configuration from file. No configuration files were found."));
+            logDeferrer.defer(l -> l.info("Unable to load configuration from file. No configuration files were found" +
+                    "."));
         }
     }
 
@@ -287,6 +277,11 @@ public class FileConfigurationSource implements ConfigurationSource {
     public void set(String key, Float value) {
     }
 
+    @Override
+    public Integer getOrdinal() {
+        return getInteger(CONFIG_ORDINAL).orElse(100);
+    }
+
     /**
      * Returns true, if key represents an array.
      *
@@ -360,5 +355,23 @@ public class FileConfigurationSource implements ConfigurationSource {
         }
 
         return value;
+    }
+
+    private void loadProperties(String fileName) {
+        try {
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
+
+            if (inputStream != null) {
+
+                logDeferrer.defer(l -> l.info("Loading configuration from .properties file: " + propertiesFileName));
+
+                properties = new Properties();
+                properties.load(inputStream);
+
+                inputStream.close();
+            }
+        } catch (IOException e) {
+            logDeferrer.defer(l -> l.info("Properties file: " + fileName + " not found."));
+        }
     }
 }

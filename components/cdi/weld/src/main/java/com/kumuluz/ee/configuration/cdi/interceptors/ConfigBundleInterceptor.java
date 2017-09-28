@@ -68,7 +68,7 @@ public class ConfigBundleInterceptor {
 
         ConfigBundle configBundleAnnotation = (ConfigBundle) targetClass.getDeclaredAnnotation(ConfigBundle.class);
 
-        processConfigBundleBeanSetters(target, targetClass, getKeyPrefix(targetClass, null), new HashMap<>(),
+        processConfigBundleBeanSetters(target, targetClass, getKeyPrefix(targetClass), new HashMap<>(),
                 configBundleAnnotation.watch());
 
         return ic.proceed();
@@ -257,8 +257,11 @@ public class ConfigBundleInterceptor {
      */
     private String getKeyName(Class targetClass, String setter, String keyPrefix) throws Exception {
 
-        String key;
-        String prefix = keyPrefix;
+        StringBuilder key = new StringBuilder();
+        key.append(keyPrefix);
+        if (!key.toString().isEmpty()) {
+            key.append(".");
+        }
 
         // get ConfigValue
         Field field = targetClass.getDeclaredField(setterToField(setter));
@@ -268,13 +271,13 @@ public class ConfigBundleInterceptor {
         }
 
         if (fieldAnnotation != null && !fieldAnnotation.value().isEmpty()) {
-            key = prefix + "." + StringUtils.camelCaseToHyphenCase(fieldAnnotation.value());
+            key.append(StringUtils.camelCaseToHyphenCase(fieldAnnotation.value()));
 
         } else {
-            key = prefix + "." + StringUtils.camelCaseToHyphenCase(setter.substring(3));
+            key.append(StringUtils.camelCaseToHyphenCase(setter.substring(3)));
         }
 
-        return key;
+        return key.toString();
 
     }
 
@@ -282,19 +285,18 @@ public class ConfigBundleInterceptor {
      * Generate a key prefix from annotation, class name, or parent prefix in case of nested classes.
      *
      * @param targetClass target class
-     * @param keyPrefix   prefix used for generation of a configuration key
      * @return key prefix
      */
-    private String getKeyPrefix(Class targetClass, String keyPrefix) {
-
-        if (keyPrefix != null) {
-            return keyPrefix;
-        }
+    private String getKeyPrefix(Class targetClass) {
 
         String prefix = ((ConfigBundle) targetClass.getAnnotation(ConfigBundle.class)).value();
 
         if (prefix.isEmpty()) {
             prefix = StringUtils.camelCaseToHyphenCase(targetClass.getSimpleName());
+        }
+
+        if (".".equals(prefix)) {
+            prefix = "";
         }
 
         return prefix;
