@@ -13,4 +13,11 @@
     <description>KumuluzEE custom class loader implementation</description>
 
     <artifactId>kumuluzee-loader</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+        </dependency>
+    </dependencies>
 </project>
