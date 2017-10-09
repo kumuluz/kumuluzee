@@ -27,7 +27,6 @@ import com.kumuluz.ee.common.dependencies.EeComponentType;
 import com.kumuluz.ee.common.dependencies.ServerDef;
 import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 import com.kumuluz.ee.common.utils.ResourceUtils;
-
 import org.eclipse.jetty.plus.jndi.Resource;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -36,17 +35,16 @@ import org.eclipse.jetty.server.handler.SecuredRedirectHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
-import org.eclipse.jetty.webapp.WebDescriptor;
 
-import java.util.*;
-import java.util.logging.Logger;
-
-import javax.naming.*;
+import javax.naming.NamingException;
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
 import javax.sql.DataSource;
+import java.util.EnumSet;
+import java.util.EventListener;
+import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * @author Tilen Faganel
