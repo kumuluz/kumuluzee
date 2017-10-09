@@ -213,8 +213,10 @@ public class EeApplication {
             }
 
             for (ConfigurationSource source : sources) {
-                source.init(configImpl.getDispatcher());
-                configImpl.getConfigurationSources().add(source);
+                if (source != null) {
+                    source.init(configImpl.getDispatcher());
+                    configImpl.getConfigurationSources().add(source);
+                }
             }
         }
 
