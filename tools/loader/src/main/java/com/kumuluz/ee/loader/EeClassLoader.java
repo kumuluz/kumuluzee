@@ -37,7 +37,6 @@ import java.security.cert.Certificate;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.logging.Logger;
 
 /**
  * @author Benjamin Kastelic
@@ -136,9 +135,9 @@ public class EeClassLoader extends ClassLoader {
                 mainThread.join();
                 shutdown();
             } catch (InterruptedException e) {
-                LOG.severe("Failed to shutdown and clean up gracefully.");
+                debug("Failed to shutdown and clean up gracefully.");
             } catch (NoClassDefFoundError e) {
-              
+
             }
         }));
 
