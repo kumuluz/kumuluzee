@@ -27,6 +27,8 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -86,6 +88,20 @@ public class FileConfigurationSource implements ConfigurationSource {
 
             if (file == null) {
                 file = getClass().getClassLoader().getResourceAsStream(yamlFileName);
+            }
+
+            if (file == null) {
+                try {
+                    file = Files.newInputStream(Paths.get(ymlFileName));
+                } catch (IOException ignored) {
+                }
+            }
+
+            if (file == null) {
+                try {
+                    file = Files.newInputStream(Paths.get(yamlFileName));
+                } catch (IOException ignored) {
+                }
             }
 
             if (file != null) {
@@ -358,8 +374,16 @@ public class FileConfigurationSource implements ConfigurationSource {
     }
 
     private void loadProperties(String fileName) {
+
         try {
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
+
+            if (inputStream == null) {
+                try {
+                    inputStream = Files.newInputStream(Paths.get(fileName));
+                } catch (IOException ignored) {
+                }
+            }
 
             if (inputStream != null) {
 
