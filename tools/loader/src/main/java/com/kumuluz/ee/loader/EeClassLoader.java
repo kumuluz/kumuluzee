@@ -43,8 +43,6 @@ import java.util.logging.Logger;
  */
 public class EeClassLoader extends ClassLoader {
 
-    private final static Logger LOG = Logger.getLogger(EeBootLoader.class.getSimpleName());
-
     /**
      * Directory name for temporary files.
      */
@@ -132,11 +130,11 @@ public class EeClassLoader extends ClassLoader {
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
-                LOG.info("Shutting down and cleaning up ...");
+                debug("Shutting down and cleaning up ...");
                 mainThread.join();
                 shutdown();
             } catch (InterruptedException e) {
-                LOG.severe("Failed to shutdown and clean up gracefully.");
+                debug("Failed to shutdown and clean up gracefully.");
             }
         }));
 

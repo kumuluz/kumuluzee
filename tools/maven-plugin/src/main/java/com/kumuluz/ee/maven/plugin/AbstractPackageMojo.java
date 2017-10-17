@@ -182,6 +182,8 @@ public abstract class AbstractPackageMojo extends AbstractCopyDependenciesMojo {
 
             Path sourcePath1 = Paths.get(buildDirectory, finalName + ".jar");
 
+            getLog().info("Repackaging jar: " + sourcePath1.toAbsolutePath());
+
             if (Files.exists(sourcePath1)) {
 
                 Files.move(
