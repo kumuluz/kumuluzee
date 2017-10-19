@@ -1,7 +1,10 @@
-package com.kumuluz.ee.maven.plugin.com.kumuluz.ee.maven.plugin.config;
+package com.kumuluz.ee.maven.plugin.com.kumuluz.ee.maven.plugin.util;
 
 /**
- * Created by zvoneg on 09/10/2017.
+ * ApiSpecsURLs class.
+ *
+ * @author Zvone Gazvoda
+ * @since 2.5.0
  */
 public class ApiSpecURLs {
 
