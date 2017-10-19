@@ -23,8 +23,9 @@ package com.kumuluz.ee.configuration.sources;
 import com.kumuluz.ee.configuration.ConfigurationSource;
 import com.kumuluz.ee.configuration.utils.ConfigurationDispatcher;
 
-import java.util.*;
-import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Tilen Faganel
@@ -143,7 +144,23 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
 
     @Override
     public Optional<List<String>> getMapKeys(String key) {
-        return Optional.empty();
+
+        List<String> mapKeys = new ArrayList<>();
+
+        for (String envKey : System.getenv().keySet()) {
+            if (envKey.startsWith(parseKeyNameForEnvironmentVariables(key))) {
+                mapKeys.add(parseKeyNameFromEnvironmentVariables(envKey.substring(parseKeyNameForEnvironmentVariables
+                        (key).length() + 1)));
+            } else if (envKey.startsWith(parseKeyNameForEnvironmentVariablesLegacy(key))) {
+                mapKeys.add(parseKeyNameFromEnvironmentVariables(envKey.substring
+                        (parseKeyNameForEnvironmentVariablesLegacy(key).length() + 1)));
+            }
+        }
+
+        if (mapKeys.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(mapKeys);
     }
 
     @Override
@@ -185,5 +202,9 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
     private String parseKeyNameForEnvironmentVariablesLegacy(String key) {
 
         return key.toUpperCase().replaceAll("\\.", "_");
+    }
+
+    private String parseKeyNameFromEnvironmentVariables(String key) {
+        return key.toLowerCase().replaceAll("_", "\\.");
     }
 }
