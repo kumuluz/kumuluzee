@@ -1,3 +1,23 @@
+/*
+ *  Copyright (c) 2014-2017 Kumuluz and/or its affiliates
+ *  and other contributors as indicated by the @author tags and
+ *  the contributor list.
+ *
+ *  Licensed under the MIT License (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  https://opensource.org/licenses/MIT
+ *
+ *  The software is provided "AS IS", WITHOUT WARRANTY OF ANY KIND, express or
+ *  implied, including but not limited to the warranties of merchantability,
+ *  fitness for a particular purpose and noninfringement. in no event shall the
+ *  authors or copyright holders be liable for any claim, damages or other
+ *  liability, whether in an action of contract, tort or otherwise, arising from,
+ *  out of or in connection with the software or the use or other dealings in the
+ *  software. See the License for the specific language governing permissions and
+ *  limitations under the License.
+*/
 package com.kumuluz.ee.jetty;
 
 import com.kumuluz.ee.common.ServletServer;
@@ -9,17 +29,18 @@ import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 import com.kumuluz.ee.common.utils.ResourceUtils;
 
 import org.eclipse.jetty.plus.jndi.Resource;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.SecuredRedirectHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 
-import java.util.EnumSet;
-import java.util.EventListener;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
-import javax.naming.NamingException;
+import javax.naming.*;
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
@@ -61,7 +82,7 @@ public class JettyServletServer implements ServletServer {
 
             log.severe(e.getMessage());
 
-            throw new KumuluzServerException(e.getMessage(), e.getCause());
+            throw new KumuluzServerException(e.getMessage(), e);
         }
     }
 
@@ -88,15 +109,24 @@ public class JettyServletServer implements ServletServer {
     public void initWebContext() {
 
         if (server == null)
-            throw new IllegalStateException("Jetty has to be initialized before adding a web " +
-                    "context");
+            throw new IllegalStateException("Jetty has to be initialized before adding a web context");
 
         if (server.isStarted() || server.isStarting())
             throw new IllegalStateException("Jetty cannot be started before adding a web context");
 
         appContext = new WebAppContext();
 
-        appContext.setAttribute(JettyAttributes.jarPattern, ClasspathAttributes.exploded);
+        if (ResourceUtils.isRunningInJar()) {
+            appContext.setAttribute(JettyAttributes.jarPattern, ClasspathAttributes.jar);
+
+            try {
+                appContext.setClassLoader(getClass().getClassLoader());
+            } catch (Exception e) {
+                throw new IllegalStateException("Unable to set custom classloader for Jetty");
+            }
+        } else {
+            appContext.setAttribute(JettyAttributes.jarPattern, ClasspathAttributes.exploded);
+        }
 
         appContext.setParentLoaderPriority(true);
 
@@ -104,9 +134,25 @@ public class JettyServletServer implements ServletServer {
 
         appContext.setContextPath(serverConfig.getContextPath());
 
+        if (!Boolean.TRUE.equals(serverConfig.getDirBrowsing())) {
+
+            appContext.setInitParameter(JettyAttributes.dirBrowsing, "false");
+        }
+
         log.info("Starting KumuluzEE with context root '" + serverConfig.getContextPath() + "'");
 
-        server.setHandler(appContext);
+        // Set the secured redirect handler in case the force https option is selected
+        if (serverConfig.getForceHttps()) {
+
+            HandlerList handlers = new HandlerList();
+            handlers.setHandlers(new Handler[]
+                    { new SecuredRedirectHandler(), appContext});
+
+            server.setHandler(handlers);
+        } else {
+
+            server.setHandler(appContext);
+        }
     }
 
     @Override
@@ -208,7 +254,7 @@ public class JettyServletServer implements ServletServer {
 
             appContext.setAttribute(jndiName, resource);
         } catch (NamingException e) {
-            throw new IllegalArgumentException("Unable to create naming data source entry with jndi name " + jndiName + "");
+            throw new IllegalArgumentException("Unable to create naming data source entry with jndi name " + jndiName + "", e);
         }
     }
 

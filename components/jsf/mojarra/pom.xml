@@ -5,7 +5,7 @@
     <parent>
         <artifactId>kumuluzee-jsf</artifactId>
         <groupId>com.kumuluz.ee</groupId>
-        <version>2.3.0-SNAPSHOT</version>
+        <version>2.5.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,10 +13,6 @@
     <description>KumuluzEE JSF component implemented by Mojarra</description>
 
     <artifactId>kumuluzee-jsf-mojarra</artifactId>
-
-    <properties>
-        <mojarra.version>2.2.14</mojarra.version>
-    </properties>
 
     <dependencies>
         <dependency>

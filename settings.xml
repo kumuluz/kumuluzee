@@ -28,6 +28,20 @@
                 <gpg.publicKeyring>~/build/${env.TRAVIS_REPO_SLUG}/gpg.pub</gpg.publicKeyring>
                 <gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
             </properties>
+
+            <repositories>
+                <repository>
+                    <id>sonatype-snapshots</id>
+                    <name>Sonatype Snapshots</name>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+                    <releases>
+                        <enabled>false</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
         </profile>
     </profiles>
     <activeProfiles/>

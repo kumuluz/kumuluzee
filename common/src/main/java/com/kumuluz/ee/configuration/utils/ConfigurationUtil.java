@@ -1,12 +1,30 @@
+/*
+ *  Copyright (c) 2014-2017 Kumuluz and/or its affiliates
+ *  and other contributors as indicated by the @author tags and
+ *  the contributor list.
+ *
+ *  Licensed under the MIT License (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  https://opensource.org/licenses/MIT
+ *
+ *  The software is provided "AS IS", WITHOUT WARRANTY OF ANY KIND, express or
+ *  implied, including but not limited to the warranties of merchantability,
+ *  fitness for a particular purpose and noninfringement. in no event shall the
+ *  authors or copyright holders be liable for any claim, damages or other
+ *  liability, whether in an action of contract, tort or otherwise, arising from,
+ *  out of or in connection with the software or the use or other dealings in the
+ *  software. See the License for the specific language governing permissions and
+ *  limitations under the License.
+*/
 package com.kumuluz.ee.configuration.utils;
 
+import com.kumuluz.ee.configuration.ConfigurationListener;
 import com.kumuluz.ee.configuration.ConfigurationSource;
-import com.kumuluz.ee.configuration.sources.EnvironmentConfigurationSource;
-import com.kumuluz.ee.configuration.sources.FileConfigurationSource;
+import com.kumuluz.ee.configuration.enums.ConfigurationValueType;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -15,49 +33,42 @@ import java.util.logging.Logger;
  */
 public class ConfigurationUtil {
 
-    private static final Logger log = Logger.getLogger(ConfigurationUtil.class.getName());
     private static ConfigurationUtil instance;
-    private List<ConfigurationSource> configurationSources;
+
+    private ConfigurationImpl config;
 
     protected ConfigurationUtil() {
     }
 
-    public static ConfigurationUtil getInstance() {
-        if (instance == null) {
-            instance = new ConfigurationUtil();
-            instance.init();
+    private ConfigurationUtil(ConfigurationImpl config) {
+        this.config = config;
+    }
+
+    public static void initialize(ConfigurationImpl config) {
+
+        if (instance != null) {
+            throw new IllegalStateException("The ConfigurationUtil was already initialized.");
         }
+
+        instance = new ConfigurationUtil(config);
+    }
+
+    public static ConfigurationUtil getInstance() {
+
+        if (instance == null) {
+            throw new IllegalStateException("The ConfigurationUtil was not yet initialized.");
+        }
+
         return instance;
     }
 
-    private void init() {
-
-        // specify sources
-        configurationSources = new ArrayList<>();
-        configurationSources.add(new EnvironmentConfigurationSource());
-        configurationSources.add(new FileConfigurationSource());
-
-        // initialise sources
-        for (ConfigurationSource configurationSource : configurationSources) {
-            log.info("Initialising configuration source: " + configurationSource.getClass().getSimpleName());
-            configurationSource.init();
-        }
-    }
-
     public Optional<String> get(String key) {
-
-        for (ConfigurationSource configurationSource : configurationSources) {
-            Optional<String> value = configurationSource.get(key);
-            if (value.isPresent()) {
-                return value;
-            }
-        }
-        return Optional.empty();
+        return get(key, new HashSet<>());
     }
 
     public Optional<Boolean> getBoolean(String key) {
 
-        for (ConfigurationSource configurationSource : configurationSources) {
+        for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
             Optional<Boolean> value = configurationSource.getBoolean(key);
             if (value.isPresent()) {
                 return value;
@@ -68,8 +79,19 @@ public class ConfigurationUtil {
 
     public Optional<Integer> getInteger(String key) {
 
-        for (ConfigurationSource configurationSource : configurationSources) {
+        for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
             Optional<Integer> value = configurationSource.getInteger(key);
+            if (value.isPresent()) {
+                return value;
+            }
+        }
+        return Optional.empty();
+    }
+
+    public Optional<Long> getLong(String key) {
+
+        for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
+            Optional<Long> value = configurationSource.getLong(key);
             if (value.isPresent()) {
                 return value;
             }
@@ -79,7 +101,7 @@ public class ConfigurationUtil {
 
     public Optional<Double> getDouble(String key) {
 
-        for (ConfigurationSource configurationSource : configurationSources) {
+        for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
             Optional<Double> value = configurationSource.getDouble(key);
             if (value.isPresent()) {
                 return value;
@@ -90,7 +112,7 @@ public class ConfigurationUtil {
 
     public Optional<Float> getFloat(String key) {
 
-        for (ConfigurationSource configurationSource : configurationSources) {
+        for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
             Optional<Float> value = configurationSource.getFloat(key);
             if (value.isPresent()) {
                 return value;
@@ -102,7 +124,7 @@ public class ConfigurationUtil {
     public Optional<Integer> getListSize(String key) {
         int listSize = -1;
 
-        for (ConfigurationSource configurationSource : configurationSources) {
+        for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
             Optional<Integer> currentListSize = configurationSource.getListSize(key);
             if (currentListSize.isPresent() && currentListSize.get() > listSize) {
                 listSize = currentListSize.get();
@@ -116,22 +138,150 @@ public class ConfigurationUtil {
     }
 
     public void set(String key, String value) {
-        configurationSources.get(0).set(key, value);
+        config.getConfigurationSources().get(0).set(key, value);
     }
 
     public void set(String key, Boolean value) {
-        configurationSources.get(0).set(key, value);
+        config.getConfigurationSources().get(0).set(key, value);
     }
 
     public void set(String key, Integer value) {
-        configurationSources.get(0).set(key, value);
+        config.getConfigurationSources().get(0).set(key, value);
     }
 
     public void set(String key, Double value) {
-        configurationSources.get(0).set(key, value);
+        config.getConfigurationSources().get(0).set(key, value);
     }
 
     public void set(String key, Float value) {
-        configurationSources.get(0).set(key, value);
+        config.getConfigurationSources().get(0).set(key, value);
+    }
+
+    public Optional<ConfigurationValueType> getType(String key) {
+
+        // check if key type is a list or a map
+        if (getListSize(key).isPresent()) {
+            return Optional.of(ConfigurationValueType.LIST);
+        }
+
+        if (getMapKeys(key).isPresent()) {
+            return Optional.of(ConfigurationValueType.MAP);
+        }
+
+        // get the key value from sources according to priorities and determine its type
+        Optional<String> value = get(key);
+
+        if (!value.isPresent()) {
+            return Optional.empty();
+        }
+
+        if ("true".equals(value.get().toLowerCase()) || "false".equals(value.get().toLowerCase())) {
+            return Optional.of(ConfigurationValueType.BOOLEAN);
+        }
+
+        try {
+            Integer.valueOf(value.get());
+            return Optional.of(ConfigurationValueType.INTEGER);
+        } catch (NumberFormatException ignored) {
+        }
+
+        try {
+            Long.valueOf(value.get());
+            return Optional.of(ConfigurationValueType.LONG);
+        } catch (NumberFormatException ignored) {
+        }
+
+        try {
+            Float f = Float.valueOf(value.get());
+            if (!f.isInfinite()) {
+                return Optional.of(ConfigurationValueType.FLOAT);
+            }
+        } catch (NumberFormatException ignored) {
+        }
+
+        try {
+            Double.valueOf(value.get());
+            return Optional.of(ConfigurationValueType.DOUBLE);
+        } catch (NumberFormatException ignored) {
+        }
+
+        return Optional.of(ConfigurationValueType.STRING);
+
+    }
+
+    public Optional<List<String>> getMapKeys(String key) {
+
+        Set<String> mapKeys = new HashSet<>();
+
+        for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
+            Optional<List<String>> value = configurationSource.getMapKeys(key);
+            if (value.isPresent()) {
+                for (String s : value.get()) {
+                    if (!mapKeys.contains(s.replace("-", ""))) {
+                        mapKeys.add(s);
+                    }
+                }
+            }
+        }
+
+        if (mapKeys.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(new ArrayList<>(mapKeys));
+    }
+
+    public void subscribe(String key, ConfigurationListener listener) {
+
+        config.getDispatcher().subscribe(listener);
+
+        for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
+            configurationSource.watch(key);
+        }
+    }
+
+    public void unsubscribe(ConfigurationListener listener) {
+        config.getDispatcher().unsubscribe(listener);
+    }
+
+    //// Private methods
+
+    private Optional<String> get(String key, Set<String> processingKeys) {
+
+        for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
+            Optional<String> value = configurationSource.get(key);
+            if (value.isPresent()) {
+                return Optional.of(interpolateString(key, value.get(), processingKeys));
+            }
+        }
+        return Optional.empty();
+    }
+
+    private String interpolateString(String key, String s, Set<String> processingKeys) {
+
+        if(processingKeys.contains(key)) {
+
+            if (config.isUtilLoggerAvailable()) {
+
+                config.getUtilLogger().warning("Detected cycle when interpolating configuration key: " + key);
+            }
+
+            return "";
+        }
+
+        processingKeys.add(key);
+
+        int startIndex;
+        while((startIndex = s.indexOf("${")) >= 0) {
+            int endIndex = s.indexOf("}", startIndex + 2);
+            String newKey = s.substring(startIndex + 2, endIndex);
+
+            String replacement = get(newKey, processingKeys).orElse("");
+            processingKeys.remove(newKey);
+
+            s = s.substring(0, startIndex) + replacement + s.substring(endIndex + 1);
+        }
+
+        return s;
     }
 }

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>kumuluzee-jax-ws</artifactId>
         <groupId>com.kumuluz.ee</groupId>
-        <version>2.3.0-SNAPSHOT</version>
+        <version>2.5.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,10 +13,6 @@
     <description>KumuluzEE JAX-WS component implemented by Metro</description>
 
     <artifactId>kumuluzee-jax-ws-metro</artifactId>
-
-    <properties>
-        <metro.version>2.3.1</metro.version>
-    </properties>
 
     <dependencies>
         <dependency>

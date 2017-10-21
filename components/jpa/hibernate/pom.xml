@@ -5,7 +5,7 @@
     <parent>
         <artifactId>kumuluzee-jpa</artifactId>
         <groupId>com.kumuluz.ee</groupId>
-        <version>2.3.0-SNAPSHOT</version>
+        <version>2.5.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,10 +13,6 @@
     <description>KumuluzEE JPA component implemented by Hibernate</description>
 
     <artifactId>kumuluzee-jpa-hibernate</artifactId>
-
-    <properties>
-        <hibernate.version>5.2.5.Final</hibernate.version>
-    </properties>
 
     <dependencies>
         <dependency>
@@ -28,6 +24,16 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
             <version>${hibernate.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.logging</groupId>
+                    <artifactId>jboss-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
         </dependency>
     </dependencies>
 
