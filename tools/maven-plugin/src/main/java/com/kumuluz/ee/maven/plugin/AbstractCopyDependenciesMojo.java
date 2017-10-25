@@ -266,7 +266,7 @@ public abstract class AbstractCopyDependenciesMojo extends AbstractMojo {
     }
 
     /**
-     * Download and add SwaggerUi to /target/classes/webapp
+     * Clean up SwaggerUI
      */
     protected void cleanSwaggerUiFromBuildDir()
             throws MojoExecutionException {

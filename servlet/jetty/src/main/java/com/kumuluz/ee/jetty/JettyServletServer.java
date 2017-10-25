@@ -134,11 +134,12 @@ public class JettyServletServer implements ServletServer {
 
         appContext.setContextPath(serverConfig.getContextPath());
 
+
+
         if (!Boolean.TRUE.equals(serverConfig.getDirBrowsing())) {
 
             appContext.setInitParameter(JettyAttributes.dirBrowsing, "false");
         }
-
         log.info("Starting KumuluzEE with context root '" + serverConfig.getContextPath() + "'");
 
         // Set the secured redirect handler in case the force https option is selected
@@ -197,7 +198,6 @@ public class JettyServletServer implements ServletServer {
         holder.setInitOrder(initOrder);
 
         if (parameters != null) {
-
             parameters.forEach(holder::setInitParameter);
         }
 

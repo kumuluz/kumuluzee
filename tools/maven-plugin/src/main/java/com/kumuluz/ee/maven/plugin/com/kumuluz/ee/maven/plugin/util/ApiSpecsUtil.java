@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.kumuluz.ee.maven.plugin.com.kumuluz.ee.maven.plugin.config.ApiSpecification;
 import com.kumuluz.ee.maven.plugin.com.kumuluz.ee.maven.plugin.config.SpecificationConfig;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 
@@ -26,30 +27,38 @@ import java.util.logging.Logger;
  */
 public class ApiSpecsUtil {
 
+    private static final Logger LOG = Logger.getLogger(ApiSpecsUtil.class.getName());
+
     public static List<ApiSpecURLs> getApiSpecs(MavenProject project, SpecificationConfig apiSpecificationConfig) throws
             MojoExecutionException {
 
         List<ApiSpecURLs> apiSpecs = new ArrayList<>();
 
         List<File> openApiSpecsConfigsLocations = new ArrayList<>();
+        List<File> swaggerSpecsConfigsLocations = new ArrayList<>();
+
         String apiSpecsPath = project.getBuild().getDirectory() + "/classes/api-specs";
 
-        File apiSpecsFile = new File(apiSpecsPath);
-        getApiSpecPaths(apiSpecsFile, openApiSpecsConfigsLocations);
+        File apiSpecFiles = new File(apiSpecsPath);
+        getApiSpecPaths(apiSpecFiles, openApiSpecsConfigsLocations, ApiSpecType.OPENAPI);
 
-        String swaggerApiSpecsConfigLocation = project.getBuild().getDirectory() + "/classes/swagger-configuration.json";
-        File swaggerConfig = new File(swaggerApiSpecsConfigLocation);
+        getApiSpecPaths(apiSpecFiles, swaggerSpecsConfigsLocations, ApiSpecType.SWAGGER);
 
         ObjectMapper mapper = new ObjectMapper();
-        if (swaggerConfig.exists()) {
-            try {
-                JsonNode root = mapper.readTree(swaggerConfig);
+        if (swaggerSpecsConfigsLocations.size() > 0) {
+            for (File swaggerConfig : swaggerSpecsConfigsLocations) {
+                try {
+                    JsonNode root = mapper.readTree(swaggerConfig);
 
-                for (JsonNode node : root) {
-                    String apiName = node.path("swagger").path("info").path("title").asText() + " - " + node.path("swagger").path("info")
+                    String apiName = root.path("swagger").path("info").path("title").asText() + " - " + root.path("swagger").path
+                            ("info")
+
                             .path("version").asText();
-                    String apiUrl = "http://" + node.path("swagger").path("host").asText() + "/api-specs/" + node.path("swagger").path
-                            ("basePath").asText() +
+
+                    String basePath = root.path("swagger").path("basePath").asText();
+                    basePath = StringUtils.strip(basePath, "/");
+
+                    String apiUrl = "http://" + root.path("swagger").path("host").asText() + "/api-specs/" + basePath +
                             "/swagger.json";
 
                     ApiSpecURLs specUrl = new ApiSpecURLs();
@@ -57,10 +66,10 @@ public class ApiSpecsUtil {
                     specUrl.setUrl(apiUrl);
 
                     apiSpecs.add(specUrl);
-                }
 
-            } catch (IOException e) {
-                throw new MojoExecutionException("Error processing API specification files", e);
+                } catch (IOException e) {
+                    throw new MojoExecutionException("Error processing API specification files", e);
+                }
             }
         } else if (openApiSpecsConfigsLocations.size() > 0) {
             for (File openApiConfig : openApiSpecsConfigsLocations) {
@@ -110,15 +119,17 @@ public class ApiSpecsUtil {
         return apiSpecs;
     }
 
-    private static void getApiSpecPaths(File file, List<File> openApiConfigLocations) {
+    private static void getApiSpecPaths(File file, List<File> openApiConfigLocations, ApiSpecType type) {
 
-        List<File> content = new ArrayList<>(Arrays.asList(file.listFiles()));
+        File[] content = file.listFiles();
 
-        for (File f : content) {
-            if (f.isDirectory()) {
-                getApiSpecPaths(f, openApiConfigLocations);
-            } else if (f.isFile()) {
-                openApiConfigLocations.add(f);
+        if (content != null) {
+            for (File f : content) {
+                if (f.isDirectory()) {
+                    getApiSpecPaths(f, openApiConfigLocations, type);
+                } else if (f.getName().equals(type.toString())) {
+                    openApiConfigLocations.add(f);
+                }
             }
         }
     }
