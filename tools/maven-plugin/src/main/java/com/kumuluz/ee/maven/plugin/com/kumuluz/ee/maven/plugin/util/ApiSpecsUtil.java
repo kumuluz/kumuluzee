@@ -2,6 +2,7 @@ package com.kumuluz.ee.maven.plugin.com.kumuluz.ee.maven.plugin.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.kumuluz.ee.maven.plugin.com.kumuluz.ee.maven.plugin.config.ApiSpecification;
@@ -51,9 +52,7 @@ public class ApiSpecsUtil {
                     JsonNode root = mapper.readTree(swaggerConfig);
 
                     String apiName = root.path("swagger").path("info").path("title").asText() + " - " + root.path("swagger").path
-                            ("info")
-
-                            .path("version").asText();
+                            ("info").path("version").asText();
 
                     String basePath = root.path("swagger").path("basePath").asText();
                     basePath = StringUtils.strip(basePath, "/");
@@ -106,7 +105,7 @@ public class ApiSpecsUtil {
                             ArrayNode array = mapper.valueToTree(config.get().getResourcePackages());
                             ((ObjectNode) root).putArray("resourcePackages").addAll(array);
 
-                            mapper.writeValue(openApiConfig, root);
+                            mapper.enable(SerializationFeature.INDENT_OUTPUT).writeValue(openApiConfig, root);
                         }
                     }
 
