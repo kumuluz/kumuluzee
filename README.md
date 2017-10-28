@@ -44,6 +44,7 @@ Currently the following components are supported with more being added over time
 - WebSocket 1.1 (Jetty)
 - Bean Validation 1.1 (RI Hibernate validator)
 - JTA 1.2 (Narayana)
+- JMS 2.0.1 (ActiveMQ)
 
 ## Additional features
 
@@ -207,6 +208,12 @@ To choose your Java EE components with fine grain control include them as your d
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee-jta-narayana</artifactId>
+</dependency>
+
+<!-- JMS -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-jms-activemq</artifactId>
 </dependency>
 ```
 
