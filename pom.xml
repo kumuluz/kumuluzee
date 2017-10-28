@@ -47,6 +47,7 @@
         <json.p.version>1.0</json.p.version>
         <ejb.version>3.2</ejb.version>
         <jta.version>1.2</jta.version>
+        <jms.version>2.0.1</jms.version>
 
         <jandex.version>2.0.3.Final</jandex.version>
         <jboss-logging.version>3.3.0.Final</jboss-logging.version>
@@ -75,6 +76,7 @@
         <jetty.version>9.4.6.v20170531</jetty.version>
         <narayana.version>5.6.4.Final</narayana.version>
         <jboss-transaction-spi.version>7.6.0.Final</jboss-transaction-spi.version>
+        <activemq.version>5.15.0</activemq.version>
     </properties>
 
     <scm>
@@ -283,6 +285,16 @@
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-jms</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-jms-activemq</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-profiles</artifactId>
                 <version>${project.version}</version>
                 <type>pom</type>
@@ -385,6 +397,11 @@
                 <groupId>javax.transaction</groupId>
                 <artifactId>javax.transaction-api</artifactId>
                 <version>${jta.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.jms</groupId>
+                <artifactId>javax.jms-api</artifactId>
+                <version>${jms.version}</version>
             </dependency>
 
             <!-- Various libraries used throughout the framework-->
