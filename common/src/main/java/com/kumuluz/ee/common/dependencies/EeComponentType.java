@@ -54,7 +54,9 @@ public enum EeComponentType {
 
     BATCH("Batch"),
 
-    MAIL("JavaMail");
+    MAIL("JavaMail"),
+
+    JMS("JMS");
 
     private final String name;
 
