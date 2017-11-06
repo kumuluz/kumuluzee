@@ -10,7 +10,17 @@ KumuluzEE also provides extensions for developing common patterns in cloud-nativ
 
 KumuluzEE has been designed to use the standard Java EE technologies and APIs with optional extensions for easier development of cloud-native microservices. Therefore, it is particularly suitable for existing enterprise Java EE developers, who would like to leverage their skills, but progressively move from monolithic to microservice design patterns.
 
-KumuluzEE is Eclipse MicroProfile compliant and provides support for MicroProfile 1.0 and MicroProfile 1.1. It implements MicroProfile Config 1.1, MicroProfile Health 1.0, MicroProfile Fault Tolerance 1.0 and MicroProfile Metrics 1.0 APIs.
+KumuluzEE is Eclipse MicroProfile compliant and provides support for MicroProfile 1.0, 1.1 and 1.2. It implements MicroProfile Config 1.1, MicroProfile Health 1.0, MicroProfile Fault Tolerance 1.0, MicroProfile Metrics 1.0 and MicroProfile JWT Authentication 1.0 APIs.
+
+## Getting started
+
+If you already know how to use Java EE, then you already know how to use KumuluzEE. It is simple and straightforward. 
+
+See the [getting started](https://github.com/kumuluz/KumuluzEE/wiki/Getting-started) wiki section to create your first light-weight standalone Java EE app in 5 minutes. 
+
+Read [tutorials](https://ee.kumuluz.com/tutorial/) at our home page.
+
+Refer to [samples](https://github.com/kumuluz/kumuluzee-samples) for more examples.
 
 ## Features
 
@@ -69,20 +79,22 @@ The following extensions are available with more planned soon:
 - [KumuluzEE Fault Tolerance](https://github.com/kumuluz/kumuluzee-fault-tolerance) (For implementing fault tolerance patterns with microservices including circuit breakers and decoupling microservices)
 - [KumuluzEE Event Streaming](https://github.com/kumuluz/kumuluzee-streaming) (For event streaming support using Apache Kafka)
 - [KumuluzEE CORS](https://github.com/kumuluz/kumuluzee-cors) (For Cross-Origin Resource Sharing (CORS) support)
-
-If you already know how to use Java EE, then you already know how to use KumuluzEE. It is simple and straightforward. See the [getting started](https://github.com/kumuluz/KumuluzEE/wiki/Getting-started) wiki section to create your first light-weight standalone Java EE app in 5 minutes. Refer to [samples](https://github.com/kumuluz/kumuluzee-samples) for more examples.
+- [KumuluzEE Swagger](https://github.com/kumuluz/kumuluzee-swagger) (For Swagger (OpenAPI 2) support and visualization)
+- [KumuluzEE OpenAPI](https://github.com/kumuluz/kumuluzee-openapi) (For OpenaAPI 3 support, interface generation and visualization)
 
 ## MicroProfile
 
 KumuluzEE is Eclipse MicroProfile compliant and provides support for:
 - MicroProfile 1.0 
 - MicroProfile 1.1
+- MicroProfile 1.2
 
 It implements the following MicroProfile APIs:
 - [MicroProfile Config 1.1](https://github.com/kumuluz/kumuluzee-config-mp)
 - [MicroProfile Health 1.0](https://github.com/kumuluz/kumuluzee-health)
 - [MicroProfile Fault Tolerance 1.0](https://github.com/kumuluz/kumuluzee-fault-tolerance)
 - [MicroProfile Metrics 1.0](https://github.com/kumuluz/kumuluzee-metrics)
+- [MicroProfile JWT Authentication 1.0](https://github.com/kumuluz/kumuluzee-jwt-auth)
 
 ## Usage
 
@@ -123,6 +135,15 @@ MicroProfile 1.1
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee-microProfile-1.1</artifactId>
+</dependency>
+```
+
+MicroProfile 1.2
+```xml
+<!-- MicroProfile 1.2 -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-microProfile-1.2</artifactId>
 </dependency>
 ```
 
