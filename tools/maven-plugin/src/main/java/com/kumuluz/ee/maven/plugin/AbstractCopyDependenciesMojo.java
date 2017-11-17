@@ -37,6 +37,7 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -58,13 +59,12 @@ public abstract class AbstractCopyDependenciesMojo extends AbstractMojo {
     protected MavenSession session;
     @Component
     protected BuildPluginManager buildPluginManager;
-
+    @Parameter
+    List<String> nonFilteredFileExtensions;
     @Parameter
     private String webappDir;
-
     @Parameter
     private SpecificationConfig specificationConfig;
-
     private String outputDirectory;
     private String baseDirectory;
 
@@ -133,6 +133,27 @@ public abstract class AbstractCopyDependenciesMojo extends AbstractMojo {
 
                 String sourceWebAppDir = webappDir == null ? "src/main/webapp" : webappDir;
 
+                Xpp3Dom config = new Xpp3Dom(configuration(
+                        element(name("outputDirectory"), "${basedir}/target/classes/webapp"),
+                        element(name("resources"),
+                                element(name("resource"),
+                                        element(name("directory"), sourceWebAppDir),
+                                        element(name("filtering"), "true")
+                                ))
+                ));
+
+                if (nonFilteredFileExtensions != null && nonFilteredFileExtensions.size() != 0) {
+                    Xpp3Dom nonFilteredFileExtensionsDom = new Xpp3Dom("nonFilteredFileExtensions");
+                    for (String nffe : nonFilteredFileExtensions) {
+
+                        Xpp3Dom nonFilteredFileExtensionDom = new Xpp3Dom("nonFilteredFileExtension");
+                        nonFilteredFileExtensionDom.setValue(nffe);
+
+                        nonFilteredFileExtensionsDom.addChild(nonFilteredFileExtensionDom);
+                    }
+                    config.addChild(nonFilteredFileExtensionsDom);
+                }
+
                 executeMojo(
                         plugin(
                                 groupId("org.apache.maven.plugins"),
@@ -140,14 +161,7 @@ public abstract class AbstractCopyDependenciesMojo extends AbstractMojo {
                                 version(MojoConstants.MAVEN_RESOURCE_PLUGIN_VERSION)
                         ),
                         goal("copy-resources"),
-                        configuration(
-                                element(name("outputDirectory"), "${basedir}/target/classes/webapp"),
-                                element(name("resources"),
-                                        element(name("resource"),
-                                                element(name("directory"), sourceWebAppDir),
-                                                element(name("filtering"), "true")
-                                        ))
-                        ),
+                        config,
                         executionEnvironment(project, session, buildPluginManager)
                 );
 
