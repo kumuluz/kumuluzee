@@ -60,8 +60,6 @@ public abstract class AbstractCopyDependenciesMojo extends AbstractMojo {
     @Component
     protected BuildPluginManager buildPluginManager;
     @Parameter
-    List<String> nonFilteredFileExtensions;
-    @Parameter
     private String webappDir;
     @Parameter
     private SpecificationConfig specificationConfig;
@@ -133,27 +131,6 @@ public abstract class AbstractCopyDependenciesMojo extends AbstractMojo {
 
                 String sourceWebAppDir = webappDir == null ? "src/main/webapp" : webappDir;
 
-                Xpp3Dom config = new Xpp3Dom(configuration(
-                        element(name("outputDirectory"), "${basedir}/target/classes/webapp"),
-                        element(name("resources"),
-                                element(name("resource"),
-                                        element(name("directory"), sourceWebAppDir),
-                                        element(name("filtering"), "true")
-                                ))
-                ));
-
-                if (nonFilteredFileExtensions != null && nonFilteredFileExtensions.size() != 0) {
-                    Xpp3Dom nonFilteredFileExtensionsDom = new Xpp3Dom("nonFilteredFileExtensions");
-                    for (String nffe : nonFilteredFileExtensions) {
-
-                        Xpp3Dom nonFilteredFileExtensionDom = new Xpp3Dom("nonFilteredFileExtension");
-                        nonFilteredFileExtensionDom.setValue(nffe);
-
-                        nonFilteredFileExtensionsDom.addChild(nonFilteredFileExtensionDom);
-                    }
-                    config.addChild(nonFilteredFileExtensionsDom);
-                }
-
                 executeMojo(
                         plugin(
                                 groupId("org.apache.maven.plugins"),
@@ -161,7 +138,13 @@ public abstract class AbstractCopyDependenciesMojo extends AbstractMojo {
                                 version(MojoConstants.MAVEN_RESOURCE_PLUGIN_VERSION)
                         ),
                         goal("copy-resources"),
-                        config,
+                        configuration(
+                                element(name("outputDirectory"), "${basedir}/target/classes/webapp"),
+                                element(name("resources"),
+                                        element(name("resource"),
+                                                element(name("directory"), sourceWebAppDir)
+                                        ))
+                        ),
                         executionEnvironment(project, session, buildPluginManager)
                 );
 
