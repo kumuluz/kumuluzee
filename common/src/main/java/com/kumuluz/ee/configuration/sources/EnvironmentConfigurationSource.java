@@ -23,8 +23,8 @@ package com.kumuluz.ee.configuration.sources;
 import com.kumuluz.ee.configuration.ConfigurationSource;
 import com.kumuluz.ee.configuration.utils.ConfigurationDispatcher;
 
-import java.util.*;
-import java.util.logging.Logger;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Tilen Faganel

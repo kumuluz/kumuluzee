@@ -22,20 +22,16 @@ package com.kumuluz.ee.configuration.sources;
 
 import com.kumuluz.ee.configuration.ConfigurationSource;
 import com.kumuluz.ee.configuration.utils.ConfigurationDispatcher;
+import com.kumuluz.ee.configuration.utils.ConfigurationSourceUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Properties;
-import java.util.logging.Logger;
 
 /**
  * @author Urban Malc
  * @since 2.4.0
  */
 public class SystemPropertyConfigurationSource implements ConfigurationSource {
-
-    private static final Logger log = Logger.getLogger(SystemPropertyConfigurationSource.class.getName());
 
     @Override
     public void init(ConfigurationDispatcher configurationDispatcher) {
@@ -119,64 +115,14 @@ public class SystemPropertyConfigurationSource implements ConfigurationSource {
 
     @Override
     public Optional<Integer> getListSize(String key) {
-        Integer maxIndex = -1;
 
-        for (String propertyName : System.getProperties().stringPropertyNames()) {
-            if (propertyName.startsWith(key + "[")) {
-                int openingIndex = key.length() + 1;
-                int closingIndex = propertyName.indexOf("]", openingIndex + 1);
-                try {
-                    Integer idx = Integer.parseInt(propertyName.substring(openingIndex, closingIndex));
-                    maxIndex = Math.max(maxIndex, idx);
-                } catch (NumberFormatException e) {
-                    log.severe("Cannot cast array index for key: " + propertyName);
-                }
-            }
-        }
-
-        if (maxIndex != -1) {
-            return Optional.of(maxIndex + 1);
-        }
-
-        return Optional.empty();
+        return ConfigurationSourceUtils.getListSize(key, System.getProperties().stringPropertyNames());
     }
 
     @Override
     public Optional<List<String>> getMapKeys(String key) {
 
-        List<String> mapKeys = new ArrayList<>();
-
-        Properties p = System.getProperties();
-        for(String propertyKey : p.stringPropertyNames()) {
-            String mapKey = "";
-
-            if(propertyKey.startsWith(key)) {
-                int index = key.length() + 1;
-                if(index < propertyKey.length() && propertyKey.charAt(index-1) == '.') {
-                    mapKey = propertyKey.substring(index);
-                }
-            }
-
-            if(!mapKey.isEmpty()) {
-                int endIndex = mapKey.indexOf(".");
-                if(endIndex > 0) {
-                    mapKey = mapKey.substring(0, endIndex);
-                }
-
-                int bracketIndex = mapKey.indexOf("[");
-                if (bracketIndex > 0) {
-                    mapKey = mapKey.substring(0, bracketIndex);
-                }
-
-                mapKeys.add(mapKey);
-            }
-        }
-
-        if(mapKeys.isEmpty()) {
-            return Optional.empty();
-        }
-
-        return Optional.of(mapKeys);
+        return ConfigurationSourceUtils.getMapKeys(key, System.getProperties().stringPropertyNames());
     }
 
     @Override
