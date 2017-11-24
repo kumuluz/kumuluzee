@@ -27,12 +27,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 /**
  * @author Urban Malc
  * @since 2.4.0
  */
 public class SystemPropertyConfigurationSource implements ConfigurationSource {
+
+    private static final Logger log = Logger.getLogger(SystemPropertyConfigurationSource.class.getName());
 
     @Override
     public void init(ConfigurationDispatcher configurationDispatcher) {
@@ -116,16 +119,26 @@ public class SystemPropertyConfigurationSource implements ConfigurationSource {
 
     @Override
     public Optional<Integer> getListSize(String key) {
-        int listSize = 0;
-        while(get(key + "[" + listSize + "]").isPresent()) {
-            listSize++;
+        Integer maxIndex = -1;
+
+        for (String propertyName : System.getProperties().stringPropertyNames()) {
+            if (propertyName.startsWith(key + "[")) {
+                int openingIndex = key.length() + 1;
+                int closingIndex = propertyName.indexOf("]", openingIndex + 1);
+                try {
+                    Integer idx = Integer.parseInt(propertyName.substring(openingIndex, closingIndex));
+                    maxIndex = Math.max(maxIndex, idx);
+                } catch (NumberFormatException e) {
+                    log.severe("Cannot cast array index for key: " + propertyName);
+                }
+            }
         }
 
-        if(listSize > 0) {
-            return Optional.of(listSize);
-        } else {
-            return Optional.empty();
+        if (maxIndex != -1) {
+            return Optional.of(maxIndex + 1);
         }
+
+        return Optional.empty();
     }
 
     @Override
