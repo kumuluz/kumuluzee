@@ -145,9 +145,14 @@ public class SystemPropertyConfigurationSource implements ConfigurationSource {
             }
 
             if(!mapKey.isEmpty()) {
-                int index = mapKey.indexOf(".");
-                if(index > 0) {
-                    mapKey = mapKey.substring(0, index);
+                int endIndex = mapKey.indexOf(".");
+                if(endIndex > 0) {
+                    mapKey = mapKey.substring(0, endIndex);
+                }
+
+                int bracketIndex = mapKey.indexOf("[");
+                if (bracketIndex > 0) {
+                    mapKey = mapKey.substring(0, bracketIndex);
                 }
 
                 mapKeys.add(mapKey);
