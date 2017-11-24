@@ -152,8 +152,11 @@ public class ConfigBundleInterceptor {
                     // process list of primitives
                     if (Arrays.asList(primitives).contains(componentType)) {
                         for (int i = 0; i < Array.getLength(array); i++) {
-                            Array.set(array, i, getValueOfPrimitive(componentType, getKeyName(targetClass, method
-                                    .getName(), keyPrefix) + "[" + i + "]").get());
+                            Optional valueOfPrimitive = getValueOfPrimitive(componentType,
+                                    getKeyName(targetClass, method.getName(), keyPrefix) + "[" + i + "]");
+                            if (valueOfPrimitive.isPresent()) {
+                                Array.set(array, i, valueOfPrimitive.get());
+                            }
                         }
 
                         // process list of nested classes
