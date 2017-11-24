@@ -240,10 +240,31 @@ public class FileConfigurationSource implements ConfigurationSource {
     @Override
     public Optional<Integer> getListSize(String key) {
 
-        Object value = getValue(key);
+        if (config != null) {
+            Object value = getValue(key);
 
-        if (value instanceof List) {
-            return Optional.of(((List) value).size());
+            if (value instanceof List) {
+                return Optional.of(((List) value).size());
+            }
+        } else if (properties != null) {
+            Integer maxIndex = -1;
+
+            for (String propertyName : properties.stringPropertyNames()) {
+                if (propertyName.startsWith(key + "[")) {
+                    int openingIndex = key.length() + 1;
+                    int closingIndex = propertyName.indexOf("]", openingIndex + 1);
+                    try {
+                        Integer idx = Integer.parseInt(propertyName.substring(openingIndex, closingIndex));
+                        maxIndex = Math.max(maxIndex, idx);
+                    } catch (NumberFormatException e) {
+                        log.severe("Cannot cast array index for key: " + propertyName);
+                    }
+                }
+            }
+
+            if (maxIndex != -1) {
+                return Optional.of(maxIndex + 1);
+            }
         }
 
         return Optional.empty();
@@ -254,19 +275,55 @@ public class FileConfigurationSource implements ConfigurationSource {
     @SuppressWarnings("unchecked")
     public Optional<List<String>> getMapKeys(String key) {
 
-        Object o = getValue(key);
-        Map<String, Object> map = null;
+        if (config != null) {
+            Object o = getValue(key);
+            Map<String, Object> map = null;
 
-        if (o instanceof Map) {
-            map = (Map<String, Object>) o;
+            if (o instanceof Map) {
+                map = (Map<String, Object>) o;
+            }
+
+            if (map == null || map.isEmpty()) {
+                return Optional.empty();
+            }
+
+            return Optional.of(new ArrayList<>(map.keySet()));
+
+        } else if (properties != null) {
+            Set<String> mapKeys = new HashSet<>();
+            for (String propertyName : properties.stringPropertyNames()) {
+                String mapKey = "";
+
+                if(propertyName.startsWith(key)) {
+                    int index = key.length() + 1;
+                    if(index < propertyName.length() && propertyName.charAt(index-1) == '.') {
+                        mapKey = propertyName.substring(index);
+                    }
+                }
+
+                if(!mapKey.isEmpty()) {
+                    int endIndex = mapKey.indexOf(".");
+                    if (endIndex > 0) {
+                        mapKey = mapKey.substring(0, endIndex);
+                    }
+
+                    int bracketIndex = mapKey.indexOf("[");
+                    if (bracketIndex > 0) {
+                        mapKey = mapKey.substring(0, bracketIndex);
+                    }
+
+                    mapKeys.add(mapKey);
+                }
+            }
+
+            if (mapKeys.size() == 0) {
+                return Optional.empty();
+            } else {
+                return Optional.of(new ArrayList<>(mapKeys));
+            }
         }
 
-        if (map == null || map.isEmpty()) {
-            return Optional.empty();
-        }
-
-        return Optional.of(new ArrayList<>(map.keySet()));
-
+        return Optional.empty();
     }
 
     @Override
