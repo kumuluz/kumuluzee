@@ -97,7 +97,8 @@ public class JettyFactory {
         }
 
         if (serverConfig.getForceHttps() && !Boolean.TRUE.equals(httpsConfig.getEnabled())) {
-            throw new IllegalStateException("You must enable the HTTPS connector in order to force redirects to it (`kumuluzee.server.https.enabled` must be true).");
+            throw new IllegalStateException("You must enable the HTTPS connector in order to force redirects to it (`kumuluzee.server" +
+                    ".https.enabled` must be true).");
         }
 
         if (httpConfig.getEnabled() == null || httpConfig.getEnabled()) {
@@ -105,6 +106,7 @@ public class JettyFactory {
             HttpConfiguration httpConfiguration = new HttpConfiguration();
             httpConfiguration.setRequestHeaderSize(httpConfig.getRequestHeaderSize());
             httpConfiguration.setResponseHeaderSize(httpConfig.getResponseHeaderSize());
+            httpConfiguration.setSendServerVersion(serverConfig.getShowServerVersion());
 
             if (Boolean.TRUE.equals(httpConfig.getProxyForwarding())) {
                 httpConfiguration.addCustomizer(new ForwardedRequestCustomizer());
@@ -123,7 +125,7 @@ public class JettyFactory {
                 HTTP2CServerConnectionFactory http2c = new HTTP2CServerConnectionFactory(httpConfiguration);
 
                 httpConnector = new ServerConnector(server, http, http2c);
-            } else  {
+            } else {
 
                 httpConnector = new ServerConnector(server, http);
             }
@@ -157,6 +159,7 @@ public class JettyFactory {
             httpsConfiguration.setRequestHeaderSize(httpsConfig.getRequestHeaderSize());
             httpsConfiguration.setResponseHeaderSize(httpsConfig.getResponseHeaderSize());
             httpsConfiguration.addCustomizer(new SecureRequestCustomizer());
+            httpsConfiguration.setSendServerVersion(serverConfig.getShowServerVersion());
 
             if (Boolean.TRUE.equals(httpsConfig.getProxyForwarding())) {
                 httpsConfiguration.addCustomizer(new ForwardedRequestCustomizer());

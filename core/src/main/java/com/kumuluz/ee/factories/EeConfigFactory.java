@@ -79,6 +79,7 @@ public class EeConfigFactory {
             Optional<Integer> minThreads = cfg.getInteger("kumuluzee.server.min-threads");
             Optional<Integer> maxThreads = cfg.getInteger("kumuluzee.server.max-threads");
             Optional<Boolean> forceHttps = cfg.getBoolean("kumuluzee.server.force-https");
+            Optional<Boolean> showServerVersion = cfg.getBoolean("kumuluzee.server.show-server-version");
 
             baseUrl.ifPresent(serverBuilder::baseUrl);
             contextPath.ifPresent(serverBuilder::contextPath);
@@ -86,6 +87,7 @@ public class EeConfigFactory {
             minThreads.ifPresent(serverBuilder::minThreads);
             maxThreads.ifPresent(serverBuilder::maxThreads);
             forceHttps.ifPresent(serverBuilder::forceHttps);
+            showServerVersion.ifPresent(serverBuilder::showServerVersion);
         }
 
         ServerConnectorConfig.Builder httpBuilder =
@@ -166,8 +168,10 @@ public class EeConfigFactory {
                     Optional<Integer> minIdle = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.min-idle");
                     Optional<Integer> maxSize = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.max-size");
                     Optional<String> poolName = cfg.get("kumuluzee.datasources[" + i + "].pool.name");
-                    Optional<Long> initializationFailTimeout = cfg.getLong("kumuluzee.datasources[" + i + "].pool.initialization-fail-timeout");
-                    Optional<Boolean> isolateInternalQueries = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.isolate-internal-queries");
+                    Optional<Long> initializationFailTimeout = cfg.getLong("kumuluzee.datasources[" + i + "].pool" +
+                            ".initialization-fail-timeout");
+                    Optional<Boolean> isolateInternalQueries = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool" +
+                            ".isolate-internal-queries");
                     Optional<Boolean> allowPoolSuspension = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.allow-pool-suspension");
                     Optional<Boolean> readOnly = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.read-only");
                     Optional<Boolean> registerMbeans = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.register-mbeans");
@@ -350,8 +354,10 @@ public class EeConfigFactory {
             keystorePassword.ifPresent(serverConnectorBuilder::keystorePassword);
             keyAlias.ifPresent(serverConnectorBuilder::keyAlias);
             keyPassword.ifPresent(serverConnectorBuilder::keyPassword);
-            sslProtocols.ifPresent(p -> serverConnectorBuilder.sslProtocols(Stream.of(p.split(",")).map(String::trim).collect(Collectors.toList())));
-            sslCiphers.ifPresent(c -> serverConnectorBuilder.sslCiphers(Stream.of(c.split(",")).map(String::trim).collect(Collectors.toList())));
+            sslProtocols.ifPresent(p -> serverConnectorBuilder.sslProtocols(Stream.of(p.split(",")).map(String::trim).collect(Collectors
+                    .toList())));
+            sslCiphers.ifPresent(c -> serverConnectorBuilder.sslCiphers(Stream.of(c.split(",")).map(String::trim).collect(Collectors
+                    .toList())));
         }
 
         return serverConnectorBuilder;

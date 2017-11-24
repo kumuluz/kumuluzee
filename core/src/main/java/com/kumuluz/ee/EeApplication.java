@@ -320,9 +320,11 @@ public class EeApplication {
             }
 
             // Add all included filters
-            Map<String, String> filterParams = new HashMap<>();
-            filterParams.put("name", "KumuluzEE/" + eeRuntimeInternal.getVersion());
-            servletServer.registerFilter(PoweredByFilter.class, "/*", filterParams);
+            if (eeConfig.getServer().getShowServerVersion()) {
+                Map<String, String> filterParams = new HashMap<>();
+                filterParams.put("name", "KumuluzEE/" + eeRuntimeInternal.getVersion());
+                servletServer.registerFilter(PoweredByFilter.class, "/*", filterParams);
+            }
         }
 
         log.info("Initializing components");
@@ -481,7 +483,8 @@ public class EeApplication {
         return new ArrayList<>(eeComp.values());
     }
 
-    private <E extends Extension> List<ExtensionWrapper<E>> processGroupEeExtensions(List<E> extensions, List<EeComponentWrapper> wrappedComponents) {
+    private <E extends Extension> List<ExtensionWrapper<E>> processGroupEeExtensions(List<E> extensions, List<EeComponentWrapper>
+            wrappedComponents) {
 
         Map<String, ExtensionWrapper<E>> eeExt = new HashMap<>();
 
@@ -521,7 +524,8 @@ public class EeApplication {
         return extensionWrappers;
     }
 
-    private <E extends Extension> List<ExtensionWrapper<E>> processSingleEeExtensions(List<E> extensions, List<EeComponentWrapper> wrappedComponents) {
+    private <E extends Extension> List<ExtensionWrapper<E>> processSingleEeExtensions(List<E> extensions, List<EeComponentWrapper>
+            wrappedComponents) {
 
         List<ExtensionWrapper<E>> extensionWrappers = new ArrayList<>();
 
@@ -545,7 +549,8 @@ public class EeApplication {
         return extensionWrappers;
     }
 
-    private <E extends Extension> void processEeExtensionDependencies(List<ExtensionWrapper<E>> extensions, List<EeComponentWrapper> components) {
+    private <E extends Extension> void processEeExtensionDependencies(List<ExtensionWrapper<E>> extensions, List<EeComponentWrapper>
+            components) {
 
         // Check if all dependencies are fulfilled
         for (ExtensionWrapper ext : extensions) {
