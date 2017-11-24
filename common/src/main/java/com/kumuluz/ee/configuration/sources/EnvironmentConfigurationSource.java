@@ -124,21 +124,31 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
     @Override
     public Optional<Integer> getListSize(String key) {
 
-        int listSize = -1;
-        int index = -1;
-        String value;
+        key = parseKeyNameForEnvironmentVariables(key);
 
-        do {
-            listSize += 1;
-            index += 1;
-            value = System.getenv(parseKeyNameForEnvironmentVariables(key + "[" + index + "]"));
-        } while (value != null);
+        Integer maxIndex = -1;
 
-        if (listSize > 0) {
-            return Optional.of(listSize);
-        } else {
-            return Optional.empty();
+        for (String envName : System.getenv().keySet()) {
+            if (envName.startsWith(key)) {
+                int openingIndex = key.length();
+                int closingIndex = envName.indexOf("_", openingIndex + 1);
+                if (closingIndex < 0) {
+                    closingIndex = envName.length();
+                }
+
+                try {
+                    Integer idx = Integer.parseInt(envName.substring(openingIndex, closingIndex));
+                    maxIndex = Math.max(maxIndex, idx);
+                } catch (NumberFormatException ignored) {
+                }
+            }
         }
+
+        if (maxIndex != -1) {
+            return Optional.of(maxIndex + 1);
+        }
+
+        return Optional.empty();
     }
 
     @Override
