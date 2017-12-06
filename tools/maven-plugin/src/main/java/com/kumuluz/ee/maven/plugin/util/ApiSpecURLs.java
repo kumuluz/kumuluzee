@@ -1,4 +1,4 @@
-package com.kumuluz.ee.maven.plugin.com.kumuluz.ee.maven.plugin.util;
+package com.kumuluz.ee.maven.plugin.util;
 
 /**
  * ApiSpecsURLs class.
