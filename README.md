@@ -80,7 +80,8 @@ The following extensions are available with more planned soon:
 - [KumuluzEE Event Streaming](https://github.com/kumuluz/kumuluzee-streaming) (For event streaming support using Apache Kafka)
 - [KumuluzEE CORS](https://github.com/kumuluz/kumuluzee-cors) (For Cross-Origin Resource Sharing (CORS) support)
 - [KumuluzEE Swagger](https://github.com/kumuluz/kumuluzee-swagger) (For Swagger (OpenAPI 2) support and visualization)
-- [KumuluzEE OpenAPI](https://github.com/kumuluz/kumuluzee-openapi) (For OpenaAPI 3 support, interface generation and visualization)
+- [KumuluzEE OpenAPI](https://github.com/kumuluz/kumuluzee-openapi) (For OpenAPI 3 support, interface generation and visualization)
+- [KumuluzEE Reactive](https://github.com/kumuluz/kumuluzee-reactive) (For developing reactive microservices and integration with reactive streams (Vert.x and similar))
 
 ## MicroProfile
 
