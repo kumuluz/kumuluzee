@@ -79,7 +79,7 @@ public class EeConfigFactory {
             Optional<Integer> minThreads = cfg.getInteger("kumuluzee.server.min-threads");
             Optional<Integer> maxThreads = cfg.getInteger("kumuluzee.server.max-threads");
             Optional<Boolean> forceHttps = cfg.getBoolean("kumuluzee.server.force-https");
-            Optional<Boolean> showServerVersion = cfg.getBoolean("kumuluzee.server.show-server-version");
+            Optional<Boolean> showServerInfo = cfg.getBoolean("kumuluzee.server.show-server-info");
 
             baseUrl.ifPresent(serverBuilder::baseUrl);
             contextPath.ifPresent(serverBuilder::contextPath);
@@ -87,7 +87,7 @@ public class EeConfigFactory {
             minThreads.ifPresent(serverBuilder::minThreads);
             maxThreads.ifPresent(serverBuilder::maxThreads);
             forceHttps.ifPresent(serverBuilder::forceHttps);
-            showServerVersion.ifPresent(serverBuilder::showServerVersion);
+            showServerInfo.ifPresent(serverBuilder::showServerInfo);
         }
 
         ServerConnectorConfig.Builder httpBuilder =
@@ -274,6 +274,7 @@ public class EeConfigFactory {
                 eeConfig.getServer().getForceHttps() == null ||
                 eeConfig.getServer().getMinThreads() == null ||
                 eeConfig.getServer().getMaxThreads() == null ||
+                eeConfig.getServer().getShowServerInfo() == null ||
                 eeConfig.getServer().getHttp() == null ||
                 eeConfig.getServer().getHttps() == null ||
                 eeConfig.getServer().getHttp().getPort() == null ||

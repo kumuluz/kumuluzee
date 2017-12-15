@@ -319,8 +319,9 @@ public class EeApplication {
                 }
             }
 
-            // Add all included filters
-            if (eeConfig.getServer().getShowServerVersion()) {
+            // Add the server info headers
+            if (eeConfig.getServer().getShowServerInfo()) {
+
                 Map<String, String> filterParams = new HashMap<>();
                 filterParams.put("name", "KumuluzEE/" + eeRuntimeInternal.getVersion());
                 servletServer.registerFilter(PoweredByFilter.class, "/*", filterParams);

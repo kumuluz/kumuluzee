@@ -17,7 +17,7 @@
  *  out of or in connection with the software or the use or other dealings in the
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
-*/
+ */
 package com.kumuluz.ee.jetty;
 
 import com.kumuluz.ee.common.config.ServerConfig;
@@ -106,7 +106,7 @@ public class JettyFactory {
             HttpConfiguration httpConfiguration = new HttpConfiguration();
             httpConfiguration.setRequestHeaderSize(httpConfig.getRequestHeaderSize());
             httpConfiguration.setResponseHeaderSize(httpConfig.getResponseHeaderSize());
-            httpConfiguration.setSendServerVersion(serverConfig.getShowServerVersion());
+            httpConfiguration.setSendServerVersion(serverConfig.getShowServerInfo());
 
             if (Boolean.TRUE.equals(httpConfig.getProxyForwarding())) {
                 httpConfiguration.addCustomizer(new ForwardedRequestCustomizer());
@@ -159,7 +159,7 @@ public class JettyFactory {
             httpsConfiguration.setRequestHeaderSize(httpsConfig.getRequestHeaderSize());
             httpsConfiguration.setResponseHeaderSize(httpsConfig.getResponseHeaderSize());
             httpsConfiguration.addCustomizer(new SecureRequestCustomizer());
-            httpsConfiguration.setSendServerVersion(serverConfig.getShowServerVersion());
+            httpsConfiguration.setSendServerVersion(serverConfig.getShowServerInfo());
 
             if (Boolean.TRUE.equals(httpsConfig.getProxyForwarding())) {
                 httpsConfiguration.addCustomizer(new ForwardedRequestCustomizer());

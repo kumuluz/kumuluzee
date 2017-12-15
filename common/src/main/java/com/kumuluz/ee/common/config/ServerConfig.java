@@ -34,7 +34,7 @@ public class ServerConfig {
         private Integer minThreads = 5;
         private Integer maxThreads = 100;
         private Boolean forceHttps = false;
-        private Boolean showServerVersion = true;
+        private Boolean showServerInfo = true;
 
         private ServerConnectorConfig.Builder http = new ServerConnectorConfig.Builder();
         private ServerConnectorConfig.Builder https = new ServerConnectorConfig.Builder();
@@ -79,8 +79,8 @@ public class ServerConfig {
             return this;
         }
 
-        public Builder showServerVersion(Boolean showServerVersion) {
-            this.showServerVersion = showServerVersion;
+        public Builder showServerInfo(Boolean showServerInfo) {
+            this.showServerInfo = showServerInfo;
             return this;
         }
 
@@ -93,7 +93,7 @@ public class ServerConfig {
             serverConfig.minThreads = minThreads;
             serverConfig.maxThreads = maxThreads;
             serverConfig.forceHttps = forceHttps;
-            serverConfig.showServerVersion = showServerVersion;
+            serverConfig.showServerInfo = showServerInfo;
 
             serverConfig.http = http.build();
             serverConfig.https = https.build();
@@ -108,7 +108,7 @@ public class ServerConfig {
     private Integer minThreads;
     private Integer maxThreads;
     private Boolean forceHttps;
-    private Boolean showServerVersion;
+    private Boolean showServerInfo;
 
     private ServerConnectorConfig http;
     private ServerConnectorConfig https;
@@ -140,8 +140,8 @@ public class ServerConfig {
         return forceHttps;
     }
 
-    public Boolean getShowServerVersion(){
-        return showServerVersion;
+    public Boolean getShowServerInfo(){
+        return showServerInfo;
     }
 
     public ServerConnectorConfig getHttp() {
