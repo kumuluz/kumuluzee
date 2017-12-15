@@ -208,11 +208,13 @@ public class EeApplication {
             extension.getExtension().init(server, eeConfig);
 
             List<ConfigurationSource> sources = extension.getExtension().getConfigurationSources();
+
             if (sources == null || sources.size() == 0) {
                 sources = Collections.singletonList(extension.getExtension().getConfigurationSource());
             }
 
             for (ConfigurationSource source : sources) {
+
                 if (source != null) {
                     source.init(configImpl.getDispatcher());
                     configImpl.getConfigurationSources().add(source);
