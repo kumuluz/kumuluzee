@@ -17,7 +17,7 @@
  *  out of or in connection with the software or the use or other dealings in the
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
-*/
+ */
 package com.kumuluz.ee.common.attributes;
 
 /**
@@ -26,7 +26,7 @@ package com.kumuluz.ee.common.attributes;
  */
 public class ClasspathAttributes {
 
-    public static final String jar = "^((?!lib|/lib).)*$";
+    public static final String jar = "^((?!lib\\_[^\\/]*\\.jar\\.[^\\/]*\\.tmp|/lib\\_[^\\/]*\\.jar\\.[^\\/]*\\.tmp|.*\\/jre\\/lib\\/.*).)*$";
 
     public static final String exploded = ".*/classes/.*";
 
