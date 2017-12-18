@@ -41,7 +41,7 @@ public class ServerConnectorConfig {
         private Boolean proxyForwarding = false;
         private Integer requestHeaderSize = 8 * 1024;
         private Integer responseHeaderSize = 8 * 1024;
-        private Integer idleTimeout = 60 * 60 * 1000;
+        private Integer idleTimeout = 30 * 1000;
         private Integer soLingerTime = -1;
 
         private String keystorePath = System.getProperty("javax.net.ssl.keyStore");
