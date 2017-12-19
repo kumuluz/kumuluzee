@@ -195,8 +195,6 @@ public class JettyFactory {
                 sslContextFactory.setCipherComparator(HTTP2Cipher.COMPARATOR);
                 sslContextFactory.setUseCipherSuitesOrder(true);
 
-                NegotiatingServerConnectionFactory.checkProtocolNegotiationAvailable();
-
                 HTTP2ServerConnectionFactory h2 = new HTTP2ServerConnectionFactory(httpsConfiguration);
 
                 ALPNServerConnectionFactory alpn = new ALPNServerConnectionFactory();

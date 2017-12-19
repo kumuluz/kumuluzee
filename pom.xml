@@ -64,7 +64,7 @@
         <download-maven-plugin.version>1.2.1</download-maven-plugin.version>
         <replacer-plugin.version>1.5.3</replacer-plugin.version>
 
-        <jetty.version>9.4.7.v20170914</jetty.version>
+        <jetty.version>9.4.8.v20171121</jetty.version>
         <uel-version>3.0.0</uel-version>
         <weld.version>2.4.6.Final</weld.version>
         <hibernate.validator.version>5.4.2.Final</hibernate.validator.version>
