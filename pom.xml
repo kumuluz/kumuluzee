@@ -61,8 +61,6 @@
         <maven-resources-plugin.version>3.0.2</maven-resources-plugin.version>
         <maven-plugin-plugin.version>3.5</maven-plugin-plugin.version>
         <maven-dependency-plugin.version>3.0.1</maven-dependency-plugin.version>
-        <download-maven-plugin.version>1.2.1</download-maven-plugin.version>
-        <replacer-plugin.version>1.5.3</replacer-plugin.version>
 
         <jetty.version>9.4.8.v20171121</jetty.version>
         <uel-version>3.0.0</uel-version>
