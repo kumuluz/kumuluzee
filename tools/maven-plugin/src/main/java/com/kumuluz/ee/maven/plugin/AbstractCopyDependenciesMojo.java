@@ -20,15 +20,6 @@
 */
 package com.kumuluz.ee.maven.plugin;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kumuluz.ee.maven.plugin.com.kumuluz.ee.maven.plugin.config.SpecificationConfig;
-import com.kumuluz.ee.maven.plugin.com.kumuluz.ee.maven.plugin.util.ApiSpecURLs;
-import com.kumuluz.ee.maven.plugin.com.kumuluz.ee.maven.plugin.util.ApiSpecsUtil;
-
-import java.util.List;
-
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.BuildPluginManager;
@@ -36,8 +27,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -61,8 +50,7 @@ public abstract class AbstractCopyDependenciesMojo extends AbstractMojo {
     protected BuildPluginManager buildPluginManager;
     @Parameter
     private String webappDir;
-    @Parameter
-    private SpecificationConfig specificationConfig;
+
     private String outputDirectory;
     private String baseDirectory;
 
@@ -70,7 +58,7 @@ public abstract class AbstractCopyDependenciesMojo extends AbstractMojo {
             throws MojoExecutionException {
 
         copyDependencies(null);
-        addSwaggerUi();
+        //addSwaggerUi();
     }
 
     /**
@@ -170,112 +158,4 @@ public abstract class AbstractCopyDependenciesMojo extends AbstractMojo {
         }
     }
 
-    /**
-     * Download and add SwaggerUi to /target/classes/webapp
-     */
-    protected void addSwaggerUi()
-            throws MojoExecutionException {
-
-        boolean containsApiSpecDependency = false;
-        for (Artifact a : project.getDependencyArtifacts()) {
-            if ((a.getGroupId().equals("com.kumuluz.ee.swagger") && a.getArtifactId().equals("kumuluzee-swagger")) ||
-                    (a.getGroupId().equals("com.kumuluz.ee.openapi") && a.getArtifactId().equals("kumuluzee-openapi"))) {
-                containsApiSpecDependency = true;
-                break;
-            }
-        }
-
-        if (containsApiSpecDependency) {
-
-            if (specificationConfig == null) {
-                specificationConfig = new SpecificationConfig();
-            }
-
-            List<ApiSpecURLs> apiSpecURLs = ApiSpecsUtil.getApiSpecs(project, specificationConfig);
-
-            if (specificationConfig.getIncludeSwaggerUI()) {
-                executeMojo(
-                        plugin(
-                                groupId("com.googlecode.maven-download-plugin"),
-                                artifactId("download-maven-plugin"),
-                                version(MojoConstants.DOWNLOAD_MAVEN_PLUGIN_VERSION)
-                        ),
-                        goal("wget"),
-                        configuration(
-                                element("url", "https://github.com/swagger-api/swagger-ui/archive/v" + MojoConstants.SWAGGER_UI_VERSION +
-                                        ".tar.gz"),
-                                element("unpack", "true"),
-                                element("outputDirectory", project.getBuild().getDirectory())
-                        ),
-                        executionEnvironment(project, session, buildPluginManager)
-                );
-
-                executeMojo(
-                        plugin(
-                                groupId("org.apache.maven.plugins"),
-                                artifactId("maven-resources-plugin"),
-                                version(MojoConstants.MAVEN_RESOURCE_PLUGIN_VERSION)
-                        ),
-                        goal("copy-resources"),
-                        configuration(
-                                element(name("outputDirectory"), "${basedir}/target/classes/webapp/api-specs/ui"),
-                                element(name("resources"),
-                                        element(name("resource"),
-                                                element(name("directory"), "${project.build.directory}/swagger-ui-" + MojoConstants
-                                                        .SWAGGER_UI_VERSION + "/dist")
-                                        ))
-                        ),
-                        executionEnvironment(project, session, buildPluginManager)
-                );
-
-                cleanSwaggerUiFromBuildDir();
-
-                ObjectMapper mapper = new ObjectMapper();
-                String apiURLs = "";
-                try {
-                    apiURLs = mapper.writeValueAsString(apiSpecURLs);
-                } catch (JsonProcessingException e) {
-                    throw new MojoExecutionException("Could not obtain API specifications information from config files.", e);
-                }
-
-                executeMojo(
-                        plugin(
-                                groupId("com.google.code.maven-replacer-plugin"),
-                                artifactId("replacer"),
-                                version(MojoConstants.REPLACER_PLUGIN_VERSION)
-                        ),
-                        goal("replace"),
-                        configuration(
-                                element("ignoreMissingFile", "false"),
-                                element("file", project.getBuild().getDirectory() + "/classes/webapp/api-specs/ui/index.html"),
-                                element("outputFile", project.getBuild().getDirectory() + "/classes/webapp/api-specs/ui/index.html"),
-                                element("regex", "false"),
-                                element(name("replacements"),
-                                        element(name("replacement"),
-                                                element(name("token"), "url: \"http://petstore.swagger.io/v2/swagger.json\""),
-                                                element(name("value"), "urls: " + apiURLs))
-                                )),
-                        executionEnvironment(project, session, buildPluginManager)
-                );
-            }
-        }
-
-    }
-
-    /**
-     * Clean up SwaggerUI
-     */
-    protected void cleanSwaggerUiFromBuildDir()
-            throws MojoExecutionException {
-
-        try {
-
-            FileUtils.deleteDirectory(project.getBuild().getDirectory() + "/swagger-ui-" + MojoConstants.SWAGGER_UI_VERSION);
-
-        } catch (IOException e) {
-
-            throw new MojoExecutionException("Could not delete 'swagger-ui' directory. Please check the target folder " +
-                    "permissions.", e);
-        }
-    }
 }
