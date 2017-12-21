@@ -22,12 +22,9 @@ package com.kumuluz.ee.maven.plugin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kumuluz.ee.maven.plugin.com.kumuluz.ee.maven.plugin.config.SpecificationConfig;
-import com.kumuluz.ee.maven.plugin.com.kumuluz.ee.maven.plugin.util.ApiSpecURLs;
-import com.kumuluz.ee.maven.plugin.com.kumuluz.ee.maven.plugin.util.ApiSpecsUtil;
-
-import java.util.List;
-
+import com.kumuluz.ee.maven.plugin.config.SpecificationConfig;
+import com.kumuluz.ee.maven.plugin.util.ApiSpecURLs;
+import com.kumuluz.ee.maven.plugin.util.ApiSpecsUtil;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
@@ -37,12 +34,12 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
 

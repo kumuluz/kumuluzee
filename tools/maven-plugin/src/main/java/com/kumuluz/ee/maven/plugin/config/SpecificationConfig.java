@@ -1,4 +1,4 @@
-package com.kumuluz.ee.maven.plugin.com.kumuluz.ee.maven.plugin.config;
+package com.kumuluz.ee.maven.plugin.config;
 
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
