@@ -20,11 +20,11 @@
     <artifactId>kumuluzee-microProfile-1.2</artifactId>
 
     <properties>
-        <version.kumuluzee-config-mp>1.1.0-SNAPSHOT</version.kumuluzee-config-mp>
-        <version.kumuluzee-fault-tolerance>1.0.0-SNAPSHOT</version.kumuluzee-fault-tolerance>
-        <version.kumuluzee-health>1.0.0-SNAPSHOT</version.kumuluzee-health>
-        <version.kumuluzee-metrics>1.0.0-SNAPSHOT</version.kumuluzee-metrics>
-        <version.kumuluzee-jwt-auth>1.0.0-SNAPSHOT</version.kumuluzee-jwt-auth>
+        <version.kumuluzee-config-mp>1.1.0</version.kumuluzee-config-mp>
+        <version.kumuluzee-fault-tolerance>1.0.0</version.kumuluzee-fault-tolerance>
+        <version.kumuluzee-health>1.0.0</version.kumuluzee-health>
+        <version.kumuluzee-metrics>1.0.0</version.kumuluzee-metrics>
+        <version.kumuluzee-jwt-auth>1.0.0</version.kumuluzee-jwt-auth>
     </properties>
 
     <dependencies>
