@@ -25,7 +25,6 @@ import com.kumuluz.ee.configuration.ConfigurationSource;
 import com.kumuluz.ee.configuration.enums.ConfigurationValueType;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 /**
  * @author Tilen Faganel
@@ -69,7 +68,9 @@ public class ConfigurationUtil {
     public Optional<Boolean> getBoolean(String key) {
 
         for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
+
             Optional<Boolean> value = configurationSource.getBoolean(key);
+
             if (value.isPresent()) {
                 return value;
             }
@@ -80,7 +81,9 @@ public class ConfigurationUtil {
     public Optional<Integer> getInteger(String key) {
 
         for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
+
             Optional<Integer> value = configurationSource.getInteger(key);
+
             if (value.isPresent()) {
                 return value;
             }
@@ -91,7 +94,9 @@ public class ConfigurationUtil {
     public Optional<Long> getLong(String key) {
 
         for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
+
             Optional<Long> value = configurationSource.getLong(key);
+
             if (value.isPresent()) {
                 return value;
             }
@@ -102,7 +107,9 @@ public class ConfigurationUtil {
     public Optional<Double> getDouble(String key) {
 
         for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
+
             Optional<Double> value = configurationSource.getDouble(key);
+
             if (value.isPresent()) {
                 return value;
             }
@@ -113,7 +120,9 @@ public class ConfigurationUtil {
     public Optional<Float> getFloat(String key) {
 
         for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
+
             Optional<Float> value = configurationSource.getFloat(key);
+
             if (value.isPresent()) {
                 return value;
             }
@@ -122,10 +131,13 @@ public class ConfigurationUtil {
     }
 
     public Optional<Integer> getListSize(String key) {
+
         int listSize = -1;
 
         for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
+
             Optional<Integer> currentListSize = configurationSource.getListSize(key);
+
             if (currentListSize.isPresent() && currentListSize.get() > listSize) {
                 listSize = currentListSize.get();
             }
@@ -214,9 +226,13 @@ public class ConfigurationUtil {
         Set<String> mapKeys = new HashSet<>();
 
         for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
+
             Optional<List<String>> value = configurationSource.getMapKeys(key);
+
             if (value.isPresent()) {
+
                 for (String s : value.get()) {
+
                     if (!mapKeys.contains(s.replace("-", ""))) {
                         mapKeys.add(s);
                     }
@@ -249,8 +265,11 @@ public class ConfigurationUtil {
     private Optional<String> get(String key, Set<String> processingKeys) {
 
         for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
+
             Optional<String> value = configurationSource.get(key);
+
             if (value.isPresent()) {
+
                 return Optional.of(interpolateString(key, value.get(), processingKeys));
             }
         }
@@ -273,6 +292,7 @@ public class ConfigurationUtil {
 
         int startIndex;
         while((startIndex = s.indexOf("${")) >= 0) {
+
             int endIndex = s.indexOf("}", startIndex + 2);
             String newKey = s.substring(startIndex + 2, endIndex);
 

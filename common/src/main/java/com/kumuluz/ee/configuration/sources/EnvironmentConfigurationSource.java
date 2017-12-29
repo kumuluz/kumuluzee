@@ -62,6 +62,7 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
         Optional<String> value = get(key);
 
         if (value.isPresent()) {
+
             try {
                 return Optional.of(Integer.valueOf(value.get()));
             } catch (NumberFormatException e) {
@@ -78,6 +79,7 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
         Optional<String> value = get(key);
 
         if (value.isPresent()) {
+
             try {
                 return Optional.of(Long.valueOf(value.get()));
             } catch (NumberFormatException e) {
@@ -94,6 +96,7 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
         Optional<String> value = get(key);
 
         if (value.isPresent()) {
+
             try {
                 return Optional.of(Double.valueOf(value.get()));
             } catch (NumberFormatException e) {
@@ -110,6 +113,7 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
         Optional<String> value = get(key);
 
         if (value.isPresent()) {
+
             try {
                 return Optional.of(Float.valueOf(value.get()));
             } catch (NumberFormatException e) {
@@ -129,9 +133,12 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
         Integer maxIndex = -1;
 
         for (String envName : System.getenv().keySet()) {
+
             if (envName.startsWith(key)) {
+
                 int openingIndex = key.length();
                 int closingIndex = envName.indexOf("_", openingIndex + 1);
+
                 if (closingIndex < 0) {
                     closingIndex = envName.length();
                 }
@@ -187,7 +194,7 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
 
     private String parseKeyNameForEnvironmentVariables(String key) {
 
-        return key.toUpperCase().replaceAll("\\[", "").replaceAll("\\]", "")
+        return key.toUpperCase().replaceAll("\\[", "").replaceAll("]", "")
                 .replaceAll("-", "").replaceAll("\\.", "_");
 
     }
