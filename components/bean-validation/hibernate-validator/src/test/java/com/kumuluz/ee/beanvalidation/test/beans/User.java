@@ -20,13 +20,13 @@
 */
 package com.kumuluz.ee.beanvalidation.test.beans;
 
-import java.util.Date;
-import java.util.List;
-
+import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Tilen
@@ -38,7 +38,7 @@ public class User {
     private String username;
 
     @NotNull
-    @Pattern(regexp = "^(.+)@(.+)$")
+    @Email
     private String email;
 
     @Size(min = 2, max = 20)
@@ -58,6 +58,7 @@ public class User {
     @NotNull
     private Date createdAt;
 
+    @Valid
     private List<Project> projects;
 
     public String getUsername() {
