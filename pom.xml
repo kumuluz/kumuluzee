@@ -41,7 +41,7 @@
         <el.version>3.0.0</el.version>
         <cdi.version>1.2</cdi.version>
         <jpa.version>2.1.1</jpa.version>
-        <jaxrs.version>2.0.1</jaxrs.version>
+        <jaxrs.version>2.1</jaxrs.version>
         <jaxws.version>2.2.11</jaxws.version>
         <jsf.version>2.2.14</jsf.version>
         <websocket.version>1.1</websocket.version>
@@ -69,7 +69,7 @@
         <uel-version>3.0.0</uel-version>
         <weld.version>2.4.6.Final</weld.version>
         <hibernate.validator.version>6.0.7.Final</hibernate.validator.version>
-        <jersey.version>2.25.1</jersey.version>
+        <jersey.version>2.26</jersey.version>
         <jackson.version>2.8.10</jackson.version>
         <metro.version>2.3.1</metro.version>
         <hibernate.version>5.2.10.Final</hibernate.version>

@@ -72,6 +72,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.ext.cdi</groupId>
+            <artifactId>jersey-cdi1x-ban-custom-hk2-binding</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
 
     </dependencies>
 
