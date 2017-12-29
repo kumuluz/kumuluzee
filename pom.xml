@@ -46,7 +46,7 @@
         <jsf.version>2.2.14</jsf.version>
         <websocket.version>1.1</websocket.version>
         <beanvalidation.version>2.0.1.Final</beanvalidation.version>
-        <json.p.version>1.0</json.p.version>
+        <json.p.version>1.1.2</json.p.version>
         <jta.version>1.2</jta.version>
         <resource.version>1.7</resource.version>
 
@@ -75,7 +75,7 @@
         <hibernate.version>5.2.10.Final</hibernate.version>
         <eclipselink.version>2.6.5</eclipselink.version>
         <mojarra.version>2.2.15</mojarra.version>
-        <jsonp.version>1.0.4</jsonp.version>
+        <jsonp.version>1.1.2</jsonp.version>
         <narayana.version>5.7.1.Final</narayana.version>
         <jboss-transaction-spi.version>7.6.0.Final</jboss-transaction-spi.version>
     </properties>
