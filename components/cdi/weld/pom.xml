@@ -21,8 +21,12 @@
         </dependency>
 
         <dependency>
-            <groupId>javax.enterprise</groupId>
-            <artifactId>cdi-api</artifactId>
+            <groupId>javax.interceptor</groupId>
+            <artifactId>javax.interceptor-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.el</groupId>
+            <artifactId>javax.el-api</artifactId>
         </dependency>
 
         <dependency>
@@ -61,6 +65,12 @@
             <groupId>org.glassfish.jersey.ext.cdi</groupId>
             <artifactId>jersey-cdi1x</artifactId>
             <version>${jersey.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.ws.rs</groupId>
+                    <artifactId>javax.ws.rs-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
     </dependencies>

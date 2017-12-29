@@ -26,6 +26,10 @@
             <version>${eclipselink.version}</version>
             <exclusions>
                 <exclusion>
+                    <groupId>org.eclipse.persistence</groupId>
+                    <artifactId>javax.persistence</artifactId>
+                </exclusion>
+                <exclusion>
                     <groupId>org.glassfish</groupId>
                     <artifactId>javax.json</artifactId>
                 </exclusion>

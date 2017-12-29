@@ -39,6 +39,12 @@
             <groupId>org.jboss.narayana.jta</groupId>
             <artifactId>narayana-jta</artifactId>
             <version>${narayana.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss</groupId>
+                    <artifactId>jboss-transaction-spi</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
