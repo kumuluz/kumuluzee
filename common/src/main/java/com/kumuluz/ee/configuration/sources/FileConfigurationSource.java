@@ -179,6 +179,7 @@ public class FileConfigurationSource implements ConfigurationSource {
         Optional<String> value = get(key);
 
         if (value.isPresent()) {
+
             try {
                 return Optional.of(Integer.valueOf(value.get()));
             } catch (NumberFormatException e) {
@@ -195,6 +196,7 @@ public class FileConfigurationSource implements ConfigurationSource {
         Optional<String> value = get(key);
 
         if (value.isPresent()) {
+
             try {
                 return Optional.of(Long.valueOf(value.get()));
             } catch (NumberFormatException e) {
@@ -211,6 +213,7 @@ public class FileConfigurationSource implements ConfigurationSource {
         Optional<String> value = get(key);
 
         if (value.isPresent()) {
+
             try {
                 return Optional.of(Double.valueOf(value.get()));
             } catch (NumberFormatException e) {
@@ -227,6 +230,7 @@ public class FileConfigurationSource implements ConfigurationSource {
         Optional<String> value = get(key);
 
         if (value.isPresent()) {
+
             try {
                 return Optional.of(Float.valueOf(value.get()));
             } catch (NumberFormatException e) {
@@ -242,6 +246,7 @@ public class FileConfigurationSource implements ConfigurationSource {
     public Optional<Integer> getListSize(String key) {
 
         if (config != null) {
+
             Object value = getValue(key);
 
             if (value instanceof List) {

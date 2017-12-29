@@ -56,6 +56,7 @@ public class SystemPropertyConfigurationSource implements ConfigurationSource {
         Optional<String> value = get(key);
 
         if (value.isPresent()) {
+
             try {
                 return Optional.of(Integer.valueOf(value.get()));
             } catch (NumberFormatException e) {
@@ -72,6 +73,7 @@ public class SystemPropertyConfigurationSource implements ConfigurationSource {
         Optional<String> value = get(key);
 
         if (value.isPresent()) {
+
             try {
                 return Optional.of(Long.valueOf(value.get()));
             } catch (NumberFormatException e) {
@@ -84,9 +86,11 @@ public class SystemPropertyConfigurationSource implements ConfigurationSource {
 
     @Override
     public Optional<Double> getDouble(String key) {
+
         Optional<String> value = get(key);
 
         if (value.isPresent()) {
+
             try {
                 return Optional.of(Double.valueOf(value.get()));
             } catch (NumberFormatException e) {
@@ -99,9 +103,11 @@ public class SystemPropertyConfigurationSource implements ConfigurationSource {
 
     @Override
     public Optional<Float> getFloat(String key) {
+
         Optional<String> value = get(key);
 
         if (value.isPresent()) {
+
             try {
                 return Optional.of(Float.valueOf(value.get()));
             } catch (NumberFormatException e) {

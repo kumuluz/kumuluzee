@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 /**
  * @author Urban Malc
@@ -32,20 +31,22 @@ import java.util.logging.Logger;
  */
 public class ConfigurationSourceUtils {
 
-    private static final Logger log = Logger.getLogger(ConfigurationSourceUtils.class.getName());
 
     public static Optional<Integer> getListSize(String key, Collection<String> allKeys) {
+
         Integer maxIndex = -1;
 
         for (String propertyKey : allKeys) {
+
             if (propertyKey.startsWith(key + "[")) {
+
                 int openingIndex = key.length() + 1;
                 int closingIndex = propertyKey.indexOf("]", openingIndex + 1);
+
                 try {
                     Integer idx = Integer.parseInt(propertyKey.substring(openingIndex, closingIndex));
                     maxIndex = Math.max(maxIndex, idx);
-                } catch (NumberFormatException e) {
-                    log.severe("Cannot cast array index for key: " + propertyKey);
+                } catch (NumberFormatException ignored) {
                 }
             }
         }
@@ -58,20 +59,26 @@ public class ConfigurationSourceUtils {
     }
 
     public static Optional<List<String>> getMapKeys(String key, Collection<String> allKeys) {
+
         List<String> mapKeys = new ArrayList<>();
 
         for (String propertyKey : allKeys) {
+
             String mapKey = "";
 
             if (propertyKey.startsWith(key)) {
+
                 int index = key.length() + 1;
+
                 if (index < propertyKey.length() && propertyKey.charAt(index - 1) == '.') {
                     mapKey = propertyKey.substring(index);
                 }
             }
 
             if (!mapKey.isEmpty()) {
+
                 int endIndex = mapKey.indexOf(".");
+
                 if (endIndex > 0) {
                     mapKey = mapKey.substring(0, endIndex);
                 }
@@ -86,6 +93,7 @@ public class ConfigurationSourceUtils {
         }
 
         if (mapKeys.isEmpty()) {
+
             return Optional.empty();
         }
 
