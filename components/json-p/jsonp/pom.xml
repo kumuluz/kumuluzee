@@ -23,9 +23,8 @@
         <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>javax.json</artifactId>
-            <version>${jsonp.version}</version>
+            <version>${jsonp-impl.version}</version>
         </dependency>
     </dependencies>
-
 
 </project>

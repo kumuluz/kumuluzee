@@ -43,11 +43,12 @@
         <jpa.version>2.2</jpa.version>
         <jpa.ee7.version>2.1.1</jpa.ee7.version>
         <jaxrs.version>2.1</jaxrs.version>
-        <jaxws.version>2.2.11</jaxws.version>
+        <jaxws.version>2.3.0</jaxws.version>
         <jsf.version>2.3</jsf.version>
         <websocket.version>1.0</websocket.version>
         <beanvalidation.version>2.0.1.Final</beanvalidation.version>
-        <json.p.version>1.1.2</json.p.version>
+        <jsonp.version>1.1.2</jsonp.version>
+        <jsonb.version>1.0</jsonb.version>
         <jta.version>1.2</jta.version>
         <resource.version>1.7</resource.version>
 
@@ -67,16 +68,17 @@
         <maven-dependency-plugin.version>3.0.1</maven-dependency-plugin.version>
 
         <jetty.version>9.4.8.v20171121</jetty.version>
-        <uel-version>3.0.0</uel-version>
+        <uel.version>3.0.0</uel.version>
         <weld.version>3.0.2.Final</weld.version>
         <hibernate.validator.version>6.0.7.Final</hibernate.validator.version>
         <jersey.version>2.26</jersey.version>
         <jackson.version>2.8.10</jackson.version>
-        <metro.version>2.3.1</metro.version>
+        <metro.version>2.4.0</metro.version>
         <hibernate.version>5.2.12.Final</hibernate.version>
         <eclipselink.version>2.7.1</eclipselink.version>
         <mojarra.version>2.3.3</mojarra.version>
-        <jsonp.version>1.1.2</jsonp.version>
+        <jsonp-impl.version>1.1.2</jsonp-impl.version>
+        <yasson.version>1.0</yasson.version>
         <narayana.version>5.7.1.Final</narayana.version>
         <jboss-transaction-spi.version>7.6.0.Final</jboss-transaction-spi.version>
     </properties>
@@ -398,7 +400,12 @@
             <dependency>
                 <groupId>javax.json</groupId>
                 <artifactId>javax.json-api</artifactId>
-                <version>${json.p.version}</version>
+                <version>${jsonp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.json.bind</groupId>
+                <artifactId>javax.json.bind-api</artifactId>
+                <version>${jsonb.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.transaction</groupId>

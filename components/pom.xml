@@ -25,6 +25,7 @@
         <module>bean-validation</module>
         <module>jax-ws</module>
         <module>jta</module>
+        <module>json-b</module>
     </modules>
 
     <artifactId>kumuluzee-components</artifactId>
