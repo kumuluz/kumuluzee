@@ -44,8 +44,8 @@
         <jpa.ee7.version>2.1.1</jpa.ee7.version>
         <jaxrs.version>2.1</jaxrs.version>
         <jaxws.version>2.2.11</jaxws.version>
-        <jsf.version>2.2.14</jsf.version>
-        <websocket.version>1.1</websocket.version>
+        <jsf.version>2.3</jsf.version>
+        <websocket.version>1.0</websocket.version>
         <beanvalidation.version>2.0.1.Final</beanvalidation.version>
         <json.p.version>1.1.2</json.p.version>
         <jta.version>1.2</jta.version>
@@ -75,7 +75,7 @@
         <metro.version>2.3.1</metro.version>
         <hibernate.version>5.2.12.Final</hibernate.version>
         <eclipselink.version>2.7.1</eclipselink.version>
-        <mojarra.version>2.2.15</mojarra.version>
+        <mojarra.version>2.3.3</mojarra.version>
         <jsonp.version>1.1.2</jsonp.version>
         <narayana.version>5.7.1.Final</narayana.version>
         <jboss-transaction-spi.version>7.6.0.Final</jboss-transaction-spi.version>
@@ -383,6 +383,11 @@
             <dependency>
                 <groupId>javax.websocket</groupId>
                 <artifactId>javax.websocket-api</artifactId>
+                <version>${websocket.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.websocket</groupId>
+                <artifactId>javax.websocket-client-api</artifactId>
                 <version>${websocket.version}</version>
             </dependency>
             <dependency>

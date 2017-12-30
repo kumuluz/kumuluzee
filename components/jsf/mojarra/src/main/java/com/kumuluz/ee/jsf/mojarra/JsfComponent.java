@@ -35,6 +35,7 @@ import java.util.logging.Logger;
  */
 @EeComponentDef(name = "Mojarra", type = EeComponentType.JSF)
 @EeComponentDependency(value = EeComponentType.SERVLET)
+@EeComponentDependency(value = EeComponentType.JSP)
 @EeComponentDependency(value = EeComponentType.EL)
 public class JsfComponent implements Component {
 
