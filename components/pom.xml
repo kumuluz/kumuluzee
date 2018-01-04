@@ -26,6 +26,7 @@
         <module>jax-ws</module>
         <module>jta</module>
         <module>json-b</module>
+        <module>javamail</module>
     </modules>
 
     <artifactId>kumuluzee-components</artifactId>

@@ -51,6 +51,7 @@
         <jsonb.version>1.0</jsonb.version>
         <jta.version>1.2</jta.version>
         <resource.version>1.7</resource.version>
+        <javamail.version>1.6.0</javamail.version>
 
         <jandex.version>2.0.4.Final</jandex.version>
         <jboss-logging.version>3.3.1.Final</jboss-logging.version>
@@ -81,6 +82,7 @@
         <yasson.version>1.0</yasson.version>
         <narayana.version>5.7.1.Final</narayana.version>
         <jboss-transaction-spi.version>7.6.0.Final</jboss-transaction-spi.version>
+        <javamail-ri.version>1.6.0</javamail-ri.version>
     </properties>
 
     <scm>
@@ -416,6 +418,11 @@
                 <groupId>javax.resource</groupId>
                 <artifactId>javax.resource-api</artifactId>
                 <version>${resource.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.mail</groupId>
+                <artifactId>javax.mail-api</artifactId>
+                <version>${javamail.version}</version>
             </dependency>
 
             <!-- Various libraries used throughout the framework-->

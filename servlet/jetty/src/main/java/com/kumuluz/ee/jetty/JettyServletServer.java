@@ -274,6 +274,18 @@ public class JettyServletServer implements ServletServer {
         return servlets;
     }
 
+    @Override
+    public void registerResource(Object o, String jndiName) {
+
+        try {
+            Resource resource = new Resource(jndiName, o);
+
+            appContext.setAttribute(jndiName, resource);
+        } catch (NamingException e) {
+            throw new IllegalArgumentException("Unable to create naming resource entry with jndi name " + jndiName + "", e);
+        }
+    }
+
     private JettyFactory createJettyFactory() {
 
         return new JettyFactory(serverConfig);

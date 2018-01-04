@@ -250,6 +250,51 @@ public class EeConfigFactory {
             }
         }
 
+        Optional<Integer> mailSessionsSizeOpt = cfg.getListSize("kumuluzee.mail-sessions");
+
+        if (mailSessionsSizeOpt.isPresent()) {
+
+            for (int i = 0; i < mailSessionsSizeOpt.get(); i++) {
+
+                String prefix = "kumuluzee.mail-sessions[" + i + "]";
+
+                MailSessionConfig.Builder mscc = new MailSessionConfig.Builder();
+
+                Optional<String> jndiName = cfg.get(prefix + ".jndi-name");
+                Optional<Boolean> debug = cfg.getBoolean(prefix + ".debug");
+
+                jndiName.ifPresent(mscc::jndiName);
+                debug.ifPresent(mscc::debug);
+
+                Optional<List<String>> transport = cfg.getMapKeys(prefix + ".transport");
+                Optional<List<String>> store = cfg.getMapKeys(prefix + ".store");
+
+                if (transport.isPresent()) {
+
+                    mscc.transport(createMailServiceConfigBuilder(prefix + ".transport"));
+                }
+
+                if (store.isPresent()) {
+
+                    mscc.store(createMailServiceConfigBuilder(prefix + ".store"));
+                }
+
+                Optional<List<String>> props = cfg.getMapKeys(prefix + ".props");
+
+                if (props.isPresent()) {
+
+                    for (String propName : props.get()) {
+
+                        Optional<String> propValue = cfg.get(prefix + ".props." + propName);
+
+                        propValue.ifPresent(v -> mscc.prop(propName, v));
+                    }
+                }
+
+                eeConfigBuilder.mailSession(mscc);
+            }
+        }
+
         PersistenceConfig.Builder persistenceBuilder = new PersistenceConfig.Builder();
 
         EnvUtils.getEnv(LEGACY_DB_UNIT_ENV, persistenceBuilder::unitName);
@@ -358,5 +403,32 @@ public class EeConfigFactory {
         }
 
         return serverConnectorBuilder;
+    }
+
+    private static MailServiceConfig.Builder createMailServiceConfigBuilder(String prefix) {
+
+        ConfigurationUtil cfg = ConfigurationUtil.getInstance();
+
+        MailServiceConfig.Builder mailServiceBuilder = new MailServiceConfig.Builder();
+
+        Optional<String> protocol = cfg.get(prefix + ".protocol");
+        Optional<String> host = cfg.get(prefix + ".host");
+        Optional<Integer> port = cfg.getInteger(prefix + ".port");
+        Optional<Boolean> starttls = cfg.getBoolean(prefix + ".starttls");
+        Optional<String> username = cfg.get(prefix + ".username");
+        Optional<String> password = cfg.get(prefix + ".password");
+        Optional<Long> connectionTimeout = cfg.getLong(prefix + ".connection-timeout");
+        Optional<Long> timeout = cfg.getLong(prefix + ".timeout");
+
+        protocol.ifPresent(mailServiceBuilder::protocol);
+        host.ifPresent(mailServiceBuilder::host);
+        port.ifPresent(mailServiceBuilder::port);
+        starttls.ifPresent(mailServiceBuilder::starttls);
+        username.ifPresent(mailServiceBuilder::username);
+        password.ifPresent(mailServiceBuilder::password);
+        connectionTimeout.ifPresent(mailServiceBuilder::connectionTimeout);
+        timeout.ifPresent(mailServiceBuilder::timeout);
+
+        return mailServiceBuilder;
     }
 }
