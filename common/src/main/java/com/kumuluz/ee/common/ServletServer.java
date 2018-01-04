@@ -20,13 +20,13 @@
 */
 package com.kumuluz.ee.common;
 
+import com.kumuluz.ee.common.models.ServletInfo;
+
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
 import javax.sql.DataSource;
-import java.util.EnumSet;
-import java.util.EventListener;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Tilen Faganel
@@ -53,4 +53,8 @@ public interface ServletServer extends KumuluzServer {
     void registerDataSource(DataSource ds, String jndiName);
 
     void initWebContext();
+
+    default List<ServletInfo> getRegisteredServlets() {
+        return Collections.emptyList();
+    }
 }

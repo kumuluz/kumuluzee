@@ -20,6 +20,7 @@
 */
 package com.kumuluz.ee.jetty;
 
+import com.kumuluz.ee.common.models.ServletInfo;
 import com.kumuluz.ee.common.ServletServer;
 import com.kumuluz.ee.common.attributes.ClasspathAttributes;
 import com.kumuluz.ee.common.config.ServerConfig;
@@ -41,9 +42,7 @@ import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
 import javax.sql.DataSource;
-import java.util.EnumSet;
-import java.util.EventListener;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -264,6 +263,15 @@ public class JettyServletServer implements ServletServer {
         } catch (NamingException e) {
             throw new IllegalArgumentException("Unable to create naming data source entry with jndi name " + jndiName + "", e);
         }
+    }
+
+    @Override
+    public List<ServletInfo> getRegisteredServlets() {
+        List<ServletInfo> servlets = new ArrayList<>();
+        Arrays.stream(this.appContext.getServletHandler().getServlets())
+                .forEach(s -> servlets.add(new ServletInfo(s.getName(), s.getContextPath())));
+
+        return servlets;
     }
 
     private JettyFactory createJettyFactory() {

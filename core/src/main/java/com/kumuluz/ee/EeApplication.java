@@ -85,6 +85,10 @@ public class EeApplication {
         EeApplication app = new EeApplication();
     }
 
+    public KumuluzServer getServer() {
+        return this.server.getServer();
+    }
+
     private void initialize() {
 
         // Initialize the configuration
