@@ -92,13 +92,13 @@ public class EeConfigFactory {
 
         ServerConnectorConfig.Builder httpBuilder =
                 createServerConnectorConfigBuilder("kumuluzee.server.http",
-                        ServerConnectorConfig.Builder.DEFAULT_HTTP_PORT);
+                        ServerConnectorConfig.DEFAULT_HTTP_PORT);
 
         EnvUtils.getEnvAsInteger(PORT_ENV, httpBuilder::port);
 
         ServerConnectorConfig.Builder httpsBuilder =
                 createServerConnectorConfigBuilder("kumuluzee.server.https",
-                        ServerConnectorConfig.Builder.DEFAULT_HTTPS_PORT);
+                        ServerConnectorConfig.DEFAULT_HTTPS_PORT);
 
         serverBuilder.http(httpBuilder);
         serverBuilder.https(httpsBuilder);
@@ -276,23 +276,19 @@ public class EeConfigFactory {
                 eeConfig.getServer().getMaxThreads() == null ||
                 eeConfig.getServer().getShowServerInfo() == null ||
                 eeConfig.getServer().getHttp() == null ||
-                eeConfig.getServer().getHttps() == null ||
-                eeConfig.getServer().getHttp().getPort() == null ||
                 eeConfig.getServer().getHttp().getHttp2() == null ||
                 eeConfig.getServer().getHttp().getProxyForwarding() == null ||
                 eeConfig.getServer().getHttp().getRequestHeaderSize() == null ||
                 eeConfig.getServer().getHttp().getResponseHeaderSize() == null ||
                 eeConfig.getServer().getHttp().getIdleTimeout() == null ||
                 eeConfig.getServer().getHttp().getSoLingerTime() == null ||
-                eeConfig.getServer().getHttps().getPort() == null ||
-                eeConfig.getServer().getHttps().getHttp2() == null ||
-                eeConfig.getServer().getHttps().getProxyForwarding() == null ||
-                eeConfig.getServer().getHttps().getRequestHeaderSize() == null ||
-                eeConfig.getServer().getHttps().getResponseHeaderSize() == null ||
-                eeConfig.getServer().getHttps().getIdleTimeout() == null ||
-                eeConfig.getServer().getHttps().getSoLingerTime() == null ||
-                eeConfig.getServer().getHttps().getKeystorePath() == null ||
-                eeConfig.getServer().getHttps().getKeystorePassword() == null ||
+                (eeConfig.getServer().getHttps() != null &&
+                        (eeConfig.getServer().getHttps().getHttp2() == null ||
+                                eeConfig.getServer().getHttps().getProxyForwarding() == null ||
+                                eeConfig.getServer().getHttps().getRequestHeaderSize() == null ||
+                                eeConfig.getServer().getHttps().getResponseHeaderSize() == null ||
+                                eeConfig.getServer().getHttps().getIdleTimeout() == null ||
+                                eeConfig.getServer().getHttps().getSoLingerTime() == null)) ||
                 eeConfig.getDatasources().stream().anyMatch(ds ->
                         (ds == null || ds.getPool() == null ||
                                 ds.getPool().getAutoCommit() == null ||

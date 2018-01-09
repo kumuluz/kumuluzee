@@ -37,7 +37,7 @@ public class ServerConfig {
         private Boolean showServerInfo = true;
 
         private ServerConnectorConfig.Builder http = new ServerConnectorConfig.Builder();
-        private ServerConnectorConfig.Builder https = new ServerConnectorConfig.Builder();
+        private ServerConnectorConfig.Builder https;
 
         public Builder baseUrl(String baseUrl) {
             this.baseUrl = baseUrl;
@@ -96,7 +96,7 @@ public class ServerConfig {
             serverConfig.showServerInfo = showServerInfo;
 
             serverConfig.http = http.build();
-            serverConfig.https = https.build();
+            if (https != null) serverConfig.https = https.build();
 
             return serverConfig;
         }
