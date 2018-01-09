@@ -20,7 +20,7 @@
     <artifactId>kumuluzee-microProfile-1.1</artifactId>
 
     <properties>
-        <version.kumuluzee-config-mp>1.1.0</version.kumuluzee-config-mp>
+        <version.kumuluzee-config-mp>1.1.1</version.kumuluzee-config-mp>
     </properties>
 
     <dependencies>
