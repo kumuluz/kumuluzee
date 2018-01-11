@@ -18,27 +18,27 @@
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.kumuluz.ee.common.models;
+package com.kumuluz.ee.common.servlet;
 
 /**
  * @author Urban Malc
  * @since 2.6.0
  */
-public class ServletInfo {
+public class ServletWrapper {
 
     private String name;
-    private String contextRoot;
+    private String contextPath;
 
-    public ServletInfo(String name, String contextRoot) {
+    public ServletWrapper(String name, String contextPath) {
         this.name = name;
-        this.contextRoot = contextRoot;
+        this.contextPath = contextPath;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getContextRoot() {
-        return contextRoot;
+    public String getContextPath() {
+        return contextPath;
     }
 }

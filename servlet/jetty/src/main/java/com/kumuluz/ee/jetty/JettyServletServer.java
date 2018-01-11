@@ -20,7 +20,7 @@
 */
 package com.kumuluz.ee.jetty;
 
-import com.kumuluz.ee.common.models.ServletInfo;
+import com.kumuluz.ee.common.servlet.ServletWrapper;
 import com.kumuluz.ee.common.ServletServer;
 import com.kumuluz.ee.common.attributes.ClasspathAttributes;
 import com.kumuluz.ee.common.config.ServerConfig;
@@ -266,10 +266,10 @@ public class JettyServletServer implements ServletServer {
     }
 
     @Override
-    public List<ServletInfo> getRegisteredServlets() {
-        List<ServletInfo> servlets = new ArrayList<>();
+    public List<ServletWrapper> getRegisteredServlets() {
+        List<ServletWrapper> servlets = new ArrayList<>();
         Arrays.stream(this.appContext.getServletHandler().getServlets())
-                .forEach(s -> servlets.add(new ServletInfo(s.getName(), s.getContextPath())));
+                .forEach(s -> servlets.add(new ServletWrapper(s.getName(), s.getContextPath())));
 
         return servlets;
     }
