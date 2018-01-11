@@ -20,7 +20,7 @@
 */
 package com.kumuluz.ee.common;
 
-import com.kumuluz.ee.common.models.ServletInfo;
+import com.kumuluz.ee.common.servlet.ServletWrapper;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
@@ -54,7 +54,5 @@ public interface ServletServer extends KumuluzServer {
 
     void initWebContext();
 
-    default List<ServletInfo> getRegisteredServlets() {
-        return Collections.emptyList();
-    }
+    List<ServletWrapper> getRegisteredServlets();
 }
