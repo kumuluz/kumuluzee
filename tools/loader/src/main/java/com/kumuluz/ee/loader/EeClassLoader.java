@@ -180,9 +180,9 @@ public class EeClassLoader extends ClassLoader {
         try {
             if (jarEntry.isDirectory()) {
                 tmpFile = new File(tempDir + File.separator + jarEntry);
+                tmpFile.mkdirs();
                 tmpFile.deleteOnExit();
                 chmod777(tmpFile);
-                tmpFile.mkdirs();
                 return tmpFile;
             } else {
                 String fileName = jarEntry.getName();
@@ -205,7 +205,7 @@ public class EeClassLoader extends ClassLoader {
                 return tmpFile;
             }
         } catch (IOException e) {
-            throw new EeClassLoaderException(String.format("Cannot create temp file '%s' for %s", tmpFile, jarEntry), e);
+            throw new EeClassLoaderException(String.format("Cannot create file '%s' for %s", tmpFile, jarEntry), e);
         }
     }
 
