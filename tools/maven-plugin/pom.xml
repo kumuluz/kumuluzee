@@ -86,6 +86,25 @@
                                     <version>${project.version}</version>
                                     <destFileName>kumuluzee-loader.jar</destFileName>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.zeroturnaround</groupId>
+                                    <groupId>org.zeroturnaround</groupId>
+                                    <artifactId>zt-zip</artifactId>
+                                    <version>1.12</version>
+                                    <destFileName>zt-zip.jar</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.slf4j</groupId>
+                                    <artifactId>slf4j-api</artifactId>
+                                    <version>1.6.6</version>
+                                    <destFileName>slf4j-api.jar</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.slf4j</groupId>
+                                    <artifactId>slf4j-simple</artifactId>
+                                    <version>1.6.6</version>
+                                    <destFileName>slf4j-simple.jar</destFileName>
+                                </artifactItem>
                             </artifactItems>
                             <outputDirectory>${project.build.directory}/generated-resources/loader/META-INF/loader
                             </outputDirectory>

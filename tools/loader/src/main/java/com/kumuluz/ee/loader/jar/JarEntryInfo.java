@@ -75,7 +75,7 @@ public class JarEntryInfo {
     }
 
     public String getName() { // used in createTempFile() and loadJar()
-        return jarEntry.getName().replace('/', '_');
+        return jarEntry.getName();
     }
 
     /**
