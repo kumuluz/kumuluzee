@@ -13,4 +13,13 @@
     <description>KumuluzEE custom class loader implementation</description>
 
     <artifactId>kumuluzee-loader</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.zeroturnaround</groupId>
+            <artifactId>zt-zip</artifactId>
+            <scope>compile</scope>
+            <version>1.12</version>
+        </dependency>
+    </dependencies>
 </project>

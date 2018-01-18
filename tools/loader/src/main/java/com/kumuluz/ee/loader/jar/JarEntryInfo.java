@@ -23,9 +23,12 @@ package com.kumuluz.ee.loader.jar;
 import com.kumuluz.ee.loader.exception.EeClassLoaderException;
 
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.jar.JarEntry;
 
@@ -63,15 +66,16 @@ public class JarEntryInfo {
 
     public URL getURL() { // used in findResource() and findResources()
         try {
-            String jarFileName = jarFileInfo.getJarFile().getName().replace("\\", "/");
-            return new URL("jar:file:" + jarFileName + "!/" + jarEntry);
-        } catch (MalformedURLException e) {
+            String jarFileName = new File(jarFileInfo.getJarFile().getName()).toURI().toString();
+            URI uri = new URI("jar:" + jarFileName + "!/" + jarEntry);
+            return uri.toURL();
+        } catch (URISyntaxException | MalformedURLException e) {
             return null;
         }
     }
 
     public String getName() { // used in createTempFile() and loadJar()
-        return jarEntry.getName().replace('/', '_');
+        return jarEntry.getName();
     }
 
     /**

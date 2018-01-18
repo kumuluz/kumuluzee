@@ -32,6 +32,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
+import java.util.Arrays;
 import java.util.List;
 import java.util.jar.JarFile;
 
@@ -43,7 +44,12 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
  */
 public abstract class AbstractPackageMojo extends AbstractCopyDependenciesMojo {
 
-    private static final String LOADER_JAR = "META-INF/loader/kumuluzee-loader.jar";
+    private static final String[] JARS = new String[] {
+            "META-INF/loader/kumuluzee-loader.jar",
+            "META-INF/loader/zt-zip.jar",
+            "META-INF/loader/slf4j-api.jar",
+            "META-INF/loader/slf4j-simple.jar"
+    };
     private static final String TEMP_DIR_NAME_PREFIX = "kumuluzee-loader";
     private static final String CLASS_SUFFIX = ".class";
 
@@ -80,39 +86,44 @@ public abstract class AbstractPackageMojo extends AbstractCopyDependenciesMojo {
 
             FileSystem pluginJarFs = FileSystems.newFileSystem(pluginJarFile, null);
 
-            Path loaderJarFile = pluginJarFs.getPath(LOADER_JAR);
-            Path tmpJar = Files.createTempFile(TEMP_DIR_NAME_PREFIX, ".tmp");
-
-            Files.copy(loaderJarFile, tmpJar, StandardCopyOption.REPLACE_EXISTING);
-
-            JarFile loaderJar = new JarFile(tmpJar.toFile());
-
-            loaderJar.stream().parallel()
-                    .filter(loaderJarEntry -> loaderJarEntry.getName().toLowerCase().endsWith(CLASS_SUFFIX))
-                    .forEach(loaderJarEntry -> {
+            Arrays.stream(JARS)
+                    .forEach(jar -> {
                         try {
+                            Path loaderJarFile = pluginJarFs.getPath(jar);
+                            Path tmpJar = Files.createTempFile(TEMP_DIR_NAME_PREFIX, ".tmp");
 
-                            Path outputPath = Paths.get(outputDirectory, loaderJarEntry.getName());
+                            Files.copy(loaderJarFile, tmpJar, StandardCopyOption.REPLACE_EXISTING);
 
-                            Path outputPathParent = outputPath.getParent();
+                            JarFile loaderJar = new JarFile(tmpJar.toFile());
 
-                            if (outputPathParent != null) {
+                            loaderJar.stream().parallel()
+                                    .filter(loaderJarEntry -> loaderJarEntry.getName().toLowerCase().endsWith(CLASS_SUFFIX))
+                                    .forEach(loaderJarEntry -> {
+                                        try {
+                                            Path outputPath = Paths.get(outputDirectory, loaderJarEntry.getName());
 
-                                Files.createDirectories(outputPathParent);
-                            }
+                                            Path outputPathParent = outputPath.getParent();
 
-                            InputStream inputStream = loaderJar.getInputStream(loaderJarEntry);
+                                            if (outputPathParent != null) {
 
-                            Files.copy(inputStream, outputPath, StandardCopyOption.REPLACE_EXISTING);
+                                                Files.createDirectories(outputPathParent);
+                                            }
 
-                            inputStream.close();
+                                            InputStream inputStream = loaderJar.getInputStream(loaderJarEntry);
+
+                                            Files.copy(inputStream, outputPath, StandardCopyOption.REPLACE_EXISTING);
+
+                                            inputStream.close();
+                                        } catch (IOException ignored) {
+                                        }
+                                    });
+
+                            loaderJar.close();
+
+                            Files.delete(tmpJar);
                         } catch (IOException ignored) {
                         }
                     });
-
-            loaderJar.close();
-
-            Files.delete(tmpJar);
 
             // Create the boot loader config file
             Path loaderConf = Paths.get(outputDirectory, "META-INF", "kumuluzee", "boot-loader.properties");
