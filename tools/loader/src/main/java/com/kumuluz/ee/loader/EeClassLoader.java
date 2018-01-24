@@ -24,6 +24,8 @@ import com.kumuluz.ee.loader.exception.EeClassLoaderException;
 import com.kumuluz.ee.loader.jar.JarEntryInfo;
 import com.kumuluz.ee.loader.jar.JarFileInfo;
 
+import javax.enterprise.inject.spi.BeforeShutdown;
+import javax.enterprise.inject.spi.CDI;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -133,6 +135,8 @@ public class EeClassLoader extends ClassLoader {
                 shutdown();
             } catch (InterruptedException e) {
                 debug("Failed to shutdown and clean up gracefully.");
+            } catch (NoClassDefFoundError e) {
+
             }
         }));
 
@@ -321,11 +325,17 @@ public class EeClassLoader extends ClassLoader {
     }
 
     /**
-     * Called on shutdown to cleanup temporary files.
+     * Called on shutdown to cleanup CDI beans and temporary files.
      */
     private void shutdown() {
 
         debug("Shutting down and cleaning up ...");
+
+        try {
+            CDI.current().getBeanManager().fireEvent(BeforeShutdown.class);
+        } catch (Exception e) {
+            // do nothing
+        }
 
         for (JarFileInfo jarFileInfo : jarFiles) {
             try {
