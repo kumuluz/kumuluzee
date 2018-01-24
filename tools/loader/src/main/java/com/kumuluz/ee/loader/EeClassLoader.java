@@ -192,6 +192,8 @@ public class EeClassLoader extends ClassLoader {
                     String dirPath = jarEntry.getName().substring(0, lastPathIndex);
                     tempDir = new File(tempDir.getPath() + File.separator + dirPath);
                     tempDir.mkdirs();
+                    tempDir.deleteOnExit();
+                    chmod777(tempDir);
                     fileName = fileName.substring(lastPathIndex + 1);
                 }
                 tmpFile = new File(tempDir + File.separator + fileName);
