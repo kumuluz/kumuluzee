@@ -33,6 +33,10 @@ public class FileInfo {
 
     public FileInfo(File file, String simpleName) {
         this.simpleName = simpleName;
+        if (this.simpleName.endsWith("/") && this.simpleName.length() > 1) {
+            this.simpleName = this.simpleName.substring(0 ,this.simpleName.length() - 1);
+        }
+
         this.file = file;
     }
 
