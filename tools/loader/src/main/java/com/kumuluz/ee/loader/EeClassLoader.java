@@ -85,8 +85,8 @@ public class EeClassLoader extends ClassLoader {
         debug("Initialising KumuluzEE classloader");
 
         classes = new HashMap<>();
-        jarFiles = new ArrayList<>();
-        files = new ArrayList<>();
+        jarFiles = Collections.synchronizedList(new ArrayList<>());
+        files = Collections.synchronizedList(new ArrayList<>());
         deleteOnExit = new HashSet<>();
 
         String mainJarURLString;
@@ -232,6 +232,7 @@ public class EeClassLoader extends ClassLoader {
 
         jarFileInfo.getJarFile()
                 .stream()
+                .parallel()
                 .filter(je -> !je.getName().toLowerCase().startsWith(LIB_DIRECTORY))
                 .forEach(je -> {
                     try {
