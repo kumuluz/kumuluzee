@@ -49,7 +49,6 @@ public class EeClassLoader extends ClassLoader {
      * Directory name for temporary files.
      */
     private static final String TMP_DIRECTORY = "tmp/EeClassLoader";
-    private final Thread mainThread = Thread.currentThread();
     private Boolean DEBUG = false;
     private File tempDir;
     private List<JarFileInfo> jarFiles;
@@ -134,9 +133,8 @@ public class EeClassLoader extends ClassLoader {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
                 debug("Shutting down and cleaning up ...");
-                mainThread.join();
                 shutdown();
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 debug("Failed to shutdown and clean up gracefully.");
             }
         }));
