@@ -130,15 +130,6 @@ public class EeClassLoader extends ClassLoader {
             throw new EeClassLoaderException(msg, e);
         }
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try {
-                debug("Shutting down and cleaning up ...");
-                shutdown();
-            } catch (Exception e) {
-                debug("Failed to shutdown and clean up gracefully.");
-            }
-        }));
-
         debug(String.format("Initialised KumuluzEE classloader @%dms", System.currentTimeMillis() - startTime));
     }
 
@@ -209,10 +200,10 @@ public class EeClassLoader extends ClassLoader {
         }
     }
 
-    private File createTempJarFile(JarEntryInfo jarEntryInfo) throws EeClassLoaderException {
+    private File createJarFile(JarEntryInfo jarEntryInfo) throws EeClassLoaderException {
         File tmpFile = null;
         try {
-            tmpFile = File.createTempFile(jarEntryInfo.getName() + ".", null, tempDir);
+            tmpFile = new File(tempDir.getPath() + File.separator + jarEntryInfo.getName());
             tmpFile.deleteOnExit();
             chmod777(tmpFile); // Unix - allow temp file deletion by any user
             byte[] bytes = jarEntryInfo.getJarBytes();
@@ -264,7 +255,7 @@ public class EeClassLoader extends ClassLoader {
                 .forEach(je -> {
                     try {
                         JarEntryInfo jarEntryInfo = new JarEntryInfo(jarFileInfo, je);
-                        File tempFile = createTempJarFile(jarEntryInfo);
+                        File tempFile = createJarFile(jarEntryInfo);
 
                         debug(String.format("Loading inner JAR %s from temp file %s", jarEntryInfo.getJarEntry(), getFilenameForLog(tempFile)));
 
@@ -415,115 +406,6 @@ public class EeClassLoader extends ClassLoader {
         debug(String.format("Loaded %s by %s from JAR %s", className, getClass().getName(), jarSimpleName));
 
         return clazz;
-    }
-
-    /**
-     * Called on shutdown to cleanup temporary files.
-     */
-    private void shutdown() {
-
-        debug("Shutting down and cleaning up ...");
-
-        for (JarFileInfo jarFileInfo : jarFiles) {
-            try {
-                jarFileInfo.getJarFile().close();
-            } catch (IOException e) {
-                // Ignore. In the worst case temp files will accumulate.
-            }
-            File file = jarFileInfo.getFileDeleteOnExit();
-            if (file != null && !file.delete()) {
-                deleteOnExit.add(file);
-            }
-        }
-        // Private configuration file with failed to delete temporary files:
-        //   WinXP: C:/Documents and Settings/username/.EeClassLoader
-        //    Unix: /export/home/username/.EeClassLoader
-        //           -or-  /home/username/.EeClassLoader
-        File configFile = new File(System.getProperty("user.home") + File.separator + ".EeClassLoader");
-        deleteOldTemp(configFile);
-        persistNewTemp(configFile);
-    }
-
-    /**
-     * Deletes temporary files listed in the file.
-     * The method is called on shutdown().
-     *
-     * @param configFile file with temporary files list.
-     */
-    private void deleteOldTemp(File configFile) {
-        BufferedReader reader = null;
-        try {
-            int count = 0;
-            reader = new BufferedReader(new FileReader(configFile));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                File file = new File(line);
-                if (!file.exists()) {
-                    continue; // already deleted; from command line?
-                }
-                if (file.delete()) {
-                    count++;
-                } else {
-                    // Cannot delete, will try next time.
-                    deleteOnExit.add(file);
-                }
-            }
-
-            debug(String.format("Deleted %d old temp files listed in %s", count, configFile.getAbsolutePath()));
-        } catch (IOException e) {
-            // Ignore. This file may not exist.
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    // Ignore
-                }
-            }
-        }
-    }
-
-    /**
-     * Creates file with temporary files list. This list will be used to
-     * delete temporary files on the next application launch.
-     * The method is called from shutdown().
-     *
-     * @param configFile file with temporary files list.
-     */
-    private void persistNewTemp(File configFile) {
-        if (deleteOnExit.size() == 0) {
-
-            debug("No temp file names to persist on exit.");
-
-            configFile.delete(); // do not pollute disk
-            return;
-        }
-
-        debug(String.format("Persisting %d temp file names into %s", deleteOnExit.size(), configFile.getAbsolutePath()));
-
-        BufferedWriter writer = null;
-        try {
-            writer = new BufferedWriter(new FileWriter(configFile));
-            for (File file : deleteOnExit) {
-                if (!file.delete()) {
-                    String filePath = file.getCanonicalPath();
-                    writer.write(filePath);
-                    writer.newLine();
-
-                    debug(String.format("JVM failed to release %s", filePath));
-                }
-            }
-        } catch (IOException e) {
-            // Ignore. In the worst case temp files will accumulate.
-        } finally {
-            if (writer != null) {
-                try {
-                    writer.close();
-                } catch (IOException e) {
-                    // Ignore
-                }
-            }
-        }
     }
 
     /**
@@ -683,7 +565,7 @@ public class EeClassLoader extends ClassLoader {
             JarEntryInfo jarEntryInfo = findJarNativeEntry(name);
             if (jarEntryInfo != null) {
                 try {
-                    File file = createTempJarFile(jarEntryInfo);
+                    File file = createJarFile(jarEntryInfo);
 
                     debug(String.format("Loading native library %s from temp file %s", jarEntryInfo.getJarEntry(), getFilenameForLog(file)));
 
