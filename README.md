@@ -10,7 +10,7 @@ KumuluzEE also provides extensions for developing common patterns in cloud-nativ
 
 KumuluzEE has been designed to use the standard Java EE technologies and APIs with optional extensions for easier development of cloud-native microservices. Therefore, it is particularly suitable for existing enterprise Java EE developers, who would like to leverage their skills, but progressively move from monolithic to microservice design patterns.
 
-KumuluzEE is Eclipse MicroProfile compliant and provides support for MicroProfile 1.0, 1.1 and 1.2. It implements MicroProfile Config 1.1, MicroProfile Health 1.0, MicroProfile Fault Tolerance 1.0, MicroProfile Metrics 1.0 and MicroProfile JWT Authentication 1.0 APIs.
+KumuluzEE is Eclipse MicroProfile compliant and provides support for MicroProfile 1.0, 1.1 and 1.2. It implements MicroProfile Config 1.2, MicroProfile Health 1.0, MicroProfile Fault Tolerance 1.0, MicroProfile Metrics 1.1 and MicroProfile JWT Authentication 1.0 APIs.
 
 ## Getting started
 
@@ -91,10 +91,10 @@ KumuluzEE is Eclipse MicroProfile compliant and provides support for:
 - MicroProfile 1.2
 
 It implements the following MicroProfile APIs:
-- [MicroProfile Config 1.1](https://github.com/kumuluz/kumuluzee-config-mp)
+- [MicroProfile Config 1.2](https://github.com/kumuluz/kumuluzee-config-mp)
 - [MicroProfile Health 1.0](https://github.com/kumuluz/kumuluzee-health)
 - [MicroProfile Fault Tolerance 1.0](https://github.com/kumuluz/kumuluzee-fault-tolerance)
-- [MicroProfile Metrics 1.0](https://github.com/kumuluz/kumuluzee-metrics)
+- [MicroProfile Metrics 1.1](https://github.com/kumuluz/kumuluzee-metrics)
 - [MicroProfile JWT Authentication 1.0](https://github.com/kumuluz/kumuluzee-jwt-auth)
 
 ## Usage
