@@ -54,25 +54,31 @@ public abstract class AbstractPackageMojo extends AbstractCopyDependenciesMojo {
     private String outputDirectory;
     private String finalName;
 
-    protected void repackage()
-            throws MojoExecutionException {
-
+    protected void repackage() throws MojoExecutionException {
         buildDirectory = project.getBuild().getDirectory();
         outputDirectory = project.getBuild().getOutputDirectory();
         finalName = project.getBuild().getFinalName();
 
+        checkPrecoditions();
         copyDependencies("classes/lib");
         unpackDependencies();
         packageJar();
         renameJars();
     }
 
-    private void unpackDependencies() throws MojoExecutionException {
+    private void checkPrecoditions() throws MojoExecutionException {
+        getLog().info("Checking if project meets the preconditions.");
 
+        // only jar packagins if allowed
+        if (!project.getPackaging().toLowerCase().equals("jar")) {
+            throw new MojoExecutionException("Only projects of \"jar\" packaging can be repackaged into an Uber JAR.");
+        }
+    }
+
+    private void unpackDependencies() throws MojoExecutionException {
         getLog().info("Unpacking kumuluzee-loader dependency.");
 
         try {
-
             // get plugin JAR
             URI pluginJarURI = getPluginJarPath();
 
@@ -127,21 +133,17 @@ public abstract class AbstractPackageMojo extends AbstractCopyDependenciesMojo {
             String loaderConfContent = "main-class=" + mainClass;
 
             Files.write(loaderConf, loaderConfContent.getBytes(StandardCharsets.UTF_8));
-
         } catch (IOException e) {
             throw new MojoExecutionException("Failed to unpack kumuluzee-loader dependency: " + e.getMessage() + ".");
         }
     }
 
     private URI getPluginJarPath() throws MojoExecutionException {
-
         try {
-
             ProtectionDomain protectionDomain = RepackageMojo.class.getProtectionDomain();
             CodeSource codeSource = protectionDomain.getCodeSource();
 
             if (codeSource == null) {
-
                 throw new MojoExecutionException("Failed to retrieve plugin JAR file path. Unobtainable Code Source.");
             }
 
@@ -152,7 +154,6 @@ public abstract class AbstractPackageMojo extends AbstractCopyDependenciesMojo {
     }
 
     private void packageJar() throws MojoExecutionException {
-
         executeMojo(
                 plugin(
                         groupId("org.apache.maven.plugins"),
@@ -176,15 +177,12 @@ public abstract class AbstractPackageMojo extends AbstractCopyDependenciesMojo {
     }
 
     private void renameJars() throws MojoExecutionException {
-
         try {
-
             Path sourcePath1 = Paths.get(buildDirectory, finalName + ".jar");
 
             getLog().info("Repackaging jar: " + sourcePath1.toAbsolutePath());
 
             if (Files.exists(sourcePath1)) {
-
                 Files.move(
                         sourcePath1,
                         sourcePath1.resolveSibling(finalName + ".jar.original"),
@@ -195,7 +193,6 @@ public abstract class AbstractPackageMojo extends AbstractCopyDependenciesMojo {
             Path sourcePath2 = Paths.get(buildDirectory, finalName + "-uber.jar");
 
             if (Files.exists(sourcePath2)) {
-
                 Files.move(
                         sourcePath2,
                         sourcePath2.resolveSibling(finalName + ".jar"),
