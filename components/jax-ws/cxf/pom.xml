@@ -15,7 +15,7 @@
     <artifactId>kumuluzee-jax-ws-cxf</artifactId>
 
     <properties>
-        <cxf.version>3.1.12</cxf.version>
+        <cxf.version>3.2.2</cxf.version>
     </properties>
 
     <dependencies>
@@ -41,7 +41,6 @@
             <version>${cxf.version}</version>
             <type>pom</type>
         </dependency>
-
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxws</artifactId>
@@ -52,11 +51,6 @@
             <artifactId>cxf-rt-transports-http</artifactId>
             <version>${cxf.version}</version>
         </dependency>
-        <!--dependency>
-            <groupId>com.sun.xml.ws</groupId>
-            <artifactId>httpspi-servlet</artifactId>
-            <version>2.3.0</version>
-        </dependency-->
     </dependencies>
 
 </project>
