@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014-2017 Kumuluz and/or its affiliates
+ *  Copyright (c) 2014-2018 Kumuluz and/or its affiliates
  *  and other contributors as indicated by the @author tags and
  *  the contributor list.
  *
@@ -31,8 +31,8 @@ import java.util.logging.Logger;
 
 
 /**
- * @author Tilen Faganel
- * @since 2.0.0
+ * @author gpor89
+ * @since 2.6.0
  */
 @EeComponentDef(name = "CXF", type = EeComponentType.JAX_WS)
 @EeComponentDependency(value = EeComponentType.SERVLET)
