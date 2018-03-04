@@ -40,7 +40,7 @@ public class KumuluzCXFServlet extends CXFNonSpringServlet {
 
         //todo read this from xml config file
         final String path = "/soap";
-        final String implementator = "https.github_com.gpor89.soap.sample.Calculator";
+        final String implementator = "com.kumuluz.ee.cxf.sample.CalculatorSoapServiceBean";
         final String wsdlLocation = "/webapp/WEB-INF/wsdls/calculatorSample.wsdl";
 
         //start init
@@ -56,11 +56,25 @@ public class KumuluzCXFServlet extends CXFNonSpringServlet {
         fb.create();
     }
 
-    private Object getBean(String beanName) {
-        CDI<Object> cdi = CDI.current();
+    private Object getBean(String className) {
+
+        String useCdi = getInitParameter("useCdi");
+
+        if ("true".equalsIgnoreCase(useCdi)) {
+            CDI<Object> cdi = CDI.current();
+            try {
+                return cdi.select(Class.forName(className)).get();
+            } catch (ClassNotFoundException e) {
+                //todo error handling...
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        //pojo instance
         try {
-            return cdi.select(Class.forName(beanName)).get();
-        } catch (ClassNotFoundException e) {
+            return Class.forName(className).getConstructor().newInstance();
+        } catch (Exception e) {
             //todo error handling...
             e.printStackTrace();
             return null;

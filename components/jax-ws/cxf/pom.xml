@@ -32,6 +32,7 @@
         <dependency>
             <groupId>com.kumuluz.ee</groupId>
             <artifactId>kumuluzee-cdi-weld</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <!-- apache cxf -->
