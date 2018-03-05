@@ -17,7 +17,7 @@
  *  out of or in connection with the software or the use or other dealings in the
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
-*/
+ */
 package com.kumuluz.ee.loader;
 
 import com.kumuluz.ee.loader.exception.EeClassLoaderException;
@@ -27,6 +27,8 @@ import com.kumuluz.ee.loader.jar.JarFileInfo;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.security.CodeSource;
@@ -35,7 +37,6 @@ import java.security.cert.Certificate;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.logging.Logger;
 
 /**
  * @author Benjamin Kastelic
@@ -43,17 +44,12 @@ import java.util.logging.Logger;
  */
 public class EeClassLoader extends ClassLoader {
 
-    private final static Logger LOG = Logger.getLogger(EeBootLoader.class.getSimpleName());
-
     /**
      * Directory name for temporary files.
      */
-    private static final String TMP_DIRECTORY = "EeClassLoader";
-
-    private Boolean DEBUG = false;
-
+    private static final String TMP_DIRECTORY = "tmp/EeClassLoader";
     private final Thread mainThread = Thread.currentThread();
-
+    private Boolean DEBUG = false;
     private File tempDir;
     private List<JarFileInfo> jarFiles;
     private Set<File> deleteOnExit;
@@ -132,27 +128,40 @@ public class EeClassLoader extends ClassLoader {
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
-                LOG.info("Shutting down and cleaning up ...");
+                debug("Shutting down and cleaning up ...");
                 mainThread.join();
                 shutdown();
             } catch (InterruptedException e) {
-                LOG.severe("Failed to shutdown and clean up gracefully.");
+                debug("Failed to shutdown and clean up gracefully.");
             }
         }));
 
         debug(String.format("Initialised KumuluzEE classloader @%dms", System.currentTimeMillis() - startTime));
     }
 
-    private File createTempFile(JarEntryInfo jarEntryInfo) throws EeClassLoaderException {
-        // Temp files directory:
-        //   WinXP: C:/Documents and Settings/username/Local Settings/Temp/EeClassLoader
-        //   Unix: /var/tmp/EeClassLoader
-        //   Win7+: C:/Users/username/AppData/Local/Temp/EeClassLoader
+    private File createTempFile(JarEntryInfo jarEntryInfo) throws EeClassLoaderException, URISyntaxException, IOException {
+        // Create temp directory for classpath initialization
         if (tempDir == null) {
-            File dir = new File(System.getProperty("java.io.tmpdir"), TMP_DIRECTORY);
-            if (!dir.exists()) {
-                dir.mkdir();
+
+            ProtectionDomain protectionDomain = getClass().getProtectionDomain();
+            CodeSource codeSource = protectionDomain.getCodeSource();
+            URI location = (codeSource == null ? null : codeSource.getLocation().toURI());
+            String path = (location == null ? null : location.getSchemeSpecificPart());
+            if (path == null) {
+                throw new IllegalStateException("Unable to determine code source archive");
             }
+
+            File jarDir = new File(path);
+            String jarFolder = jarDir.getParentFile().getPath();
+
+            File dir = new File(jarFolder, TMP_DIRECTORY);
+
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            dir.deleteOnExit();
+
             chmod777(dir); // Unix - allow temp directory RW access to all users.
             if (!dir.exists() || !dir.isDirectory()) {
                 throw new EeClassLoaderException("Cannot create temp directory " + dir.getAbsolutePath());
@@ -208,6 +217,8 @@ public class EeClassLoader extends ClassLoader {
                         throw new RuntimeException(String.format("Cannot load jar entries from jar %s", je.getName().toLowerCase()), e);
                     } catch (EeClassLoaderException e) {
                         throw new RuntimeException("ERROR on loading inner JAR: " + e.getMessageAll());
+                    } catch (URISyntaxException e) {
+                        throw new RuntimeException(String.format("Invalid path for %s", je.getName().toLowerCase()), e);
                     }
                 });
     }
@@ -569,6 +580,10 @@ public class EeClassLoader extends ClassLoader {
                 } catch (EeClassLoaderException e) {
 
                     debug(String.format("Failure to load native library %s: %s", name, e.toString()));
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException(String.format("Invalid path for %s", name), e);
+                } catch (IOException e) {
+                    throw new RuntimeException("Unable to create temp directory: " + e.getMessage());
                 }
             }
             return null;

@@ -23,8 +23,8 @@ package com.kumuluz.ee.configuration.sources;
 import com.kumuluz.ee.configuration.ConfigurationSource;
 import com.kumuluz.ee.configuration.utils.ConfigurationDispatcher;
 
-import java.util.*;
-import java.util.logging.Logger;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Tilen Faganel
@@ -62,6 +62,7 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
         Optional<String> value = get(key);
 
         if (value.isPresent()) {
+
             try {
                 return Optional.of(Integer.valueOf(value.get()));
             } catch (NumberFormatException e) {
@@ -78,6 +79,7 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
         Optional<String> value = get(key);
 
         if (value.isPresent()) {
+
             try {
                 return Optional.of(Long.valueOf(value.get()));
             } catch (NumberFormatException e) {
@@ -94,6 +96,7 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
         Optional<String> value = get(key);
 
         if (value.isPresent()) {
+
             try {
                 return Optional.of(Double.valueOf(value.get()));
             } catch (NumberFormatException e) {
@@ -110,6 +113,7 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
         Optional<String> value = get(key);
 
         if (value.isPresent()) {
+
             try {
                 return Optional.of(Float.valueOf(value.get()));
             } catch (NumberFormatException e) {
@@ -124,21 +128,34 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
     @Override
     public Optional<Integer> getListSize(String key) {
 
-        int listSize = -1;
-        int index = -1;
-        String value;
+        key = parseKeyNameForEnvironmentVariables(key);
 
-        do {
-            listSize += 1;
-            index += 1;
-            value = System.getenv(parseKeyNameForEnvironmentVariables(key + "[" + index + "]"));
-        } while (value != null);
+        Integer maxIndex = -1;
 
-        if (listSize > 0) {
-            return Optional.of(listSize);
-        } else {
-            return Optional.empty();
+        for (String envName : System.getenv().keySet()) {
+
+            if (envName.startsWith(key)) {
+
+                int openingIndex = key.length();
+                int closingIndex = envName.indexOf("_", openingIndex + 1);
+
+                if (closingIndex < 0) {
+                    closingIndex = envName.length();
+                }
+
+                try {
+                    Integer idx = Integer.parseInt(envName.substring(openingIndex, closingIndex));
+                    maxIndex = Math.max(maxIndex, idx);
+                } catch (NumberFormatException ignored) {
+                }
+            }
         }
+
+        if (maxIndex != -1) {
+            return Optional.of(maxIndex + 1);
+        }
+
+        return Optional.empty();
     }
 
     @Override
@@ -170,9 +187,14 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
     public void set(String key, Float value) {
     }
 
+    @Override
+    public Integer getOrdinal() {
+        return getInteger(CONFIG_ORDINAL).orElse(300);
+    }
+
     private String parseKeyNameForEnvironmentVariables(String key) {
 
-        return key.toUpperCase().replaceAll("\\[", "").replaceAll("\\]", "")
+        return key.toUpperCase().replaceAll("\\[", "").replaceAll("]", "")
                 .replaceAll("-", "").replaceAll("\\.", "_");
 
     }

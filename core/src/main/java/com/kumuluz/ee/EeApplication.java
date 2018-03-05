@@ -20,28 +20,31 @@
 */
 package com.kumuluz.ee;
 
-import com.kumuluz.ee.common.config.DataSourcePoolConfig;
-import com.kumuluz.ee.common.runtime.EeRuntime;
-import com.kumuluz.ee.common.runtime.EeRuntimeComponent;
-import com.kumuluz.ee.common.runtime.EeRuntimeExtension;
-import com.kumuluz.ee.common.runtime.EeRuntimeInternal;
-import com.kumuluz.ee.factories.EeConfigFactory;
-import com.kumuluz.ee.factories.JtaXADataSourceFactory;
 import com.kumuluz.ee.common.*;
 import com.kumuluz.ee.common.config.DataSourceConfig;
+import com.kumuluz.ee.common.config.DataSourcePoolConfig;
 import com.kumuluz.ee.common.config.EeConfig;
 import com.kumuluz.ee.common.config.XaDataSourceConfig;
-import com.kumuluz.ee.common.datasources.XADataSourceBuilder;
 import com.kumuluz.ee.common.datasources.NonJtaXADataSourceWrapper;
+import com.kumuluz.ee.common.datasources.XADataSourceBuilder;
 import com.kumuluz.ee.common.datasources.XADataSourceWrapper;
 import com.kumuluz.ee.common.dependencies.*;
 import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 import com.kumuluz.ee.common.filters.PoweredByFilter;
+import com.kumuluz.ee.common.runtime.EeRuntime;
+import com.kumuluz.ee.common.runtime.EeRuntimeComponent;
+import com.kumuluz.ee.common.runtime.EeRuntimeExtension;
+import com.kumuluz.ee.common.runtime.EeRuntimeInternal;
 import com.kumuluz.ee.common.utils.ResourceUtils;
-import com.kumuluz.ee.common.wrapper.*;
+import com.kumuluz.ee.common.wrapper.ComponentWrapper;
+import com.kumuluz.ee.common.wrapper.EeComponentWrapper;
+import com.kumuluz.ee.common.wrapper.ExtensionWrapper;
+import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
 import com.kumuluz.ee.configuration.ConfigurationSource;
 import com.kumuluz.ee.configuration.utils.ConfigurationImpl;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
+import com.kumuluz.ee.factories.EeConfigFactory;
+import com.kumuluz.ee.factories.JtaXADataSourceFactory;
 import com.kumuluz.ee.loaders.*;
 import com.kumuluz.ee.logs.impl.JavaUtilDefaultLogConfigurator;
 import com.zaxxer.hikari.HikariDataSource;
@@ -80,6 +83,10 @@ public class EeApplication {
     public static void main(String args[]) {
 
         EeApplication app = new EeApplication();
+    }
+
+    public KumuluzServer getServer() {
+        return this.server.getServer();
     }
 
     private void initialize() {
@@ -204,11 +211,22 @@ public class EeApplication {
             extension.getExtension().load();
             extension.getExtension().init(server, eeConfig);
 
-            ConfigurationSource source = extension.getExtension().getConfigurationSource();
+            List<ConfigurationSource> sources = extension.getExtension().getConfigurationSources();
 
-            source.init(configImpl.getDispatcher());
-            configImpl.getConfigurationSources().add(1, source);
+            if (sources == null || sources.size() == 0) {
+                sources = Collections.singletonList(extension.getExtension().getConfigurationSource());
+            }
+
+            for (ConfigurationSource source : sources) {
+
+                if (source != null) {
+                    source.init(configImpl.getDispatcher());
+                    configImpl.getConfigurationSources().add(source);
+                }
+            }
         }
+
+        configImpl.getConfigurationSources().sort(Comparator.comparingInt(ConfigurationSource::getOrdinal).reversed());
 
         log.info("Config extensions initialized");
 
@@ -307,10 +325,13 @@ public class EeApplication {
                 }
             }
 
-            // Add all included filters
-            Map<String, String> filterParams = new HashMap<>();
-            filterParams.put("name", "KumuluzEE/" + eeRuntimeInternal.getVersion());
-            servletServer.registerFilter(PoweredByFilter.class, "/*", filterParams);
+            // Add the server info headers
+            if (eeConfig.getServer().getShowServerInfo()) {
+
+                Map<String, String> filterParams = new HashMap<>();
+                filterParams.put("name", "KumuluzEE/" + eeRuntimeInternal.getVersion());
+                servletServer.registerFilter(PoweredByFilter.class, "/*", filterParams);
+            }
         }
 
         log.info("Initializing components");
@@ -469,7 +490,8 @@ public class EeApplication {
         return new ArrayList<>(eeComp.values());
     }
 
-    private <E extends Extension> List<ExtensionWrapper<E>> processGroupEeExtensions(List<E> extensions, List<EeComponentWrapper> wrappedComponents) {
+    private <E extends Extension> List<ExtensionWrapper<E>> processGroupEeExtensions(List<E> extensions, List<EeComponentWrapper>
+            wrappedComponents) {
 
         Map<String, ExtensionWrapper<E>> eeExt = new HashMap<>();
 
@@ -509,7 +531,8 @@ public class EeApplication {
         return extensionWrappers;
     }
 
-    private <E extends Extension> List<ExtensionWrapper<E>> processSingleEeExtensions(List<E> extensions, List<EeComponentWrapper> wrappedComponents) {
+    private <E extends Extension> List<ExtensionWrapper<E>> processSingleEeExtensions(List<E> extensions, List<EeComponentWrapper>
+            wrappedComponents) {
 
         List<ExtensionWrapper<E>> extensionWrappers = new ArrayList<>();
 
@@ -533,7 +556,8 @@ public class EeApplication {
         return extensionWrappers;
     }
 
-    private <E extends Extension> void processEeExtensionDependencies(List<ExtensionWrapper<E>> extensions, List<EeComponentWrapper> components) {
+    private <E extends Extension> void processEeExtensionDependencies(List<ExtensionWrapper<E>> extensions, List<EeComponentWrapper>
+            components) {
 
         // Check if all dependencies are fulfilled
         for (ExtensionWrapper ext : extensions) {

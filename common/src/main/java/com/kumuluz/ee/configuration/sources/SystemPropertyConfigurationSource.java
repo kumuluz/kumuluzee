@@ -22,11 +22,10 @@ package com.kumuluz.ee.configuration.sources;
 
 import com.kumuluz.ee.configuration.ConfigurationSource;
 import com.kumuluz.ee.configuration.utils.ConfigurationDispatcher;
+import com.kumuluz.ee.configuration.utils.ConfigurationSourceUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Properties;
 
 /**
  * @author Urban Malc
@@ -57,6 +56,7 @@ public class SystemPropertyConfigurationSource implements ConfigurationSource {
         Optional<String> value = get(key);
 
         if (value.isPresent()) {
+
             try {
                 return Optional.of(Integer.valueOf(value.get()));
             } catch (NumberFormatException e) {
@@ -73,6 +73,7 @@ public class SystemPropertyConfigurationSource implements ConfigurationSource {
         Optional<String> value = get(key);
 
         if (value.isPresent()) {
+
             try {
                 return Optional.of(Long.valueOf(value.get()));
             } catch (NumberFormatException e) {
@@ -85,9 +86,11 @@ public class SystemPropertyConfigurationSource implements ConfigurationSource {
 
     @Override
     public Optional<Double> getDouble(String key) {
+
         Optional<String> value = get(key);
 
         if (value.isPresent()) {
+
             try {
                 return Optional.of(Double.valueOf(value.get()));
             } catch (NumberFormatException e) {
@@ -100,9 +103,11 @@ public class SystemPropertyConfigurationSource implements ConfigurationSource {
 
     @Override
     public Optional<Float> getFloat(String key) {
+
         Optional<String> value = get(key);
 
         if (value.isPresent()) {
+
             try {
                 return Optional.of(Float.valueOf(value.get()));
             } catch (NumberFormatException e) {
@@ -116,49 +121,14 @@ public class SystemPropertyConfigurationSource implements ConfigurationSource {
 
     @Override
     public Optional<Integer> getListSize(String key) {
-        int listSize = 0;
-        while(get(key + "[" + listSize + "]").isPresent()) {
-            listSize++;
-        }
 
-        if(listSize > 0) {
-            return Optional.of(listSize);
-        } else {
-            return Optional.empty();
-        }
+        return ConfigurationSourceUtils.getListSize(key, System.getProperties().stringPropertyNames());
     }
 
     @Override
     public Optional<List<String>> getMapKeys(String key) {
 
-        List<String> mapKeys = new ArrayList<>();
-
-        Properties p = System.getProperties();
-        for(String propertyKey : p.stringPropertyNames()) {
-            String mapKey = "";
-
-            if(propertyKey.startsWith(key)) {
-                int index = key.length() + 1;
-                if(index < propertyKey.length() && propertyKey.charAt(index-1) == '.') {
-                    mapKey = propertyKey.substring(index);
-                }
-            }
-
-            if(!mapKey.isEmpty()) {
-                int index = mapKey.indexOf(".");
-                if(index > 0) {
-                    mapKey = mapKey.substring(0, index);
-                }
-
-                mapKeys.add(mapKey);
-            }
-        }
-
-        if(mapKeys.isEmpty()) {
-            return Optional.empty();
-        }
-
-        return Optional.of(mapKeys);
+        return ConfigurationSourceUtils.getMapKeys(key, System.getProperties().stringPropertyNames());
     }
 
     @Override
@@ -183,5 +153,10 @@ public class SystemPropertyConfigurationSource implements ConfigurationSource {
 
     @Override
     public void set(String key, Float value) {
+    }
+
+    @Override
+    public Integer getOrdinal() {
+        return getInteger(CONFIG_ORDINAL).orElse(400);
     }
 }

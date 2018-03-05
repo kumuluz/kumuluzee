@@ -46,12 +46,10 @@ public abstract class AbstractCopyDependenciesMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${session}", readonly = true, required = true)
     protected MavenSession session;
-
-    @Parameter
-    private String webappDir;
-
     @Component
     protected BuildPluginManager buildPluginManager;
+    @Parameter
+    private String webappDir;
 
     private String outputDirectory;
     private String baseDirectory;
@@ -131,8 +129,7 @@ public abstract class AbstractCopyDependenciesMojo extends AbstractMojo {
                                 element(name("outputDirectory"), "${basedir}/target/classes/webapp"),
                                 element(name("resources"),
                                         element(name("resource"),
-                                                element(name("directory"), sourceWebAppDir),
-                                                element(name("filtering"), "true")
+                                                element(name("directory"), sourceWebAppDir)
                                         ))
                         ),
                         executionEnvironment(project, session, buildPluginManager)
@@ -154,8 +151,10 @@ public abstract class AbstractCopyDependenciesMojo extends AbstractMojo {
 
             } catch (IOException e) {
 
-                throw new MojoExecutionException("Could not create the necessary `webapp` directory. Please check the target folder permissions.", e);
+                throw new MojoExecutionException("Could not create the necessary `webapp` directory. Please check the target folder " +
+                        "permissions.", e);
             }
         }
     }
+
 }

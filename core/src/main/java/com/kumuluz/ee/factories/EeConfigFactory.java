@@ -79,6 +79,7 @@ public class EeConfigFactory {
             Optional<Integer> minThreads = cfg.getInteger("kumuluzee.server.min-threads");
             Optional<Integer> maxThreads = cfg.getInteger("kumuluzee.server.max-threads");
             Optional<Boolean> forceHttps = cfg.getBoolean("kumuluzee.server.force-https");
+            Optional<Boolean> showServerInfo = cfg.getBoolean("kumuluzee.server.show-server-info");
 
             baseUrl.ifPresent(serverBuilder::baseUrl);
             contextPath.ifPresent(serverBuilder::contextPath);
@@ -86,17 +87,18 @@ public class EeConfigFactory {
             minThreads.ifPresent(serverBuilder::minThreads);
             maxThreads.ifPresent(serverBuilder::maxThreads);
             forceHttps.ifPresent(serverBuilder::forceHttps);
+            showServerInfo.ifPresent(serverBuilder::showServerInfo);
         }
 
         ServerConnectorConfig.Builder httpBuilder =
                 createServerConnectorConfigBuilder("kumuluzee.server.http",
-                        ServerConnectorConfig.Builder.DEFAULT_HTTP_PORT);
+                        ServerConnectorConfig.DEFAULT_HTTP_PORT);
 
         EnvUtils.getEnvAsInteger(PORT_ENV, httpBuilder::port);
 
         ServerConnectorConfig.Builder httpsBuilder =
                 createServerConnectorConfigBuilder("kumuluzee.server.https",
-                        ServerConnectorConfig.Builder.DEFAULT_HTTPS_PORT);
+                        ServerConnectorConfig.DEFAULT_HTTPS_PORT);
 
         serverBuilder.http(httpBuilder);
         serverBuilder.https(httpsBuilder);
@@ -166,8 +168,10 @@ public class EeConfigFactory {
                     Optional<Integer> minIdle = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.min-idle");
                     Optional<Integer> maxSize = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.max-size");
                     Optional<String> poolName = cfg.get("kumuluzee.datasources[" + i + "].pool.name");
-                    Optional<Long> initializationFailTimeout = cfg.getLong("kumuluzee.datasources[" + i + "].pool.initialization-fail-timeout");
-                    Optional<Boolean> isolateInternalQueries = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.isolate-internal-queries");
+                    Optional<Long> initializationFailTimeout = cfg.getLong("kumuluzee.datasources[" + i + "].pool" +
+                            ".initialization-fail-timeout");
+                    Optional<Boolean> isolateInternalQueries = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool" +
+                            ".isolate-internal-queries");
                     Optional<Boolean> allowPoolSuspension = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.allow-pool-suspension");
                     Optional<Boolean> readOnly = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.read-only");
                     Optional<Boolean> registerMbeans = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.register-mbeans");
@@ -270,24 +274,21 @@ public class EeConfigFactory {
                 eeConfig.getServer().getForceHttps() == null ||
                 eeConfig.getServer().getMinThreads() == null ||
                 eeConfig.getServer().getMaxThreads() == null ||
+                eeConfig.getServer().getShowServerInfo() == null ||
                 eeConfig.getServer().getHttp() == null ||
-                eeConfig.getServer().getHttps() == null ||
-                eeConfig.getServer().getHttp().getPort() == null ||
                 eeConfig.getServer().getHttp().getHttp2() == null ||
                 eeConfig.getServer().getHttp().getProxyForwarding() == null ||
                 eeConfig.getServer().getHttp().getRequestHeaderSize() == null ||
                 eeConfig.getServer().getHttp().getResponseHeaderSize() == null ||
                 eeConfig.getServer().getHttp().getIdleTimeout() == null ||
                 eeConfig.getServer().getHttp().getSoLingerTime() == null ||
-                eeConfig.getServer().getHttps().getPort() == null ||
-                eeConfig.getServer().getHttps().getHttp2() == null ||
-                eeConfig.getServer().getHttps().getProxyForwarding() == null ||
-                eeConfig.getServer().getHttps().getRequestHeaderSize() == null ||
-                eeConfig.getServer().getHttps().getResponseHeaderSize() == null ||
-                eeConfig.getServer().getHttps().getIdleTimeout() == null ||
-                eeConfig.getServer().getHttps().getSoLingerTime() == null ||
-                eeConfig.getServer().getHttps().getKeystorePath() == null ||
-                eeConfig.getServer().getHttps().getKeystorePassword() == null ||
+                (eeConfig.getServer().getHttps() != null &&
+                        (eeConfig.getServer().getHttps().getHttp2() == null ||
+                                eeConfig.getServer().getHttps().getProxyForwarding() == null ||
+                                eeConfig.getServer().getHttps().getRequestHeaderSize() == null ||
+                                eeConfig.getServer().getHttps().getResponseHeaderSize() == null ||
+                                eeConfig.getServer().getHttps().getIdleTimeout() == null ||
+                                eeConfig.getServer().getHttps().getSoLingerTime() == null)) ||
                 eeConfig.getDatasources().stream().anyMatch(ds ->
                         (ds == null || ds.getPool() == null ||
                                 ds.getPool().getAutoCommit() == null ||
@@ -350,8 +351,10 @@ public class EeConfigFactory {
             keystorePassword.ifPresent(serverConnectorBuilder::keystorePassword);
             keyAlias.ifPresent(serverConnectorBuilder::keyAlias);
             keyPassword.ifPresent(serverConnectorBuilder::keyPassword);
-            sslProtocols.ifPresent(p -> serverConnectorBuilder.sslProtocols(Stream.of(p.split(",")).map(String::trim).collect(Collectors.toList())));
-            sslCiphers.ifPresent(c -> serverConnectorBuilder.sslCiphers(Stream.of(c.split(",")).map(String::trim).collect(Collectors.toList())));
+            sslProtocols.ifPresent(p -> serverConnectorBuilder.sslProtocols(Stream.of(p.split(",")).map(String::trim).collect(Collectors
+                    .toList())));
+            sslCiphers.ifPresent(c -> serverConnectorBuilder.sslCiphers(Stream.of(c.split(",")).map(String::trim).collect(Collectors
+                    .toList())));
         }
 
         return serverConnectorBuilder;

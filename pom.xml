@@ -33,7 +33,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <annotations.version>1.3</annotations.version>
+        <annotations.version>1.3.1</annotations.version>
         <servlet.version>3.1.0</servlet.version>
         <jsp.version>2.3.1</jsp.version>
         <el.version>3.0.0</el.version>
@@ -48,12 +48,12 @@
         <ejb.version>3.2</ejb.version>
         <jta.version>1.2</jta.version>
 
-        <jandex.version>2.0.3.Final</jandex.version>
-        <jboss-logging.version>3.3.0.Final</jboss-logging.version>
+        <jandex.version>2.0.4.Final</jandex.version>
+        <jboss-logging.version>3.3.1.Final</jboss-logging.version>
         <hikari.version>2.6.3</hikari.version>
         <yaml.version>1.18</yaml.version>
         <junit.version>4.12</junit.version>
-        <maven.plugin.api.version>3.5.0</maven.plugin.api.version>
+        <maven.plugin.api.version>3.5.2</maven.plugin.api.version>
         <maven-plugin-annotations.version>3.5</maven-plugin-annotations.version>
         <mojo-executor.version>2.3.0</mojo-executor.version>
 
@@ -62,17 +62,17 @@
         <maven-plugin-plugin.version>3.5</maven-plugin-plugin.version>
         <maven-dependency-plugin.version>3.0.1</maven-dependency-plugin.version>
 
+        <jetty.version>9.4.8.v20171121</jetty.version>
         <uel-version>3.0.0</uel-version>
-        <weld.version>2.4.4.Final</weld.version>
-        <hibernate.validator.version>5.4.1.Final</hibernate.validator.version>
+        <weld.version>2.4.6.Final</weld.version>
+        <hibernate.validator.version>5.4.2.Final</hibernate.validator.version>
         <jersey.version>2.25.1</jersey.version>
         <jackson.version>2.8.10</jackson.version>
         <metro.version>2.3.1</metro.version>
         <hibernate.version>5.2.10.Final</hibernate.version>
-        <eclipselink.version>2.6.4</eclipselink.version>
-        <mojarra.version>2.2.14</mojarra.version>
+        <eclipselink.version>2.6.5</eclipselink.version>
+        <mojarra.version>2.2.15</mojarra.version>
         <jsonp.version>1.0.4</jsonp.version>
-        <jetty.version>9.4.6.v20170531</jetty.version>
         <narayana.version>5.6.4.Final</narayana.version>
         <jboss-transaction-spi.version>7.6.0.Final</jboss-transaction-spi.version>
     </properties>
@@ -417,6 +417,21 @@
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-plugin-api</artifactId>
+                <version>${maven.plugin.api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.plugin-tools</groupId>
+                <artifactId>maven-plugin-annotations</artifactId>
+                <version>${maven-plugin-annotations.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.twdata.maven</groupId>
+                <artifactId>mojo-executor</artifactId>
+                <version>${mojo-executor.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

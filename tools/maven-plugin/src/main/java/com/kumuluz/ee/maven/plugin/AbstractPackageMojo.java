@@ -17,7 +17,7 @@
  *  out of or in connection with the software or the use or other dealings in the
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
-*/
+ */
 package com.kumuluz.ee.maven.plugin;
 
 import org.apache.maven.artifact.Artifact;
@@ -180,6 +180,8 @@ public abstract class AbstractPackageMojo extends AbstractCopyDependenciesMojo {
         try {
 
             Path sourcePath1 = Paths.get(buildDirectory, finalName + ".jar");
+
+            getLog().info("Repackaging jar: " + sourcePath1.toAbsolutePath());
 
             if (Files.exists(sourcePath1)) {
 

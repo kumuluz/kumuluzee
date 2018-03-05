@@ -17,7 +17,7 @@
  *  out of or in connection with the software or the use or other dealings in the
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
-*/
+ */
 package com.kumuluz.ee.jetty;
 
 import com.kumuluz.ee.common.config.ServerConfig;
@@ -92,12 +92,13 @@ public class JettyFactory {
 
         List<ServerConnector> connectors = new ArrayList<>();
 
-        if (Boolean.FALSE.equals(httpConfig.getEnabled()) && Boolean.FALSE.equals(httpsConfig.getEnabled())) {
+        if (Boolean.FALSE.equals(httpConfig.getEnabled()) && (httpsConfig == null || Boolean.FALSE.equals(httpsConfig.getEnabled()))) {
             throw new IllegalStateException("Both the HTTP and HTTPS connectors can not be disabled. Please enable at least one.");
         }
 
-        if (serverConfig.getForceHttps() && !Boolean.TRUE.equals(httpsConfig.getEnabled())) {
-            throw new IllegalStateException("You must enable the HTTPS connector in order to force redirects to it (`kumuluzee.server.https.enabled` must be true).");
+        if (serverConfig.getForceHttps() && (httpsConfig == null || !Boolean.TRUE.equals(httpsConfig.getEnabled()))) {
+            throw new IllegalStateException("You must enable the HTTPS connector in order to force redirects to it (`kumuluzee.server" +
+                    ".https.enabled` must be true).");
         }
 
         if (httpConfig.getEnabled() == null || httpConfig.getEnabled()) {
@@ -105,13 +106,15 @@ public class JettyFactory {
             HttpConfiguration httpConfiguration = new HttpConfiguration();
             httpConfiguration.setRequestHeaderSize(httpConfig.getRequestHeaderSize());
             httpConfiguration.setResponseHeaderSize(httpConfig.getResponseHeaderSize());
+            httpConfiguration.setSendServerVersion(serverConfig.getShowServerInfo());
 
             if (Boolean.TRUE.equals(httpConfig.getProxyForwarding())) {
                 httpConfiguration.addCustomizer(new ForwardedRequestCustomizer());
             }
 
-            if (Boolean.TRUE.equals(httpsConfig.getEnabled())) {
-                httpConfiguration.setSecurePort(httpsConfig.getPort());
+            if (httpsConfig != null && Boolean.TRUE.equals(httpsConfig.getEnabled())) {
+                httpConfiguration.setSecurePort(
+                        httpsConfig.getPort() == null ? ServerConnectorConfig.DEFAULT_HTTPS_PORT : httpsConfig.getPort());
             }
 
             ServerConnector httpConnector;
@@ -123,12 +126,12 @@ public class JettyFactory {
                 HTTP2CServerConnectionFactory http2c = new HTTP2CServerConnectionFactory(httpConfiguration);
 
                 httpConnector = new ServerConnector(server, http, http2c);
-            } else  {
+            } else {
 
                 httpConnector = new ServerConnector(server, http);
             }
 
-            httpConnector.setPort(httpConfig.getPort());
+            httpConnector.setPort(httpConfig.getPort() == null ? ServerConnectorConfig.DEFAULT_HTTP_PORT : httpConfig.getPort());
             httpConnector.setHost(httpConfig.getAddress());
 
             httpConnector.setIdleTimeout(httpConfig.getIdleTimeout());
@@ -137,7 +140,7 @@ public class JettyFactory {
             connectors.add(httpConnector);
         }
 
-        if (httpsConfig.getEnabled() != null && httpsConfig.getEnabled()) {
+        if (httpsConfig != null && httpsConfig.getEnabled() != null && httpsConfig.getEnabled()) {
 
             if (StringUtils.isNullOrEmpty(httpsConfig.getKeystorePath())) {
                 throw new IllegalStateException("Cannot create SSL connector; keystore path not specified.");
@@ -157,6 +160,7 @@ public class JettyFactory {
             httpsConfiguration.setRequestHeaderSize(httpsConfig.getRequestHeaderSize());
             httpsConfiguration.setResponseHeaderSize(httpsConfig.getResponseHeaderSize());
             httpsConfiguration.addCustomizer(new SecureRequestCustomizer());
+            httpsConfiguration.setSendServerVersion(serverConfig.getShowServerInfo());
 
             if (Boolean.TRUE.equals(httpsConfig.getProxyForwarding())) {
                 httpsConfiguration.addCustomizer(new ForwardedRequestCustomizer());
@@ -192,8 +196,6 @@ public class JettyFactory {
                 sslContextFactory.setCipherComparator(HTTP2Cipher.COMPARATOR);
                 sslContextFactory.setUseCipherSuitesOrder(true);
 
-                NegotiatingServerConnectionFactory.checkProtocolNegotiationAvailable();
-
                 HTTP2ServerConnectionFactory h2 = new HTTP2ServerConnectionFactory(httpsConfiguration);
 
                 ALPNServerConnectionFactory alpn = new ALPNServerConnectionFactory();
@@ -209,7 +211,7 @@ public class JettyFactory {
                 httpsConnector = new ServerConnector(server, ssl, http);
             }
 
-            httpsConnector.setPort(httpsConfig.getPort());
+            httpsConnector.setPort(httpsConfig.getPort() == null ? ServerConnectorConfig.DEFAULT_HTTPS_PORT : httpsConfig.getPort());
             httpsConnector.setHost(httpsConfig.getAddress());
 
             httpsConnector.setIdleTimeout(httpsConfig.getIdleTimeout());

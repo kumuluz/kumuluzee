@@ -20,6 +20,7 @@
 */
 package com.kumuluz.ee.jetty;
 
+import com.kumuluz.ee.common.servlet.ServletWrapper;
 import com.kumuluz.ee.common.ServletServer;
 import com.kumuluz.ee.common.attributes.ClasspathAttributes;
 import com.kumuluz.ee.common.config.ServerConfig;
@@ -27,7 +28,6 @@ import com.kumuluz.ee.common.dependencies.EeComponentType;
 import com.kumuluz.ee.common.dependencies.ServerDef;
 import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 import com.kumuluz.ee.common.utils.ResourceUtils;
-
 import org.eclipse.jetty.plus.jndi.Resource;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -37,14 +37,13 @@ import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 
-import java.util.*;
-import java.util.logging.Logger;
-
-import javax.naming.*;
+import javax.naming.NamingException;
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
 import javax.sql.DataSource;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * @author Tilen Faganel
@@ -134,11 +133,12 @@ public class JettyServletServer implements ServletServer {
 
         appContext.setContextPath(serverConfig.getContextPath());
 
+
+
         if (!Boolean.TRUE.equals(serverConfig.getDirBrowsing())) {
 
             appContext.setInitParameter(JettyAttributes.dirBrowsing, "false");
         }
-
         log.info("Starting KumuluzEE with context root '" + serverConfig.getContextPath() + "'");
 
         // Set the secured redirect handler in case the force https option is selected
@@ -146,7 +146,7 @@ public class JettyServletServer implements ServletServer {
 
             HandlerList handlers = new HandlerList();
             handlers.setHandlers(new Handler[]
-                    { new SecuredRedirectHandler(), appContext});
+                    {new SecuredRedirectHandler(), appContext});
 
             server.setHandler(handlers);
         } else {
@@ -156,26 +156,33 @@ public class JettyServletServer implements ServletServer {
     }
 
     @Override
-    public void setServerConfig(ServerConfig serverConfig) {
-
-        this.serverConfig = serverConfig;
-    }
-
-    @Override
     public ServerConfig getServerConfig() {
 
         return serverConfig;
     }
 
     @Override
+    public void setServerConfig(ServerConfig serverConfig) {
+
+        this.serverConfig = serverConfig;
+    }
+
+    @Override
     public void registerServlet(Class<? extends Servlet> servletClass, String mapping) {
 
-        registerServlet(servletClass, mapping, null);
+        registerServlet(servletClass, mapping, null, 0);
     }
 
     @Override
     public void registerServlet(Class<? extends Servlet> servletClass, String mapping, Map<String, String>
             parameters) {
+
+        registerServlet(servletClass, mapping, parameters, 0);
+    }
+
+    @Override
+    public void registerServlet(Class<? extends Servlet> servletClass, String mapping, Map<String, String>
+            parameters, int initOrder) {
 
         if (server == null)
             throw new IllegalStateException("Jetty has to be initialized before adding a servlet ");
@@ -187,10 +194,9 @@ public class JettyServletServer implements ServletServer {
         Class<Servlet> servlet = (Class<Servlet>) servletClass;
 
         ServletHolder holder = new ServletHolder(servlet);
-        holder.setInitOrder(0);
+        holder.setInitOrder(initOrder);
 
         if (parameters != null) {
-
             parameters.forEach(holder::setInitParameter);
         }
 
@@ -228,7 +234,8 @@ public class JettyServletServer implements ServletServer {
     }
 
     @Override
-    public void registerFilter(Class<? extends Filter> filterClass, String pathSpec, EnumSet<DispatcherType> dispatches, Map<String, String> parameters) {
+    public void registerFilter(Class<? extends Filter> filterClass, String pathSpec, EnumSet<DispatcherType> dispatches, Map<String,
+            String> parameters) {
 
         if (server == null)
             throw new IllegalStateException("Jetty has to be initialized before adding a servlet ");
@@ -256,6 +263,15 @@ public class JettyServletServer implements ServletServer {
         } catch (NamingException e) {
             throw new IllegalArgumentException("Unable to create naming data source entry with jndi name " + jndiName + "", e);
         }
+    }
+
+    @Override
+    public List<ServletWrapper> getRegisteredServlets() {
+        List<ServletWrapper> servlets = new ArrayList<>();
+        Arrays.stream(this.appContext.getServletHandler().getServlets())
+                .forEach(s -> servlets.add(new ServletWrapper(s.getName(), s.getContextPath())));
+
+        return servlets;
     }
 
     private JettyFactory createJettyFactory() {

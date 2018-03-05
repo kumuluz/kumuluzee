@@ -20,13 +20,13 @@
 */
 package com.kumuluz.ee.common;
 
+import com.kumuluz.ee.common.servlet.ServletWrapper;
+
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
 import javax.sql.DataSource;
-import java.util.EnumSet;
-import java.util.EventListener;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Tilen Faganel
@@ -37,6 +37,8 @@ public interface ServletServer extends KumuluzServer {
     void registerServlet(Class<? extends Servlet> servletClass, String mapping);
 
     void registerServlet(Class<? extends Servlet> servletClass, String mapping, Map<String, String> parameters);
+
+    void registerServlet(Class<? extends Servlet> servletClass, String mapping, Map<String, String> parameters, int initOrder);
 
     void registerListener(EventListener listener);
 
@@ -51,4 +53,6 @@ public interface ServletServer extends KumuluzServer {
     void registerDataSource(DataSource ds, String jndiName);
 
     void initWebContext();
+
+    List<ServletWrapper> getRegisteredServlets();
 }

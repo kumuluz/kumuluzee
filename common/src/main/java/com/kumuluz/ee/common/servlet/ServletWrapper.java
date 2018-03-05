@@ -17,27 +17,28 @@
  *  out of or in connection with the software or the use or other dealings in the
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
-*/
-package com.kumuluz.ee.common;
-
-import com.kumuluz.ee.configuration.ConfigurationSource;
-
-import java.util.Collections;
-import java.util.List;
+ */
+package com.kumuluz.ee.common.servlet;
 
 /**
- * @author Tilen Faganel
- * @since 2.3.0
+ * @author Urban Malc
+ * @since 2.6.0
  */
-public interface ConfigExtension extends Extension {
+public class ServletWrapper {
 
-    /**
-     * @deprecated Use {@link #getConfigurationSources()} instead.
-     */
-    @Deprecated
-    ConfigurationSource getConfigurationSource();
+    private String name;
+    private String contextPath;
 
-    default List<ConfigurationSource> getConfigurationSources() {
-        return Collections.emptyList();
+    public ServletWrapper(String name, String contextPath) {
+        this.name = name;
+        this.contextPath = contextPath;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getContextPath() {
+        return contextPath;
     }
 }

@@ -29,10 +29,10 @@ import java.util.List;
  */
 public class ServerConnectorConfig {
 
-    public static class Builder {
+    public final static Integer DEFAULT_HTTP_PORT = 8080;
+    public final static Integer DEFAULT_HTTPS_PORT = 8443;
 
-        public final static Integer DEFAULT_HTTP_PORT = 8080;
-        public final static Integer DEFAULT_HTTPS_PORT = 8443;
+    public static class Builder {
 
         private Integer port;
         private String address;
@@ -41,11 +41,11 @@ public class ServerConnectorConfig {
         private Boolean proxyForwarding = false;
         private Integer requestHeaderSize = 8 * 1024;
         private Integer responseHeaderSize = 8 * 1024;
-        private Integer idleTimeout = 60 * 60 * 1000;
+        private Integer idleTimeout = 30 * 1000;
         private Integer soLingerTime = -1;
 
-        private String keystorePath = System.getProperty("javax.net.ssl.keyStore");
-        private String keystorePassword = System.getProperty("javax.net.ssl.keyStorePassword");
+        private String keystorePath;
+        private String keystorePassword;
         private String keyAlias;
         private String keyPassword;
         private List<String> sslProtocols;

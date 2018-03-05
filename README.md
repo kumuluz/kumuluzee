@@ -10,6 +10,20 @@ KumuluzEE also provides extensions for developing common patterns in cloud-nativ
 
 KumuluzEE has been designed to use the standard Java EE technologies and APIs with optional extensions for easier development of cloud-native microservices. Therefore, it is particularly suitable for existing enterprise Java EE developers, who would like to leverage their skills, but progressively move from monolithic to microservice design patterns.
 
+KumuluzEE is Eclipse MicroProfile compliant and provides support for MicroProfile 1.0, 1.1 and 1.2. It implements MicroProfile Config 1.2, MicroProfile Health 1.0, MicroProfile Fault Tolerance 1.0, MicroProfile Metrics 1.1 and MicroProfile JWT Authentication 1.0 APIs.
+
+## Getting started
+
+If you already know how to use Java EE, then you already know how to use KumuluzEE. It is simple and straightforward. 
+
+See the [getting started](https://github.com/kumuluz/KumuluzEE/wiki/Getting-started) wiki section to create your first light-weight standalone Java EE app in 5 minutes. 
+
+Read [tutorials](https://ee.kumuluz.com/tutorial/) at our home page.
+
+Refer to [samples](https://github.com/kumuluz/kumuluzee-samples) for more examples.
+
+## Features
+
 Primary features:
 
 - No need for a traditional application server. Run your app anywhere Java runs as well as in PaaS
@@ -22,6 +36,8 @@ and Docker-like environments
 - Extend your microservices with common cloud-native patterns, such as config, discovery, logging, fault tolerance, circuit-breakers, etc. KumuluzEE provides all the building blocks.
 
 KumuluzEE provides support for various Java EE APIs and components. The goal is to support as many Java EE components as possible (contributions welcome). 
+
+## Java EE components
 
 Currently the following components are supported with more being added over time:
 
@@ -39,6 +55,8 @@ Currently the following components are supported with more being added over time
 - Bean Validation 1.1 (RI Hibernate validator)
 - JTA 1.2 (Narayana)
 
+## Additional features
+
 KumuluzEE provides additional features, which are described on the [project Wiki]( https://github.com/kumuluz/kumuluzee/wiki), particularly:
 - [Configuration framework](https://github.com/kumuluz/kumuluzee/wiki/Configuration) for easy and efficient configuration of microservices from various sources, such as environment variables, configuration files (yaml), properties, etc.
 - [TLS/SSL support](https://github.com/kumuluz/kumuluzee/wiki/TLS-SSL-support) for configuring TLS/SSL.
@@ -50,19 +68,34 @@ KumuluzEE also provides support for [**Uber JARs**](https://github.com/kumuluz/k
 In addition to the standard Java EE components, KumuluzEE also comes with several extensions that complement and extend its functionality. The extensions will follow the same modular concept as the Java EE components in which you can chose if you want to use it as well as the underlying implementation of the extension. Most extensions are geared towards creating cloud-native microservices including configuration, logging, discovery, fault tolerance including circuit-breakers, metrics, security, event streaming and more.
 The following extensions are available with more planned soon:
 
-- [KumuluzEE Config](https://github.com/kumuluz/kumuluzee/wiki/Configuration) (File and environment variables built-in)
+- [KumuluzEE Config](https://github.com/kumuluz/kumuluzee/wiki/Configuration) (File and environment variables)
 - [KumuluzEE Config with config server](https://github.com/kumuluz/kumuluzee-config) (Config server etcd/Consul)
 - [KumuluzEE REST](https://github.com/kumuluz/kumuluzee-rest) (For implementation of common, advanced and flexible REST API functionalities and patterns. Includes support for exposing JPA entities through REST)
 - [KumuluzEE Logs](https://github.com/kumuluz/kumuluzee-logs) (For advanced microservice framework for logging)
 - [KumuluzEE Discovery](https://github.com/kumuluz/kumuluzee-discovery) (For dynamic service discovery (etcd or Consul). Fully compatible with Kubernetes)
-- [KumuluzEE Metrics](https://github.com/kumuluz) (For easy collection and reporting of performance metrics)
+- [KumuluzEE Metrics](https://github.com/kumuluz/kumuluzee-metrics) (For easy collection and reporting of performance metrics)
 - [KumuluzEE Security](https://github.com/kumuluz/kumuluzee-security) (For easy integration with OAuth2/OpenID identity and access management providers)
-- [KumuluzEE Health](https://github.com/kumuluz) (For implementing health checks and exposing microservice health information)
+- [KumuluzEE Health](https://github.com/kumuluz/kumuluzee-health) (For implementing health checks and exposing microservice health information)
 - [KumuluzEE Fault Tolerance](https://github.com/kumuluz/kumuluzee-fault-tolerance) (For implementing fault tolerance patterns with microservices including circuit breakers and decoupling microservices)
 - [KumuluzEE Event Streaming](https://github.com/kumuluz/kumuluzee-streaming) (For event streaming support using Apache Kafka)
 - [KumuluzEE CORS](https://github.com/kumuluz/kumuluzee-cors) (For Cross-Origin Resource Sharing (CORS) support)
+- [KumuluzEE Swagger](https://github.com/kumuluz/kumuluzee-swagger) (For Swagger (OpenAPI 2) support and visualization)
+- [KumuluzEE OpenAPI](https://github.com/kumuluz/kumuluzee-openapi) (For OpenAPI 3 support, interface generation and visualization)
+- [KumuluzEE Reactive](https://github.com/kumuluz/kumuluzee-reactive) (For developing reactive microservices and integration with reactive streams (Vert.x and similar))
 
-If you already know how to use Java EE, then you already know how to use KumuluzEE. It is simple and straightforward. See the [getting started](https://github.com/kumuluz/KumuluzEE/wiki/Getting-started) wiki section to create your first light-weight standalone Java EE app in 5 minutes. Refer to [samples](https://github.com/kumuluz/kumuluzee-samples) for more examples.
+## MicroProfile
+
+KumuluzEE is Eclipse MicroProfile compliant and provides support for:
+- MicroProfile 1.0 
+- MicroProfile 1.1
+- MicroProfile 1.2
+
+It implements the following MicroProfile APIs:
+- [MicroProfile Config 1.2](https://github.com/kumuluz/kumuluzee-config-mp)
+- [MicroProfile Health 1.0](https://github.com/kumuluz/kumuluzee-health)
+- [MicroProfile Fault Tolerance 1.0](https://github.com/kumuluz/kumuluzee-fault-tolerance)
+- [MicroProfile Metrics 1.1](https://github.com/kumuluz/kumuluzee-metrics)
+- [MicroProfile JWT Authentication 1.0](https://github.com/kumuluz/kumuluzee-jwt-auth)
 
 ## Usage
 
@@ -88,11 +121,30 @@ Using maven add the BOM module of the library as a dependency to your project. T
 Now you can either choose any single combinations of Java EE components or use one of the common pre-built profiles that
 ship as part of KumuluzEE. You can chose any of the following profiles:
 
+MicroProfile 1.0
 ```xml
 <!-- MicroProfile 1.0 -->
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee-microProfile-1.0</artifactId>
+</dependency>
+```
+
+MicroProfile 1.1
+```xml
+<!-- MicroProfile 1.1 -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-microProfile-1.1</artifactId>
+</dependency>
+```
+
+MicroProfile 1.2
+```xml
+<!-- MicroProfile 1.2 -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-microProfile-1.2</artifactId>
 </dependency>
 ```
 
@@ -182,11 +234,11 @@ To choose your Java EE components with fine grain control include them as your d
 
 To choose your KumuluzEE extensions include them as your dependencies. You can find the available implementations and options at their respected project pages.
 
-## Pack and run microservice as uber JAR
+## Pack and run microservice as Uber JAR
 
-KumuluzEE (since version 2.4) provides support for packing and running microservices as uber JARs. It also includes a Maven plugin that correctly packages the microservice. 
+KumuluzEE (since version 2.4) provides support for packing and running microservices as Uber JARs. It also includes a Maven plugin that correctly packages the microservice. 
 
-To package a Kumuluz EE microservice into an "uber" JAR, you need to add the following plugin declaration into your 
+To package a Kumuluz EE microservice into an Uber JAR, you need to add the following plugin declaration into your 
 REST module pom.xml:
 
 ```xml
