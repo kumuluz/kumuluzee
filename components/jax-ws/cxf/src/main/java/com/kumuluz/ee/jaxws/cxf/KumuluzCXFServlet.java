@@ -20,13 +20,16 @@
  */
 package com.kumuluz.ee.jaxws.cxf;
 
+import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
+import com.kumuluz.ee.jaxws.cxf.config.Endpoint;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.cxf.transport.servlet.CXFNonSpringServlet;
 
 import javax.enterprise.inject.spi.CDI;
 import javax.servlet.ServletConfig;
-import javax.xml.namespace.QName;
+import javax.servlet.ServletException;
+import java.util.List;
 
 /**
  * @author gpor89
@@ -34,31 +37,40 @@ import javax.xml.namespace.QName;
  */
 public class KumuluzCXFServlet extends CXFNonSpringServlet {
 
+    protected static final String CDI_INIT_PARAM = "useCdi";
+
+    private List<Endpoint> endpoints;
+
+    public void init() throws ServletException {
+        this.endpoints = Endpoint.readEndpointList(ConfigurationUtil.getInstance());
+    }
+
     @Override
     protected void loadBus(ServletConfig sc) {
         super.loadBus(sc);
 
-        //todo read this from xml config file
-        final String path = "/soap";
-        final String implementator = "com.kumuluz.ee.cxf.sample.CalculatorSoapServiceBean";
-        final String wsdlLocation = "/webapp/WEB-INF/wsdls/calculatorSample.wsdl";
+        endpoints.stream().forEach(
+                endpoint -> {
 
-        //start init
-        JaxWsServerFactoryBean fb = new JaxWsServerFactoryBean();
-        fb.setWsdlLocation(wsdlLocation);
-        fb.setAddress(path);
-        fb.setBus(BusFactory.getThreadDefaultBus());
+                    final JaxWsServerFactoryBean fb = new JaxWsServerFactoryBean();
 
-        Object instance = getBean(implementator);
-        fb.setServiceBean(instance);
-        fb.setServiceName(new QName("https://github.com/gpor89/soap/sample", "Calculator"));
+                    fb.setAddress(endpoint.getPath());
+                    fb.setBus(BusFactory.getThreadDefaultBus());
+                    if (endpoint.getWsdlLocation().isPresent()) {
+                        fb.setWsdlLocation(endpoint.getWsdlLocation().get());
+                    }
 
-        fb.create();
+                    final Object instance = getBean(endpoint.getImplementationClass());
+                    fb.setServiceBean(instance);
+
+                    fb.create();
+                }
+        );
     }
 
     private Object getBean(String className) {
 
-        String useCdi = getInitParameter("useCdi");
+        String useCdi = getInitParameter(CDI_INIT_PARAM);
 
         if ("true".equalsIgnoreCase(useCdi)) {
             CDI<Object> cdi = CDI.current();
