@@ -25,7 +25,6 @@ import com.kumuluz.ee.common.ServletServer;
 import com.kumuluz.ee.common.config.EeConfig;
 import com.kumuluz.ee.common.dependencies.EeComponentDef;
 import com.kumuluz.ee.common.dependencies.EeComponentDependency;
-import com.kumuluz.ee.common.dependencies.EeComponentOptional;
 import com.kumuluz.ee.common.dependencies.EeComponentType;
 import com.kumuluz.ee.common.runtime.EeRuntime;
 import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
@@ -41,15 +40,14 @@ import java.util.logging.Logger;
  */
 @EeComponentDef(name = "CXF", type = EeComponentType.JAX_WS)
 @EeComponentDependency(value = EeComponentType.SERVLET)
-@EeComponentOptional(value = EeComponentType.CDI)
 public class JaxWsComponent implements Component {
 
-    private Logger log = Logger.getLogger(JaxWsComponent.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(JaxWsComponent.class.getSimpleName());
 
     @Override
     public void init(KumuluzServerWrapper server, EeConfig eeConfig) {
 
-        log.info("Initiating CXF");
+        LOG.info("Initiating CXF");
 
         // Check if CDI is present in the runtime
         Boolean cdiPresent = EeRuntime.getInstance().getEeComponents().stream().anyMatch(c -> c.getType().equals(EeComponentType.CDI));
@@ -57,7 +55,7 @@ public class JaxWsComponent implements Component {
         final ServletServer kumuluzServer = (ServletServer) server.getServer();
 
         final Map<String, String> servletParams = new HashMap<>();
-        servletParams.put("useCdi", cdiPresent.toString());
+        servletParams.put(KumuluzCXFServlet.CDI_INIT_PARAM, cdiPresent.toString());
 
         kumuluzServer.registerServlet(KumuluzCXFServlet.class, "/*", servletParams);
     }
@@ -65,6 +63,6 @@ public class JaxWsComponent implements Component {
     @Override
     public void load() {
 
-        log.info("CXF Initialized");
+        LOG.info("CXF Initialized");
     }
 }
