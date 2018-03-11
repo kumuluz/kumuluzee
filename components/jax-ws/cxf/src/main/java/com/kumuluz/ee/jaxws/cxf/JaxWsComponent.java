@@ -28,6 +28,8 @@ import com.kumuluz.ee.common.dependencies.EeComponentDependency;
 import com.kumuluz.ee.common.dependencies.EeComponentType;
 import com.kumuluz.ee.common.runtime.EeRuntime;
 import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
+import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
+import com.kumuluz.ee.jaxws.cxf.config.Endpoint;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,10 +56,16 @@ public class JaxWsComponent implements Component {
 
         final ServletServer kumuluzServer = (ServletServer) server.getServer();
 
-        final Map<String, String> servletParams = new HashMap<>();
-        servletParams.put(KumuluzCXFServlet.CDI_INIT_PARAM, cdiPresent.toString());
 
-        kumuluzServer.registerServlet(KumuluzCXFServlet.class, "/*", servletParams);
+        String webContext = Endpoint.readWebContextPath(ConfigurationUtil.getInstance());
+
+        if (webContext != null) {
+            final Map<String, String> servletParams = new HashMap<>();
+            servletParams.put(KumuluzCXFServlet.CDI_INIT_PARAM, cdiPresent.toString());
+            servletParams.put(KumuluzCXFServlet.CONTEXT_ROOT, webContext);
+            kumuluzServer.registerServlet(KumuluzCXFServlet.class, webContext + "/*", servletParams);
+        }
+
     }
 
     @Override

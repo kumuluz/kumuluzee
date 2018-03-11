@@ -22,9 +22,7 @@ package com.kumuluz.ee.jaxws.cxf.config;
 
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -48,7 +46,31 @@ public class Endpoint {
         this.wsdlLocation = wsdlLocation;
     }
 
-    public static List<Endpoint> readEndpointList(ConfigurationUtil cfg) {
+    public static String readWebContextPath(ConfigurationUtil cfg) {
+        final Set<String> contextPathSet = new HashSet<>();
+
+        Optional<Integer> jaxWsConfigLength = cfg.getListSize(JAX_WS_CONFIG_PATH);
+
+        for (int i = 0; jaxWsConfigLength.isPresent() && i < jaxWsConfigLength.get(); i++) {
+
+            Optional<String> webCtxConfig = cfg.get(JAX_WS_CONFIG_PATH + "[" + i + "].web-context");
+
+            if (!webCtxConfig.isPresent()) {
+                LOG.warning("Invalid jax-ws endpoint web-context = " + webCtxConfig);
+                continue;
+            }
+
+            contextPathSet.add(webCtxConfig.get());
+        }
+
+        if (contextPathSet.size() > 0) {
+            LOG.warning("Webservice component does not support multiple web-contexts");
+        }
+
+        return contextPathSet.isEmpty() ? null : contextPathSet.stream().findFirst().get();
+    }
+
+    public static List<Endpoint> readEndpointList(ConfigurationUtil cfg, String contextRoot) {
 
         final List<Endpoint> endpointList = new LinkedList<>();
 
@@ -56,7 +78,14 @@ public class Endpoint {
 
         for (int i = 0; jaxWsConfigLength.isPresent() && i < jaxWsConfigLength.get(); i++) {
 
-            Optional<String> path = cfg.get(JAX_WS_CONFIG_PATH + "[" + i + "].path");
+            Optional<String> webCtxConfig = cfg.get(JAX_WS_CONFIG_PATH + "[" + i + "].web-context");
+
+            if (!webCtxConfig.isPresent() || !webCtxConfig.get().equalsIgnoreCase(contextRoot)) {
+                LOG.warning("Invalid jax-ws endpoint web-context = " + webCtxConfig);
+                continue;
+            }
+
+            Optional<String> path = cfg.get(JAX_WS_CONFIG_PATH + "[" + i + "].url");
             Optional<String> implementationClass = cfg.get(JAX_WS_CONFIG_PATH + "[" + i + "].implementation-class");
             Optional<String> wsdlLocation = cfg.get(JAX_WS_CONFIG_PATH + "[" + i + "].wsdl-location");
 
@@ -78,8 +107,17 @@ public class Endpoint {
         return path.orElse(null);
     }
 
-    public String getImplementationClass() {
-        return implementationClass.orElse(null);
+    public Class<?> getImplementationClass() {
+
+        if (implementationClass.isPresent()) {
+            try {
+                return Class.forName(implementationClass.get());
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException("Invalid webservice implementation class", e);
+            }
+        }
+
+        throw new RuntimeException("Webservice implementation class not found");
     }
 
     public Optional<String> getWsdlLocation() {
