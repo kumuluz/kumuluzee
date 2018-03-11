@@ -20,13 +20,13 @@
 */
 package com.kumuluz.ee.jpa.common;
 
-import com.kumuluz.ee.common.config.PersistenceConfig;
 import com.kumuluz.ee.jpa.common.utils.PersistenceUtils;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * @author Tilen Faganel
