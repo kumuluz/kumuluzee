@@ -25,14 +25,13 @@ import com.kumuluz.ee.jaxws.cxf.config.Endpoint;
 import com.kumuluz.ee.jaxws.cxf.ws.InjectionHelper;
 import com.kumuluz.ee.jaxws.cxf.ws.KumuluzWSInvoker;
 import com.kumuluz.ee.jaxws.cxf.ws.KumuluzWebServiceContext;
-import org.apache.cxf.BusFactory;
-import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.transport.servlet.CXFNonSpringServlet;
 
 import javax.annotation.Resource;
 import javax.enterprise.inject.spi.CDI;
+import javax.jws.WebService;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NameAlreadyBoundException;
@@ -75,13 +74,19 @@ public class KumuluzCXFServlet extends CXFNonSpringServlet {
                     fb.setBlockPostConstruct(true);
 
                     fb.setAddress(endpoint.getPath());
-                    fb.setBus(BusFactory.getThreadDefaultBus());
-
-                    if (endpoint.getWsdlLocation().isPresent()) {
-                        fb.setWsdlLocation(endpoint.getWsdlLocation().get());
-                    }
+                    fb.setBus(this.bus);
 
                     final Class<?> implementationClass = endpoint.getImplementationClass();
+
+                    final WebService wsAnnotation = implementationClass.getAnnotation(WebService.class);
+
+                    if (wsAnnotation == null) {
+                        return;
+                    }
+
+                    if (wsAnnotation.wsdlLocation() != null && !wsAnnotation.wsdlLocation().isEmpty()) {
+                        fb.setWsdlLocation(wsAnnotation.wsdlLocation());
+                    }
 
                     final Context context;
                     try {
@@ -120,7 +125,7 @@ public class KumuluzCXFServlet extends CXFNonSpringServlet {
                             context.close();
                         }
                     } catch (NamingException e) {
-                        throw new RuntimeException("Unable to register jndi context for", e);
+                        throw new RuntimeException("Unable to register jndi context", e);
                     }
 
                     final Object targetBean = getBean(implementationClass);
@@ -133,12 +138,13 @@ public class KumuluzCXFServlet extends CXFNonSpringServlet {
                     Invoker i = new KumuluzWSInvoker(implementationClass, targetBean);
                     fb.setInvoker(i);
 
-                    Server server = fb.create();
+                    fb.create();
 
                     LOG.info("Webservice endpoint published with address=" + fb.getAddress() +
                             ", wsdlLocation=" + fb.getWsdlURL() +
                             ", implementor=" + implementationClass.getName() +
-                            ", serviceName=" + server.getEndpoint().getEndpointInfo().getService().getName());
+                            ", serviceName=" + wsAnnotation.serviceName() +
+                            ", portName=" + wsAnnotation.portName());
                 }
         );
     }

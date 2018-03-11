@@ -38,12 +38,10 @@ public class Endpoint {
 
     private Optional<String> path;
     private Optional<String> implementationClass;
-    private Optional<String> wsdlLocation;
 
-    private Endpoint(Optional<String> path, Optional<String> implementationClass, Optional<String> wsdlLocation) {
+    private Endpoint(Optional<String> path, Optional<String> implementationClass) {
         this.path = path;
         this.implementationClass = implementationClass;
-        this.wsdlLocation = wsdlLocation;
     }
 
     public static String readWebContextPath(ConfigurationUtil cfg) {
@@ -87,7 +85,6 @@ public class Endpoint {
 
             Optional<String> path = cfg.get(JAX_WS_CONFIG_PATH + "[" + i + "].url");
             Optional<String> implementationClass = cfg.get(JAX_WS_CONFIG_PATH + "[" + i + "].implementation-class");
-            Optional<String> wsdlLocation = cfg.get(JAX_WS_CONFIG_PATH + "[" + i + "].wsdl-location");
 
             if (!path.isPresent() || !implementationClass.isPresent()) {
 
@@ -97,7 +94,7 @@ public class Endpoint {
                 continue;
             }
 
-            endpointList.add(new Endpoint(path, implementationClass, wsdlLocation));
+            endpointList.add(new Endpoint(path, implementationClass));
         }
 
         return endpointList;
@@ -120,7 +117,4 @@ public class Endpoint {
         throw new RuntimeException("Webservice implementation class not found");
     }
 
-    public Optional<String> getWsdlLocation() {
-        return wsdlLocation;
-    }
 }
