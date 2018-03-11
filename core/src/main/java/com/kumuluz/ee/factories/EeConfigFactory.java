@@ -38,17 +38,6 @@ public class EeConfigFactory {
 
     private static final String PORT_ENV = "PORT";
 
-    private static final String LEGACY_MIN_THREADS_ENV = "MIN_THREADS";
-    private static final String LEGACY_MAX_THREADS_ENV = "MAX_THREADS";
-    private static final String LEGACY_REQUEST_HEADER_SIZE_ENV = "REQUEST_HEADER_SIZE";
-    private static final String LEGACY_RESPONSE_HEADER_SIZE_ENV = "RESPONSE_HEADER_SIZE";
-    private static final String LEGACY_CONTEXT_PATH_ENV = "CONTEXT_PATH";
-
-    private static final String LEGACY_DB_UNIT_ENV = "DATABASE_UNIT";
-    private static final String LEGACY_DB_URL_ENV = "DATABASE_URL";
-    private static final String LEGACY_DB_USER_ENV = "DATABASE_USER";
-    private static final String LEGACY_DB_PASS_ENV = "DATABASE_PASS";
-
     public static EeConfig buildEeConfig() {
 
         ConfigurationUtil cfg = ConfigurationUtil.getInstance();
@@ -66,10 +55,6 @@ public class EeConfigFactory {
         ServerConfig.Builder serverBuilder = new ServerConfig.Builder();
 
         Optional<List<String>> serverCfgOpt = cfg.getMapKeys("kumuluzee.server");
-
-        EnvUtils.getEnv(LEGACY_CONTEXT_PATH_ENV, serverBuilder::contextPath);
-        EnvUtils.getEnvAsInteger(LEGACY_MIN_THREADS_ENV, serverBuilder::minThreads);
-        EnvUtils.getEnvAsInteger(LEGACY_MAX_THREADS_ENV, serverBuilder::maxThreads);
 
         if (serverCfgOpt.isPresent()) {
 
@@ -153,7 +138,6 @@ public class EeConfigFactory {
                 conUrl.ifPresent(dsc::connectionUrl);
                 user.ifPresent(dsc::username);
                 pass.ifPresent(dsc::password);
-                maxPool.ifPresent(dsc::maxPoolSize);
 
                 Optional<List<String>> pool = cfg.getMapKeys("kumuluzee.datasources[" + i + "].pool");
 
@@ -295,15 +279,6 @@ public class EeConfigFactory {
             }
         }
 
-        PersistenceConfig.Builder persistenceBuilder = new PersistenceConfig.Builder();
-
-        EnvUtils.getEnv(LEGACY_DB_UNIT_ENV, persistenceBuilder::unitName);
-        EnvUtils.getEnv(LEGACY_DB_URL_ENV, persistenceBuilder::url);
-        EnvUtils.getEnv(LEGACY_DB_USER_ENV, persistenceBuilder::username);
-        EnvUtils.getEnv(LEGACY_DB_PASS_ENV, persistenceBuilder::password);
-
-        eeConfigBuilder.persistenceConfig(persistenceBuilder);
-
         return eeConfigBuilder.build();
     }
 
@@ -358,9 +333,6 @@ public class EeConfigFactory {
 
         serverConnectorBuilder.port(defaultPort);
 
-        EnvUtils.getEnvAsInteger(LEGACY_REQUEST_HEADER_SIZE_ENV, serverConnectorBuilder::requestHeaderSize);
-        EnvUtils.getEnvAsInteger(LEGACY_RESPONSE_HEADER_SIZE_ENV, serverConnectorBuilder::responseHeaderSize);
-
         Optional<List<String>> serverConnectorCfgOpt = cfg.getMapKeys(prefix);
 
         if (serverConnectorCfgOpt.isPresent()) {
@@ -371,7 +343,7 @@ public class EeConfigFactory {
             Optional<Boolean> http2 = cfg.getBoolean(prefix + ".http2");
             Optional<Boolean> proxyForwarding = cfg.getBoolean(prefix + ".proxy-forwarding");
             Optional<Integer> requestHeaderSize = cfg.getInteger(prefix + ".request-header-size");
-            Optional<Integer> responseHeaderSize = cfg.getInteger(prefix + ".kresponse-header-size");
+            Optional<Integer> responseHeaderSize = cfg.getInteger(prefix + ".response-header-size");
             Optional<Integer> idleTimeout = cfg.getInteger(prefix + ".idle-timeout");
             Optional<Integer> soLingerTime = cfg.getInteger(prefix + ".so-linger-time");
 

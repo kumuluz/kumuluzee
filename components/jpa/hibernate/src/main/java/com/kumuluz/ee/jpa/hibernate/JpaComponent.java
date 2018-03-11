@@ -40,8 +40,6 @@ public class JpaComponent implements Component {
 
     @Override
     public void init(KumuluzServerWrapper server, EeConfig eeConfig) {
-
-        PersistenceUnitHolder.getInstance().setConfig(eeConfig.getPersistenceConfig());
     }
 
     @Override

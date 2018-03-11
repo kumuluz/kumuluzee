@@ -44,8 +44,6 @@ public class EeConfig {
         private List<XaDataSourceConfig.Builder> xaDatasources = new ArrayList<>();
         private List<MailSessionConfig.Builder> mailSessions = new ArrayList<>();
 
-        private PersistenceConfig.Builder persistenceConfig = new PersistenceConfig.Builder();
-
         public Builder name(String name) {
             this.name = name;
             return this;
@@ -91,11 +89,6 @@ public class EeConfig {
             return this;
         }
 
-        public Builder persistenceConfig(PersistenceConfig.Builder persistenceConfig) {
-            this.persistenceConfig = persistenceConfig;
-            return this;
-        }
-
         public EeConfig build() {
 
             List<DataSourceConfig> constructedDatasources =
@@ -118,8 +111,6 @@ public class EeConfig {
             eeConfig.xaDatasources = Collections.unmodifiableList(constructedXaDatasources);
             eeConfig.mailSessions = Collections.unmodifiableList(constructedMailSessions);
 
-            eeConfig.persistenceConfig = persistenceConfig.build();
-
             return eeConfig;
         }
     }
@@ -136,8 +127,6 @@ public class EeConfig {
     private List<DataSourceConfig> datasources;
     private List<XaDataSourceConfig> xaDatasources;
     private List<MailSessionConfig> mailSessions;
-
-    private PersistenceConfig persistenceConfig;
 
     private EeConfig() {
     }
@@ -194,10 +183,5 @@ public class EeConfig {
 
     public List<MailSessionConfig> getMailSessions() {
         return mailSessions;
-    }
-
-    @Deprecated
-    public PersistenceConfig getPersistenceConfig() {
-        return persistenceConfig;
     }
 }
