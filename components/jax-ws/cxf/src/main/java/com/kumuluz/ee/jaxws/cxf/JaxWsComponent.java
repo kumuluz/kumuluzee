@@ -29,20 +29,22 @@ import com.kumuluz.ee.common.dependencies.EeComponentType;
 import com.kumuluz.ee.common.runtime.EeRuntime;
 import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
-import com.kumuluz.ee.jaxws.cxf.config.Endpoint;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 
 /**
  * @author gpor89
- * @since 2.6.0
+ * @since 3.0.0
  */
 @EeComponentDef(name = "CXF", type = EeComponentType.JAX_WS)
 @EeComponentDependency(value = EeComponentType.SERVLET)
 public class JaxWsComponent implements Component {
+
+    protected static final String JAX_WS_CTX_PATH = "kumuluzee.jax-ws.web-context";
 
     private static final Logger LOG = Logger.getLogger(JaxWsComponent.class.getSimpleName());
 
@@ -56,16 +58,15 @@ public class JaxWsComponent implements Component {
 
         final ServletServer kumuluzServer = (ServletServer) server.getServer();
 
+        final Optional<String> contextPath = ConfigurationUtil.getInstance().get(JAX_WS_CTX_PATH);
 
-        String webContext = Endpoint.readWebContextPath(ConfigurationUtil.getInstance());
+        String webContext = contextPath.isPresent() ? contextPath.get() : "";
 
-        if (webContext != null) {
-            final Map<String, String> servletParams = new HashMap<>();
-            servletParams.put(KumuluzCXFServlet.CDI_INIT_PARAM, cdiPresent.toString());
-            servletParams.put(KumuluzCXFServlet.CONTEXT_ROOT, webContext);
-            kumuluzServer.registerServlet(KumuluzCXFServlet.class, webContext + "/*", servletParams);
-        }
+        final Map<String, String> servletParams = new HashMap<>();
+        servletParams.put(KumuluzCXFServlet.CDI_INIT_PARAM, cdiPresent.toString());
+        servletParams.put(KumuluzCXFServlet.CONTEXT_ROOT, webContext);
 
+        kumuluzServer.registerServlet(KumuluzCXFServlet.class, webContext + "/*", servletParams);
     }
 
     @Override

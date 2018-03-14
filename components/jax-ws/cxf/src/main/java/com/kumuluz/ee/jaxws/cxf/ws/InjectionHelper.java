@@ -26,7 +26,7 @@ import java.lang.reflect.Field;
 
 /**
  * @author gpor89
- * @since 2.6.0
+ * @since 3.0.0
  */
 public final class InjectionHelper {
 
