@@ -37,7 +37,7 @@ import java.util.List;
 
 /**
  * @author gpor89
- * @since 2.6.0
+ * @since 3.0.0
  */
 public class KumuluzWSInvoker extends JAXWSMethodInvoker implements Invoker {
 

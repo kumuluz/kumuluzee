@@ -21,149 +21,72 @@
 package com.kumuluz.ee.jaxws.cxf;
 
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
-import com.kumuluz.ee.jaxws.cxf.config.Endpoint;
-import com.kumuluz.ee.jaxws.cxf.ws.InjectionHelper;
-import com.kumuluz.ee.jaxws.cxf.ws.KumuluzWSInvoker;
-import com.kumuluz.ee.jaxws.cxf.ws.KumuluzWebServiceContext;
-import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
-import org.apache.cxf.service.invoker.Invoker;
+import com.kumuluz.ee.jaxws.cxf.ws.CXFWebservicePublisher;
+import com.kumuluz.ee.jaxws.cxf.ws.Endpoint;
 import org.apache.cxf.transport.servlet.CXFNonSpringServlet;
 
-import javax.annotation.Resource;
-import javax.enterprise.inject.spi.CDI;
-import javax.jws.WebService;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NameAlreadyBoundException;
-import javax.naming.NamingException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.xml.ws.WebServiceContext;
-import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 /**
  * @author gpor89
- * @since 2.6.0
+ * @since 3.0.0
  */
 public class KumuluzCXFServlet extends CXFNonSpringServlet {
 
-    protected static final String JNDI_NAME_PREFIX = "java:comp/env/";
     protected static final String CDI_INIT_PARAM = "useCdi";
     protected static final String CONTEXT_ROOT = "contextRoot";
+    protected static final String JAX_WS_ENDPOINTS_PATH = "kumuluzee.jax-ws.endpoints";
 
-    private static final Logger LOG = Logger.getLogger(KumuluzCXFServlet.class.getSimpleName());
+    private static Logger LOG = Logger.getLogger(KumuluzCXFServlet.class.getSimpleName());
 
     private List<Endpoint> endpoints;
 
     public void init() throws ServletException {
         super.init();
-        String contextPath = getInitParameter(CONTEXT_ROOT);
-        this.endpoints = Endpoint.readEndpointList(ConfigurationUtil.getInstance(), contextPath);
+
+        this.endpoints = readEndpointList();
     }
 
     @Override
     protected void loadBus(ServletConfig sc) {
         super.loadBus(sc);
 
-        endpoints.stream().forEach(
-                endpoint -> {
-                    final JaxWsServerFactoryBean fb = new JaxWsServerFactoryBean();
-                    fb.setBlockPostConstruct(true);
+        boolean cdiPresent = "true".equalsIgnoreCase(getInitParameter(CDI_INIT_PARAM));
 
-                    fb.setAddress(endpoint.getPath());
-                    fb.setBus(this.bus);
+        final CXFWebservicePublisher publisher = new CXFWebservicePublisher();
 
-                    final Class<?> implementationClass = endpoint.getImplementationClass();
+        endpoints.stream().forEach(e -> publisher.publish(e, bus, cdiPresent));
 
-                    final WebService wsAnnotation = implementationClass.getAnnotation(WebService.class);
-
-                    if (wsAnnotation == null) {
-                        return;
-                    }
-
-                    if (wsAnnotation.wsdlLocation() != null && !wsAnnotation.wsdlLocation().isEmpty()) {
-                        fb.setWsdlLocation(wsAnnotation.wsdlLocation());
-                    }
-
-                    final Context context;
-                    try {
-                        context = new InitialContext();
-
-                        try {
-                            Stream.of(implementationClass.getDeclaredFields())
-                                    .filter(f -> f.getType() == WebServiceContext.class)
-                                    .forEach(f -> {
-                                        Resource annotation = f.getAnnotation(Resource.class);
-
-                                        if (annotation != null) {
-                                            String name = annotation.name();
-                                            String fieldName = f.getName();
-
-                                            String bindName = null;
-                                            try {
-
-                                                if (name != null && !name.isEmpty()) {
-                                                    bindName = JNDI_NAME_PREFIX + name;
-                                                } else {
-                                                    context.createSubcontext(JNDI_NAME_PREFIX + implementationClass.getName());
-                                                    bindName = JNDI_NAME_PREFIX + implementationClass.getName() + "/" + fieldName;
-                                                }
-
-                                                context.bind(bindName, KumuluzWebServiceContext.getInstance());
-                                            } catch (NameAlreadyBoundException e) {
-
-                                            } catch (NamingException e) {
-                                                throw new RuntimeException("Unable to register jndi context for " + bindName, e);
-                                            }
-                                        }
-                                    });
-
-                        } finally {
-                            context.close();
-                        }
-                    } catch (NamingException e) {
-                        throw new RuntimeException("Unable to register jndi context", e);
-                    }
-
-                    final Object targetBean = getBean(implementationClass);
-
-                    InjectionHelper.injectWebServiceContext(targetBean, KumuluzWebServiceContext.getInstance());
-
-                    //fb.setServiceBean(targetBean);
-                    fb.setServiceClass(implementationClass);
-
-                    Invoker i = new KumuluzWSInvoker(implementationClass, targetBean);
-                    fb.setInvoker(i);
-
-                    fb.create();
-
-                    LOG.info("Webservice endpoint published with address=" + fb.getAddress() +
-                            ", wsdlLocation=" + fb.getWsdlURL() +
-                            ", implementor=" + implementationClass.getName() +
-                            ", serviceName=" + wsAnnotation.serviceName() +
-                            ", portName=" + wsAnnotation.portName());
-                }
-        );
+        publisher.close();
     }
 
-    private Object getBean(Class<?> clazz) {
+    protected final List<Endpoint> readEndpointList() {
 
-        String useCdi = getInitParameter(CDI_INIT_PARAM);
+        final ConfigurationUtil conf = ConfigurationUtil.getInstance();
 
-        //cdi
-        if ("true".equalsIgnoreCase(useCdi)) {
-            return CDI.current().select(clazz).get();
+        final List<Endpoint> endpointList = new LinkedList<>();
+
+        Optional<Integer> jaxWsConfigLength = conf.getListSize(JAX_WS_ENDPOINTS_PATH);
+
+        for (int i = 0; jaxWsConfigLength.isPresent() && i < jaxWsConfigLength.get(); i++) {
+
+            Optional<String> url = conf.get(JAX_WS_ENDPOINTS_PATH + "[" + i + "].url");
+            Optional<String> implementationClass = conf.get(JAX_WS_ENDPOINTS_PATH + "[" + i + "].implementation-class");
+
+            if (!url.isPresent() || !implementationClass.isPresent()) {
+                LOG.warning("Invalid jax-ws endpoint configuration = " + conf.get(JAX_WS_ENDPOINTS_PATH + "[" + i + "]").orElse(""));
+                continue;
+            }
+
+            endpointList.add(new Endpoint(url, implementationClass));
         }
 
-        //pojo instance
-        try {
-            return clazz.getConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new RuntimeException("Unable to instantiate bean from " + clazz);
-        }
-
+        return endpointList;
     }
+
 }

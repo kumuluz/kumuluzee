@@ -30,7 +30,7 @@ import java.security.Principal;
 
 /**
  * @author gpor89
- * @since 2.6.0
+ * @since 3.0.0
  */
 public final class KumuluzWebServiceContext implements WebServiceContext, Serializable {
 
