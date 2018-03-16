@@ -48,6 +48,8 @@ public enum EeComponentType {
 
     JSON_P("JSON-P"),
 
+    JSON_B("JSON-B"),
+
     JTA("JTA"),
 
     EJB("EJB"),

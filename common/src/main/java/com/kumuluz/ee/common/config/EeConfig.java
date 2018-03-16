@@ -20,7 +20,9 @@
 */
 package com.kumuluz.ee.common.config;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -40,8 +42,7 @@ public class EeConfig {
         private ServerConfig.Builder server = new ServerConfig.Builder();
         private List<DataSourceConfig.Builder> datasources = new ArrayList<>();
         private List<XaDataSourceConfig.Builder> xaDatasources = new ArrayList<>();
-
-        private PersistenceConfig.Builder persistenceConfig = new PersistenceConfig.Builder();
+        private List<MailSessionConfig.Builder> mailSessions = new ArrayList<>();
 
         public Builder name(String name) {
             this.name = name;
@@ -83,8 +84,8 @@ public class EeConfig {
             return this;
         }
 
-        public Builder persistenceConfig(PersistenceConfig.Builder persistenceConfig) {
-            this.persistenceConfig = persistenceConfig;
+        public Builder mailSession(MailSessionConfig.Builder mailSession) {
+            this.mailSessions.add(mailSession);
             return this;
         }
 
@@ -96,6 +97,9 @@ public class EeConfig {
             List<XaDataSourceConfig> constructedXaDatasources =
                     xaDatasources.stream().map(XaDataSourceConfig.Builder::build).collect(Collectors.toList());
 
+            List<MailSessionConfig> constructedMailSessions =
+                    mailSessions.stream().map(MailSessionConfig.Builder::build).collect(Collectors.toList());
+
             EeConfig eeConfig = new EeConfig();
             eeConfig.name = name;
             eeConfig.version = version;
@@ -105,8 +109,7 @@ public class EeConfig {
             eeConfig.server = server.build();
             eeConfig.datasources = Collections.unmodifiableList(constructedDatasources);
             eeConfig.xaDatasources = Collections.unmodifiableList(constructedXaDatasources);
-
-            eeConfig.persistenceConfig = persistenceConfig.build();
+            eeConfig.mailSessions = Collections.unmodifiableList(constructedMailSessions);
 
             return eeConfig;
         }
@@ -123,8 +126,7 @@ public class EeConfig {
     private ServerConfig server;
     private List<DataSourceConfig> datasources;
     private List<XaDataSourceConfig> xaDatasources;
-
-    private PersistenceConfig persistenceConfig;
+    private List<MailSessionConfig> mailSessions;
 
     private EeConfig() {
     }
@@ -179,8 +181,7 @@ public class EeConfig {
         return xaDatasources;
     }
 
-    @Deprecated
-    public PersistenceConfig getPersistenceConfig() {
-        return persistenceConfig;
+    public List<MailSessionConfig> getMailSessions() {
+        return mailSessions;
     }
 }

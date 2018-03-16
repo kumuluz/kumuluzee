@@ -10,12 +10,13 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
 
-    <name>KumuluzEE EJB</name>
-    <description>KumuluzEE EJB component</description>
+    <name>KumuluzEE JavaMail</name>
+    <description>KumuluzEE JavaMail component</description>
+
     <modules>
-        <module>openejb</module>
+        <module>ri</module>
     </modules>
 
-    <artifactId>kumuluzee-ejb</artifactId>
+    <artifactId>kumuluzee-javamail</artifactId>
 
 </project>

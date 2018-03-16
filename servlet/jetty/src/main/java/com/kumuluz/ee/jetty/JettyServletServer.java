@@ -20,13 +20,13 @@
 */
 package com.kumuluz.ee.jetty;
 
-import com.kumuluz.ee.common.servlet.ServletWrapper;
 import com.kumuluz.ee.common.ServletServer;
 import com.kumuluz.ee.common.attributes.ClasspathAttributes;
 import com.kumuluz.ee.common.config.ServerConfig;
 import com.kumuluz.ee.common.dependencies.EeComponentType;
 import com.kumuluz.ee.common.dependencies.ServerDef;
 import com.kumuluz.ee.common.exceptions.KumuluzServerException;
+import com.kumuluz.ee.common.servlet.ServletWrapper;
 import com.kumuluz.ee.common.utils.ResourceUtils;
 import org.eclipse.jetty.plus.jndi.Resource;
 import org.eclipse.jetty.server.Handler;
@@ -267,11 +267,25 @@ public class JettyServletServer implements ServletServer {
 
     @Override
     public List<ServletWrapper> getRegisteredServlets() {
+
         List<ServletWrapper> servlets = new ArrayList<>();
+
         Arrays.stream(this.appContext.getServletHandler().getServlets())
                 .forEach(s -> servlets.add(new ServletWrapper(s.getName(), s.getContextPath())));
 
         return servlets;
+    }
+
+    @Override
+    public void registerResource(Object o, String jndiName) {
+
+        try {
+            Resource resource = new Resource(jndiName, o);
+
+            appContext.setAttribute(jndiName, resource);
+        } catch (NamingException e) {
+            throw new IllegalArgumentException("Unable to create naming resource entry with jndi name " + jndiName + "", e);
+        }
     }
 
     private JettyFactory createJettyFactory() {

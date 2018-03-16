@@ -34,23 +34,30 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <annotations.version>1.3.1</annotations.version>
+        <inject.version>1</inject.version>
+        <interceptor.version>1.2.1</interceptor.version>
         <servlet.version>3.1.0</servlet.version>
         <jsp.version>2.3.1</jsp.version>
         <el.version>3.0.0</el.version>
-        <cdi.version>1.2</cdi.version>
-        <jpa.version>2.1.1</jpa.version>
-        <jaxrs.version>2.0.1</jaxrs.version>
-        <jaxws.version>2.2.11</jaxws.version>
-        <jsf.version>2.2.14</jsf.version>
-        <websocket.version>1.1</websocket.version>
-        <beanvalidation.version>1.1.0.Final</beanvalidation.version>
-        <json.p.version>1.0</json.p.version>
-        <ejb.version>3.2</ejb.version>
+        <cdi.version>2.0</cdi.version>
+        <jpa.version>2.2</jpa.version>
+        <jpa.ee7.version>2.1.1</jpa.ee7.version>
+        <jaxrs.version>2.1</jaxrs.version>
+        <jaxws.version>2.3.0</jaxws.version>
+        <jsf.version>2.3</jsf.version>
+        <websocket.version>1.0</websocket.version>
+        <beanvalidation.version>2.0.1.Final</beanvalidation.version>
+        <jsonp.version>1.1.2</jsonp.version>
+        <jsonb.version>1.0</jsonb.version>
         <jta.version>1.2</jta.version>
+        <resource.version>1.7</resource.version>
+        <javamail.version>1.6.1</javamail.version>
 
         <jandex.version>2.0.4.Final</jandex.version>
         <jboss-logging.version>3.3.1.Final</jboss-logging.version>
-        <hikari.version>2.6.3</hikari.version>
+        <classmate.version>1.3.4</classmate.version>
+        <javassist.version>3.22.0-GA</javassist.version>
+        <hikari.version>2.7.8</hikari.version>
         <yaml.version>1.18</yaml.version>
         <junit.version>4.12</junit.version>
         <maven.plugin.api.version>3.5.2</maven.plugin.api.version>
@@ -63,29 +70,31 @@
         <maven-dependency-plugin.version>3.0.1</maven-dependency-plugin.version>
 
         <jetty.version>9.4.8.v20171121</jetty.version>
-        <uel-version>3.0.0</uel-version>
-        <weld.version>2.4.6.Final</weld.version>
-        <hibernate.validator.version>5.4.2.Final</hibernate.validator.version>
-        <jersey.version>2.25.1</jersey.version>
-        <jackson.version>2.8.10</jackson.version>
-        <metro.version>2.3.1</metro.version>
-        <hibernate.version>5.2.10.Final</hibernate.version>
-        <eclipselink.version>2.6.5</eclipselink.version>
-        <mojarra.version>2.2.15</mojarra.version>
-        <jsonp.version>1.0.4</jsonp.version>
-        <narayana.version>5.6.4.Final</narayana.version>
+        <uel.version>3.0.0</uel.version>
+        <weld.version>3.0.2.Final</weld.version>
+        <hibernate.validator.version>6.0.8.Final</hibernate.validator.version>
+        <jersey.version>2.26</jersey.version>
+        <jackson.version>2.8.11</jackson.version>
+        <metro.version>2.4.0</metro.version>
+        <hibernate.version>5.3.0.CR1</hibernate.version>
+        <eclipselink.version>2.7.1</eclipselink.version>
+        <mojarra.version>2.3.3</mojarra.version>
+        <jsonp-impl.version>1.1.2</jsonp-impl.version>
+        <yasson.version>1.0.1</yasson.version>
+        <narayana.version>5.8.0.Final</narayana.version>
         <jboss-transaction-spi.version>7.6.0.Final</jboss-transaction-spi.version>
+        <javamail-ri.version>1.6.1</javamail-ri.version>
     </properties>
 
     <scm>
-        <connection>scm:git:git@github.com:TFaga/KumuluzEE.git</connection>
-        <developerConnection>scm:git:git@github.com:TFaga/KumuluzEE.git</developerConnection>
-        <url>git@github.com:TFaga/KumuluzEE.git</url>
+        <connection>scm:git:git@github.com:kumuluz/kumuluze.git</connection>
+        <developerConnection>scm:git:git@github.com:kumuluz/kumuluzee.git</developerConnection>
+        <url>git@github.com:kumuluz/kumuluzee.git</url>
     </scm>
 
     <issueManagement>
         <system>GitHub Issues</system>
-        <url>https://github.com/TFaga/KumuluzEE/issues</url>
+        <url>https://github.com/kumuluz/kumuluzee/issues</url>
     </issueManagement>
 
     <developers>
@@ -327,6 +336,16 @@
                 <version>${annotations.version}</version>
             </dependency>
             <dependency>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>${inject.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.interceptor</groupId>
+                <artifactId>javax.interceptor-api</artifactId>
+                <version>${interceptor.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>
                 <version>${servlet.version}</version>
@@ -347,9 +366,14 @@
                 <version>${cdi.version}</version>
             </dependency>
             <dependency>
+                <groupId>javax.persistence</groupId>
+                <artifactId>javax.persistence-api</artifactId>
+                <version>${jpa.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.eclipse.persistence</groupId>
                 <artifactId>javax.persistence</artifactId>
-                <version>${jpa.version}</version>
+                <version>${jpa.ee7.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.ws.rs</groupId>
@@ -372,6 +396,11 @@
                 <version>${websocket.version}</version>
             </dependency>
             <dependency>
+                <groupId>javax.websocket</groupId>
+                <artifactId>javax.websocket-client-api</artifactId>
+                <version>${websocket.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>javax.validation</groupId>
                 <artifactId>validation-api</artifactId>
                 <version>${beanvalidation.version}</version>
@@ -379,17 +408,27 @@
             <dependency>
                 <groupId>javax.json</groupId>
                 <artifactId>javax.json-api</artifactId>
-                <version>${json.p.version}</version>
+                <version>${jsonp.version}</version>
             </dependency>
             <dependency>
-                <groupId>javax.ejb</groupId>
-                <artifactId>javax.ejb-api</artifactId>
-                <version>${ejb.version}</version>
+                <groupId>javax.json.bind</groupId>
+                <artifactId>javax.json.bind-api</artifactId>
+                <version>${jsonb.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.transaction</groupId>
                 <artifactId>javax.transaction-api</artifactId>
                 <version>${jta.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.resource</groupId>
+                <artifactId>javax.resource-api</artifactId>
+                <version>${resource.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.mail</groupId>
+                <artifactId>javax.mail-api</artifactId>
+                <version>${javamail.version}</version>
             </dependency>
 
             <!-- Various libraries used throughout the framework-->
@@ -402,6 +441,16 @@
                 <groupId>org.jboss.logging</groupId>
                 <artifactId>jboss-logging</artifactId>
                 <version>${jboss-logging.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml</groupId>
+                <artifactId>classmate</artifactId>
+                <version>${classmate.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.javassist</groupId>
+                <artifactId>javassist</artifactId>
+                <version>${javassist.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.zaxxer</groupId>

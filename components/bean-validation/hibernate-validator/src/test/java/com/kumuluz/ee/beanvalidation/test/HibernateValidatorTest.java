@@ -22,19 +22,17 @@ package com.kumuluz.ee.beanvalidation.test;
 
 import com.kumuluz.ee.beanvalidation.test.beans.Project;
 import com.kumuluz.ee.beanvalidation.test.beans.User;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Set;
 
 /**
  * @author Tilen
@@ -99,6 +97,6 @@ public class HibernateValidatorTest {
                 validator.validate(u1);
 
         Assert.assertNotNull(constraintViolations);
-        Assert.assertEquals(3, constraintViolations.size());
+        Assert.assertEquals(4, constraintViolations.size());
     }
 }

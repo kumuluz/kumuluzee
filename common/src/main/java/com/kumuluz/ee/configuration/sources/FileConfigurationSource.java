@@ -32,6 +32,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * @author Tilen Faganel
@@ -138,8 +139,7 @@ public class FileConfigurationSource implements ConfigurationSource {
         if (config != null || properties != null) {
             logDeferrer.defer(l -> l.info("Configuration successfully read."));
         } else {
-            logDeferrer.defer(l -> l.info("Unable to load configuration from file. No configuration files were found" +
-                    "."));
+            logDeferrer.defer(l -> l.info("Unable to load configuration from file. No configuration files were found."));
         }
     }
 
@@ -318,7 +318,7 @@ public class FileConfigurationSource implements ConfigurationSource {
      * Returns true, if key represents an array.
      *
      * @param key configuration key
-     * @return
+     * @return true if the config key represents an array, false otherwise.
      */
     private boolean representsArray(String key) {
 
@@ -340,7 +340,10 @@ public class FileConfigurationSource implements ConfigurationSource {
         // iterate over configuration tree
         String[] splittedKeys = key.split("\\.");
         Object value = config;
-        for (String splittedKey : splittedKeys) {
+
+        for (int i = 0; i < splittedKeys.length; i++) {
+
+            String splittedKey = splittedKeys[i];
 
             if (value == null) {
                 return null;
@@ -379,7 +382,19 @@ public class FileConfigurationSource implements ConfigurationSource {
 
             } else {
                 if (value instanceof Map) {
-                    value = ((Map) value).get(splittedKey);
+
+                    Object tmpValue = ((Map) value).get(splittedKey);
+
+                    if (tmpValue == null && i != splittedKeys.length - 1) {
+
+                        String postfixKey = Arrays.stream(splittedKeys).skip(i)
+                                .collect(Collectors.joining("."));
+
+                        return ((Map) value).get(postfixKey);
+                    } else {
+
+                        value = tmpValue;
+                    }
                 } else {
                     return null;
                 }

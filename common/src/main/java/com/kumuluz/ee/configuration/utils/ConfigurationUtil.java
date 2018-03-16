@@ -273,6 +273,7 @@ public class ConfigurationUtil {
                 return Optional.of(interpolateString(key, value.get(), processingKeys));
             }
         }
+
         return Optional.empty();
     }
 

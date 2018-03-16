@@ -23,7 +23,7 @@
         <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>javax.el</artifactId>
-            <version>${uel-version}</version>
+            <version>${uel.version}</version>
         </dependency>
     </dependencies>
 

@@ -265,10 +265,6 @@ public class EeApplication {
                         ds.setDataSourceClassName(dsc.getDataSourceClass());
                     }
 
-                    if (dsc.getMaxPoolSize() != null) {
-                        ds.setMaximumPoolSize(dsc.getMaxPoolSize());
-                    }
-
                     DataSourcePoolConfig dscp = dsc.getPool();
 
                     ds.setAutoCommit(dscp.getAutoCommit());

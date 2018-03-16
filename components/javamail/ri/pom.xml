@@ -3,16 +3,16 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>kumuluzee-ejb</artifactId>
+        <artifactId>kumuluzee-javamail</artifactId>
         <groupId>com.kumuluz.ee</groupId>
         <version>3.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <name>KumuluzEE EJB OpenEJB</name>
-    <description>KumuluzEE EJB component implemented by OpenEJB</description>
+    <name>KumuluzEE JavaMail</name>
+    <description>KumuluzEE JavaMail component implemented by JavaMail RI</description>
 
-    <artifactId>kumuluzee-ejb-openejb</artifactId>
+    <artifactId>kumuluzee-javamail-ri</artifactId>
 
     <dependencies>
         <dependency>
@@ -21,10 +21,10 @@
         </dependency>
 
         <dependency>
-            <groupId>javax.ejb</groupId>
-            <artifactId>javax.ejb-api</artifactId>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>${javamail-ri.version}</version>
         </dependency>
-
     </dependencies>
 
 </project>

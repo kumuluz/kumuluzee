@@ -50,6 +50,8 @@ public interface ServletServer extends KumuluzServer {
 
     void registerFilter(Class<? extends Filter> filterClass, String pathSpec, EnumSet<DispatcherType> dispatches, Map<String, String> parameters);
 
+    void registerResource(Object o, String jndiName);
+
     void registerDataSource(DataSource ds, String jndiName);
 
     void initWebContext();

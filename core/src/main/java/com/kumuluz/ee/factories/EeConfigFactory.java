@@ -38,17 +38,6 @@ public class EeConfigFactory {
 
     private static final String PORT_ENV = "PORT";
 
-    private static final String LEGACY_MIN_THREADS_ENV = "MIN_THREADS";
-    private static final String LEGACY_MAX_THREADS_ENV = "MAX_THREADS";
-    private static final String LEGACY_REQUEST_HEADER_SIZE_ENV = "REQUEST_HEADER_SIZE";
-    private static final String LEGACY_RESPONSE_HEADER_SIZE_ENV = "RESPONSE_HEADER_SIZE";
-    private static final String LEGACY_CONTEXT_PATH_ENV = "CONTEXT_PATH";
-
-    private static final String LEGACY_DB_UNIT_ENV = "DATABASE_UNIT";
-    private static final String LEGACY_DB_URL_ENV = "DATABASE_URL";
-    private static final String LEGACY_DB_USER_ENV = "DATABASE_USER";
-    private static final String LEGACY_DB_PASS_ENV = "DATABASE_PASS";
-
     public static EeConfig buildEeConfig() {
 
         ConfigurationUtil cfg = ConfigurationUtil.getInstance();
@@ -66,10 +55,6 @@ public class EeConfigFactory {
         ServerConfig.Builder serverBuilder = new ServerConfig.Builder();
 
         Optional<List<String>> serverCfgOpt = cfg.getMapKeys("kumuluzee.server");
-
-        EnvUtils.getEnv(LEGACY_CONTEXT_PATH_ENV, serverBuilder::contextPath);
-        EnvUtils.getEnvAsInteger(LEGACY_MIN_THREADS_ENV, serverBuilder::minThreads);
-        EnvUtils.getEnvAsInteger(LEGACY_MAX_THREADS_ENV, serverBuilder::maxThreads);
 
         if (serverCfgOpt.isPresent()) {
 
@@ -153,7 +138,6 @@ public class EeConfigFactory {
                 conUrl.ifPresent(dsc::connectionUrl);
                 user.ifPresent(dsc::username);
                 pass.ifPresent(dsc::password);
-                maxPool.ifPresent(dsc::maxPoolSize);
 
                 Optional<List<String>> pool = cfg.getMapKeys("kumuluzee.datasources[" + i + "].pool");
 
@@ -250,14 +234,50 @@ public class EeConfigFactory {
             }
         }
 
-        PersistenceConfig.Builder persistenceBuilder = new PersistenceConfig.Builder();
+        Optional<Integer> mailSessionsSizeOpt = cfg.getListSize("kumuluzee.mail-sessions");
 
-        EnvUtils.getEnv(LEGACY_DB_UNIT_ENV, persistenceBuilder::unitName);
-        EnvUtils.getEnv(LEGACY_DB_URL_ENV, persistenceBuilder::url);
-        EnvUtils.getEnv(LEGACY_DB_USER_ENV, persistenceBuilder::username);
-        EnvUtils.getEnv(LEGACY_DB_PASS_ENV, persistenceBuilder::password);
+        if (mailSessionsSizeOpt.isPresent()) {
 
-        eeConfigBuilder.persistenceConfig(persistenceBuilder);
+            for (int i = 0; i < mailSessionsSizeOpt.get(); i++) {
+
+                String prefix = "kumuluzee.mail-sessions[" + i + "]";
+
+                MailSessionConfig.Builder mscc = new MailSessionConfig.Builder();
+
+                Optional<String> jndiName = cfg.get(prefix + ".jndi-name");
+                Optional<Boolean> debug = cfg.getBoolean(prefix + ".debug");
+
+                jndiName.ifPresent(mscc::jndiName);
+                debug.ifPresent(mscc::debug);
+
+                Optional<List<String>> transport = cfg.getMapKeys(prefix + ".transport");
+                Optional<List<String>> store = cfg.getMapKeys(prefix + ".store");
+
+                if (transport.isPresent()) {
+
+                    mscc.transport(createMailServiceConfigBuilder(prefix + ".transport"));
+                }
+
+                if (store.isPresent()) {
+
+                    mscc.store(createMailServiceConfigBuilder(prefix + ".store"));
+                }
+
+                Optional<List<String>> props = cfg.getMapKeys(prefix + ".props");
+
+                if (props.isPresent()) {
+
+                    for (String propName : props.get()) {
+
+                        Optional<String> propValue = cfg.get(prefix + ".props." + propName);
+
+                        propValue.ifPresent(v -> mscc.prop(propName, v));
+                    }
+                }
+
+                eeConfigBuilder.mailSession(mscc);
+            }
+        }
 
         return eeConfigBuilder.build();
     }
@@ -313,9 +333,6 @@ public class EeConfigFactory {
 
         serverConnectorBuilder.port(defaultPort);
 
-        EnvUtils.getEnvAsInteger(LEGACY_REQUEST_HEADER_SIZE_ENV, serverConnectorBuilder::requestHeaderSize);
-        EnvUtils.getEnvAsInteger(LEGACY_RESPONSE_HEADER_SIZE_ENV, serverConnectorBuilder::responseHeaderSize);
-
         Optional<List<String>> serverConnectorCfgOpt = cfg.getMapKeys(prefix);
 
         if (serverConnectorCfgOpt.isPresent()) {
@@ -326,7 +343,7 @@ public class EeConfigFactory {
             Optional<Boolean> http2 = cfg.getBoolean(prefix + ".http2");
             Optional<Boolean> proxyForwarding = cfg.getBoolean(prefix + ".proxy-forwarding");
             Optional<Integer> requestHeaderSize = cfg.getInteger(prefix + ".request-header-size");
-            Optional<Integer> responseHeaderSize = cfg.getInteger(prefix + ".kresponse-header-size");
+            Optional<Integer> responseHeaderSize = cfg.getInteger(prefix + ".response-header-size");
             Optional<Integer> idleTimeout = cfg.getInteger(prefix + ".idle-timeout");
             Optional<Integer> soLingerTime = cfg.getInteger(prefix + ".so-linger-time");
 
@@ -358,5 +375,32 @@ public class EeConfigFactory {
         }
 
         return serverConnectorBuilder;
+    }
+
+    private static MailServiceConfig.Builder createMailServiceConfigBuilder(String prefix) {
+
+        ConfigurationUtil cfg = ConfigurationUtil.getInstance();
+
+        MailServiceConfig.Builder mailServiceBuilder = new MailServiceConfig.Builder();
+
+        Optional<String> protocol = cfg.get(prefix + ".protocol");
+        Optional<String> host = cfg.get(prefix + ".host");
+        Optional<Integer> port = cfg.getInteger(prefix + ".port");
+        Optional<Boolean> starttls = cfg.getBoolean(prefix + ".starttls");
+        Optional<String> username = cfg.get(prefix + ".username");
+        Optional<String> password = cfg.get(prefix + ".password");
+        Optional<Long> connectionTimeout = cfg.getLong(prefix + ".connection-timeout");
+        Optional<Long> timeout = cfg.getLong(prefix + ".timeout");
+
+        protocol.ifPresent(mailServiceBuilder::protocol);
+        host.ifPresent(mailServiceBuilder::host);
+        port.ifPresent(mailServiceBuilder::port);
+        starttls.ifPresent(mailServiceBuilder::starttls);
+        username.ifPresent(mailServiceBuilder::username);
+        password.ifPresent(mailServiceBuilder::password);
+        connectionTimeout.ifPresent(mailServiceBuilder::connectionTimeout);
+        timeout.ifPresent(mailServiceBuilder::timeout);
+
+        return mailServiceBuilder;
     }
 }
