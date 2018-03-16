@@ -20,7 +20,7 @@
  */
 package com.kumuluz.ee.jaxws.cxf.ws;
 
-import java.util.Optional;
+import javax.jws.WebService;
 
 /**
  * @author gpor89
@@ -28,28 +28,57 @@ import java.util.Optional;
  */
 public class Endpoint {
 
-    private Optional<String> path;
-    private Optional<String> implementationClass;
+    private String url;
+    private Class<?> implementationClass;
+    private WebService ws;
 
-    public Endpoint(Optional<String> path, Optional<String> implementationClass) {
-        this.path = path;
+    public Endpoint(Class<?> implementationClass, String url, WebService webService) {
+        this.url = url;
         this.implementationClass = implementationClass;
+        this.ws = webService;
     }
 
-    public String getPath() {
-        return path.orElse(null);
+    public String getUrl() {
+        return url != null ? url : defaultEndpointUrl();
     }
 
     public Class<?> getImplementationClass() {
+        return implementationClass;
+    }
 
-        if (implementationClass.isPresent()) {
-            try {
-                return Class.forName(implementationClass.get());
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException("Webservice implementation class not found", e);
-            }
+    public String wsdlLocation() {
+
+        if (ws == null) {
+            return null;
         }
 
-        throw new RuntimeException("Webservice implementation class not found");
+        return ws.wsdlLocation() != null && ws.wsdlLocation().isEmpty() ? null : ws.wsdlLocation();
+    }
+
+    private String defaultEndpointUrl() {
+
+        if (ws == null || implementationClass == null) {
+            return null;
+        }
+
+        return "/" + implementationClass.getName();
+    }
+
+    public String serviceName() {
+
+        if (ws == null) {
+            return null;
+        }
+
+        return ws.serviceName() != null && ws.serviceName().isEmpty() ? null : ws.serviceName();
+    }
+
+    public String portName() {
+
+        if (ws == null) {
+            return null;
+        }
+
+        return ws.portName() != null && ws.portName().isEmpty() ? null : ws.portName();
     }
 }
