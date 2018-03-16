@@ -20,17 +20,14 @@
  */
 package com.kumuluz.ee.jaxws.cxf;
 
-import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
+import com.kumuluz.ee.jaxws.cxf.processor.JaxWsAnnotationProcessorUtil;
 import com.kumuluz.ee.jaxws.cxf.ws.CXFWebservicePublisher;
 import com.kumuluz.ee.jaxws.cxf.ws.Endpoint;
 import org.apache.cxf.transport.servlet.CXFNonSpringServlet;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
-import java.util.logging.Logger;
 
 /**
  * @author gpor89
@@ -39,17 +36,15 @@ import java.util.logging.Logger;
 public class KumuluzCXFServlet extends CXFNonSpringServlet {
 
     protected static final String CDI_INIT_PARAM = "useCdi";
-    protected static final String CONTEXT_ROOT = "contextRoot";
-    protected static final String JAX_WS_ENDPOINTS_PATH = "kumuluzee.jax-ws.endpoints";
-
-    private static Logger LOG = Logger.getLogger(KumuluzCXFServlet.class.getSimpleName());
 
     private List<Endpoint> endpoints;
 
     public void init() throws ServletException {
         super.init();
 
-        this.endpoints = readEndpointList();
+        final JaxWsAnnotationProcessorUtil wsInstance = JaxWsAnnotationProcessorUtil.getInstance();
+
+        this.endpoints = wsInstance.getEndpointList();
     }
 
     @Override
@@ -63,30 +58,6 @@ public class KumuluzCXFServlet extends CXFNonSpringServlet {
         endpoints.stream().forEach(e -> publisher.publish(e, bus, cdiPresent));
 
         publisher.close();
-    }
-
-    protected final List<Endpoint> readEndpointList() {
-
-        final ConfigurationUtil conf = ConfigurationUtil.getInstance();
-
-        final List<Endpoint> endpointList = new LinkedList<>();
-
-        Optional<Integer> jaxWsConfigLength = conf.getListSize(JAX_WS_ENDPOINTS_PATH);
-
-        for (int i = 0; jaxWsConfigLength.isPresent() && i < jaxWsConfigLength.get(); i++) {
-
-            Optional<String> url = conf.get(JAX_WS_ENDPOINTS_PATH + "[" + i + "].url");
-            Optional<String> implementationClass = conf.get(JAX_WS_ENDPOINTS_PATH + "[" + i + "].implementation-class");
-
-            if (!url.isPresent() || !implementationClass.isPresent()) {
-                LOG.warning("Invalid jax-ws endpoint configuration = " + conf.get(JAX_WS_ENDPOINTS_PATH + "[" + i + "]").orElse(""));
-                continue;
-            }
-
-            endpointList.add(new Endpoint(url, implementationClass));
-        }
-
-        return endpointList;
     }
 
 }

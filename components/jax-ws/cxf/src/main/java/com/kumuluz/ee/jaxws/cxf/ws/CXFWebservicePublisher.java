@@ -28,7 +28,6 @@ import org.apache.cxf.service.invoker.Invoker;
 
 import javax.annotation.Resource;
 import javax.enterprise.inject.spi.CDI;
-import javax.jws.WebService;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NameAlreadyBoundException;
@@ -53,13 +52,7 @@ public class CXFWebservicePublisher {
     public Server publish(final Endpoint endpoint, final Bus bus, final boolean cdiPresent) {
 
         final Class<?> clazz = endpoint.getImplementationClass();
-        final String url = endpoint.getPath();
-
-        final WebService wsAnnotation = clazz.getAnnotation(WebService.class);
-
-        if (wsAnnotation == null) {
-            return null;
-        }
+        final String url = endpoint.getUrl();
 
         //inject resources into WS instance
         Stream.of(clazz.getDeclaredFields())
@@ -82,8 +75,9 @@ public class CXFWebservicePublisher {
         fb.setInvoker(invoker);
         fb.setHandlers(builder.buildHandlerChainFromClass(clazz, fb.getEndpointName(), fb.getServiceName(), fb.getBindingId()));
 
-        if (wsAnnotation.wsdlLocation() != null && !wsAnnotation.wsdlLocation().isEmpty()) {
-            fb.setWsdlLocation(wsAnnotation.wsdlLocation());
+        if (endpoint.wsdlLocation() != null) {
+            //top-down approach
+            fb.setWsdlLocation(endpoint.wsdlLocation());
         }
 
         Server server = fb.create();
@@ -91,8 +85,8 @@ public class CXFWebservicePublisher {
         LOG.info("Webservice endpoint published with address=" + fb.getAddress() +
                 ", wsdlLocation=" + fb.getWsdlURL() +
                 ", implementor=" + clazz.getName() +
-                ", serviceName=" + wsAnnotation.serviceName() +
-                ", portName=" + wsAnnotation.portName());
+                ", serviceName=" + endpoint.serviceName() +
+                ", portName=" + endpoint.portName());
 
         return server;
     }
@@ -129,7 +123,6 @@ public class CXFWebservicePublisher {
 
 
     private Object getBean(Class<?> clazz, boolean cdiPresent) {
-
         //cdi
         if (cdiPresent) {
             return CDI.current().select(clazz).get();
@@ -145,7 +138,6 @@ public class CXFWebservicePublisher {
     }
 
     private void open() {
-
         if (context == null) {
             try {
                 context = new InitialContext();

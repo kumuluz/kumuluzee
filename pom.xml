@@ -7,7 +7,7 @@
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee</artifactId>
     <packaging>pom</packaging>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.0.0.cxf-SNAPSHOT</version>
     <modules>
         <module>common</module>
         <module>core</module>
@@ -67,6 +67,7 @@
         <maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
         <maven-resources-plugin.version>3.0.2</maven-resources-plugin.version>
         <maven-plugin-plugin.version>3.5</maven-plugin-plugin.version>
+        <maven-compile-plugin.version>3.7.0</maven-compile-plugin.version>
         <maven-dependency-plugin.version>3.0.1</maven-dependency-plugin.version>
 
         <jetty.version>9.4.8.v20171121</jetty.version>

@@ -28,11 +28,10 @@ import com.kumuluz.ee.common.dependencies.EeComponentDependency;
 import com.kumuluz.ee.common.dependencies.EeComponentType;
 import com.kumuluz.ee.common.runtime.EeRuntime;
 import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
-import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
+import com.kumuluz.ee.jaxws.cxf.processor.JaxWsAnnotationProcessorUtil;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.logging.Logger;
 
 
@@ -43,8 +42,6 @@ import java.util.logging.Logger;
 @EeComponentDef(name = "CXF", type = EeComponentType.JAX_WS)
 @EeComponentDependency(value = EeComponentType.SERVLET)
 public class JaxWsComponent implements Component {
-
-    protected static final String JAX_WS_CTX_PATH = "kumuluzee.jax-ws.web-context";
 
     private static final Logger LOG = Logger.getLogger(JaxWsComponent.class.getSimpleName());
 
@@ -58,15 +55,15 @@ public class JaxWsComponent implements Component {
 
         final ServletServer kumuluzServer = (ServletServer) server.getServer();
 
-        final Optional<String> contextPath = ConfigurationUtil.getInstance().get(JAX_WS_CTX_PATH);
+        final String baseUrl = server.getServer().getServerConfig().getBaseUrl();
 
-        String webContext = contextPath.isPresent() ? contextPath.get() : "";
+        final JaxWsAnnotationProcessorUtil wsInstance = JaxWsAnnotationProcessorUtil.getInstance();
+        wsInstance.setContextRoot(baseUrl);
 
         final Map<String, String> servletParams = new HashMap<>();
         servletParams.put(KumuluzCXFServlet.CDI_INIT_PARAM, cdiPresent.toString());
-        servletParams.put(KumuluzCXFServlet.CONTEXT_ROOT, webContext);
 
-        kumuluzServer.registerServlet(KumuluzCXFServlet.class, webContext + "/*", servletParams);
+        kumuluzServer.registerServlet(KumuluzCXFServlet.class, wsInstance.getContextRoot(), servletParams);
     }
 
     @Override
