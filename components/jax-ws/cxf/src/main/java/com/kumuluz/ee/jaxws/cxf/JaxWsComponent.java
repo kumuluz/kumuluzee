@@ -52,6 +52,7 @@ public class JaxWsComponent implements Component {
 
         // Check if CDI is present in the runtime
         Boolean cdiPresent = EeRuntime.getInstance().getEeComponents().stream().anyMatch(c -> c.getType().equals(EeComponentType.CDI));
+        LOG.fine("CXF component will run with" + (cdiPresent ? "" : "out") + " CDI");
 
         final ServletServer kumuluzServer = (ServletServer) server.getServer();
 
@@ -63,12 +64,15 @@ public class JaxWsComponent implements Component {
         final Map<String, String> servletParams = new HashMap<>();
         servletParams.put(KumuluzCXFServlet.CDI_INIT_PARAM, cdiPresent.toString());
 
-        kumuluzServer.registerServlet(KumuluzCXFServlet.class, wsInstance.getContextRoot(), servletParams);
+        String contextRoot = wsInstance.getContextRoot();
+        LOG.fine(KumuluzCXFServlet.class.getName() + " mapping set to " + contextRoot);
+
+        kumuluzServer.registerServlet(KumuluzCXFServlet.class, contextRoot, servletParams);
     }
 
     @Override
     public void load() {
 
-        LOG.info("CXF Initialized");
+        LOG.info("CXF component initialized");
     }
 }
