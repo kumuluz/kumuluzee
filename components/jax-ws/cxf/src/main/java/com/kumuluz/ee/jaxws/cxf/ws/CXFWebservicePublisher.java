@@ -132,7 +132,7 @@ public class CXFWebservicePublisher {
         try {
             return clazz.getConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new RuntimeException("Unable to instantiate bean from " + clazz);
+            throw new RuntimeException("Unable to instantiate bean from " + clazz, e);
         }
 
     }
