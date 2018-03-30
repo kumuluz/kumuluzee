@@ -21,6 +21,7 @@
 package com.kumuluz.ee.loader;
 
 import com.kumuluz.ee.loader.exception.EeClassLoaderException;
+import com.kumuluz.ee.loader.jar.FileInfo;
 import com.kumuluz.ee.loader.jar.JarEntryInfo;
 import com.kumuluz.ee.loader.jar.JarFileInfo;
 
@@ -48,12 +49,14 @@ public class EeClassLoader extends ClassLoader {
      * Directory name for temporary files.
      */
     private static final String TMP_DIRECTORY = "tmp/EeClassLoader";
-    private final Thread mainThread = Thread.currentThread();
     private Boolean DEBUG = false;
     private File tempDir;
     private List<JarFileInfo> jarFiles;
+    private List<FileInfo> files;
     private Set<File> deleteOnExit;
     private Map<String, Class<?>> classes;
+
+    private JarFileInfo jarFileInfo;
 
     /**
      * Default constructor.
@@ -81,7 +84,8 @@ public class EeClassLoader extends ClassLoader {
         debug("Initialising KumuluzEE classloader");
 
         classes = new HashMap<>();
-        jarFiles = new ArrayList<>();
+        jarFiles = Collections.synchronizedList(new ArrayList<>());
+        files = Collections.synchronizedList(new ArrayList<>());
         deleteOnExit = new HashSet<>();
 
         String mainJarURLString;
@@ -90,7 +94,6 @@ public class EeClassLoader extends ClassLoader {
         URL mainJarURL = codeSource.getLocation();
         String protocol = mainJarURL.getProtocol();
 
-        JarFileInfo jarFileInfo;
         // Decoding required for 'space char' in URL:
         //    URL.getFile() returns "/C:/my%20dir/MyApp.jar" for "/C:/my dir/MyApp.jar"
         try {
@@ -118,6 +121,7 @@ public class EeClassLoader extends ClassLoader {
         // load main JAR:
         try {
             // start recursive JAR loading
+            extractMainJar(jarFileInfo);
             loadJar(jarFileInfo);
         } catch (Exception e) {
 
@@ -126,20 +130,10 @@ public class EeClassLoader extends ClassLoader {
             throw new EeClassLoaderException(msg, e);
         }
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try {
-                debug("Shutting down and cleaning up ...");
-                mainThread.join();
-                shutdown();
-            } catch (InterruptedException e) {
-                debug("Failed to shutdown and clean up gracefully.");
-            }
-        }));
-
         debug(String.format("Initialised KumuluzEE classloader @%dms", System.currentTimeMillis() - startTime));
     }
 
-    private File createTempFile(JarEntryInfo jarEntryInfo) throws EeClassLoaderException, URISyntaxException, IOException {
+    private void createTempDirectory() throws URISyntaxException {
         // Create temp directory for classpath initialization
         if (tempDir == null) {
 
@@ -168,10 +162,48 @@ public class EeClassLoader extends ClassLoader {
             }
             tempDir = dir;
         }
+    }
 
+    private File createFile(JarEntry jarEntry, InputStream is) throws EeClassLoaderException {
         File tmpFile = null;
         try {
-            tmpFile = File.createTempFile(jarEntryInfo.getName() + ".", null, tempDir);
+            if (jarEntry.isDirectory()) {
+                tmpFile = new File(tempDir + File.separator + jarEntry);
+                tmpFile.mkdirs();
+                tmpFile.deleteOnExit();
+                chmod777(tmpFile);
+                return tmpFile;
+            } else {
+                String fileName = jarEntry.getName();
+                File tempDir = this.tempDir;
+                int lastPathIndex = jarEntry.getName().lastIndexOf("/");
+                if (lastPathIndex > -1) {
+                    String dirPath = jarEntry.getName().substring(0, lastPathIndex);
+                    tempDir = new File(tempDir.getPath() + File.separator + dirPath);
+                    tempDir.mkdirs();
+                    tempDir.deleteOnExit();
+                    chmod777(tempDir);
+                    fileName = fileName.substring(lastPathIndex + 1);
+                }
+                tmpFile = new File(tempDir + File.separator + fileName);
+                tmpFile.deleteOnExit();
+                chmod777(tmpFile); // Unix - allow temp file deletion by any user
+                BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(tmpFile));
+                while(is.available() > 0) {
+                    os.write(is.read());
+                }
+                os.close();
+                return tmpFile;
+            }
+        } catch (IOException e) {
+            throw new EeClassLoaderException(String.format("Cannot create file '%s' for %s", tmpFile, jarEntry), e);
+        }
+    }
+
+    private File createJarFile(JarEntryInfo jarEntryInfo) throws EeClassLoaderException {
+        File tmpFile = null;
+        try {
+            tmpFile = new File(tempDir.getPath() + File.separator + jarEntryInfo.getName());
             tmpFile.deleteOnExit();
             chmod777(tmpFile); // Unix - allow temp file deletion by any user
             byte[] bytes = jarEntryInfo.getJarBytes();
@@ -182,6 +214,31 @@ public class EeClassLoader extends ClassLoader {
         } catch (IOException e) {
             throw new EeClassLoaderException(String.format("Cannot create temp file '%s' for %s", tmpFile, jarEntryInfo.getJarEntry()), e);
         }
+    }
+
+    private void extractMainJar(JarFileInfo jarFileInfo) throws URISyntaxException {
+        final String LIB_DIRECTORY = "lib/";
+
+        createTempDirectory();
+
+        jarFileInfo.getJarFile()
+                .stream()
+                .parallel()
+                .filter(je -> !je.getName().toLowerCase().startsWith(LIB_DIRECTORY))
+                .forEach(je -> {
+                    try {
+                        JarEntryInfo jarEntryInfo = new JarEntryInfo(jarFileInfo, je);
+                        File tempFile = createFile(je, jarFileInfo.getJarFile().getInputStream(je));
+
+                        debug(String.format("Loading inner JAR %s from temp file %s", jarEntryInfo.getJarEntry(), getFilenameForLog(tempFile)));
+
+                        files.add(new FileInfo(tempFile, je.getName()));
+                    } catch (IOException e) {
+                        throw new RuntimeException(String.format("Cannot load jar entries from jar %s", je.getName().toLowerCase()), e);
+                    } catch (EeClassLoaderException e) {
+                        throw new RuntimeException("ERROR on loading inner JAR: " + e.getMessageAll());
+                    }
+                });
     }
 
     /**
@@ -198,7 +255,7 @@ public class EeClassLoader extends ClassLoader {
                 .forEach(je -> {
                     try {
                         JarEntryInfo jarEntryInfo = new JarEntryInfo(jarFileInfo, je);
-                        File tempFile = createTempFile(jarEntryInfo);
+                        File tempFile = createJarFile(jarEntryInfo);
 
                         debug(String.format("Loading inner JAR %s from temp file %s", jarEntryInfo.getJarEntry(), getFilenameForLog(tempFile)));
 
@@ -217,8 +274,6 @@ public class EeClassLoader extends ClassLoader {
                         throw new RuntimeException(String.format("Cannot load jar entries from jar %s", je.getName().toLowerCase()), e);
                     } catch (EeClassLoaderException e) {
                         throw new RuntimeException("ERROR on loading inner JAR: " + e.getMessageAll());
-                    } catch (URISyntaxException e) {
-                        throw new RuntimeException(String.format("Invalid path for %s", je.getName().toLowerCase()), e);
                     }
                 });
     }
@@ -229,6 +284,19 @@ public class EeClassLoader extends ClassLoader {
             JarEntry jarEntry = jarFile.getJarEntry(name);
             if (jarEntry != null) {
                 return new JarEntryInfo(jarFileInfo, jarEntry);
+            }
+        }
+        return null;
+    }
+
+    private URL findFile(String name) {
+        for (FileInfo fileInfo : files) {
+            if (fileInfo.getSimpleName().equals(name)) {
+                try {
+                    return fileInfo.getFile().toURI().toURL();
+                } catch (Exception e) {
+                    // ignore
+                }
             }
         }
         return null;
@@ -246,7 +314,27 @@ public class EeClassLoader extends ClassLoader {
                 jarEntryInfoList.add(new JarEntryInfo(jarFileInfo, jarEntry));
             }
         }
+
         return jarEntryInfoList;
+    }
+
+    private List<URL> findFiles(String name) {
+
+        List<URL> urlList = new ArrayList<>();
+
+        for (FileInfo fileInfo : files) {
+
+            if (fileInfo.getSimpleName().equals(name)) {
+                try {
+                    URL fileUrl = fileInfo.getFile().toURI().toURL();
+                    urlList.add(fileUrl);
+                } catch (Exception e) {
+                    // ignore
+                }
+            }
+        }
+
+        return urlList;
     }
 
     /**
@@ -318,115 +406,6 @@ public class EeClassLoader extends ClassLoader {
         debug(String.format("Loaded %s by %s from JAR %s", className, getClass().getName(), jarSimpleName));
 
         return clazz;
-    }
-
-    /**
-     * Called on shutdown to cleanup temporary files.
-     */
-    private void shutdown() {
-
-        debug("Shutting down and cleaning up ...");
-
-        for (JarFileInfo jarFileInfo : jarFiles) {
-            try {
-                jarFileInfo.getJarFile().close();
-            } catch (IOException e) {
-                // Ignore. In the worst case temp files will accumulate.
-            }
-            File file = jarFileInfo.getFileDeleteOnExit();
-            if (file != null && !file.delete()) {
-                deleteOnExit.add(file);
-            }
-        }
-        // Private configuration file with failed to delete temporary files:
-        //   WinXP: C:/Documents and Settings/username/.EeClassLoader
-        //    Unix: /export/home/username/.EeClassLoader
-        //           -or-  /home/username/.EeClassLoader
-        File configFile = new File(System.getProperty("user.home") + File.separator + ".EeClassLoader");
-        deleteOldTemp(configFile);
-        persistNewTemp(configFile);
-    }
-
-    /**
-     * Deletes temporary files listed in the file.
-     * The method is called on shutdown().
-     *
-     * @param configFile file with temporary files list.
-     */
-    private void deleteOldTemp(File configFile) {
-        BufferedReader reader = null;
-        try {
-            int count = 0;
-            reader = new BufferedReader(new FileReader(configFile));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                File file = new File(line);
-                if (!file.exists()) {
-                    continue; // already deleted; from command line?
-                }
-                if (file.delete()) {
-                    count++;
-                } else {
-                    // Cannot delete, will try next time.
-                    deleteOnExit.add(file);
-                }
-            }
-
-            debug(String.format("Deleted %d old temp files listed in %s", count, configFile.getAbsolutePath()));
-        } catch (IOException e) {
-            // Ignore. This file may not exist.
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    // Ignore
-                }
-            }
-        }
-    }
-
-    /**
-     * Creates file with temporary files list. This list will be used to
-     * delete temporary files on the next application launch.
-     * The method is called from shutdown().
-     *
-     * @param configFile file with temporary files list.
-     */
-    private void persistNewTemp(File configFile) {
-        if (deleteOnExit.size() == 0) {
-
-            debug("No temp file names to persist on exit.");
-
-            configFile.delete(); // do not pollute disk
-            return;
-        }
-
-        debug(String.format("Persisting %d temp file names into %s", deleteOnExit.size(), configFile.getAbsolutePath()));
-
-        BufferedWriter writer = null;
-        try {
-            writer = new BufferedWriter(new FileWriter(configFile));
-            for (File file : deleteOnExit) {
-                if (!file.delete()) {
-                    String filePath = file.getCanonicalPath();
-                    writer.write(filePath);
-                    writer.newLine();
-
-                    debug(String.format("JVM failed to release %s", filePath));
-                }
-            }
-        } catch (IOException e) {
-            // Ignore. In the worst case temp files will accumulate.
-        } finally {
-            if (writer != null) {
-                try {
-                    writer.close();
-                } catch (IOException e) {
-                    // Ignore
-                }
-            }
-        }
     }
 
     /**
@@ -520,6 +499,13 @@ public class EeClassLoader extends ClassLoader {
         debug(String.format("findResource: %s", name));
 
         if (isLaunchedFromJar()) {
+            URL file = findFile(normalizeResourceName(name));
+            if (file != null) {
+                debug(String.format("found resource: %s", file));
+
+                return file;
+            }
+
             JarEntryInfo inf = findJarEntry(normalizeResourceName(name));
             if (inf != null) {
                 URL url = inf.getURL();
@@ -548,14 +534,22 @@ public class EeClassLoader extends ClassLoader {
         debug(String.format("getResources: %s", name));
 
         if (isLaunchedFromJar()) {
+            List<URL> fileUrls = findFiles(normalizeResourceName(name));
             List<JarEntryInfo> jarEntries = findJarEntries(normalizeResourceName(name));
-            List<URL> urls = new ArrayList<>();
+
+            List<URL> urls = new ArrayList<>(fileUrls);
+
             for (JarEntryInfo jarEntryInfo : jarEntries) {
+                if (jarEntryInfo.getJarFileInfo().equals(this.jarFileInfo)) {
+                    continue;
+                }
+
                 URL url = jarEntryInfo.getURL();
                 if (url != null) {
                     urls.add(url);
                 }
             }
+
             return Collections.enumeration(urls);
         }
 
@@ -571,7 +565,7 @@ public class EeClassLoader extends ClassLoader {
             JarEntryInfo jarEntryInfo = findJarNativeEntry(name);
             if (jarEntryInfo != null) {
                 try {
-                    File file = createTempFile(jarEntryInfo);
+                    File file = createJarFile(jarEntryInfo);
 
                     debug(String.format("Loading native library %s from temp file %s", jarEntryInfo.getJarEntry(), getFilenameForLog(file)));
 
@@ -580,10 +574,6 @@ public class EeClassLoader extends ClassLoader {
                 } catch (EeClassLoaderException e) {
 
                     debug(String.format("Failure to load native library %s: %s", name, e.toString()));
-                } catch (URISyntaxException e) {
-                    throw new RuntimeException(String.format("Invalid path for %s", name), e);
-                } catch (IOException e) {
-                    throw new RuntimeException("Unable to create temp directory: " + e.getMessage());
                 }
             }
             return null;

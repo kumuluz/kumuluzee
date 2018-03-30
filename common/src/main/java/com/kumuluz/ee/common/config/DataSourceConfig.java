@@ -43,9 +43,6 @@ public class DataSourceConfig {
 
         private Map<String, String> props = new HashMap<>();
 
-        @Deprecated
-        private Integer maxPoolSize;
-
         public Builder jndiName(String jndiName) {
             this.jndiName = jndiName;
             return this;
@@ -86,12 +83,6 @@ public class DataSourceConfig {
             return this;
         }
 
-        @Deprecated
-        public Builder maxPoolSize(Integer maxPoolSize) {
-            this.maxPoolSize = maxPoolSize;
-            return this;
-        }
-
         public DataSourceConfig build() {
 
             DataSourceConfig dataSourceConfig = new DataSourceConfig();
@@ -105,8 +96,6 @@ public class DataSourceConfig {
             dataSourceConfig.pool = pool.build();
 
             dataSourceConfig.props = Collections.unmodifiableMap(props);
-
-            dataSourceConfig.maxPoolSize = maxPoolSize;
 
             return dataSourceConfig;
         }
@@ -122,9 +111,6 @@ public class DataSourceConfig {
     private DataSourcePoolConfig pool;
 
     private Map<String, String> props;
-
-    @Deprecated
-    private Integer maxPoolSize;
 
     private DataSourceConfig() {
     }
@@ -159,10 +145,5 @@ public class DataSourceConfig {
 
     public Map<String, String> getProps() {
         return props;
-    }
-
-    @Deprecated
-    public Integer getMaxPoolSize() {
-        return maxPoolSize;
     }
 }

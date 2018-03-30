@@ -34,6 +34,7 @@ import java.util.logging.Logger;
  * @since 1.0.0
  */
 @EeComponentDef(name = "Jetty", type = EeComponentType.JSP)
+@EeComponentDependency(value = EeComponentType.SERVLET, implementations = {"Jetty"})
 @EeComponentDependency(value = EeComponentType.EL)
 public class JspComponent implements Component {
 

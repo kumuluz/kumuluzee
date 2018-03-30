@@ -23,9 +23,6 @@ package com.kumuluz.ee.common.wrapper;
 import com.kumuluz.ee.common.Component;
 import com.kumuluz.ee.common.dependencies.EeComponentDependency;
 import com.kumuluz.ee.common.dependencies.EeComponentOptional;
-import com.kumuluz.ee.common.dependencies.EeComponentType;
-
-import java.util.List;
 
 /**
  * @author Tilen Faganel

@@ -20,13 +20,13 @@
 */
 package com.kumuluz.ee.jpa.common;
 
-import com.kumuluz.ee.common.config.PersistenceConfig;
 import com.kumuluz.ee.jpa.common.utils.PersistenceUtils;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * @author Tilen Faganel
@@ -35,7 +35,6 @@ import java.util.*;
 public class PersistenceUnitHolder {
 
     private PersistenceSettings providerProperties;
-    private PersistenceConfig config;
 
     private String defaultUnitName;
 
@@ -64,13 +63,6 @@ public class PersistenceUnitHolder {
                 properties.putAll(providerProperties.getPersistenceUnitProperties());
             }
 
-            if (config != null && unitName.equals(config.getUnitName())) {
-
-                Optional.ofNullable(config.getUrl()).ifPresent(u -> properties.put("javax.persistence.jdbc.url", u));
-                Optional.ofNullable(config.getUsername()).ifPresent(u -> properties.put("javax.persistence.jdbc.user", u));
-                Optional.ofNullable(config.getPassword()).ifPresent(p -> properties.put("javax.persistence.jdbc.password", p));
-            }
-
             EntityManagerFactory factory = Persistence.createEntityManagerFactory(unitName, properties);
             TransactionType transactionType = PersistenceUtils.getEntityManagerFactoryTransactionType(factory);
 
@@ -84,10 +76,6 @@ public class PersistenceUnitHolder {
 
     public String getDefaultUnitName() {
         return defaultUnitName;
-    }
-
-    public void setConfig(PersistenceConfig config) {
-        this.config = config;
     }
 
     public void setProviderProperties(PersistenceSettings providerProperties) {

@@ -45,6 +45,10 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
             value = System.getenv(parseKeyNameForEnvironmentVariablesLegacy(key));
         }
 
+        if (value == null) {
+            value = System.getenv(key);
+        }
+
         return (value == null) ? Optional.empty() : Optional.of(value);
     }
 
