@@ -17,18 +17,28 @@
  *  out of or in connection with the software or the use or other dealings in the
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
-*/
-package com.kumuluz.ee.maven.plugin;
-
-import java.util.ResourceBundle;
+ */
+package com.kumuluz.ee.common.servlet;
 
 /**
- * @author Tilen Faganel
- * @since 2.4.0
+ * @author Urban Malc
+ * @since 2.6.0
  */
-public class MojoConstants {
+public class ServletWrapper {
 
-    public static final String MAVEN_JAR_PLUGIN_VERSION = ResourceBundle.getBundle("META-INF/kumuluzee/plugin-versions").getString("maven-jar-plugin.version");
-    public static final String MAVEN_RESOURCE_PLUGIN_VERSION = ResourceBundle.getBundle("META-INF/kumuluzee/plugin-versions").getString("maven-resources-plugin.version");
-    public static final String MAVEN_DEPENDENCY_PLUGIN_VERSION = ResourceBundle.getBundle("META-INF/kumuluzee/plugin-versions").getString("maven-dependency-plugin.version");
+    private String name;
+    private String contextPath;
+
+    public ServletWrapper(String name, String contextPath) {
+        this.name = name;
+        this.contextPath = contextPath;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getContextPath() {
+        return contextPath;
+    }
 }

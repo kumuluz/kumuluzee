@@ -58,7 +58,6 @@ public abstract class AbstractCopyDependenciesMojo extends AbstractMojo {
             throws MojoExecutionException {
 
         copyDependencies(null);
-        //addSwaggerUi();
     }
 
     /**
