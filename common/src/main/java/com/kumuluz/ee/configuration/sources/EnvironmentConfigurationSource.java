@@ -17,7 +17,7 @@
  *  out of or in connection with the software or the use or other dealings in the
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
-*/
+ */
 package com.kumuluz.ee.configuration.sources;
 
 import com.kumuluz.ee.configuration.ConfigurationSource;
@@ -132,20 +132,48 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
     @Override
     public Optional<Integer> getListSize(String key) {
 
-        key = parseKeyNameForEnvironmentVariables(key);
+        String parsedKey = parseKeyNameForEnvironmentVariables(key);
 
         Integer maxIndex = -1;
 
         for (String envName : System.getenv().keySet()) {
 
-            if (envName.startsWith(key)) {
+            if (envName.startsWith(parsedKey)) {
 
-                int openingIndex = key.length();
+                int openingIndex = parsedKey.length();
                 int closingIndex = envName.indexOf("_", openingIndex + 1);
 
                 if (closingIndex < 0) {
                     closingIndex = envName.length();
                 }
+
+                try {
+                    Integer idx = Integer.parseInt(envName.substring(openingIndex, closingIndex));
+                    maxIndex = Math.max(maxIndex, idx);
+                } catch (NumberFormatException ignored) {
+                }
+            }
+        }
+
+        if (maxIndex != -1) {
+            return Optional.of(maxIndex + 1);
+        }
+
+        // retry for legacy key names
+        parsedKey = parseKeyNameForEnvironmentVariablesLegacy(key);
+
+        for (String envName : System.getenv().keySet()) {
+
+            if (envName.startsWith(parsedKey)) {
+
+                int openingIndex = parsedKey.length() + 1;
+                int closingIndex = envName.indexOf("_", openingIndex + 1);
+
+                if (closingIndex < 0) {
+                    closingIndex = envName.length();
+                }
+
+                closingIndex -= 1;
 
                 try {
                     Integer idx = Integer.parseInt(envName.substring(openingIndex, closingIndex));
