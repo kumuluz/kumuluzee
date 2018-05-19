@@ -26,6 +26,7 @@ import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 import java.io.*;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author gpor89
@@ -75,9 +76,15 @@ public class AnnotationProcessorUtil {
 
     private static void writeFile(Set<String> content, String resourceName, FileObject overrideFile, Filer filer) throws IOException {
         FileObject file = overrideFile;
-        if (file == null) {
-            file = filer.createResource(StandardLocation.CLASS_OUTPUT, "", resourceName);
+        if (file != null) {
+            //check if file content equals required content
+            final Set<String> fileContent = new BufferedReader(new InputStreamReader(file.openInputStream())).lines().collect(Collectors.toSet());
+
+            if (content.containsAll(fileContent) && fileContent.containsAll(content)) {
+                return;
+            }
         }
+        file = filer.createResource(StandardLocation.CLASS_OUTPUT, "", resourceName);
         try (Writer writer = file.openWriter()) {
             for (String serviceClassName : content) {
                 writer.write(serviceClassName);
