@@ -14,6 +14,7 @@
 
     <modules>
         <module>metro</module>
+        <module>cxf</module>
     </modules>
 
     <name>KumuluzEE JAX-WS</name>
