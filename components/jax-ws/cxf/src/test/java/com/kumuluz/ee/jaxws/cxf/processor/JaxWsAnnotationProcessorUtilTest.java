@@ -4,9 +4,11 @@ import com.kumuluz.ee.jaxws.cxf.impl.NoWsContextAnnotatedEndpointBean;
 import com.kumuluz.ee.jaxws.cxf.impl.WsContextAnnotatedEndpointBean;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
@@ -73,18 +75,16 @@ public class JaxWsAnnotationProcessorUtilTest {
     //helper method
     private void prepareEndpointList(String... endpoints) {
 
-        PrintWriter out = null;
-        try {
-            URL url = this.getClass().getClassLoader().getResource("META-INF/ws/java.lang.Object");
-            out = new PrintWriter(url.getFile());
+        URL url = this.getClass().getClassLoader().getResource("META-INF/ws/java.lang.Object");
+        if (url == null) {
+            throw new RuntimeException("Service file not found.");
+        }
+
+        try (PrintWriter out = new PrintWriter(new File(URLDecoder.decode(url.getFile(), "UTF-8")))) {
             Stream.of(endpoints).forEach(out::print);
             out.flush();
         } catch (IOException fe) {
             fe.printStackTrace();
-        } finally {
-            if (out != null) {
-                out.close();
-            }
         }
     }
 
