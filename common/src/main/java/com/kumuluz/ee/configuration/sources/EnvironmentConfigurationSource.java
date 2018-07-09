@@ -23,6 +23,7 @@ package com.kumuluz.ee.configuration.sources;
 import com.kumuluz.ee.configuration.ConfigurationSource;
 import com.kumuluz.ee.configuration.utils.ConfigurationDispatcher;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,17 +40,17 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
     @Override
     public Optional<String> get(String key) {
 
-        String value = System.getenv(parseKeyNameForEnvironmentVariables(key));
+        String value = null;
 
-        if (value == null) {
-            value = System.getenv(parseKeyNameForEnvironmentVariablesLegacy(key));
+        for (String possibleName : getPossibleEnvNames(key)) {
+            value = System.getenv(possibleName);
+
+            if (value != null) {
+                break;
+            }
         }
 
-        if (value == null) {
-            value = System.getenv(key);
-        }
-
-        return (value == null) ? Optional.empty() : Optional.of(value);
+        return Optional.ofNullable(value);
     }
 
     @Override
@@ -132,59 +133,55 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
     @Override
     public Optional<Integer> getListSize(String key) {
 
-        String parsedKey = parseKeyNameForEnvironmentVariables(key);
+        for (String possibleKeyName : getPossibleEnvNames(key)) {
+            Integer maxIndex = -1;
 
-        Integer maxIndex = -1;
+            for (String envName : System.getenv().keySet()) {
 
-        for (String envName : System.getenv().keySet()) {
+                if (envName.startsWith(possibleKeyName)) {
 
-            if (envName.startsWith(parsedKey)) {
+                    int openingIndex = possibleKeyName.length();
+                    int closingIndex = envName.indexOf("_", openingIndex + 1);
 
-                int openingIndex = parsedKey.length();
-                int closingIndex = envName.indexOf("_", openingIndex + 1);
+                    if (closingIndex < 0) {
+                        closingIndex = envName.length();
+                    }
 
-                if (closingIndex < 0) {
-                    closingIndex = envName.length();
-                }
-
-                try {
-                    Integer idx = Integer.parseInt(envName.substring(openingIndex, closingIndex));
-                    maxIndex = Math.max(maxIndex, idx);
-                } catch (NumberFormatException ignored) {
-                }
-            }
-        }
-
-        if (maxIndex != -1) {
-            return Optional.of(maxIndex + 1);
-        }
-
-        // retry for legacy key names
-        parsedKey = parseKeyNameForEnvironmentVariablesLegacy(key);
-
-        for (String envName : System.getenv().keySet()) {
-
-            if (envName.startsWith(parsedKey)) {
-
-                int openingIndex = parsedKey.length() + 1;
-                int closingIndex = envName.indexOf("_", openingIndex + 1);
-
-                if (closingIndex < 0) {
-                    closingIndex = envName.length();
-                }
-
-                closingIndex -= 1;
-
-                try {
-                    Integer idx = Integer.parseInt(envName.substring(openingIndex, closingIndex));
-                    maxIndex = Math.max(maxIndex, idx);
-                } catch (NumberFormatException ignored) {
+                    try {
+                        Integer idx = Integer.parseInt(envName.substring(openingIndex, closingIndex));
+                        maxIndex = Math.max(maxIndex, idx);
+                    } catch (NumberFormatException ignored) {
+                    }
                 }
             }
-        }
 
-        if (maxIndex != -1) {
-            return Optional.of(maxIndex + 1);
+            if (maxIndex != -1) {
+                return Optional.of(maxIndex + 1);
+            }
+
+            // retry for legacy key names
+            for (String envName : System.getenv().keySet()) {
+
+                if (envName.startsWith(possibleKeyName)) {
+
+                    int openingIndex = possibleKeyName.length() + 1;
+                    int closingIndex = envName.indexOf("]", openingIndex + 1);
+
+                    if (closingIndex < 0) {
+                        closingIndex = envName.length() - 1;
+                    }
+
+                    try {
+                        Integer idx = Integer.parseInt(envName.substring(openingIndex, closingIndex));
+                        maxIndex = Math.max(maxIndex, idx);
+                    } catch (NumberFormatException ignored) {
+                    }
+                }
+            }
+
+            if (maxIndex != -1) {
+                return Optional.of(maxIndex + 1);
+            }
         }
 
         return Optional.empty();
@@ -222,6 +219,27 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
     @Override
     public Integer getOrdinal() {
         return getInteger(CONFIG_ORDINAL).orElse(300);
+    }
+
+    private List<String> getPossibleEnvNames(String key) {
+        List<String> possibleNames = new LinkedList<>();
+
+        // legacy 1: removes characters '[]-' and replaces dots with '_', to uppercase
+        possibleNames.add(parseKeyNameForEnvironmentVariables(key));
+        // legacy 2: replaces dots with '_', to uppercase
+        possibleNames.add(parseKeyNameForEnvironmentVariablesLegacy(key));
+        // MP Config 1.3: raw key
+        possibleNames.add(key);
+        // MP Config 1.3: replaces non alpha-numeric characters with '_'
+        possibleNames.add(replaceNonAlphaNum(key));
+        // MP Config 1.3: replaces non alpha-numeric characters with '_', to uppercase
+        possibleNames.add(replaceNonAlphaNum(key).toUpperCase());
+
+        return possibleNames;
+    }
+
+    private String replaceNonAlphaNum(String s) {
+        return s.replaceAll("[^a-zA-Z0-9]", "_");
     }
 
     private String parseKeyNameForEnvironmentVariables(String key) {
