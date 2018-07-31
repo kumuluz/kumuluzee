@@ -224,16 +224,16 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
     private List<String> getPossibleEnvNames(String key) {
         List<String> possibleNames = new LinkedList<>();
 
-        // legacy 1: removes characters '[]-' and replaces dots with '_', to uppercase
-        possibleNames.add(parseKeyNameForEnvironmentVariables(key));
-        // legacy 2: replaces dots with '_', to uppercase
-        possibleNames.add(parseKeyNameForEnvironmentVariablesLegacy(key));
         // MP Config 1.3: raw key
         possibleNames.add(key);
         // MP Config 1.3: replaces non alpha-numeric characters with '_'
         possibleNames.add(replaceNonAlphaNum(key));
         // MP Config 1.3: replaces non alpha-numeric characters with '_', to uppercase
         possibleNames.add(replaceNonAlphaNum(key).toUpperCase());
+        // legacy 1: removes characters '[]-' and replaces dots with '_', to uppercase
+        possibleNames.add(parseKeyNameForEnvironmentVariables(key));
+        // legacy 2: replaces dots with '_', to uppercase
+        possibleNames.add(parseKeyNameForEnvironmentVariablesLegacy(key));
 
         return possibleNames;
     }
