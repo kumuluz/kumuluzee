@@ -260,6 +260,10 @@ public class ConfigurationUtil {
         config.getDispatcher().unsubscribe(listener);
     }
 
+    public List<ConfigurationSource> getConfigurationSources() {
+        return Collections.unmodifiableList(this.config.getConfigurationSources());
+    }
+
     //// Private methods
 
     private Optional<String> get(String key, Set<String> processingKeys) {

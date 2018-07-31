@@ -20,10 +20,7 @@
 */
 package com.kumuluz.ee.configuration.utils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author Urban Malc
@@ -60,13 +57,15 @@ public class ConfigurationSourceUtils {
 
     public static Optional<List<String>> getMapKeys(String key, Collection<String> allKeys) {
 
-        List<String> mapKeys = new ArrayList<>();
+        Set<String> mapKeys = new HashSet<>();
 
         for (String propertyKey : allKeys) {
 
             String mapKey = "";
 
-            if (propertyKey.startsWith(key)) {
+            if (key.isEmpty()) {
+                mapKey = propertyKey;
+            } else if (propertyKey.startsWith(key)) {
 
                 int index = key.length() + 1;
 
@@ -97,6 +96,6 @@ public class ConfigurationSourceUtils {
             return Optional.empty();
         }
 
-        return Optional.of(mapKeys);
+        return Optional.of(new ArrayList<>(mapKeys));
     }
 }
