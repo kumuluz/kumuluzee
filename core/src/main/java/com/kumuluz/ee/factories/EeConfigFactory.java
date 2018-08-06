@@ -65,6 +65,7 @@ public class EeConfigFactory {
             Optional<Integer> maxThreads = cfg.getInteger("kumuluzee.server.max-threads");
             Optional<Boolean> forceHttps = cfg.getBoolean("kumuluzee.server.force-https");
             Optional<Boolean> showServerInfo = cfg.getBoolean("kumuluzee.server.show-server-info");
+            Optional<Boolean> forwardStartupException = cfg.getBoolean("kumuluzee.server.jetty.forward-startup-exception");
 
             baseUrl.ifPresent(serverBuilder::baseUrl);
             contextPath.ifPresent(serverBuilder::contextPath);
@@ -73,6 +74,7 @@ public class EeConfigFactory {
             maxThreads.ifPresent(serverBuilder::maxThreads);
             forceHttps.ifPresent(serverBuilder::forceHttps);
             showServerInfo.ifPresent(serverBuilder::showServerInfo);
+            forwardStartupException.ifPresent(serverBuilder::forwardStartupException);
         }
 
         ServerConnectorConfig.Builder httpBuilder =
@@ -295,6 +297,7 @@ public class EeConfigFactory {
                 eeConfig.getServer().getMinThreads() == null ||
                 eeConfig.getServer().getMaxThreads() == null ||
                 eeConfig.getServer().getShowServerInfo() == null ||
+                eeConfig.getServer().getForwardStartupException() == null ||
                 eeConfig.getServer().getHttp() == null ||
                 eeConfig.getServer().getHttp().getHttp2() == null ||
                 eeConfig.getServer().getHttp().getProxyForwarding() == null ||

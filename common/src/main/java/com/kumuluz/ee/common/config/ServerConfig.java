@@ -35,6 +35,7 @@ public class ServerConfig {
         private Integer maxThreads = 100;
         private Boolean forceHttps = false;
         private Boolean showServerInfo = true;
+        private Boolean forwardStartupException;
 
         private ServerConnectorConfig.Builder http = new ServerConnectorConfig.Builder();
         private ServerConnectorConfig.Builder https;
@@ -84,6 +85,11 @@ public class ServerConfig {
             return this;
         }
 
+        public Builder forwardStartupException(Boolean forwardStartupException) {
+            this.forwardStartupException = forwardStartupException;
+            return this;
+        }
+
         public ServerConfig build() {
 
             ServerConfig serverConfig = new ServerConfig();
@@ -94,6 +100,7 @@ public class ServerConfig {
             serverConfig.maxThreads = maxThreads;
             serverConfig.forceHttps = forceHttps;
             serverConfig.showServerInfo = showServerInfo;
+            serverConfig.forwardStartupException = forwardStartupException;
 
             serverConfig.http = http.build();
             if (https != null) serverConfig.https = https.build();
@@ -109,6 +116,7 @@ public class ServerConfig {
     private Integer maxThreads;
     private Boolean forceHttps;
     private Boolean showServerInfo;
+    private Boolean forwardStartupException;
 
     private ServerConnectorConfig http;
     private ServerConnectorConfig https;
@@ -142,6 +150,10 @@ public class ServerConfig {
 
     public Boolean getShowServerInfo(){
         return showServerInfo;
+    }
+
+    public Boolean getForwardStartupException() {
+        return forwardStartupException;
     }
 
     public ServerConnectorConfig getHttp() {

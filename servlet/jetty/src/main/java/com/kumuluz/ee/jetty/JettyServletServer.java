@@ -133,7 +133,9 @@ public class JettyServletServer implements ServletServer {
 
         appContext.setContextPath(serverConfig.getContextPath());
 
-
+        if (serverConfig.getForwardStartupException() != null) {
+            appContext.setThrowUnavailableOnStartupException(serverConfig.getForwardStartupException());
+        }
 
         if (!Boolean.TRUE.equals(serverConfig.getDirBrowsing())) {
 
