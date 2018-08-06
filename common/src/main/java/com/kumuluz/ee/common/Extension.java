@@ -35,4 +35,8 @@ public interface Extension {
     void load();
 
     void init(KumuluzServerWrapper server, EeConfig eeConfig);
+
+    default boolean isEnabled() {
+        return true;
+    }
 }

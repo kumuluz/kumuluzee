@@ -208,21 +208,26 @@ public class EeApplication {
 
             log.info("Found config extension implemented by " + extension.getName());
 
-            extension.getExtension().load();
-            extension.getExtension().init(server, eeConfig);
+            if (extension.getExtension().isEnabled()) {
 
-            List<ConfigurationSource> sources = extension.getExtension().getConfigurationSources();
+                extension.getExtension().load();
+                extension.getExtension().init(server, eeConfig);
 
-            if (sources == null || sources.size() == 0) {
-                sources = Collections.singletonList(extension.getExtension().getConfigurationSource());
-            }
+                List<ConfigurationSource> sources = extension.getExtension().getConfigurationSources();
 
-            for (ConfigurationSource source : sources) {
-
-                if (source != null) {
-                    source.init(configImpl.getDispatcher());
-                    configImpl.getConfigurationSources().add(source);
+                if (sources == null || sources.size() == 0) {
+                    sources = Collections.singletonList(extension.getExtension().getConfigurationSource());
                 }
+
+                for (ConfigurationSource source : sources) {
+
+                    if (source != null) {
+                        source.init(configImpl.getDispatcher());
+                        configImpl.getConfigurationSources().add(source);
+                    }
+                }
+            } else {
+                log.info("Config extension " + extension.getName() + " won't be initialized because it's disabled.");
             }
         }
 
@@ -352,11 +357,14 @@ public class EeApplication {
 
         for (ExtensionWrapper<Extension> extension : eeExtensions) {
 
-            log.info("Found extension implemented by " + extension.getExtension().getClass()
-                    .getDeclaredAnnotation(EeExtensionDef.class).name());
+            log.info("Found extension implemented by " + extension.getName());
 
-            extension.getExtension().load();
-            extension.getExtension().init(server, eeConfig);
+            if (extension.getExtension().isEnabled()) {
+                extension.getExtension().load();
+                extension.getExtension().init(server, eeConfig);
+            } else {
+                log.info("Extension " + extension.getName() + " won't be initialized because it's disabled.");
+            }
         }
 
         log.info("Extensions Initialized");
