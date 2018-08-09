@@ -33,11 +33,11 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <annotations.version>1.3.1</annotations.version>
+        <annotations.version>1.3.2</annotations.version>
         <inject.version>1</inject.version>
-        <interceptor.version>1.2.1</interceptor.version>
+        <interceptor.version>1.2.2</interceptor.version>
         <servlet.version>3.1.0</servlet.version>
-        <jsp.version>2.3.1</jsp.version>
+        <jsp.version>2.3.3</jsp.version>
         <el.version>3.0.0</el.version>
         <cdi.version>1.2</cdi.version>
         <jpa.version>2.1.1</jpa.version>
@@ -56,15 +56,15 @@
         <hikari.version>2.6.3</hikari.version>
         <yaml.version>1.18</yaml.version>
         <junit.version>4.12</junit.version>
-        <maven.plugin.api.version>3.5.2</maven.plugin.api.version>
-        <maven-plugin-annotations.version>3.5</maven-plugin-annotations.version>
+        <maven.plugin.api.version>3.5.4</maven.plugin.api.version>
+        <maven-plugin-annotations.version>3.5.2</maven-plugin-annotations.version>
         <mojo-executor.version>2.3.0</mojo-executor.version>
 
-        <maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
-        <maven-resources-plugin.version>3.0.2</maven-resources-plugin.version>
-        <maven-plugin-plugin.version>3.5</maven-plugin-plugin.version>
-        <maven-compile-plugin.version>3.7.0</maven-compile-plugin.version>
-        <maven-dependency-plugin.version>3.0.1</maven-dependency-plugin.version>
+        <maven-jar-plugin.version>3.1.0</maven-jar-plugin.version>
+        <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
+        <maven-plugin-plugin.version>3.5.2</maven-plugin-plugin.version>
+        <maven-compile-plugin.version>3.8.0</maven-compile-plugin.version>
+        <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
 
         <jetty.version>9.4.8.v20171121</jetty.version>
         <uel-version>3.0.0</uel-version>
