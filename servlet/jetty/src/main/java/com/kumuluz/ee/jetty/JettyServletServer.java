@@ -91,7 +91,7 @@ public class JettyServletServer implements ServletServer {
         if (server == null)
             throw new IllegalStateException("Jetty has to be initialized before stopping it");
 
-        if (server.isStarted() || server.isStarting())
+        if (server.isStopped() || server.isStopping())
             throw new IllegalStateException("Jetty is not running stopped");
 
         try {
