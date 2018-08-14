@@ -42,18 +42,21 @@ KumuluzEE provides support for various Java EE APIs and components. The goal is 
 Currently the following components are supported with more being added over time:
 
 - Servlet 3.1 (Jetty)
-- CDI 1.2 (RI Weld)
+- CDI 2.0 (RI Weld)
 - JAX-RS 2.1. (RI Jersey)
-- JSON-P 1.0 (RI JSONP)
+- JSON-P 1.1 (RI JSONP)
+- JSON-B 1.0 (RI Yasson)
 - JSP 2.3 (Jetty Apache Jasper)
-- JPA 2.1 (RI EclipseLink)
-- JPA 2.1 (RI Hibernate)
+- JPA 2.2 (RI EclipseLink)
+- JPA 2.2 (RI Hibernate)
 - EL 3.0 (RI UEL)
-- JAX-WS (RI Metro)
-- JSF 2.2 (RI Mojarra)
+- JAX-WS 2.3 (RI Metro)
+- JAX-WS 2.3 (Apache CXF)
+- JSF 2.3 (RI Mojarra)
 - WebSocket 1.1 (Jetty)
-- Bean Validation 1.1 (RI Hibernate validator)
-- JTA 1.2 (Narayana)
+- Bean Validation 2.0 (RI Hibernate validator)
+- JTA 1.3 (Narayana)
+- Java Mail 1.6 (RI JavaMail)
 
 ## Additional features
 
@@ -207,6 +210,14 @@ To choose your Java EE components with fine grain control include them as your d
     <artifactId>kumuluzee-jax-ws-metro</artifactId>
 </dependency>
 
+<!-- or -->
+
+<!-- JAX-WS (Apache CXF) -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-jax-ws-cxf</artifactId>
+</dependency>
+
 <!-- JSF (Mojarra) -->
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
@@ -225,10 +236,22 @@ To choose your Java EE components with fine grain control include them as your d
     <artifactId>kumuluzee-json-p-jsonp</artifactId>
 </dependency>
 
+<!-- JSON-B -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-json-b-yasson</artifactId>
+</dependency>
+
 <!-- JTA -->
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee-jta-narayana</artifactId>
+</dependency>
+
+<!-- JavaMail -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-javamail-ri</artifactId>
 </dependency>
 ```
 
