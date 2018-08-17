@@ -29,6 +29,7 @@ import com.kumuluz.ee.common.dependencies.ServerDef;
 import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 import com.kumuluz.ee.common.utils.ResourceUtils;
 import org.eclipse.jetty.plus.jndi.Resource;
+import org.eclipse.jetty.plus.jndi.Transaction;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
@@ -42,6 +43,7 @@ import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
 import javax.sql.DataSource;
+import javax.transaction.UserTransaction;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -209,10 +211,10 @@ public class JettyServletServer implements ServletServer {
     public void registerListener(EventListener listener) {
 
         if (server == null)
-            throw new IllegalStateException("Jetty has to be initialized before adding a servlet ");
+            throw new IllegalStateException("Jetty has to be initialized before adding a listener");
 
         if (server.isStarted() || server.isStarting())
-            throw new IllegalStateException("Jetty cannot be started before adding a servlet");
+            throw new IllegalStateException("Jetty cannot be started before adding a listener");
 
         appContext.addEventListener(listener);
     }
@@ -274,6 +276,27 @@ public class JettyServletServer implements ServletServer {
                 .forEach(s -> servlets.add(new ServletWrapper(s.getName(), s.getContextPath())));
 
         return servlets;
+    }
+
+    @Override
+    public void registerResource(Object o, String jndiName) {
+
+        try {
+            Resource resource = new Resource(jndiName, o);
+
+            appContext.setAttribute(jndiName, resource);
+        } catch (NamingException e) {
+            throw new IllegalArgumentException("Unable to create naming resource entry with jndi name " + jndiName + "", e);
+        }
+    }
+
+    @Override
+    public void registerTransactionManager(UserTransaction userTransaction) {
+        try {
+            new Transaction(userTransaction);
+        } catch (NamingException e) {
+            throw new IllegalArgumentException("Unable to create transaction manager", e);
+        }
     }
 
     private JettyFactory createJettyFactory() {

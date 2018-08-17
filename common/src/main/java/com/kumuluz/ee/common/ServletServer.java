@@ -26,6 +26,7 @@ import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
 import javax.sql.DataSource;
+import javax.transaction.UserTransaction;
 import java.util.*;
 
 /**
@@ -51,6 +52,8 @@ public interface ServletServer extends KumuluzServer {
     void registerFilter(Class<? extends Filter> filterClass, String pathSpec, EnumSet<DispatcherType> dispatches, Map<String, String> parameters);
 
     void registerDataSource(DataSource ds, String jndiName);
+
+    void registerTransactionManager(UserTransaction userTransaction);
 
     void initWebContext();
 
