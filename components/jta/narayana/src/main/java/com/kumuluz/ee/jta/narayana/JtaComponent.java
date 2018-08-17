@@ -23,11 +23,13 @@ package com.kumuluz.ee.jta.narayana;
 import com.arjuna.ats.arjuna.common.arjPropertyManager;
 import com.arjuna.ats.jta.utils.JNDIManager;
 import com.kumuluz.ee.common.Component;
+import com.kumuluz.ee.common.ServletServer;
 import com.kumuluz.ee.common.config.EeConfig;
 import com.kumuluz.ee.common.dependencies.EeComponentDef;
 import com.kumuluz.ee.common.dependencies.EeComponentType;
 import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
 import com.kumuluz.ee.jta.common.JtaTransactionHolder;
+import com.kumuluz.ee.jta.common.TransactionAcquirer;
 
 import javax.naming.NamingException;
 import java.util.logging.Level;
@@ -44,7 +46,13 @@ public class JtaComponent implements Component {
 
     @Override
     public void init(KumuluzServerWrapper server, EeConfig eeConfig) {
-        JtaTransactionHolder.getInstance().setTransactionAcquirer(new NarayanaTransactionAcquirer());
+        TransactionAcquirer transactionAcquirer = new NarayanaTransactionAcquirer();
+
+        JtaTransactionHolder.getInstance().setTransactionAcquirer(transactionAcquirer);
+
+        if (server.getServer() instanceof ServletServer) {
+            ((ServletServer) server.getServer()).registerTransactionManager(transactionAcquirer.getUserTransaction());
+        }
     }
 
     @Override
