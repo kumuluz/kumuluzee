@@ -12,5 +12,5 @@ public class EeExtensionGroup {
     public final static String METRICS = "metrics";
     public final static String HEALTH = "health";
     public final static String CORS = "cors";
-	public final static String REST_CLIENT = "rest.client";
+    public final static String REST_CLIENT = "rest.client";
 }
