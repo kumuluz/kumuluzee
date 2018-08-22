@@ -14,10 +14,6 @@
 
     <artifactId>kumuluzee-jax-ws-cxf</artifactId>
 
-    <properties>
-        <cxf.version>3.2.4</cxf.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.kumuluz.ee</groupId>
