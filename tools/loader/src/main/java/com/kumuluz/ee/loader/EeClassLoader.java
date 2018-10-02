@@ -494,6 +494,11 @@ public class EeClassLoader extends ClassLoader {
     }
 
     @Override
+    protected Class<?> findClass(String s) throws ClassNotFoundException {
+        return loadClass(s); // same as loadClass(s, false)
+    }
+
+    @Override
     protected URL findResource(String name) {
 
         debug(String.format("findResource: %s", name));
