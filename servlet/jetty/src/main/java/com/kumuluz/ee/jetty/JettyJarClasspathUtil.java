@@ -17,30 +17,31 @@
  *  out of or in connection with the software or the use or other dealings in the
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
-*/
-package com.kumuluz.ee.common;
+ */
+package com.kumuluz.ee.jetty;
 
-import com.kumuluz.ee.common.config.EeConfig;
-import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
+import com.kumuluz.ee.loader.EeClassLoader;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
- * @author Tilen Faganel
- * @since 2.3.0
+ * Obtains extra classpath jars from {@link EeClassLoader}. Must be in separate file because {@link EeClassLoader} is
+ * not present on the classpath when running in exploded.
+ *
+ * @author Urban Malc
+ * @since 3.1.0
  */
-public interface Extension {
+public class JettyJarClasspathUtil {
 
-    void load();
+    public static String getExtraClasspath(List<String> scanLibraries) {
 
-    void init(KumuluzServerWrapper server, EeConfig eeConfig);
+        if (!(JettyJarClasspathUtil.class.getClassLoader() instanceof EeClassLoader)) {
+            throw new IllegalStateException("Classloader not instance of EeClassLoader");
+        }
 
-    default boolean isEnabled() {
-        return true;
-    }
+        EeClassLoader eeClassLoader = (EeClassLoader) JettyJarClasspathUtil.class.getClassLoader();
 
-    default List<String> scanLibraries() {
-        return Collections.emptyList();
+        return String.join(",", eeClassLoader
+                .getJarFilesLocations(scanLibraries));
     }
 }

@@ -25,6 +25,8 @@ import com.kumuluz.ee.common.utils.EnvUtils;
 import com.kumuluz.ee.common.utils.StringUtils;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -129,6 +131,22 @@ public class EeConfigFactory {
             Optional<String> webappDir = cfg.get("kumuluzee.dev.webapp-dir");
 
             webappDir.ifPresent(devBuilder::webappDir);
+
+            Optional<Integer> scanLibrariesListSize = cfg.getListSize("kumuluzee.dev.scan-libraries");
+
+            if (scanLibrariesListSize.isPresent()) {
+                List<String> scanLibraries = new ArrayList<>();
+
+                for (int i = 0; i < scanLibrariesListSize.get(); i++) {
+                    Optional<String> lib = cfg.get("kumuluzee.dev.scan-libraries[" + i + "]");
+
+                    lib.ifPresent(scanLibraries::add);
+                }
+
+                if (scanLibraries.size() > 0) {
+                    devBuilder.scanLibraries(Collections.unmodifiableList(scanLibraries));
+                }
+            }
 
             eeConfigBuilder.dev(devBuilder);
         }

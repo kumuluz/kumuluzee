@@ -23,6 +23,7 @@ package com.kumuluz.ee.jetty;
 import com.kumuluz.ee.common.servlet.ServletWrapper;
 import com.kumuluz.ee.common.ServletServer;
 import com.kumuluz.ee.common.attributes.ClasspathAttributes;
+import com.kumuluz.ee.common.config.EeConfig;
 import com.kumuluz.ee.common.config.ServerConfig;
 import com.kumuluz.ee.common.dependencies.EeComponentType;
 import com.kumuluz.ee.common.dependencies.ServerDef;
@@ -46,6 +47,7 @@ import javax.sql.DataSource;
 import javax.transaction.UserTransaction;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 /**
  * @author Tilen Faganel
@@ -107,7 +109,7 @@ public class JettyServletServer implements ServletServer {
     }
 
     @Override
-    public void initWebContext() {
+    public void initWebContext(List<String> scanLibraries) {
 
         if (server == null)
             throw new IllegalStateException("Jetty has to be initialized before adding a web context");
@@ -115,18 +117,34 @@ public class JettyServletServer implements ServletServer {
         if (server.isStarted() || server.isStarting())
             throw new IllegalStateException("Jetty cannot be started before adding a web context");
 
+        if (EeConfig.getInstance().getDev().getScanLibraries() != null) {
+            scanLibraries.addAll(EeConfig.getInstance().getDev().getScanLibraries());
+        }
+
         appContext = new WebAppContext();
 
         if (ResourceUtils.isRunningInJar()) {
             appContext.setAttribute(JettyAttributes.jarPattern, ClasspathAttributes.jar);
 
+            appContext.setExtraClasspath(JettyJarClasspathUtil.getExtraClasspath(scanLibraries));
+
             try {
                 appContext.setClassLoader(getClass().getClassLoader());
             } catch (Exception e) {
-                throw new IllegalStateException("Unable to set custom classloader for Jetty");
+                throw new IllegalStateException("Unable to set custom classloader for Jetty", e);
             }
         } else {
-            appContext.setAttribute(JettyAttributes.jarPattern, ClasspathAttributes.exploded);
+            StringBuilder explodedClasspath = new StringBuilder(ClasspathAttributes.exploded);
+            for (String lib : scanLibraries) {
+                if (lib.endsWith(".jar")) {
+                    explodedClasspath.append("|^.*/").append(Pattern.quote(lib)).append("$");
+                } else {
+                    explodedClasspath.append("|^.*/").append(Pattern.quote(lib)).append("-[^/]+\\.jar$");
+                }
+            }
+
+            log.fine("Using classpath scanning regex: " + explodedClasspath.toString());
+            appContext.setAttribute(JettyAttributes.jarPattern, explodedClasspath.toString());
         }
 
         appContext.setParentLoaderPriority(true);
