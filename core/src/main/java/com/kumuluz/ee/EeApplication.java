@@ -251,7 +251,14 @@ public class EeApplication {
 
             ServletServer servletServer = (ServletServer) server.getServer();
 
-            servletServer.initWebContext();
+            List<Extension> allExtensions = new ArrayList<>();
+            allExtensions.addAll(eeExtensions.stream().map(ExtensionWrapper::getExtension)
+                    .collect(Collectors.toList()));
+            allExtensions.addAll(eeConfigExtensions.stream().map(ExtensionWrapper::getExtension)
+                    .collect(Collectors.toList()));
+            allExtensions.addAll(eeLogsExtensions.stream().map(ExtensionWrapper::getExtension)
+                    .collect(Collectors.toList()));
+            servletServer.initWebContext(collectScanLibraries(allExtensions));
 
             // Create and register datasources to the underlying server
             if (eeConfig.getDatasources().size() > 0) {
@@ -368,6 +375,14 @@ public class EeApplication {
         server.getServer().startServer();
 
         log.info("KumuluzEE started successfully");
+    }
+
+    private List<String> collectScanLibraries(List<Extension> extensions) {
+        Set<String> scanLibraries = new HashSet<>();
+
+        extensions.stream().filter(Extension::isEnabled).forEach(e -> scanLibraries.addAll(e.scanLibraries()));
+
+        return new ArrayList<>(scanLibraries);
     }
 
     private void processKumuluzServer(KumuluzServer kumuluzServer) {

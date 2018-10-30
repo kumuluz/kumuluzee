@@ -57,7 +57,7 @@ public interface ServletServer extends KumuluzServer {
 
     void registerTransactionManager(UserTransaction userTransaction);
 
-    void initWebContext();
+    void initWebContext(List<String> scanLibraries);
 
     List<ServletWrapper> getRegisteredServlets();
 }
