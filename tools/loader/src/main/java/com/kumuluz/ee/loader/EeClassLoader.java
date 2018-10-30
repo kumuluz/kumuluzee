@@ -38,6 +38,9 @@ import java.security.cert.Certificate;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @author Benjamin Kastelic
@@ -584,6 +587,52 @@ public class EeClassLoader extends ClassLoader {
             return null;
         }
         return super.findLibrary(name);
+    }
+
+    public List<String> getJarFilesLocations(List<String> filenames) {
+        List<String> locations = new ArrayList<>();
+
+        for (String filename : filenames) {
+            // try exact match
+            JarFileInfo jarLib = jarFiles.stream()
+                    .filter(jfi -> jfi.getSimpleName().contains("!"))
+                    .filter(jfi -> jfi.getSimpleName().split("!")[1].equals("lib_" + filename))
+                    .findFirst().orElse(null);
+
+            if (jarLib == null) {
+                // try artifact name search only
+                String regex = "^.*!lib_" + Pattern.quote(filename) + "-[^/]+\\.jar$";
+                List<JarFileInfo> matchedFiles = jarFiles.stream().filter(jfi -> jfi.getSimpleName().matches(regex))
+                        .collect(Collectors.toList());
+
+                if (matchedFiles.size() == 1) {
+                    jarLib = matchedFiles.get(0);
+                } else if (matchedFiles.size() > 1) {
+                    // multiple matches, select one with the shortest name
+                    jarLib = matchedFiles.stream().min(Comparator.comparingInt(jfi -> jfi.getSimpleName().length()))
+                            .orElseThrow(() -> new RuntimeException("Could not find library with shortest name"));
+
+                    // logging should be initialized by now
+                    Logger log = Logger.getLogger(EeClassLoader.class.getSimpleName());
+                    log.severe(String.format("Multiple jar files with artifact name similar to '%s' found ([%s]). " +
+                                    "Using %s. Consider matching by full name.",
+                            filename,
+                            matchedFiles.stream().map(jfi -> jfi.getSimpleName().split("!")[1].substring(4))
+                                    .collect(Collectors.joining(", ")),
+                            jarLib.getSimpleName().split("!")[1].substring(4))
+                    );
+                }
+                // else exception is thrown because jarLib == null
+            }
+
+            if (jarLib == null) {
+                throw new IllegalArgumentException("Could not locate library " + filename);
+            }
+
+            locations.add(jarLib.getFileDeleteOnExit().getAbsolutePath());
+        }
+
+        return Collections.unmodifiableList(locations);
     }
 
     /**
