@@ -99,6 +99,7 @@ It implements the following MicroProfile APIs:
 - [MicroProfile Fault Tolerance 1.0](https://github.com/kumuluz/kumuluzee-fault-tolerance)
 - [MicroProfile Metrics 1.1](https://github.com/kumuluz/kumuluzee-metrics)
 - [MicroProfile JWT Authentication 1.0](https://github.com/kumuluz/kumuluzee-jwt-auth)
+- [MicroProfile Rest Client 1.0](https://github.com/kumuluz/kumuluzee-rest-client)
 
 ## Usage
 
