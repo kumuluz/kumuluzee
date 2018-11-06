@@ -88,9 +88,9 @@ The following projects are available with more planned soon:
 - [KumuluzEE Swagger](https://github.com/kumuluz/kumuluzee-swagger) (For Swagger (OpenAPI 2) support and visualization)
 - [KumuluzEE OpenAPI](https://github.com/kumuluz/kumuluzee-openapi) (For OpenAPI 3 support, interface generation and visualization)
 - [KumuluzEE Testing](https://github.com/kumuluz/kumuluzee-testing) (Tools and utilities for testing KumuluzEE microservices)
-- **new** [KumuluzEE gRPC](https://github.com/kumuluz/kumuluzee-grpc) (Native support for gRPC based services)
-- **new** [KumuluzEE GraphQL](https://github.com/kumuluz/kumuluzee-graphql) (Native support for GraphQL)
-- **new** [KumuluzEE Ethereum](https://github.com/kumuluz/kumuluzee-ethereum) (For Ethereum-enabled blockchain microservices)
+- **_new_** [KumuluzEE gRPC](https://github.com/kumuluz/kumuluzee-grpc) (Native support for gRPC based services)
+- **_new_** [KumuluzEE GraphQL](https://github.com/kumuluz/kumuluzee-graphql) (Native support for GraphQL)
+- **_new_** [KumuluzEE Ethereum](https://github.com/kumuluz/kumuluzee-ethereum) (For Ethereum-enabled blockchain microservices)
 
 
 
