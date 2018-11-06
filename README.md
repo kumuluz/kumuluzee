@@ -10,7 +10,7 @@ KumuluzEE also provides extensions for developing common patterns in cloud-nativ
 
 KumuluzEE has been designed to use the standard Java/JavaEE/JakartaEE/EE4J technologies and APIs with optional extensions for easier development of cloud-native microservices. Therefore, it is particularly suitable for existing enterprise Java developers, who would like to leverage their skills, but progressively move from monolithic to microservice design patterns.
 
-KumuluzEE provides full support for Java, including Java SE 9/10/11 and higher versions. In addition to Java, KumuluzEE supports several programming languages, including Node.js and Go. Support for additional languages will be added soon. For these languages, KumuluzEE also provides support for service configuration and discovery. 
+KumuluzEE provides full support for **Java**, including Java SE 9/10/11 and higher versions and Java EE 8. In addition to Java, KumuluzEE supports several programming languages, including **Node.js** and **Go**. Support for additional languages will be added soon. For these languages, KumuluzEE also provides support for service configuration and discovery. 
 
 KumuluzEE is Eclipse MicroProfile compliant and provides support for MicroProfile 1.0, 1.1 and 1.2. We will support higher versions soon. It implements MicroProfile Config 1.3, MicroProfile Health 1.0, MicroProfile Fault Tolerance 1.0, MicroProfile Metrics 1.1, MicroProfile JWT Authentication 1.0 and MicroProfile Open Tracing 1.0 APIs.
 
@@ -88,9 +88,9 @@ The following projects are available with more planned soon:
 - [KumuluzEE Swagger](https://github.com/kumuluz/kumuluzee-swagger) (For Swagger (OpenAPI 2) support and visualization)
 - [KumuluzEE OpenAPI](https://github.com/kumuluz/kumuluzee-openapi) (For OpenAPI 3 support, interface generation and visualization)
 - [KumuluzEE Testing](https://github.com/kumuluz/kumuluzee-testing) (Tools and utilities for testing KumuluzEE microservices)
-- [KumuluzEE gRPC](https://github.com/kumuluz/kumuluzee-grpc) (Native support for gRPC based services)
-- [KumuluzEE GraphQL](https://github.com/kumuluz/kumuluzee-graphql) (Native support for GraphQL)
-- [KumuluzEE Ethereum](https://github.com/kumuluz/kumuluzee-ethereum) (For Ethereum-enabled blockchain microservices)
+- **new** [KumuluzEE gRPC](https://github.com/kumuluz/kumuluzee-grpc) (Native support for gRPC based services)
+- **new** [KumuluzEE GraphQL](https://github.com/kumuluz/kumuluzee-graphql) (Native support for GraphQL)
+- **new** [KumuluzEE Ethereum](https://github.com/kumuluz/kumuluzee-ethereum) (For Ethereum-enabled blockchain microservices)
 
 
 
