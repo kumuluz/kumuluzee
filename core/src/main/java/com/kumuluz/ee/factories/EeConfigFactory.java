@@ -150,7 +150,6 @@ public class EeConfigFactory {
                 Optional<String> conUrl = cfg.get("kumuluzee.datasources[" + i + "].connection-url");
                 Optional<String> user = cfg.get("kumuluzee.datasources[" + i + "].username");
                 Optional<String> pass = cfg.get("kumuluzee.datasources[" + i + "].password");
-                Optional<Integer> maxPool = cfg.getInteger("kumuluzee.datasources[" + i + "].max-pool-size");
 
                 jndiName.ifPresent(dsc::jndiName);
                 driverClass.ifPresent(dsc::driverClass);
@@ -322,14 +321,12 @@ public class EeConfigFactory {
                 eeConfig.getServer().getHttp().getRequestHeaderSize() == null ||
                 eeConfig.getServer().getHttp().getResponseHeaderSize() == null ||
                 eeConfig.getServer().getHttp().getIdleTimeout() == null ||
-                eeConfig.getServer().getHttp().getSoLingerTime() == null ||
                 (eeConfig.getServer().getHttps() != null &&
                         (eeConfig.getServer().getHttps().getHttp2() == null ||
                                 eeConfig.getServer().getHttps().getProxyForwarding() == null ||
                                 eeConfig.getServer().getHttps().getRequestHeaderSize() == null ||
                                 eeConfig.getServer().getHttps().getResponseHeaderSize() == null ||
-                                eeConfig.getServer().getHttps().getIdleTimeout() == null ||
-                                eeConfig.getServer().getHttps().getSoLingerTime() == null)) ||
+                                eeConfig.getServer().getHttps().getIdleTimeout() == null)) ||
                 eeConfig.getDatasources().stream().anyMatch(ds ->
                         (ds == null || ds.getPool() == null ||
                                 ds.getPool().getAutoCommit() == null ||
@@ -366,7 +363,6 @@ public class EeConfigFactory {
             Optional<Integer> requestHeaderSize = cfg.getInteger(prefix + ".request-header-size");
             Optional<Integer> responseHeaderSize = cfg.getInteger(prefix + ".response-header-size");
             Optional<Integer> idleTimeout = cfg.getInteger(prefix + ".idle-timeout");
-            Optional<Integer> soLingerTime = cfg.getInteger(prefix + ".so-linger-time");
 
             Optional<String> keystorePath = cfg.get(prefix + ".keystore-path");
             Optional<String> keystorePassword = cfg.get(prefix + ".keystore-password");
@@ -383,7 +379,6 @@ public class EeConfigFactory {
             requestHeaderSize.ifPresent(serverConnectorBuilder::requestHeaderSize);
             responseHeaderSize.ifPresent(serverConnectorBuilder::responseHeaderSize);
             idleTimeout.ifPresent(serverConnectorBuilder::idleTimeout);
-            soLingerTime.ifPresent(serverConnectorBuilder::soLingerTime);
 
             keystorePath.ifPresent(serverConnectorBuilder::keystorePath);
             keystorePassword.ifPresent(serverConnectorBuilder::keystorePassword);
