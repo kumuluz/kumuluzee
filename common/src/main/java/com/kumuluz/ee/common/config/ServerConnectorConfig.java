@@ -42,7 +42,6 @@ public class ServerConnectorConfig {
         private Integer requestHeaderSize = 8 * 1024;
         private Integer responseHeaderSize = 8 * 1024;
         private Integer idleTimeout = 30 * 1000;
-        private Integer soLingerTime = -1;
 
         private String keystorePath;
         private String keystorePassword;
@@ -91,11 +90,6 @@ public class ServerConnectorConfig {
             return this;
         }
 
-        public Builder soLingerTime(Integer soLingerTime) {
-            this.soLingerTime = soLingerTime;
-            return this;
-        }
-
         public Builder keystorePath(String keystorePath) {
             this.keystorePath = keystorePath;
             return this;
@@ -137,7 +131,6 @@ public class ServerConnectorConfig {
             serverConnectorConfig.requestHeaderSize = requestHeaderSize;
             serverConnectorConfig.responseHeaderSize = responseHeaderSize;
             serverConnectorConfig.idleTimeout = idleTimeout;
-            serverConnectorConfig.soLingerTime = soLingerTime;
             serverConnectorConfig.keystorePath = keystorePath;
             serverConnectorConfig.keystorePassword = keystorePassword;
             serverConnectorConfig.keyAlias = keyAlias;
@@ -157,7 +150,6 @@ public class ServerConnectorConfig {
     private Integer requestHeaderSize;
     private Integer responseHeaderSize;
     private Integer idleTimeout;
-    private Integer soLingerTime;
 
     private String keystorePath;
     private String keystorePassword;
@@ -199,10 +191,6 @@ public class ServerConnectorConfig {
 
     public Integer getIdleTimeout() {
         return idleTimeout;
-    }
-
-    public Integer getSoLingerTime() {
-        return soLingerTime;
     }
 
     public String getKeystorePath() {
