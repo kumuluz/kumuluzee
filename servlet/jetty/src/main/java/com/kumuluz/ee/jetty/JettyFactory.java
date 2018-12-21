@@ -135,7 +135,6 @@ public class JettyFactory {
             httpConnector.setHost(httpConfig.getAddress());
 
             httpConnector.setIdleTimeout(httpConfig.getIdleTimeout());
-            httpConnector.setSoLingerTime(httpConfig.getSoLingerTime());
 
             connectors.add(httpConnector);
         }
@@ -215,7 +214,6 @@ public class JettyFactory {
             httpsConnector.setHost(httpsConfig.getAddress());
 
             httpsConnector.setIdleTimeout(httpsConfig.getIdleTimeout());
-            httpsConnector.setSoLingerTime(httpsConfig.getSoLingerTime());
 
             connectors.add(httpsConnector);
         }
