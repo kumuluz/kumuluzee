@@ -310,6 +310,83 @@ REST module pom.xml:
     
     __Default value is__: `${project.build.directory}`
 
+#### Gradle support
+
+If you're using Gradle, you can use the following build file to package and run microservices as Uber JAR.
+
+```groovy
+import java.nio.file.Files
+import java.nio.file.Paths
+
+configurations {
+    kumuluzeeLoader { transitive = false }
+}
+
+dependencies {
+    kumuluzeeLoader 'com.kumuluz.ee:kumuluzee-loader:3.1.0'
+}
+
+task repackageKumuluzee {
+    /*Unpack and copy kumuluzee loader*/
+    copy {
+        from zipTree(configurations.kumuluzeeLoader.singleFile).matching { include "**/*.class" }
+        into "$buildDir/classes/java/main"
+        outputs.upToDateWhen { false }
+    }
+    /*Create boot loader properties*/
+    file("$buildDir/classes/java/main/META-INF/kumuluzee").mkdirs()
+    /*Change to correct main class*/
+    file("$buildDir/classes/java/main/META-INF/kumuluzee/boot-loader.properties").text = "main-class=com.kumuluz.ee.EeApplication"
+}
+
+/**
+ * Configure a different path using -PwebappDir="RELATIVE_PATH" argument when running the task.
+ * */
+task copyOrCreateWebapp {
+    def webapp_path = Paths.get("$buildDir", "classes", "webapp")
+    if (!Files.isDirectory(webapp_path)) {
+        def sourceWebappPath = project.hasProperty("webappDir") ? Paths.get(projectDir.path, project.property("webappDir").toString()) : Paths.get(projectDir.path, "src", "main", "webapp")
+        println("Source Webapp path: " + sourceWebappPath)
+        if (Files.isDirectory(sourceWebappPath)) {
+            copy {
+                from sourceWebappPath
+                into webapp_path
+            }
+        }
+        if (!Files.isDirectory(webapp_path)) {
+            Files.createDirectories(webapp_path)
+        }
+    }
+}
+
+/**
+ * Builds the kumuluzee UberJAR.
+ * */
+task buildKumuluzee {
+    jar {
+        baseName = "kumuluz-server"
+        archiveName = "${baseName}-${version}.${extension}"
+        manifest {
+            attributes "Main-Class": "com.kumuluz.ee.loader.EeBootLoader"
+        }
+        /*Copy project dependencies into lib folder as jars*/
+        into("lib") {
+            from configurations.runtimeClasspath
+        }
+    }
+    dependsOn repackageKumuluzee
+    dependsOn copyOrCreateWebapp
+    finalizedBy build
+}
+
+/**
+ * Run the application in an executable JAR archive runtime.
+ * */
+task runJar(type: JavaExec) {
+    main = "-jar"
+    args jar.archivePath
+}
+```
 
 ### Run
 Start the application using the following command:
