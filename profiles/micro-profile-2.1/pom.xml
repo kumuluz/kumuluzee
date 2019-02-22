@@ -9,9 +9,9 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <name>KumuluzEE MicroProfile 2.0</name>
+    <name>KumuluzEE MicroProfile 2.1</name>
     <description>
-        KumuluzEE MicroProfile 2.0 which includes and tracks the version 2.0 community based specification found at
+        KumuluzEE MicroProfile 2.1 which includes and tracks the version 2.1 community based specification found at
         https://microprofile.io, which focuses on technologies best-suited to build modern Java based cloud
         applications that follow the microservice architecture. The main KumuluzEE profile includes the reference
         implementations of the profile/specification.
