@@ -42,6 +42,11 @@
                 <artifactId>kumuluzee-microProfile-1.4</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-microProfile-2.0</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>

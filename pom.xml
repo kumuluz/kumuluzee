@@ -282,6 +282,17 @@
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-json-b</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-json-b-yasson</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
                 <artifactId>kumuluzee-jta</artifactId>
                 <version>${project.version}</version>
             </dependency>
