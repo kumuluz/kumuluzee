@@ -88,10 +88,10 @@ The following projects are available with more planned soon:
 - [KumuluzEE Swagger](https://github.com/kumuluz/kumuluzee-swagger) (For Swagger (OpenAPI 2) support and visualization)
 - [KumuluzEE OpenAPI](https://github.com/kumuluz/kumuluzee-openapi) (For OpenAPI 3 support, interface generation and visualization)
 - [KumuluzEE Testing](https://github.com/kumuluz/kumuluzee-testing) (Tools and utilities for testing KumuluzEE microservices)
-- **_new_** [KumuluzEE gRPC](https://github.com/kumuluz/kumuluzee-grpc) (Native support for gRPC based services)
-- **_new_** [KumuluzEE GraphQL](https://github.com/kumuluz/kumuluzee-graphql) (Native support for GraphQL)
-- **_new_** [KumuluzEE Ethereum](https://github.com/kumuluz/kumuluzee-ethereum) (For Ethereum-enabled blockchain microservices)
-
+- [KumuluzEE gRPC](https://github.com/kumuluz/kumuluzee-grpc) (Native support for gRPC based services)
+- [KumuluzEE GraphQL](https://github.com/kumuluz/kumuluzee-graphql) (Native support for GraphQL)
+- [KumuluzEE Ethereum](https://github.com/kumuluz/kumuluzee-ethereum) (For Ethereum-enabled blockchain microservices)
+- **_new_** [KumuluzEE AMQP](https://github.com/kumuluz/kumuluzee-amqp) (Support for Advanced Message Queueing Protocol)
 
 
 ## MicroProfile
@@ -100,16 +100,20 @@ KumuluzEE is Eclipse MicroProfile compliant and provides support for:
 - MicroProfile 1.0 
 - MicroProfile 1.1
 - MicroProfile 1.2
-- Support for MicroProfile 1.3, 1.4, 2.0 and 2.1 cooming soon
+- MicroProfile 1.3
+- MicroProfile 1.4
+- MicroProfile 2.0
+- MicroProfile 2.1
 
 It implements the following MicroProfile APIs:
 - [MicroProfile Config 1.3](https://github.com/kumuluz/kumuluzee-config-mp)
-- [MicroProfile Health 1.0](https://github.com/kumuluz/kumuluzee-health)
-- [MicroProfile Fault Tolerance 1.0](https://github.com/kumuluz/kumuluzee-fault-tolerance)
+- [MicroProfile Health Check 1.0](https://github.com/kumuluz/kumuluzee-health)
+- [MicroProfile Fault Tolerance 1.1](https://github.com/kumuluz/kumuluzee-fault-tolerance)
 - [MicroProfile Metrics 1.1](https://github.com/kumuluz/kumuluzee-metrics)
-- [MicroProfile JWT Authentication 1.0](https://github.com/kumuluz/kumuluzee-jwt-auth)
-- [MicroProfile Rest Client 1.0](https://github.com/kumuluz/kumuluzee-rest-client)
-- [MicroProfile Open Tracing 1.0](https://github.com/kumuluz/)
+- [MicroProfile JWT Authentication 1.1](https://github.com/kumuluz/kumuluzee-jwt-auth)
+- [MicroProfile Rest Client 1.1](https://github.com/kumuluz/kumuluzee-rest-client)
+- [MicroProfile OpenAPI 1.0.1](https://github.com/kumuluz/kumuluzee-openapi-mp)
+- [MicroProfile Open Tracing 1.2.1](https://github.com/kumuluz/kumuluzee-opentracing)
 
 ## Usage
 
