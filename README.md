@@ -12,7 +12,7 @@ KumuluzEE has been designed to use the standard Java/JavaEE/JakartaEE/EE4J techn
 
 KumuluzEE provides full support for **Java**, including Java SE 9/10/11 and higher versions and Java EE 8. In addition to Java, KumuluzEE supports several programming languages, including **Node.js** and **Go**. Support for additional languages will be added soon. For these languages, KumuluzEE also provides support for service configuration and discovery. 
 
-KumuluzEE is Eclipse MicroProfile compliant and provides support for MicroProfile 1.0, 1.1 and 1.2. We will support higher versions soon. It implements MicroProfile Config 1.3, MicroProfile Health 1.0, MicroProfile Fault Tolerance 1.0, MicroProfile Metrics 1.1, MicroProfile JWT Authentication 1.0 and MicroProfile Open Tracing 1.0 APIs.
+KumuluzEE is Eclipse MicroProfile compliant and provides support for MicroProfile 1.0, 1.1, 1.2, 1.3, 1.4, 2.0 and 2.1. Support for versions 2.2 is coming soon. It implements MicroProfile Config 1.3, MicroProfile Health 1.0, MicroProfile Fault Tolerance 1.1, MicroProfile Metrics 1.1, MicroProfile JWT Authentication 1.1, MicroProfile Rest Client 1.1, MicroProfile OpenAPI 1.0.1 and , MicroProfile Open Tracing 1.2.1 APIs.
 
 ## Getting started
 
