@@ -20,7 +20,7 @@ If you already know how to use Java/JavaEE/JakartaEE/EE4J, then you already know
 
 See the [getting started](https://github.com/kumuluz/KumuluzEE/wiki/Getting-started) wiki section to create your first light-weight standalone Java microservice in 5 minutes. 
 
-Read [tutorials](https://ee.kumuluz.com/tutorial/) at our home page.
+Read [tutorials](https://ee.kumuluz.com/tutorials/) at our home page.
 
 Refer to [samples](https://github.com/kumuluz/kumuluzee-samples) for more examples.
 
