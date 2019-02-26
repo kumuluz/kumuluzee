@@ -165,6 +165,42 @@ MicroProfile 1.2
 </dependency>
 ```
 
+MicroProfile 1.3
+```xml
+<!-- MicroProfile 1.3 -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-microProfile-1.3</artifactId>
+</dependency>
+```
+
+MicroProfile 1.4
+```xml
+<!-- MicroProfile 1.4 -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-microProfile-1.4</artifactId>
+</dependency>
+```
+
+MicroProfile 2.0
+```xml
+<!-- MicroProfile 2.0 -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-microProfile-2.0</artifactId>
+</dependency>
+```
+
+MicroProfile 2.1
+```xml
+<!-- MicroProfile 2.1 -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-microProfile-2.1</artifactId>
+</dependency>
+```
+
 To choose your Java components with fine grain control include them as your dependencies. You can chose any of the following artifacts:
 
 ```xml
