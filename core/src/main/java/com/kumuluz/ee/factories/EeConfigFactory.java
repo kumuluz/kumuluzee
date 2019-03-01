@@ -172,7 +172,6 @@ public class EeConfigFactory {
                 conUrl.ifPresent(dsc::connectionUrl);
                 user.ifPresent(dsc::username);
                 pass.ifPresent(dsc::password);
-                maxPool.ifPresent(dsc::maxPoolSize);
 
                 Optional<List<String>> pool = cfg.getMapKeys("kumuluzee.datasources[" + i + "].pool");
 

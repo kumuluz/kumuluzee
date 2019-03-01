@@ -53,6 +53,8 @@ public interface ServletServer extends KumuluzServer {
 
     void registerDataSource(DataSource ds, String jndiName);
 
+    void registerResource(Object o, String jndiName);
+
     void registerTransactionManager(UserTransaction userTransaction);
 
     void initWebContext(List<String> scanLibraries);
