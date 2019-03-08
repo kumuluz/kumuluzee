@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014-2017 Kumuluz and/or its affiliates
+ *  Copyright (c) 2014-2019 Kumuluz and/or its affiliates
  *  and other contributors as indicated by the @author tags and
  *  the contributor list.
  *
@@ -17,9 +17,10 @@
  *  out of or in connection with the software or the use or other dealings in the
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
-*/
+ */
 package com.kumuluz.ee.configuration.utils;
 
+import com.kumuluz.ee.configuration.ConfigurationDecoder;
 import com.kumuluz.ee.configuration.ConfigurationSource;
 import com.kumuluz.ee.configuration.sources.EnvironmentConfigurationSource;
 import com.kumuluz.ee.configuration.sources.FileConfigurationSource;
@@ -27,6 +28,7 @@ import com.kumuluz.ee.configuration.sources.SystemPropertyConfigurationSource;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ServiceLoader;
 import java.util.logging.Logger;
 
 /**
@@ -38,6 +40,7 @@ public class ConfigurationImpl {
     private Logger utilLogger;
     private ConfigurationDispatcher dispatcher;
     private List<ConfigurationSource> configurationSources;
+    private ConfigurationDecoder configurationDecoder;
 
     private EnvironmentConfigurationSource environmentConfigurationSource;
     private SystemPropertyConfigurationSource systemPropertyConfigurationSource;
@@ -66,6 +69,16 @@ public class ConfigurationImpl {
 
             configurationSource.init(dispatcher);
         }
+
+        // initialise configuration decoder
+        List<ConfigurationDecoder> configurationDecoders = new ArrayList<>();
+        ServiceLoader.load(ConfigurationDecoder.class).forEach(configurationDecoders::add);
+        if (configurationDecoders.size() > 1) {
+            throw new IllegalStateException(
+                    "There is more than one service provider defined for the ConfigurationDecoder interface.");
+        } else if (configurationDecoders.size() == 1) {
+            configurationDecoder = configurationDecoders.get(0);
+        }
     }
 
     public void postInit() {
@@ -89,5 +102,9 @@ public class ConfigurationImpl {
 
     public List<ConfigurationSource> getConfigurationSources() {
         return configurationSources;
+    }
+
+    public ConfigurationDecoder getConfigurationDecoder() {
+        return configurationDecoder;
     }
 }
