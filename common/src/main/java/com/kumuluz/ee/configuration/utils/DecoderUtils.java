@@ -18,30 +18,27 @@
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.kumuluz.ee.configuration;
+package com.kumuluz.ee.configuration.utils;
+
+import com.kumuluz.ee.configuration.ConfigurationDecoder;
 
 /**
- * Optional implementation of this interface can be registered as
- * a service provider to implement decoding of certain configuration keys' values.
+ * Util methods for decoding encoded configuration keys.
  *
  * @author Jan Meznarič
  * @since 3.2.1
  */
-public interface ConfigurationDecoder {
+public class DecoderUtils {
 
-    /**
-     * Check if key's value should be decoded.
-     *
-     * @return returns true if key's value should be decoded with the decode(String key, String value) method
-     */
-    boolean shouldDecode(String key);
+    public static String decodeConfigValueIfEncoded(String key, String value) {
 
-    /**
-     * Decode values of encoded keys.
-     *
-     * @param key   encoded key
-     * @param value encoded value
-     * @return decoded value
-     */
-    String decode(String key, String value);
+        ConfigurationDecoder configurationDecoder = ConfigurationUtil.getInstance().getConfigurationDecoder();
+
+        if (configurationDecoder != null && configurationDecoder.shouldDecode(key)) {
+            return configurationDecoder.decode(key, value);
+        }
+
+        return value;
+    }
+
 }

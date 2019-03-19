@@ -265,6 +265,10 @@ public class ConfigurationUtil {
         return Collections.unmodifiableList(this.config.getConfigurationSources());
     }
 
+    public ConfigurationDecoder getConfigurationDecoder() {
+        return config.getConfigurationDecoder();
+    }
+
     //// Private methods
 
     private Optional<String> get(String key, Set<String> processingKeys) {
@@ -275,7 +279,8 @@ public class ConfigurationUtil {
 
             if (value.isPresent()) {
 
-                return Optional.of(interpolateString(key, tryToDecodeValue(key, value.get()), processingKeys));
+                return Optional.of(interpolateString(
+                        key, DecoderUtils.decodeConfigValueIfEncoded(key, value.get()), processingKeys));
             }
         }
 
@@ -309,16 +314,5 @@ public class ConfigurationUtil {
         }
 
         return s;
-    }
-
-    private String tryToDecodeValue(String key, String value) {
-
-        ConfigurationDecoder configurationDecoder = config.getConfigurationDecoder();
-
-        if (configurationDecoder != null && configurationDecoder.encodedKeys().contains(key)) {
-            return configurationDecoder.decode(value);
-        }
-
-        return value;
     }
 }
