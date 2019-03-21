@@ -32,6 +32,7 @@ public interface ConfigurationDecoder {
     /**
      * Check if key's value should be decoded.
      *
+     * @param key configuration key to be checked for decoding
      * @return returns true if key's value should be decoded with the decode(String key, String value) method
      */
     boolean shouldDecode(String key);
