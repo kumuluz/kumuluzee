@@ -280,7 +280,7 @@ public class ConfigurationUtil {
             if (value.isPresent()) {
 
                 return Optional.of(interpolateString(
-                        key, DecoderUtils.decodeConfigValueIfEncoded(key, value.get()), processingKeys));
+                        key, ConfigurationDecoderUtils.decodeConfigValueIfEncoded(key, value.get()), processingKeys));
             }
         }
 

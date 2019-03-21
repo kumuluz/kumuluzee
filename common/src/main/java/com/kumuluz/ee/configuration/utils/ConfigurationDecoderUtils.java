@@ -28,7 +28,7 @@ import com.kumuluz.ee.configuration.ConfigurationDecoder;
  * @author Jan Meznarič
  * @since 3.2.1
  */
-public class DecoderUtils {
+public class ConfigurationDecoderUtils {
 
     public static String decodeConfigValueIfEncoded(String key, String value) {
 
