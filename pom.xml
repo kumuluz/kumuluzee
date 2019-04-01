@@ -33,7 +33,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <jaxb-api.version>2.3.0</jaxb-api.version>
+        <jaxb-api.version>2.3.1</jaxb-api.version>
         <activation.version>1.1.1</activation.version>
         <jaxws-tools.version>2.3.0.2</jaxws-tools.version>
 
@@ -46,50 +46,50 @@
         <cdi.version>2.0</cdi.version>
         <jpa.version>2.2</jpa.version>
         <jpa.ee7.version>2.1.1</jpa.ee7.version>
-        <jaxrs.version>2.1</jaxrs.version>
-        <jaxws.version>2.3.0</jaxws.version>
+        <jaxrs.version>2.1.1</jaxrs.version>
+        <jaxws.version>2.3.1</jaxws.version>
         <jsf.version>2.3</jsf.version>
         <websocket.version>1.1</websocket.version>
         <beanvalidation.version>2.0.1.Final</beanvalidation.version>
-        <jsonp.version>1.1.2</jsonp.version>
+        <jsonp.version>1.1.4</jsonp.version>
         <jsonb.version>1.0</jsonb.version>
         <jta.version>1.3</jta.version>
         <resource.version>1.7.1</resource.version>
-        <javamail.version>1.6.1</javamail.version>
+        <javamail.version>1.6.2</javamail.version>
 
-        <jandex.version>2.0.5.Final</jandex.version>
+        <jandex.version>2.1.1.Final</jandex.version>
         <jboss-logging.version>3.3.2.Final</jboss-logging.version>
-        <classmate.version>1.4.0</classmate.version>
-        <javassist.version>3.23.1-GA</javassist.version>
-        <hikari.version>2.7.8</hikari.version>
-        <yaml.version>1.18</yaml.version>
+        <classmate.version>1.5.0</classmate.version>
+        <javassist.version>3.24.1-GA</javassist.version>
+        <hikari.version>2.7.9</hikari.version>
+        <yaml.version>1.24</yaml.version>
         <junit.version>4.12</junit.version>
-        <maven.plugin.api.version>3.5.4</maven.plugin.api.version>
-        <maven-plugin-annotations.version>3.5.2</maven-plugin-annotations.version>
+        <maven.plugin.api.version>3.6.0</maven.plugin.api.version>
+        <maven-plugin-annotations.version>3.6.0</maven-plugin-annotations.version>
         <mojo-executor.version>2.3.0</mojo-executor.version>
 
-        <maven-jar-plugin.version>3.1.0</maven-jar-plugin.version>
+        <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
         <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
-        <maven-plugin-plugin.version>3.5.2</maven-plugin-plugin.version>
-        <maven-compile-plugin.version>3.8.0</maven-compile-plugin.version>
+        <maven-plugin-plugin.version>3.6.0</maven-plugin-plugin.version>
+        <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
         <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
 
-        <jetty.version>9.4.14.v20181114</jetty.version>
+        <jetty.version>9.4.15.v20190215</jetty.version>
         <uel.version>3.0.0</uel.version>
-        <weld.version>3.0.5.Final</weld.version>
-        <hibernate.validator.version>6.0.13.Final</hibernate.validator.version>
-        <jersey.version>2.27</jersey.version>
-        <jackson.version>2.8.11</jackson.version>
+        <weld.version>3.1.0.Final</weld.version>
+        <hibernate.validator.version>6.0.16.Final</hibernate.validator.version>
+        <jersey.version>2.28</jersey.version>
+        <jackson.version>2.9.8</jackson.version>
         <metro.version>2.4.1</metro.version>
         <cxf.version>3.2.6</cxf.version>
-        <hibernate.version>5.3.4.Final</hibernate.version>
-        <eclipselink.version>2.7.3</eclipselink.version>
+        <hibernate.version>5.4.2.Final</hibernate.version>
+        <eclipselink.version>2.7.4</eclipselink.version>
         <mojarra.version>2.4.0</mojarra.version>
-        <jsonp-impl.version>1.1.2</jsonp-impl.version>
-        <yasson.version>1.0.1</yasson.version>
-        <narayana.version>5.9.0.Final</narayana.version>
+        <jsonp-impl.version>1.1.4</jsonp-impl.version>
+        <yasson.version>1.0.3</yasson.version>
+        <narayana.version>5.9.4.Final</narayana.version>
         <jboss-transaction-spi.version>7.6.0.Final</jboss-transaction-spi.version>
-        <javamail-ri.version>1.6.1</javamail-ri.version>
+        <javamail-ri.version>1.6.2</javamail-ri.version>
     </properties>
 
     <scm>
@@ -449,6 +449,13 @@
             </dependency>
 
             <!-- Various libraries used throughout the framework-->
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
             <dependency>
                 <groupId>org.jboss</groupId>
                 <artifactId>jandex</artifactId>
