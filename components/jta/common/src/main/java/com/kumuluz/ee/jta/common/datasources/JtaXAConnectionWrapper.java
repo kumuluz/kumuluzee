@@ -40,6 +40,7 @@ import java.util.logging.Logger;
  * @author Tilen Faganel
  * @since 2.3.0
  */
+@Deprecated
 public class JtaXAConnectionWrapper implements Connection {
 
     private Logger log = Logger.getLogger(JtaXAConnectionWrapper.class.getSimpleName());

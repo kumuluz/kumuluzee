@@ -31,6 +31,7 @@ import java.util.concurrent.Executor;
  * @author Tilen Faganel
  * @since 2.3.0
  */
+@Deprecated
 public class NonJtaXAConnectionWrapper implements Connection {
 
     private Boolean isClosed = false;
