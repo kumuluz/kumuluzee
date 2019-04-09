@@ -28,6 +28,7 @@ import javax.transaction.RollbackException;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
+import javax.transaction.xa.XAResource;
 import java.sql.*;
 import java.util.Collections;
 import java.util.Map;
@@ -47,12 +48,14 @@ public class JtaXAConnectionWrapper implements Connection {
     private Boolean isEnlistedInJTA = false;
     private Boolean closeAfterTransactionEnd = false;
 
-    private XAConnection xaConnection;
+    private Connection xaConnection;
+    private XAResource xaResource;
 
     private TransactionManager transactionManager;
 
-    public JtaXAConnectionWrapper(XAConnection xaConnection) {
-        this.xaConnection = xaConnection;
+    public JtaXAConnectionWrapper(XAConnection xaConnection) throws SQLException {
+        xaResource = xaConnection.getXAResource();
+        this.xaConnection = xaConnection.getConnection();
     }
 
     @Override
@@ -61,7 +64,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        Statement statement = xaConnection.getConnection().createStatement();
+        Statement statement = xaConnection.createStatement();
 
         return (Statement) XAStatementProxy.newInstance(statement, this);
     }
@@ -72,7 +75,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        PreparedStatement preparedStatement = xaConnection.getConnection().prepareStatement(sql);
+        PreparedStatement preparedStatement = xaConnection.prepareStatement(sql);
 
         return (PreparedStatement) XAStatementProxy.newInstance(preparedStatement, this);
     }
@@ -83,7 +86,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        CallableStatement callableStatement = xaConnection.getConnection().prepareCall(sql);
+        CallableStatement callableStatement = xaConnection.prepareCall(sql);
 
         return (CallableStatement) XAStatementProxy.newInstance(callableStatement, this);
     }
@@ -93,16 +96,7 @@ public class JtaXAConnectionWrapper implements Connection {
 
         checkIfValid();
 
-        return xaConnection.getConnection().nativeSQL(sql);
-    }
-
-    @Override
-    public void setAutoCommit(boolean autoCommit) throws SQLException {
-
-        checkIfValid();
-        jtaPreInvoke();
-
-        xaConnection.getConnection().setAutoCommit(autoCommit);
+        return xaConnection.nativeSQL(sql);
     }
 
     @Override
@@ -111,7 +105,16 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        return xaConnection.getConnection().getAutoCommit();
+        return xaConnection.getAutoCommit();
+    }
+
+    @Override
+    public void setAutoCommit(boolean autoCommit) throws SQLException {
+
+        checkIfValid();
+        jtaPreInvoke();
+
+        xaConnection.setAutoCommit(autoCommit);
     }
 
     @Override
@@ -119,7 +122,7 @@ public class JtaXAConnectionWrapper implements Connection {
 
         checkIfValid();
 
-        xaConnection.getConnection().commit();
+        xaConnection.commit();
     }
 
     @Override
@@ -128,7 +131,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        xaConnection.getConnection().rollback();
+        xaConnection.rollback();
     }
 
     @Override
@@ -167,16 +170,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        return xaConnection.getConnection().getMetaData();
-    }
-
-    @Override
-    public void setReadOnly(boolean readOnly) throws SQLException {
-
-        checkIfValid();
-        jtaPreInvoke();
-
-        xaConnection.getConnection().setReadOnly(readOnly);
+        return xaConnection.getMetaData();
     }
 
     @Override
@@ -185,16 +179,16 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        return xaConnection.getConnection().isReadOnly();
+        return xaConnection.isReadOnly();
     }
 
     @Override
-    public void setCatalog(String catalog) throws SQLException {
+    public void setReadOnly(boolean readOnly) throws SQLException {
 
         checkIfValid();
         jtaPreInvoke();
 
-        xaConnection.getConnection().setCatalog(catalog);
+        xaConnection.setReadOnly(readOnly);
     }
 
     @Override
@@ -203,16 +197,16 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        return xaConnection.getConnection().getCatalog();
+        return xaConnection.getCatalog();
     }
 
     @Override
-    public void setTransactionIsolation(int level) throws SQLException {
+    public void setCatalog(String catalog) throws SQLException {
 
         checkIfValid();
         jtaPreInvoke();
 
-        xaConnection.getConnection().setTransactionIsolation(level);
+        xaConnection.setCatalog(catalog);
     }
 
     @Override
@@ -221,7 +215,16 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        return xaConnection.getConnection().getTransactionIsolation();
+        return xaConnection.getTransactionIsolation();
+    }
+
+    @Override
+    public void setTransactionIsolation(int level) throws SQLException {
+
+        checkIfValid();
+        jtaPreInvoke();
+
+        xaConnection.setTransactionIsolation(level);
     }
 
     @Override
@@ -230,7 +233,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        return xaConnection.getConnection().getWarnings();
+        return xaConnection.getWarnings();
     }
 
     @Override
@@ -239,7 +242,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        xaConnection.getConnection().clearWarnings();
+        xaConnection.clearWarnings();
     }
 
     @Override
@@ -248,7 +251,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        Statement statement = xaConnection.getConnection().createStatement(resultSetType, resultSetConcurrency);
+        Statement statement = xaConnection.createStatement(resultSetType, resultSetConcurrency);
 
         return (Statement) XAStatementProxy.newInstance(statement, this);
     }
@@ -259,7 +262,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        PreparedStatement preparedStatement = xaConnection.getConnection().prepareStatement(sql, resultSetType, resultSetConcurrency);
+        PreparedStatement preparedStatement = xaConnection.prepareStatement(sql, resultSetType, resultSetConcurrency);
 
         return (PreparedStatement) XAStatementProxy.newInstance(preparedStatement, this);
     }
@@ -270,7 +273,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        CallableStatement callableStatement = xaConnection.getConnection().prepareCall(sql, resultSetType, resultSetConcurrency);
+        CallableStatement callableStatement = xaConnection.prepareCall(sql, resultSetType, resultSetConcurrency);
 
         return (CallableStatement) XAStatementProxy.newInstance(callableStatement, this);
     }
@@ -281,7 +284,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        return xaConnection.getConnection().getTypeMap();
+        return xaConnection.getTypeMap();
     }
 
     @Override
@@ -290,16 +293,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        xaConnection.getConnection().setTypeMap(map);
-    }
-
-    @Override
-    public void setHoldability(int holdability) throws SQLException {
-
-        checkIfValid();
-        jtaPreInvoke();
-
-        xaConnection.getConnection().setHoldability(holdability);
+        xaConnection.setTypeMap(map);
     }
 
     @Override
@@ -308,7 +302,16 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        return xaConnection.getConnection().getHoldability();
+        return xaConnection.getHoldability();
+    }
+
+    @Override
+    public void setHoldability(int holdability) throws SQLException {
+
+        checkIfValid();
+        jtaPreInvoke();
+
+        xaConnection.setHoldability(holdability);
     }
 
     @Override
@@ -317,7 +320,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        return xaConnection.getConnection().setSavepoint();
+        return xaConnection.setSavepoint();
     }
 
     @Override
@@ -326,7 +329,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        return xaConnection.getConnection().setSavepoint(name);
+        return xaConnection.setSavepoint(name);
     }
 
     @Override
@@ -335,7 +338,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        xaConnection.getConnection().rollback();
+        xaConnection.rollback();
     }
 
     @Override
@@ -344,7 +347,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        xaConnection.getConnection().releaseSavepoint(savepoint);
+        xaConnection.releaseSavepoint(savepoint);
     }
 
     @Override
@@ -353,7 +356,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        Statement statement = xaConnection.getConnection().createStatement(resultSetType, resultSetConcurrency, resultSetHoldability);
+        Statement statement = xaConnection.createStatement(resultSetType, resultSetConcurrency, resultSetHoldability);
 
         return (Statement) XAStatementProxy.newInstance(statement, this);
     }
@@ -364,7 +367,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        PreparedStatement preparedStatement = xaConnection.getConnection().prepareStatement(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
+        PreparedStatement preparedStatement = xaConnection.prepareStatement(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
 
         return (PreparedStatement) XAStatementProxy.newInstance(preparedStatement, this);
     }
@@ -375,7 +378,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        CallableStatement callableStatement = xaConnection.getConnection().prepareCall(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
+        CallableStatement callableStatement = xaConnection.prepareCall(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
 
         return (CallableStatement) XAStatementProxy.newInstance(callableStatement, this);
     }
@@ -386,7 +389,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        PreparedStatement preparedStatement = xaConnection.getConnection().prepareStatement(sql, autoGeneratedKeys);
+        PreparedStatement preparedStatement = xaConnection.prepareStatement(sql, autoGeneratedKeys);
 
         return (PreparedStatement) XAStatementProxy.newInstance(preparedStatement, this);
     }
@@ -397,7 +400,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        PreparedStatement preparedStatement = xaConnection.getConnection().prepareStatement(sql, columnIndexes);
+        PreparedStatement preparedStatement = xaConnection.prepareStatement(sql, columnIndexes);
 
         return (PreparedStatement) XAStatementProxy.newInstance(preparedStatement, this);
     }
@@ -408,7 +411,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        PreparedStatement preparedStatement = xaConnection.getConnection().prepareStatement(sql, columnNames);
+        PreparedStatement preparedStatement = xaConnection.prepareStatement(sql, columnNames);
 
         return (PreparedStatement) XAStatementProxy.newInstance(preparedStatement, this);
     }
@@ -419,7 +422,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        return xaConnection.getConnection().createClob();
+        return xaConnection.createClob();
     }
 
     @Override
@@ -428,7 +431,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        return xaConnection.getConnection().createBlob();
+        return xaConnection.createBlob();
     }
 
     @Override
@@ -437,7 +440,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        return xaConnection.getConnection().createNClob();
+        return xaConnection.createNClob();
     }
 
     @Override
@@ -446,7 +449,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        return xaConnection.getConnection().createSQLXML();
+        return xaConnection.createSQLXML();
     }
 
     @Override
@@ -455,7 +458,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        return xaConnection.getConnection().isValid(timeout);
+        return xaConnection.isValid(timeout);
     }
 
     @Override
@@ -465,20 +468,7 @@ public class JtaXAConnectionWrapper implements Connection {
             checkIfValid();
             jtaPreInvoke();
 
-            xaConnection.getConnection().setClientInfo(name, value);
-        } catch (SQLException e) {
-            throw new SQLClientInfoException(Collections.emptyMap(), e);
-        }
-    }
-
-    @Override
-    public void setClientInfo(Properties properties) throws SQLClientInfoException {
-
-        try {
-            checkIfValid();
-            jtaPreInvoke();
-
-            xaConnection.getConnection().setClientInfo(properties);
+            xaConnection.setClientInfo(name, value);
         } catch (SQLException e) {
             throw new SQLClientInfoException(Collections.emptyMap(), e);
         }
@@ -490,7 +480,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        return xaConnection.getConnection().getClientInfo(name);
+        return xaConnection.getClientInfo(name);
     }
 
     @Override
@@ -499,7 +489,20 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        return xaConnection.getConnection().getClientInfo();
+        return xaConnection.getClientInfo();
+    }
+
+    @Override
+    public void setClientInfo(Properties properties) throws SQLClientInfoException {
+
+        try {
+            checkIfValid();
+            jtaPreInvoke();
+
+            xaConnection.setClientInfo(properties);
+        } catch (SQLException e) {
+            throw new SQLClientInfoException(Collections.emptyMap(), e);
+        }
     }
 
     @Override
@@ -508,7 +511,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        return xaConnection.getConnection().createArrayOf(typeName, elements);
+        return xaConnection.createArrayOf(typeName, elements);
     }
 
     @Override
@@ -517,16 +520,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        return xaConnection.getConnection().createStruct(typeName, attributes);
-    }
-
-    @Override
-    public void setSchema(String schema) throws SQLException {
-
-        checkIfValid();
-        jtaPreInvoke();
-
-        xaConnection.getConnection().setSchema(schema);
+        return xaConnection.createStruct(typeName, attributes);
     }
 
     @Override
@@ -535,7 +529,16 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        return xaConnection.getConnection().getSchema();
+        return xaConnection.getSchema();
+    }
+
+    @Override
+    public void setSchema(String schema) throws SQLException {
+
+        checkIfValid();
+        jtaPreInvoke();
+
+        xaConnection.setSchema(schema);
     }
 
     @Override
@@ -544,7 +547,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        xaConnection.getConnection().abort(executor);
+        xaConnection.abort(executor);
     }
 
     @Override
@@ -553,7 +556,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        xaConnection.getConnection().setNetworkTimeout(executor, milliseconds);
+        xaConnection.setNetworkTimeout(executor, milliseconds);
     }
 
     @Override
@@ -562,7 +565,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        return xaConnection.getConnection().getNetworkTimeout();
+        return xaConnection.getNetworkTimeout();
     }
 
     @Override
@@ -571,7 +574,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        return xaConnection.getConnection().unwrap(iface);
+        return xaConnection.unwrap(iface);
     }
 
     @Override
@@ -580,7 +583,7 @@ public class JtaXAConnectionWrapper implements Connection {
         checkIfValid();
         jtaPreInvoke();
 
-        return xaConnection.getConnection().isWrapperFor(iface);
+        return xaConnection.isWrapperFor(iface);
     }
 
     private void checkIfValid() throws SQLException {
@@ -601,7 +604,7 @@ public class JtaXAConnectionWrapper implements Connection {
 
             if (TxUtils.isActive(transactionManager)) {
 
-                transactionManager.getTransaction().enlistResource(xaConnection.getXAResource());
+                transactionManager.getTransaction().enlistResource(xaResource);
                 transactionManager.getTransaction().registerSynchronization(new Synchronization() {
 
                     @Override
@@ -630,7 +633,7 @@ public class JtaXAConnectionWrapper implements Connection {
 
                 this.isEnlistedInJTA = true;
             }
-        } catch (SystemException | RollbackException | SQLException e) {
+        } catch (SystemException | RollbackException e) {
             throw new SQLException(e);
         }
     }
