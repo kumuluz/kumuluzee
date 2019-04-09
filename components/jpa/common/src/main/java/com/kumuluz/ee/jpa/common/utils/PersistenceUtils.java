@@ -47,6 +47,15 @@ public class PersistenceUtils {
 
         EntityManager manager = emf.createEntityManager();
 
+        // Hibernate does not throw exception when getTransaction() in JTA context is called, this is the workaround
+        // for JTA detection
+        if (emf.getProperties().containsKey("hibernate.transaction.coordinator_class") &&
+                emf.getProperties().get("hibernate.transaction.coordinator_class") instanceof Class &&
+                ((Class) emf.getProperties().get("hibernate.transaction.coordinator_class")).getSimpleName()
+                        .equals("JtaTransactionCoordinatorBuilderImpl")) {
+            return TransactionType.JTA;
+        }
+
         try {
             manager.getTransaction();
 
