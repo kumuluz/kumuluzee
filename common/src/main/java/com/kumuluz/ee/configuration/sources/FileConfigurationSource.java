@@ -265,7 +265,7 @@ public class FileConfigurationSource implements ConfigurationSource {
     public Optional<List<String>> getMapKeys(String key) {
 
         if (config != null) {
-            Object o = getValue(key);
+            Object o = (key.equals("")) ? config : getValue(key);
             Map<String, Object> map = null;
 
             if (o instanceof Map) {

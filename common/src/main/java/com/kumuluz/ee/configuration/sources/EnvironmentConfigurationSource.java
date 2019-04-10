@@ -23,9 +23,7 @@ package com.kumuluz.ee.configuration.sources;
 import com.kumuluz.ee.configuration.ConfigurationSource;
 import com.kumuluz.ee.configuration.utils.ConfigurationDispatcher;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author Tilen Faganel
@@ -168,7 +166,15 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
                     int closingIndex = envName.indexOf("]", openingIndex + 1);
 
                     if (closingIndex < 0) {
+                        closingIndex = envName.indexOf("_", openingIndex + 1);
+                    }
+
+                    if (closingIndex < 0) {
                         closingIndex = envName.length() - 1;
+                    }
+
+                    if (openingIndex >= closingIndex) {
+                        continue;
                     }
 
                     try {
@@ -189,7 +195,71 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
 
     @Override
     public Optional<List<String>> getMapKeys(String key) {
-        return Optional.empty();
+
+        Set<String> mapKeys = new HashSet<>();
+        Set<String> envKeys = new HashSet<>(System.getenv().keySet());
+
+        List<String> possibleKeyNames = (key.equals("")) ? Collections.singletonList("") : getPossibleEnvNames(key);
+        for (String possibleKeyName : possibleKeyNames) {
+            Set<String> toRemove = new HashSet<>();
+            for (String envKey : envKeys) {
+                if (!possibleKeyName.equals("") && possibleKeyName.length() + 1 > envKey.length()) {
+                    continue;
+                }
+                if (envKey.startsWith(possibleKeyName)) {
+                    int separatorIdx;
+                    int startIdx;
+                    if (possibleKeyName.equals("")) {
+                        int dotIdx = envKey.indexOf('.');
+                        int underscoreIdx = envKey.indexOf('_');
+
+                        if (dotIdx > 0 && underscoreIdx > 0) {
+                            // both defined, pick earliest
+                            separatorIdx = Math.min(dotIdx, underscoreIdx);
+                        } else {
+                            // at least one is -1
+                            separatorIdx = Math.max(dotIdx, underscoreIdx);
+                        }
+                        startIdx = 0;
+                    } else {
+                        char separator = envKey.charAt(possibleKeyName.length());
+
+                        if (separator != '.' && separator != '_') {
+                            continue;
+                        }
+
+                        startIdx = possibleKeyName.length() + 1;
+
+                        separatorIdx = envKey.indexOf(separator, startIdx);
+                    }
+
+                    if (separatorIdx < 0) {
+                        // no separators left, use full key
+                        separatorIdx = envKey.length();
+                    }
+
+                    String mapKey = envKey.substring(startIdx, separatorIdx);
+
+                    if (!mapKey.isEmpty()) {
+                        int bracketIndex = mapKey.indexOf("[");
+                        if (bracketIndex > 0) {
+                            // list bracket present, cut it off
+                            mapKey = mapKey.substring(0, bracketIndex);
+                        }
+
+                        mapKeys.add(mapKey.toLowerCase());
+                        toRemove.add(envKey);
+                    }
+                }
+            }
+            envKeys.removeAll(toRemove);
+        }
+
+        if (mapKeys.size() == 0) {
+            return Optional.empty();
+        } else {
+            return Optional.of(new ArrayList<>(mapKeys));
+        }
     }
 
     @Override
