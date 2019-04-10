@@ -32,6 +32,7 @@ public class DevConfig {
 
         private String webappDir;
         private List<String> scanLibraries;
+        private Boolean runningTests = false;
 
         public Builder scanLibraries(List<String> scanLibraries) {
             this.scanLibraries = scanLibraries;
@@ -43,11 +44,17 @@ public class DevConfig {
             return this;
         }
 
+        public Builder runningTests(Boolean runningTests) {
+            this.runningTests = runningTests;
+            return this;
+        }
+
         public DevConfig build() {
 
             DevConfig devConfig = new DevConfig();
             devConfig.webappDir = webappDir;
             devConfig.scanLibraries = scanLibraries;
+            devConfig.runningTests = runningTests;
 
             return devConfig;
         }
@@ -55,6 +62,7 @@ public class DevConfig {
 
     private String webappDir;
     private List<String> scanLibraries;
+    private Boolean runningTests;
 
     private DevConfig() {
     }
@@ -65,5 +73,9 @@ public class DevConfig {
 
     public List<String> getScanLibraries() {
         return scanLibraries;
+    }
+
+    public Boolean getRunningTests() {
+        return runningTests;
     }
 }

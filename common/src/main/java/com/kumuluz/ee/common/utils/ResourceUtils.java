@@ -106,4 +106,8 @@ public class ResourceUtils {
         return (jar == null || jar.toString().toLowerCase().startsWith("jar:"))
                 && ResourceUtils.class.getClassLoader().getClass().getName().equals("com.kumuluz.ee.loader.EeClassLoader");
     }
+
+    public static boolean isRunningTests() {
+        return EeConfig.getInstance().getDev().getRunningTests();
+    }
 }

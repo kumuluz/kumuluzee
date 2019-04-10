@@ -114,8 +114,10 @@ public class EeConfigFactory {
             DevConfig.Builder devBuilder = new DevConfig.Builder();
 
             Optional<String> webappDir = cfg.get("kumuluzee.dev.webapp-dir");
+            Optional<Boolean> runningTests = cfg.getBoolean("kumuluzee.dev.running-tests");
 
             webappDir.ifPresent(devBuilder::webappDir);
+            runningTests.ifPresent(devBuilder::runningTests);
 
             Optional<Integer> scanLibrariesListSize = cfg.getListSize("kumuluzee.dev.scan-libraries");
 
