@@ -135,6 +135,11 @@ public class JettyServletServer implements ServletServer {
             }
         } else {
             StringBuilder explodedClasspath = new StringBuilder(ClasspathAttributes.exploded);
+
+            if (ResourceUtils.isRunningTests()) {
+                explodedClasspath.append("|").append(ClasspathAttributes.exploded_test);
+            }
+
             for (String lib : scanLibraries) {
                 if (lib.endsWith(".jar")) {
                     explodedClasspath.append("|^.*/").append(Pattern.quote(lib)).append("$");
