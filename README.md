@@ -318,7 +318,7 @@ REST module pom.xml:
 <plugin>
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee-maven-plugin</artifactId>
-    <version>${kumuluz.version}</version>
+    <version>${kumuluzee.version}</version>
     <executions>
         <execution>
             <id>package</id>
