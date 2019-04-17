@@ -128,7 +128,7 @@ Using maven add the BOM module of the library as a dependency to your project. T
         <dependency>
             <groupId>com.kumuluz.ee</groupId>
             <artifactId>kumuluzee-bom</artifactId>
-            <version>${kumuluz.version}</version>
+            <version>${kumuluzee.version}</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
