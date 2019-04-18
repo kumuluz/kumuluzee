@@ -22,6 +22,7 @@ package com.kumuluz.ee.jetty;
 
 import com.kumuluz.ee.common.ServletServer;
 import com.kumuluz.ee.common.attributes.ClasspathAttributes;
+import com.kumuluz.ee.common.config.EeConfig;
 import com.kumuluz.ee.common.config.ServerConfig;
 import com.kumuluz.ee.common.dependencies.EeComponentType;
 import com.kumuluz.ee.common.dependencies.ServerDef;
@@ -29,6 +30,7 @@ import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 import com.kumuluz.ee.common.servlet.ServletWrapper;
 import com.kumuluz.ee.common.utils.ResourceUtils;
 import org.eclipse.jetty.plus.jndi.Resource;
+import org.eclipse.jetty.plus.jndi.Transaction;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
@@ -42,8 +44,10 @@ import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
 import javax.sql.DataSource;
+import javax.transaction.UserTransaction;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 /**
  * @author Tilen Faganel
@@ -91,8 +95,8 @@ public class JettyServletServer implements ServletServer {
         if (server == null)
             throw new IllegalStateException("Jetty has to be initialized before stopping it");
 
-        if (server.isStarted() || server.isStarting())
-            throw new IllegalStateException("Jetty is not running stopped");
+        if (server.isStopped() || server.isStopping())
+            throw new IllegalStateException("Jetty is already stopped");
 
         try {
             server.stop();
@@ -105,7 +109,7 @@ public class JettyServletServer implements ServletServer {
     }
 
     @Override
-    public void initWebContext() {
+    public void initWebContext(List<String> scanLibraries) {
 
         if (server == null)
             throw new IllegalStateException("Jetty has to be initialized before adding a web context");
@@ -113,18 +117,39 @@ public class JettyServletServer implements ServletServer {
         if (server.isStarted() || server.isStarting())
             throw new IllegalStateException("Jetty cannot be started before adding a web context");
 
+        if (EeConfig.getInstance().getDev().getScanLibraries() != null) {
+            scanLibraries.addAll(EeConfig.getInstance().getDev().getScanLibraries());
+        }
+
         appContext = new WebAppContext();
 
         if (ResourceUtils.isRunningInJar()) {
             appContext.setAttribute(JettyAttributes.jarPattern, ClasspathAttributes.jar);
 
+            appContext.setExtraClasspath(JettyJarClasspathUtil.getExtraClasspath(scanLibraries));
+
             try {
                 appContext.setClassLoader(getClass().getClassLoader());
             } catch (Exception e) {
-                throw new IllegalStateException("Unable to set custom classloader for Jetty");
+                throw new IllegalStateException("Unable to set custom classloader for Jetty", e);
             }
         } else {
-            appContext.setAttribute(JettyAttributes.jarPattern, ClasspathAttributes.exploded);
+            StringBuilder explodedClasspath = new StringBuilder(ClasspathAttributes.exploded);
+
+            if (ResourceUtils.isRunningTests()) {
+                explodedClasspath.append("|").append(ClasspathAttributes.exploded_test);
+            }
+
+            for (String lib : scanLibraries) {
+                if (lib.endsWith(".jar")) {
+                    explodedClasspath.append("|^.*/").append(Pattern.quote(lib)).append("$");
+                } else {
+                    explodedClasspath.append("|^.*/").append(Pattern.quote(lib)).append("-[^/]+\\.jar$");
+                }
+            }
+
+            log.fine("Using classpath scanning regex: " + explodedClasspath.toString());
+            appContext.setAttribute(JettyAttributes.jarPattern, explodedClasspath.toString());
         }
 
         appContext.setParentLoaderPriority(true);
@@ -133,7 +158,9 @@ public class JettyServletServer implements ServletServer {
 
         appContext.setContextPath(serverConfig.getContextPath());
 
-
+        if (serverConfig.getForwardStartupException() != null) {
+            appContext.setThrowUnavailableOnStartupException(serverConfig.getForwardStartupException());
+        }
 
         if (!Boolean.TRUE.equals(serverConfig.getDirBrowsing())) {
 
@@ -207,10 +234,10 @@ public class JettyServletServer implements ServletServer {
     public void registerListener(EventListener listener) {
 
         if (server == null)
-            throw new IllegalStateException("Jetty has to be initialized before adding a servlet ");
+            throw new IllegalStateException("Jetty has to be initialized before adding a listener");
 
         if (server.isStarted() || server.isStarting())
-            throw new IllegalStateException("Jetty cannot be started before adding a servlet");
+            throw new IllegalStateException("Jetty cannot be started before adding a listener");
 
         appContext.addEventListener(listener);
     }
@@ -285,6 +312,15 @@ public class JettyServletServer implements ServletServer {
             appContext.setAttribute(jndiName, resource);
         } catch (NamingException e) {
             throw new IllegalArgumentException("Unable to create naming resource entry with jndi name " + jndiName + "", e);
+        }
+    }
+
+    @Override
+    public void registerTransactionManager(UserTransaction userTransaction) {
+        try {
+            new Transaction(userTransaction);
+        } catch (NamingException e) {
+            throw new IllegalArgumentException("Unable to create transaction manager", e);
         }
     }
 

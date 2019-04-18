@@ -5,7 +5,7 @@
     <parent>
         <artifactId>kumuluzee-servlet</artifactId>
         <groupId>com.kumuluz.ee</groupId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.5.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -18,6 +18,11 @@
         <dependency>
             <groupId>com.kumuluz.ee</groupId>
             <artifactId>kumuluzee-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.kumuluz.ee</groupId>
+            <artifactId>kumuluzee-loader</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <dependency>

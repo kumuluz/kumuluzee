@@ -25,6 +25,8 @@ import com.kumuluz.ee.common.utils.EnvUtils;
 import com.kumuluz.ee.common.utils.StringUtils;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -65,6 +67,7 @@ public class EeConfigFactory {
             Optional<Integer> maxThreads = cfg.getInteger("kumuluzee.server.max-threads");
             Optional<Boolean> forceHttps = cfg.getBoolean("kumuluzee.server.force-https");
             Optional<Boolean> showServerInfo = cfg.getBoolean("kumuluzee.server.show-server-info");
+            Optional<Boolean> forwardStartupException = cfg.getBoolean("kumuluzee.server.jetty.forward-startup-exception");
 
             baseUrl.ifPresent(serverBuilder::baseUrl);
             contextPath.ifPresent(serverBuilder::contextPath);
@@ -73,6 +76,7 @@ public class EeConfigFactory {
             maxThreads.ifPresent(serverBuilder::maxThreads);
             forceHttps.ifPresent(serverBuilder::forceHttps);
             showServerInfo.ifPresent(serverBuilder::showServerInfo);
+            forwardStartupException.ifPresent(serverBuilder::forwardStartupException);
         }
 
         ServerConnectorConfig.Builder httpBuilder =
@@ -110,8 +114,26 @@ public class EeConfigFactory {
             DevConfig.Builder devBuilder = new DevConfig.Builder();
 
             Optional<String> webappDir = cfg.get("kumuluzee.dev.webapp-dir");
+            Optional<Boolean> runningTests = cfg.getBoolean("kumuluzee.dev.running-tests");
 
             webappDir.ifPresent(devBuilder::webappDir);
+            runningTests.ifPresent(devBuilder::runningTests);
+
+            Optional<Integer> scanLibrariesListSize = cfg.getListSize("kumuluzee.dev.scan-libraries");
+
+            if (scanLibrariesListSize.isPresent()) {
+                List<String> scanLibraries = new ArrayList<>();
+
+                for (int i = 0; i < scanLibrariesListSize.get(); i++) {
+                    Optional<String> lib = cfg.get("kumuluzee.dev.scan-libraries[" + i + "]");
+
+                    lib.ifPresent(scanLibraries::add);
+                }
+
+                if (scanLibraries.size() > 0) {
+                    devBuilder.scanLibraries(Collections.unmodifiableList(scanLibraries));
+                }
+            }
 
             eeConfigBuilder.dev(devBuilder);
         }
@@ -130,7 +152,6 @@ public class EeConfigFactory {
                 Optional<String> conUrl = cfg.get("kumuluzee.datasources[" + i + "].connection-url");
                 Optional<String> user = cfg.get("kumuluzee.datasources[" + i + "].username");
                 Optional<String> pass = cfg.get("kumuluzee.datasources[" + i + "].password");
-                Optional<Integer> maxPool = cfg.getInteger("kumuluzee.datasources[" + i + "].max-pool-size");
 
                 jndiName.ifPresent(dsc::jndiName);
                 driverClass.ifPresent(dsc::driverClass);
@@ -295,20 +316,19 @@ public class EeConfigFactory {
                 eeConfig.getServer().getMinThreads() == null ||
                 eeConfig.getServer().getMaxThreads() == null ||
                 eeConfig.getServer().getShowServerInfo() == null ||
+                eeConfig.getServer().getForwardStartupException() == null ||
                 eeConfig.getServer().getHttp() == null ||
                 eeConfig.getServer().getHttp().getHttp2() == null ||
                 eeConfig.getServer().getHttp().getProxyForwarding() == null ||
                 eeConfig.getServer().getHttp().getRequestHeaderSize() == null ||
                 eeConfig.getServer().getHttp().getResponseHeaderSize() == null ||
                 eeConfig.getServer().getHttp().getIdleTimeout() == null ||
-                eeConfig.getServer().getHttp().getSoLingerTime() == null ||
                 (eeConfig.getServer().getHttps() != null &&
                         (eeConfig.getServer().getHttps().getHttp2() == null ||
                                 eeConfig.getServer().getHttps().getProxyForwarding() == null ||
                                 eeConfig.getServer().getHttps().getRequestHeaderSize() == null ||
                                 eeConfig.getServer().getHttps().getResponseHeaderSize() == null ||
-                                eeConfig.getServer().getHttps().getIdleTimeout() == null ||
-                                eeConfig.getServer().getHttps().getSoLingerTime() == null)) ||
+                                eeConfig.getServer().getHttps().getIdleTimeout() == null)) ||
                 eeConfig.getDatasources().stream().anyMatch(ds ->
                         (ds == null || ds.getPool() == null ||
                                 ds.getPool().getAutoCommit() == null ||
@@ -345,7 +365,6 @@ public class EeConfigFactory {
             Optional<Integer> requestHeaderSize = cfg.getInteger(prefix + ".request-header-size");
             Optional<Integer> responseHeaderSize = cfg.getInteger(prefix + ".response-header-size");
             Optional<Integer> idleTimeout = cfg.getInteger(prefix + ".idle-timeout");
-            Optional<Integer> soLingerTime = cfg.getInteger(prefix + ".so-linger-time");
 
             Optional<String> keystorePath = cfg.get(prefix + ".keystore-path");
             Optional<String> keystorePassword = cfg.get(prefix + ".keystore-password");
@@ -362,7 +381,6 @@ public class EeConfigFactory {
             requestHeaderSize.ifPresent(serverConnectorBuilder::requestHeaderSize);
             responseHeaderSize.ifPresent(serverConnectorBuilder::responseHeaderSize);
             idleTimeout.ifPresent(serverConnectorBuilder::idleTimeout);
-            soLingerTime.ifPresent(serverConnectorBuilder::soLingerTime);
 
             keystorePath.ifPresent(serverConnectorBuilder::keystorePath);
             keystorePassword.ifPresent(serverConnectorBuilder::keystorePassword);

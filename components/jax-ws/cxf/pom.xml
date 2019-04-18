@@ -5,7 +5,7 @@
     <parent>
         <artifactId>kumuluzee-jax-ws</artifactId>
         <groupId>com.kumuluz.ee</groupId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.5.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,10 +13,6 @@
     <description>KumuluzEE JAX-WS component implemented by CXF</description>
 
     <artifactId>kumuluzee-jax-ws-cxf</artifactId>
-
-    <properties>
-        <cxf.version>3.2.4</cxf.version>
-    </properties>
 
     <dependencies>
         <dependency>
@@ -51,11 +47,32 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>java9-modules</id>
+            <activation>
+                <jdk>[9,)</jdk>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sun.xml.ws</groupId>
+                    <artifactId>jaxws-tools</artifactId>
+                    <version>${jaxws-tools.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>javax.activation</groupId>
+                    <artifactId>activation</artifactId>
+                    <version>${activation.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compile-plugin.version}</version>
+                <version>${maven-compiler-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>default-compile</id>

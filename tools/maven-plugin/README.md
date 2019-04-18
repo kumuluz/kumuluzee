@@ -12,7 +12,7 @@ Include the plugin in your project:
 <plugin>
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee-maven-plugin</artifactId>
-    <version>2.4.0-SNAPSHOT</version>
+    <version>${kumuluzee.version}</version>
 </plugin>
 ```
 

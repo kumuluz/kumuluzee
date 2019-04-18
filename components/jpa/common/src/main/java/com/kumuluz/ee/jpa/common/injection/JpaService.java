@@ -89,18 +89,6 @@ public class JpaService implements JpaInjectionServices {
     }
 
     @Override
-    public EntityManager resolvePersistenceContext(InjectionPoint injectionPoint) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public EntityManagerFactory resolvePersistenceUnit(InjectionPoint injectionPoint) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void cleanup() {
     }
 }

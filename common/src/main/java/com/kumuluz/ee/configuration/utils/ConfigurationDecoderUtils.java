@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2014-2017 Kumuluz and/or its affiliates
+ *  Copyright (c) 2014-2019 Kumuluz and/or its affiliates
  *  and other contributors as indicated by the @author tags and
  *  the contributor list.
  *
@@ -17,30 +17,28 @@
  *  out of or in connection with the software or the use or other dealings in the
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
-*/
-package com.kumuluz.ee.common;
+ */
+package com.kumuluz.ee.configuration.utils;
 
-import com.kumuluz.ee.common.config.EeConfig;
-import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
-
-import java.util.Collections;
-import java.util.List;
+import com.kumuluz.ee.configuration.ConfigurationDecoder;
 
 /**
- * @author Tilen Faganel
- * @since 2.3.0
+ * Util methods for decoding encoded configuration keys.
+ *
+ * @author Jan Meznarič
+ * @since 3.2.1
  */
-public interface Extension {
+public class ConfigurationDecoderUtils {
 
-    void load();
+    public static String decodeConfigValueIfEncoded(String key, String value) {
 
-    void init(KumuluzServerWrapper server, EeConfig eeConfig);
+        ConfigurationDecoder configurationDecoder = ConfigurationUtil.getInstance().getConfigurationDecoder();
 
-    default boolean isEnabled() {
-        return true;
+        if (configurationDecoder != null && configurationDecoder.shouldDecode(key)) {
+            return configurationDecoder.decode(key, value);
+        }
+
+        return value;
     }
 
-    default List<String> scanLibraries() {
-        return Collections.emptyList();
-    }
 }

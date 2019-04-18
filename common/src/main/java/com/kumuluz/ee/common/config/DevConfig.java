@@ -20,6 +20,8 @@
 */
 package com.kumuluz.ee.common.config;
 
+import java.util.List;
+
 /**
  * @author Tilen Faganel
  * @since 2.4.0
@@ -29,9 +31,21 @@ public class DevConfig {
     public static class Builder {
 
         private String webappDir;
+        private List<String> scanLibraries;
+        private Boolean runningTests = false;
+
+        public Builder scanLibraries(List<String> scanLibraries) {
+            this.scanLibraries = scanLibraries;
+            return this;
+        }
 
         public Builder webappDir(String webappDir) {
             this.webappDir = webappDir;
+            return this;
+        }
+
+        public Builder runningTests(Boolean runningTests) {
+            this.runningTests = runningTests;
             return this;
         }
 
@@ -39,17 +53,29 @@ public class DevConfig {
 
             DevConfig devConfig = new DevConfig();
             devConfig.webappDir = webappDir;
+            devConfig.scanLibraries = scanLibraries;
+            devConfig.runningTests = runningTests;
 
             return devConfig;
         }
     }
 
     private String webappDir;
+    private List<String> scanLibraries;
+    private Boolean runningTests;
 
     private DevConfig() {
     }
 
     public String getWebappDir() {
         return webappDir;
+    }
+
+    public List<String> getScanLibraries() {
+        return scanLibraries;
+    }
+
+    public Boolean getRunningTests() {
+        return runningTests;
     }
 }

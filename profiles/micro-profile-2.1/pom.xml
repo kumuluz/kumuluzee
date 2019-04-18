@@ -9,22 +9,25 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <name>KumuluzEE MicroProfile 1.2</name>
+    <name>KumuluzEE MicroProfile 2.1</name>
     <description>
-        KumuluzEE MicroProfile 1.2 which includes and tracks the version 1.2 community based specification found at
+        KumuluzEE MicroProfile 2.1 which includes and tracks the version 2.1 community based specification found at
         https://microprofile.io, which focuses on technologies best-suited to build modern Java based cloud
         applications that follow the microservice architecture. The main KumuluzEE profile includes the reference
         implementations of the profile/specification.
     </description>
 
-    <artifactId>kumuluzee-microProfile-1.2</artifactId>
+    <artifactId>kumuluzee-microProfile-2.1</artifactId>
 
     <properties>
-        <version.kumuluzee-config-mp>1.1.1</version.kumuluzee-config-mp>
-        <version.kumuluzee-fault-tolerance>1.0.0</version.kumuluzee-fault-tolerance>
-        <version.kumuluzee-health>1.0.0</version.kumuluzee-health>
-        <version.kumuluzee-metrics>1.0.0</version.kumuluzee-metrics>
-        <version.kumuluzee-jwt-auth>1.0.0</version.kumuluzee-jwt-auth>
+        <version.kumuluzee-config-mp>1.3.0</version.kumuluzee-config-mp>
+        <version.kumuluzee-fault-tolerance>1.1.3</version.kumuluzee-fault-tolerance>
+        <version.kumuluzee-health>1.0.1</version.kumuluzee-health>
+        <version.kumuluzee-metrics>1.1.2</version.kumuluzee-metrics>
+        <version.kumuluzee-jwt-auth>1.1.1</version.kumuluzee-jwt-auth>
+        <version.kumuluzee-opentracing>1.2.1</version.kumuluzee-opentracing>
+        <version.kumuluzee-openapi-mp>1.0.1</version.kumuluzee-openapi-mp>
+        <version.kumuluzee-rest-client>1.1.0</version.kumuluzee-rest-client>
     </properties>
 
     <dependencies>
@@ -47,6 +50,10 @@
         <dependency>
             <groupId>com.kumuluz.ee</groupId>
             <artifactId>kumuluzee-json-p-jsonp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.kumuluz.ee</groupId>
+            <artifactId>kumuluzee-json-b-yasson</artifactId>
         </dependency>
 
         <dependency>
@@ -73,6 +80,21 @@
             <groupId>com.kumuluz.ee.jwt</groupId>
             <artifactId>kumuluzee-jwt-auth</artifactId>
             <version>${version.kumuluzee-jwt-auth}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kumuluz.ee.opentracing</groupId>
+            <artifactId>kumuluzee-opentracing-jaeger</artifactId>
+            <version>${version.kumuluzee-opentracing}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kumuluz.ee.openapi</groupId>
+            <artifactId>kumuluzee-openapi-mp</artifactId>
+            <version>${version.kumuluzee-openapi-mp}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kumuluz.ee.rest-client</groupId>
+            <artifactId>kumuluzee-rest-client</artifactId>
+            <version>${version.kumuluzee-rest-client}</version>
         </dependency>
     </dependencies>
 
