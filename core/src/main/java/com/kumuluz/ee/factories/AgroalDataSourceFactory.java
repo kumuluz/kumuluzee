@@ -5,6 +5,7 @@ import com.kumuluz.ee.common.config.DataSourcePoolConfig;
 import com.kumuluz.ee.common.config.XaDataSourceConfig;
 import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 import com.kumuluz.ee.common.utils.StringUtils;
+import com.kumuluz.ee.jta.common.JtaProvider;
 import io.agroal.api.AgroalDataSource;
 import io.agroal.api.configuration.AgroalConnectionFactoryConfiguration.TransactionIsolation;
 import io.agroal.api.configuration.AgroalDataSourceConfiguration.DataSourceImplementation;
@@ -13,7 +14,6 @@ import io.agroal.api.configuration.supplier.AgroalConnectionPoolConfigurationSup
 import io.agroal.api.configuration.supplier.AgroalDataSourceConfigurationSupplier;
 import io.agroal.api.security.NamePrincipal;
 import io.agroal.api.security.SimplePassword;
-import io.agroal.api.transaction.TransactionIntegration;
 
 import java.sql.SQLException;
 import java.time.Duration;
@@ -38,6 +38,8 @@ public class AgroalDataSourceFactory {
 
         if (!jtaPresent) {
             dataSourceConfig.dataSourceImplementation(DataSourceImplementation.HIKARI);
+        } else {
+            poolConfig.transactionIntegration( JtaProvider.getInstance().getTransactionIntegration() );
         }
 
         if (!StringUtils.isNullOrEmpty( dsc.getDriverClass() )) {
@@ -69,6 +71,10 @@ public class AgroalDataSourceFactory {
         AgroalConnectionPoolConfigurationSupplier poolConfig = xaDataSourceConfig.connectionPoolConfiguration();
 
         AgroalConnectionFactoryConfigurationSupplier connectionFactoryConfig = poolConfig.connectionFactoryConfiguration();
+
+        if (jtaPresent) {
+            poolConfig.transactionIntegration( JtaProvider.getInstance().getTransactionIntegration() );
+        }
 
         if (!StringUtils.isNullOrEmpty( xdsc.getXaDatasourceClass() )) {
             connectionFactoryConfig.connectionProviderClassName( xdsc.getXaDatasourceClass() );

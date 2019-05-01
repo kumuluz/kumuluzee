@@ -20,7 +20,7 @@
 */
 package com.kumuluz.ee.jpa.eclipselink;
 
-import com.kumuluz.ee.jta.common.JtaTransactionHolder;
+import com.kumuluz.ee.jta.common.JtaProvider;
 import org.eclipse.persistence.transaction.JTATransactionController;
 
 import javax.transaction.TransactionManager;
@@ -33,6 +33,6 @@ public class KumuluzTransactionController extends JTATransactionController {
 
     @Override
     protected TransactionManager acquireTransactionManager() throws Exception {
-        return JtaTransactionHolder.getInstance().getTransactionManager();
+        return JtaProvider.getInstance().getTransactionManager();
     }
 }

@@ -20,7 +20,7 @@
 */
 package com.kumuluz.ee.jta.common.utils;
 
-import com.kumuluz.ee.jta.common.JtaTransactionHolder;
+import com.kumuluz.ee.jta.common.JtaProvider;
 import com.kumuluz.ee.jta.common.exceptions.CannotRetrieveTxException;
 
 import javax.transaction.SystemException;
@@ -38,7 +38,7 @@ public class TxUtils {
         try {
             Transaction tx = transactionManager.getTransaction();
 
-            return tx != null && JtaTransactionHolder.TRANSACTION_ACTIVE_STATUS.contains(tx.getStatus());
+            return tx != null && JtaProvider.TRANSACTION_ACTIVE_STATUS.contains(tx.getStatus());
         } catch (SystemException e) {
             throw new CannotRetrieveTxException(e);
         }
