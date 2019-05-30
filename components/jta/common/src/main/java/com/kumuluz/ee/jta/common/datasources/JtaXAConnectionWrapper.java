@@ -48,13 +48,15 @@ public class JtaXAConnectionWrapper implements Connection {
     private Boolean isEnlistedInJTA = false;
     private Boolean closeAfterTransactionEnd = false;
 
+    private XAConnection parentConnection;
     private Connection xaConnection;
     private XAResource xaResource;
 
     private TransactionManager transactionManager;
 
     public JtaXAConnectionWrapper(XAConnection xaConnection) throws SQLException {
-        xaResource = xaConnection.getXAResource();
+        this.xaResource = xaConnection.getXAResource();
+        this.parentConnection = xaConnection;
         this.xaConnection = xaConnection.getConnection();
     }
 
@@ -623,6 +625,8 @@ public class JtaXAConnectionWrapper implements Connection {
                             try {
                                 jtaXaConnectionWrapper.xaConnection.close();
                                 jtaXaConnectionWrapper.xaConnection = null;
+                                jtaXaConnectionWrapper.parentConnection.close();
+                                jtaXaConnectionWrapper.parentConnection = null;
                             } catch (SQLException e) {
 
                                 log.severe("There was an error closing the connection after transaction complete");
