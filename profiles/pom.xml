@@ -24,6 +24,7 @@
         <module>micro-profile-1.4</module>
         <module>micro-profile-2.0</module>
         <module>micro-profile-2.1</module>
+        <module>micro-profile-2.2</module>
     </modules>
 
     <artifactId>kumuluzee-profiles</artifactId>
