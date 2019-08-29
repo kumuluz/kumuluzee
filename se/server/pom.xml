@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+	<artifactId>kumuluz-server-se</artifactId>
+    <parent>
+        <artifactId>kumuluz-se</artifactId>
+        <groupId>com.kumuluz.ee</groupId>
+        <version>3.6.0-SNAPSHOT</version>
+    </parent>
+
+	<name>KumuluzEE SE server</name>
+	<description>KumuluzEE server for Java SE env</description>
+	
+    <dependencies>
+		<dependency>
+			<groupId>com.kumuluz.ee</groupId>
+			<artifactId>kumuluzee-cdi-weld</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.glassfish.jersey.ext.cdi</groupId>
+					<artifactId>jersey-cdi1x</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.glassfish.jersey.ext.cdi</groupId>
+					<artifactId>jersey-cdi1x-ban-custom-hk2-binding</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.jboss.weld.servlet</groupId>
+					<artifactId>weld-servlet-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>javax.servlet-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.transaction</groupId>
+					<artifactId>javax.transaction-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.weld.se</groupId>
+			<artifactId>weld-se-core</artifactId>
+			<version>${weld.version}</version>
+		</dependency>		
+        <dependency>
+            <groupId>com.kumuluz.ee</groupId>
+            <artifactId>kumuluzee-loader</artifactId>
+            <optional>true</optional>
+        </dependency>
+		<dependency>
+			<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+    </dependencies>
+</project>
