@@ -1,0 +1,27 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.kumuluz.ee</groupId>
+		<artifactId>kumuluzee-cdi</artifactId>
+		<version>3.6.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>kumuluzee-cdi-weld-se</artifactId>
+
+	<name>KumuluzEE CDI Weld SE</name>
+	<description>KumuluzEE CDI component implemented by Weld for JavaSE environments</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.kumuluz.ee</groupId>
+			<artifactId>kumuluzee-cdi-common</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.weld.se</groupId>
+			<artifactId>weld-se-core</artifactId>
+			<version>${weld.version}</version>
+		</dependency>
+	</dependencies>
+</project>
