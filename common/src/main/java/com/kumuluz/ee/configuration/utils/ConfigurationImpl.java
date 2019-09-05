@@ -22,11 +22,12 @@ package com.kumuluz.ee.configuration.utils;
 
 import com.kumuluz.ee.configuration.ConfigurationDecoder;
 import com.kumuluz.ee.configuration.ConfigurationSource;
-import com.kumuluz.ee.configuration.sources.EnvironmentConfigurationSource;
-import com.kumuluz.ee.configuration.sources.FileConfigurationSource;
-import com.kumuluz.ee.configuration.sources.SystemPropertyConfigurationSource;
+import com.kumuluz.ee.configuration.sources.*;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.logging.Logger;
@@ -37,14 +38,16 @@ import java.util.logging.Logger;
  */
 public class ConfigurationImpl {
 
+    private static final String[] YAML_FILE_LOCATIONS = {"config.yml", "config.yaml"};
+    private static final String[] PROPERTIES_FILE_LOCATIONS = {"META-INF/microprofile-config.properties",
+            "config.properties"};
+
     private Logger utilLogger;
     private ConfigurationDispatcher dispatcher;
     private List<ConfigurationSource> configurationSources;
     private ConfigurationDecoder configurationDecoder;
 
-    private EnvironmentConfigurationSource environmentConfigurationSource;
-    private SystemPropertyConfigurationSource systemPropertyConfigurationSource;
-    private FileConfigurationSource fileConfigurationSource;
+    private List<FileConfigurationSource> fileConfigurationSources;
 
     public ConfigurationImpl() {
         init();
@@ -52,15 +55,15 @@ public class ConfigurationImpl {
 
     private void init() {
 
-        environmentConfigurationSource = new EnvironmentConfigurationSource();
-        systemPropertyConfigurationSource = new SystemPropertyConfigurationSource();
-        fileConfigurationSource = new FileConfigurationSource();
+        EnvironmentConfigurationSource environmentConfigurationSource = new EnvironmentConfigurationSource();
+        SystemPropertyConfigurationSource systemPropertyConfigurationSource = new SystemPropertyConfigurationSource();
+        fileConfigurationSources = getFileConfigurationSources();
 
         // specify sources
         configurationSources = new ArrayList<>();
         configurationSources.add(environmentConfigurationSource);
         configurationSources.add(systemPropertyConfigurationSource);
-        configurationSources.add(fileConfigurationSource);
+        configurationSources.addAll(fileConfigurationSources);
 
         dispatcher = new ConfigurationDispatcher();
 
@@ -81,9 +84,49 @@ public class ConfigurationImpl {
         }
     }
 
+    private List<FileConfigurationSource> getFileConfigurationSources() {
+
+        List<FileConfigurationSource> configurationSources = new LinkedList<>();
+        int nextOrdinal = 100;
+
+        // properties should be first so that microprofile properties gets ordinal 100 as per specification
+        for (String propertiesFile : PROPERTIES_FILE_LOCATIONS) {
+            if (resourceExists(propertiesFile)) {
+                configurationSources.add(new PropertiesConfigurationSource(propertiesFile, nextOrdinal));
+                nextOrdinal--;
+            }
+        }
+
+        for (String yamlFile : YAML_FILE_LOCATIONS) {
+            if (resourceExists(yamlFile)) {
+                configurationSources.add(new YamlConfigurationSource(yamlFile, nextOrdinal));
+                nextOrdinal--;
+            }
+        }
+
+        // legacy additional file from system property
+        String legacyConfigurationFileName = System.getProperty("com.kumuluz.ee.configuration.file");
+        if (legacyConfigurationFileName != null && !legacyConfigurationFileName.isEmpty()) {
+            configurationSources.add(new PropertiesConfigurationSource(legacyConfigurationFileName, 101));
+            configurationSources.add(new YamlConfigurationSource(legacyConfigurationFileName, 102));
+        }
+
+        return configurationSources;
+    }
+
+    public void addFileConfigurationSource(FileConfigurationSource fileConfigurationSource) {
+        this.configurationSources.add(fileConfigurationSource);
+        // add to file configuration sources so the postInit logic gets properly executed
+        this.fileConfigurationSources.add(fileConfigurationSource);
+    }
+
+    private boolean resourceExists(String locator) {
+        return this.getClass().getClassLoader().getResource(locator) != null || Files.exists(Paths.get(locator));
+    }
+
     public void postInit() {
 
-        fileConfigurationSource.postInit();
+        fileConfigurationSources.forEach(FileConfigurationSource::postInit);
 
         utilLogger = Logger.getLogger(ConfigurationUtil.class.getName());
     }
