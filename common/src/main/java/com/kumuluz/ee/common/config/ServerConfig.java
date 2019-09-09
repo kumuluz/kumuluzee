@@ -31,6 +31,7 @@ public class ServerConfig {
         private String baseUrl;
         private String contextPath = "/";
         private Boolean dirBrowsing = false;
+        private Boolean etags = false;
         private Integer minThreads = 5;
         private Integer maxThreads = 100;
         private Boolean forceHttps = false;
@@ -52,6 +53,11 @@ public class ServerConfig {
 
         public Builder dirBrowsing(Boolean dirBrowsing) {
             this.dirBrowsing = dirBrowsing;
+            return this;
+        }
+
+        public Builder etags(Boolean etags) {
+            this.etags = etags;
             return this;
         }
 
@@ -96,6 +102,7 @@ public class ServerConfig {
             serverConfig.baseUrl = baseUrl;
             serverConfig.contextPath = contextPath;
             serverConfig.dirBrowsing = dirBrowsing;
+            serverConfig.etags = etags;
             serverConfig.minThreads = minThreads;
             serverConfig.maxThreads = maxThreads;
             serverConfig.forceHttps = forceHttps;
@@ -112,6 +119,7 @@ public class ServerConfig {
     private String baseUrl;
     private String contextPath;
     private Boolean dirBrowsing;
+    private Boolean etags;
     private Integer minThreads;
     private Integer maxThreads;
     private Boolean forceHttps;
@@ -134,6 +142,10 @@ public class ServerConfig {
 
     public Boolean getDirBrowsing() {
         return dirBrowsing;
+    }
+
+    public Boolean getEtags() {
+        return etags;
     }
 
     public Integer getMinThreads() {
