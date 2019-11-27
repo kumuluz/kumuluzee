@@ -7,7 +7,7 @@
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee</artifactId>
     <packaging>pom</packaging>
-    <version>3.6.0-SNAPSHOT</version>
+    <version>3.7.0-SNAPSHOT</version>
     <modules>
         <module>common</module>
         <module>core</module>
@@ -62,7 +62,7 @@
         <classmate.version>1.5.0</classmate.version>
         <javassist.version>3.24.1-GA</javassist.version>
         <hikari.version>2.7.9</hikari.version>
-        <yaml.version>1.24</yaml.version>
+        <yaml.version>1.18</yaml.version>
         <junit.version>4.12</junit.version>
         <maven.plugin.api.version>3.6.0</maven.plugin.api.version>
         <maven-plugin-annotations.version>3.6.0</maven-plugin-annotations.version>
@@ -335,7 +335,7 @@
             </dependency>
             <dependency>
                 <groupId>com.kumuluz.ee</groupId>
-                <artifactId>kumuluzee-microProfile-1.0</artifactId>
+                <artifactId>kumuluzee-microProfile-3.0</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

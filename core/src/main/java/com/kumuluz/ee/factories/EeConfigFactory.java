@@ -63,6 +63,7 @@ public class EeConfigFactory {
             Optional<String> baseUrl = cfg.get("kumuluzee.server.base-url");
             Optional<String> contextPath = cfg.get("kumuluzee.server.context-path");
             Optional<Boolean> dirBrowsing = cfg.getBoolean("kumuluzee.server.dir-browsing");
+            Optional<Boolean> etags = cfg.getBoolean("kumuluzee.server.etags");
             Optional<Integer> minThreads = cfg.getInteger("kumuluzee.server.min-threads");
             Optional<Integer> maxThreads = cfg.getInteger("kumuluzee.server.max-threads");
             Optional<Boolean> forceHttps = cfg.getBoolean("kumuluzee.server.force-https");
@@ -72,6 +73,7 @@ public class EeConfigFactory {
             baseUrl.ifPresent(serverBuilder::baseUrl);
             contextPath.ifPresent(serverBuilder::contextPath);
             dirBrowsing.ifPresent(serverBuilder::dirBrowsing);
+            etags.ifPresent(serverBuilder::etags);
             minThreads.ifPresent(serverBuilder::minThreads);
             maxThreads.ifPresent(serverBuilder::maxThreads);
             forceHttps.ifPresent(serverBuilder::forceHttps);
