@@ -203,6 +203,15 @@ MicroProfile 2.1
 </dependency>
 ```
 
+MicroProfile 3.0
+```xml
+<!-- MicroProfile 3.0 -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-microProfile-3.0</artifactId>
+</dependency>
+```
+
 To choose your Java components with fine grain control include them as your dependencies. You can chose any of the following artifacts:
 
 ```xml
