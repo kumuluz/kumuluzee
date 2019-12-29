@@ -41,6 +41,9 @@ import com.kumuluz.ee.common.wrapper.EeComponentWrapper;
 import com.kumuluz.ee.common.wrapper.ExtensionWrapper;
 import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
 import com.kumuluz.ee.configuration.ConfigurationSource;
+import com.kumuluz.ee.configuration.sources.FileConfigurationSource;
+import com.kumuluz.ee.configuration.sources.PropertiesConfigurationSource;
+import com.kumuluz.ee.configuration.sources.YamlConfigurationSource;
 import com.kumuluz.ee.configuration.utils.ConfigurationImpl;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
 import com.kumuluz.ee.factories.EeConfigFactory;
@@ -61,6 +64,8 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  */
 public class EeApplication {
+
+    private static final String CONFIG_ADDITIONAL_CONFIG_FILES = "kumuluzee.config.additional-config-files";
 
     private Logger log;
 
@@ -95,6 +100,38 @@ public class EeApplication {
         ConfigurationImpl configImpl = new ConfigurationImpl();
 
         ConfigurationUtil.initialize(configImpl);
+
+        Optional<Integer> additionalConfigFilesSize = ConfigurationUtil.getInstance()
+                .getListSize(CONFIG_ADDITIONAL_CONFIG_FILES);
+        if (additionalConfigFilesSize.isPresent()) {
+            for (int i = 0; i < additionalConfigFilesSize.get(); i++) {
+
+                Optional<String> configFile = ConfigurationUtil.getInstance()
+                        .get(CONFIG_ADDITIONAL_CONFIG_FILES + "[" + i + "]");
+
+                if (configFile.isPresent()) {
+
+                    int defaultOrdinal = 100 + additionalConfigFilesSize.get() - i;
+                    FileConfigurationSource configurationSource;
+                    if (configFile.get().endsWith(".yml") || configFile.get().endsWith(".yaml")) {
+                        // ordinal assigned so that the first file is the most important one
+                        configurationSource = new YamlConfigurationSource(configFile.get(), defaultOrdinal);
+                    } else if (configFile.get().endsWith(".properties")) {
+                        configurationSource = new PropertiesConfigurationSource(configFile.get(), defaultOrdinal);
+                    } else {
+                        throw new IllegalArgumentException("Additional configuration file " + configFile.get()  +
+                                " does not have any recognised extension.");
+                    }
+
+                    configurationSource.init(configImpl.getDispatcher());
+                    configImpl.addFileConfigurationSource(configurationSource);
+                }
+            }
+        }
+
+        // sort here because even if additional config files are not specified because ordinals of the default
+        // configuration sources can be overridden using config_ordinal (MicroProfile)
+        configImpl.getConfigurationSources().sort(Comparator.comparingInt(ConfigurationSource::getOrdinal).reversed());
 
         if (this.eeConfig == null) {
             this.eeConfig = EeConfigFactory.buildEeConfig();

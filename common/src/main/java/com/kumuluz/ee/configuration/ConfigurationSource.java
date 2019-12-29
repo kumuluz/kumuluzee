@@ -37,15 +37,77 @@ public interface ConfigurationSource {
 
     Optional<String> get(String key);
 
-    Optional<Boolean> getBoolean(String key);
+    default Optional<Boolean> getBoolean(String key) {
 
-    Optional<Integer> getInteger(String key);
+        Optional<String> value = get(key);
 
-    Optional<Long> getLong(String key);
+        return value.map(Boolean::valueOf);
+    }
 
-    Optional<Double> getDouble(String key);
+    default Optional<Integer> getInteger(String key) {
 
-    Optional<Float> getFloat(String key);
+        Optional<String> value = get(key);
+
+        if (value.isPresent()) {
+
+            try {
+                return Optional.of(Integer.valueOf(value.get()));
+            } catch (NumberFormatException e) {
+                return Optional.empty();
+            }
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    default Optional<Long> getLong(String key) {
+
+        Optional<String> value = get(key);
+
+        if (value.isPresent()) {
+
+            try {
+                return Optional.of(Long.valueOf(value.get()));
+            } catch (NumberFormatException e) {
+                return Optional.empty();
+            }
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    default Optional<Double> getDouble(String key) {
+
+        Optional<String> value = get(key);
+
+        if (value.isPresent()) {
+
+            try {
+                return Optional.of(Double.valueOf(value.get()));
+            } catch (NumberFormatException e) {
+                return Optional.empty();
+            }
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    default Optional<Float> getFloat(String key) {
+
+        Optional<String> value = get(key);
+
+        if (value.isPresent()) {
+
+            try {
+                return Optional.of(Float.valueOf(value.get()));
+            } catch (NumberFormatException e) {
+                return Optional.empty();
+            }
+
+        } else {
+            return Optional.empty();
+        }
+    }
 
     Optional<Integer> getListSize(String key);
 
