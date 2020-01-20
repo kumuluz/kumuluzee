@@ -149,11 +149,7 @@ public class JtaXAConnectionWrapper implements Connection {
             return;
         }
 
-        if (xaConnection != null) {
-
-            xaConnection.close();
-            xaConnection = null;
-        }
+        closeConnections(this);
     }
 
     @Override
@@ -623,10 +619,7 @@ public class JtaXAConnectionWrapper implements Connection {
                         if (jtaXaConnectionWrapper.closeAfterTransactionEnd && jtaXaConnectionWrapper.xaConnection != null) {
 
                             try {
-                                jtaXaConnectionWrapper.xaConnection.close();
-                                jtaXaConnectionWrapper.xaConnection = null;
-                                jtaXaConnectionWrapper.parentConnection.close();
-                                jtaXaConnectionWrapper.parentConnection = null;
+                                closeConnections(jtaXaConnectionWrapper);
                             } catch (SQLException e) {
 
                                 log.severe("There was an error closing the connection after transaction complete");
@@ -639,6 +632,17 @@ public class JtaXAConnectionWrapper implements Connection {
             }
         } catch (SystemException | RollbackException e) {
             throw new SQLException(e);
+        }
+    }
+
+    private static void closeConnections(JtaXAConnectionWrapper jtaXaConnectionWrapper) throws SQLException {
+        if (jtaXaConnectionWrapper.xaConnection != null) {
+            jtaXaConnectionWrapper.xaConnection.close();
+            jtaXaConnectionWrapper.xaConnection = null;
+        }
+        if (jtaXaConnectionWrapper.parentConnection != null) {
+            jtaXaConnectionWrapper.parentConnection.close();
+            jtaXaConnectionWrapper.parentConnection = null;
         }
     }
 }
