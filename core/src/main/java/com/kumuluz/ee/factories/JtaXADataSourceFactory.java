@@ -29,6 +29,7 @@ import javax.sql.XADataSource;
  * @author Tilen Faganel
  * @since 2.3.0
  */
+@Deprecated
 public class JtaXADataSourceFactory {
 
     public static NonJtaXADataSourceWrapper buildJtaXADataSourceWrapper(XADataSource xaDataSource) {

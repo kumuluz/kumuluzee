@@ -61,7 +61,7 @@
         <jboss-logging.version>3.3.2.Final</jboss-logging.version>
         <classmate.version>1.5.0</classmate.version>
         <javassist.version>3.24.1-GA</javassist.version>
-        <hikari.version>2.7.9</hikari.version>
+        <agroal.version>1.4</agroal.version>
         <yaml.version>1.18</yaml.version>
         <junit.version>4.12</junit.version>
         <maven.plugin.api.version>3.6.0</maven.plugin.api.version>
@@ -477,9 +477,9 @@
                 <version>${javassist.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.zaxxer</groupId>
-                <artifactId>HikariCP</artifactId>
-                <version>${hikari.version}</version>
+                <groupId>io.agroal</groupId>
+                <artifactId>agroal-api</artifactId>
+                <version>${agroal.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.yaml</groupId>

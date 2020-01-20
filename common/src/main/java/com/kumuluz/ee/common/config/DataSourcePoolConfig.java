@@ -31,14 +31,30 @@ public class DataSourcePoolConfig {
         private Boolean autoCommit = true;
         private Long connectionTimeout = 30000L;
         private Long idleTimeout = 600000L;
+
+        @Deprecated
         private Long maxLifetime = 1800000L;
+
+        @Deprecated
         private Integer minIdle;
         private Integer maxSize = 10;
+
+        @Deprecated
         private String name;
+
+        @Deprecated
         private Long initializationFailTimeout = 1L;
+
+        @Deprecated
         private Boolean isolateInternalQueries = false;
+
+        @Deprecated
         private Boolean allowPoolSuspension = false;
+
+        @Deprecated
         private Boolean readOnly = false;
+
+        @Deprecated
         private Boolean registerMbeans = false;
         private String connectionInitSql;
         private String transactionIsolation;
@@ -60,11 +76,13 @@ public class DataSourcePoolConfig {
             return this;
         }
 
+        @Deprecated
         public Builder maxLifetime(Long maxLifetime) {
             this.maxLifetime = maxLifetime;
             return this;
         }
 
+        @Deprecated
         public Builder minIdle(Integer minIdle) {
             this.minIdle = minIdle;
             return this;
@@ -75,31 +93,37 @@ public class DataSourcePoolConfig {
             return this;
         }
 
+        @Deprecated
         public Builder name(String name) {
             this.name = name;
             return this;
         }
 
+        @Deprecated
         public Builder initializationFailTimeout(Long initializationFailTimeout) {
             this.initializationFailTimeout = initializationFailTimeout;
             return this;
         }
 
+        @Deprecated
         public Builder isolateInternalQueries(Boolean isolateInternalQueries) {
             this.isolateInternalQueries = isolateInternalQueries;
             return this;
         }
 
+        @Deprecated
         public Builder allowPoolSuspension(Boolean allowPoolSuspension) {
             this.allowPoolSuspension = allowPoolSuspension;
             return this;
         }
 
+        @Deprecated
         public Builder readOnly(Boolean readOnly) {
             this.readOnly = readOnly;
             return this;
         }
 
+        @Deprecated
         public Builder registerMbeans(Boolean registerMbeans) {
             this.registerMbeans = registerMbeans;
             return this;
@@ -152,14 +176,30 @@ public class DataSourcePoolConfig {
     private Boolean autoCommit;
     private Long connectionTimeout;
     private Long idleTimeout;
+
+    @Deprecated
     private Long maxLifetime;
+
+    @Deprecated
     private Integer minIdle;
     private Integer maxSize;
+
+    @Deprecated
     private String name;
+
+    @Deprecated
     private Long initializationFailTimeout;
+
+    @Deprecated
     private Boolean isolateInternalQueries;
+
+    @Deprecated
     private Boolean allowPoolSuspension;
+
+    @Deprecated
     private Boolean readOnly;
+
+    @Deprecated
     private Boolean registerMbeans;
     private String connectionInitSql;
     private String transactionIsolation;
@@ -181,10 +221,12 @@ public class DataSourcePoolConfig {
         return idleTimeout;
     }
 
+    @Deprecated
     public Long getMaxLifetime() {
         return maxLifetime;
     }
 
+    @Deprecated
     public Integer getMinIdle() {
         return minIdle;
     }
@@ -193,26 +235,32 @@ public class DataSourcePoolConfig {
         return maxSize;
     }
 
+    @Deprecated
     public String getName() {
         return name;
     }
 
+    @Deprecated
     public Long getInitializationFailTimeout() {
         return initializationFailTimeout;
     }
 
+    @Deprecated
     public Boolean getIsolateInternalQueries() {
         return isolateInternalQueries;
     }
 
+    @Deprecated
     public Boolean getAllowPoolSuspension() {
         return allowPoolSuspension;
     }
 
+    @Deprecated
     public Boolean getReadOnly() {
         return readOnly;
     }
 
+    @Deprecated
     public Boolean getRegisterMbeans() {
         return registerMbeans;
     }

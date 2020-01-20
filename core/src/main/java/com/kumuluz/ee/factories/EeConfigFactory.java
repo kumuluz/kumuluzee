@@ -241,6 +241,51 @@ public class EeConfigFactory {
                 user.ifPresent(xdsc::username);
                 pass.ifPresent(xdsc::password);
 
+                Optional<List<String>> pool = cfg.getMapKeys("kumuluzee.xa-datasources[" + i + "].pool");
+
+                if (pool.isPresent()) {
+
+                    DataSourcePoolConfig.Builder dspc = new DataSourcePoolConfig.Builder();
+
+                    Optional<Boolean> autoCommit = cfg.getBoolean("kumuluzee.xa-datasources[" + i + "].pool.auto-commit");
+                    Optional<Long> connectionTimeout = cfg.getLong("kumuluzee.xa-datasources[" + i + "].pool.connection-timeout");
+                    Optional<Long> idleTimeout = cfg.getLong("kumuluzee.xa-datasources[" + i + "].pool.idle-timeout");
+                    Optional<Long> maxLifetime = cfg.getLong("kumuluzee.xa-datasources[" + i + "].pool.max-lifetime");
+                    Optional<Integer> minIdle = cfg.getInteger("kumuluzee.xa-datasources[" + i + "].pool.min-idle");
+                    Optional<Integer> maxSize = cfg.getInteger("kumuluzee.xa-datasources[" + i + "].pool.max-size");
+                    Optional<String> poolName = cfg.get("kumuluzee.xa-datasources[" + i + "].pool.name");
+                    Optional<Long> initializationFailTimeout = cfg.getLong("kumuluzee.xa-datasources[" + i + "].pool" +
+                            ".initialization-fail-timeout");
+                    Optional<Boolean> isolateInternalQueries = cfg.getBoolean("kumuluzee.xa-datasources[" + i + "].pool" +
+                            ".isolate-internal-queries");
+                    Optional<Boolean> allowPoolSuspension = cfg.getBoolean("kumuluzee.xa-datasources[" + i + "].pool.allow-pool-suspension");
+                    Optional<Boolean> readOnly = cfg.getBoolean("kumuluzee.xa-datasources[" + i + "].pool.read-only");
+                    Optional<Boolean> registerMbeans = cfg.getBoolean("kumuluzee.xa-datasources[" + i + "].pool.register-mbeans");
+                    Optional<String> connectionInitSql = cfg.get("kumuluzee.xa-datasources[" + i + "].pool.connection-init-sql");
+                    Optional<String> transactionIsolation = cfg.get("kumuluzee.xa-datasources[" + i + "].pool.transaction-isolation");
+                    Optional<Long> validationTimeout = cfg.getLong("kumuluzee.xa-datasources[" + i + "].pool.validation-timeout");
+                    Optional<Long> leakDetectionThreshold = cfg.getLong("kumuluzee.xa-datasources[" + i + "].pool.leak-detection-threshold");
+
+                    autoCommit.ifPresent(dspc::autoCommit);
+                    connectionTimeout.ifPresent(dspc::connectionTimeout);
+                    idleTimeout.ifPresent(dspc::idleTimeout);
+                    maxLifetime.ifPresent(dspc::maxLifetime);
+                    minIdle.ifPresent(dspc::minIdle);
+                    maxSize.ifPresent(dspc::maxSize);
+                    poolName.ifPresent(dspc::name);
+                    initializationFailTimeout.ifPresent(dspc::initializationFailTimeout);
+                    isolateInternalQueries.ifPresent(dspc::isolateInternalQueries);
+                    allowPoolSuspension.ifPresent(dspc::allowPoolSuspension);
+                    readOnly.ifPresent(dspc::readOnly);
+                    registerMbeans.ifPresent(dspc::registerMbeans);
+                    connectionInitSql.ifPresent(dspc::connectionInitSql);
+                    transactionIsolation.ifPresent(dspc::transactionIsolation);
+                    validationTimeout.ifPresent(dspc::validationTimeout);
+                    leakDetectionThreshold.ifPresent(dspc::leakDetectionThreshold);
+
+                    xdsc.pool(dspc);
+                }
+
                 Optional<List<String>> props = cfg.getMapKeys("kumuluzee.xa-datasources[" + i + "].props");
 
                 if (props.isPresent()) {
