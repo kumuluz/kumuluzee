@@ -177,7 +177,6 @@ public class DataSourcePoolConfig {
     private Long connectionTimeout;
     private Long idleTimeout;
 
-    @Deprecated
     private Long maxLifetime;
 
     @Deprecated
@@ -221,7 +220,6 @@ public class DataSourcePoolConfig {
         return idleTimeout;
     }
 
-    @Deprecated
     public Long getMaxLifetime() {
         return maxLifetime;
     }

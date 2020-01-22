@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 
 /**
  * @author Marcos Koch Salvador
- * @since 3.6.0
+ * @since 3.7.0
  */
 public class AgroalDataSourceFactory {
 
@@ -110,8 +110,7 @@ public class AgroalDataSourceFactory {
 
         Optional.ofNullable( dscp.getIdleTimeout() ).map(Duration::ofMillis).ifPresent(pool::reapTimeout);
 
-        // Unknown or non-existent configuration in Agroal
-        Optional.ofNullable( dscp.getMaxLifetime() ).ifPresent((v) -> logMessageDepreciatedProperty("maxLifetime") );
+        Optional.ofNullable( dscp.getMaxLifetime() ).map(Duration::ofMillis).ifPresent(pool::maxLifetime);
 
         Optional.ofNullable( dscp.getMaxSize() ).ifPresent(pool::maxSize);
 
