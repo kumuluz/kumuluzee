@@ -92,7 +92,9 @@ The following projects are available with more planned soon:
 - [KumuluzEE GraphQL](https://github.com/kumuluz/kumuluzee-graphql) (Native support for GraphQL)
 - [KumuluzEE Ethereum](https://github.com/kumuluz/kumuluzee-ethereum) (For Ethereum-enabled blockchain microservices)
 - [KumuluzEE AMQP](https://github.com/kumuluz/kumuluzee-amqp) (Support for Advanced Message Queueing Protocol)
-- **_new_** [KumuluzEE AMQP](https://github.com/kumuluz/kumuluzee-feature-flags) (Support for for development with feature flags.)
+- **_new_** [KumuluzEE Feature Flags](https://github.com/kumuluz/kumuluzee-feature-flags) (Support for development with feature flags.)
+- **_new_** [KumuluzEE JCache](https://github.com/kumuluz/kumuluzee-jcache) (Support for caching using JCache annotations.)
+- **_new_** [KumuluzEE Version](https://github.com/kumuluz/kumuluzee-version) (Support for exposing version details of microservice.)
 
 
 ## MicroProfile
