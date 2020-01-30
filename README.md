@@ -64,7 +64,7 @@ Currently the following components are supported with more being added over time
 
 KumuluzEE provides additional features, which are described on the [project Wiki]( https://github.com/kumuluz/kumuluzee/wiki), particularly:
 - [Configuration framework](https://github.com/kumuluz/kumuluzee/wiki/Configuration) for easy and efficient configuration of microservices from various sources, such as environment variables, configuration files (yaml), properties, etc.
-- [TLS/SSL support](https://github.com/kumuluz/kumuluzee/wiki/TLS-SSL-support) for configuring TLS/SSL.
+- [TLS/SSL support](https://github.com/kumuluz/kumuluzee/wiki/TLS-SSL-support) for configuring TLS/SSL, including support for **HTTP/2**.
 
 KumuluzEE also provides support for [**Uber JARs**](https://github.com/kumuluz/kumuluzee/wiki/Uber-JAR-support). With the KumuluzEE Maven plugin, you can pack and run each microservice as a single, self-contained Uber-JAR. Details are described later in this document.
 
