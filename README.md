@@ -12,7 +12,7 @@ KumuluzEE has been designed to use the standard Java/JavaEE/JakartaEE/EE4J techn
 
 KumuluzEE provides full support for **Java**, including Java SE 9/10/11 and higher versions and Java EE 8. In addition to Java, KumuluzEE supports several programming languages, including **Node.js** and **Go**. Support for additional languages will be added soon. For these languages, KumuluzEE also provides support for service configuration and discovery. 
 
-KumuluzEE is Eclipse MicroProfile compliant and provides support for MicroProfile 1.0, 1.1, 1.2, 1.3, 1.4, 2.0, 2.1 and 3.0. Support for versions 3.1 and 3.2 is coming soon. KumuluzEE implements MicroProfile Config 1.3, MicroProfile Health 2.1, MicroProfile Fault Tolerance 2.0, MicroProfile Metrics 2.0, MicroProfile JWT Authentication 1.1, MicroProfile Rest Client 1.1, MicroProfile OpenAPI 1.1 and MicroProfile Open Tracing 1.3 APIs.
+KumuluzEE is Eclipse MicroProfile compliant and provides support for MicroProfile 1.0, 1.1, 1.2, 1.3, 1.4, 2.0, 2.1, 3.0, 3.1 and 3.2. KumuluzEE implements MicroProfile Config 1.3, MicroProfile Health 2.1, MicroProfile Fault Tolerance 2.0, MicroProfile Metrics 2.2, MicroProfile JWT Authentication 1.1, MicroProfile Rest Client 1.3, MicroProfile OpenAPI 1.1 and MicroProfile Open Tracing 1.3 APIs.
 
 ## Getting started
 
@@ -108,6 +108,8 @@ KumuluzEE is Eclipse MicroProfile compliant and provides support for:
 - MicroProfile 2.0
 - MicroProfile 2.1
 - MicroProfile 3.0
+- MicroProfile 3.1
+- MicroProfile 3.2
 
 It implements the following MicroProfile APIs:
 - [MicroProfile Config](https://github.com/kumuluz/kumuluzee-config-mp)
@@ -211,6 +213,24 @@ MicroProfile 3.0
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee-microProfile-3.0</artifactId>
+</dependency>
+```
+
+MicroProfile 3.1
+```xml
+<!-- MicroProfile 3.1 -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-microProfile-3.1</artifactId>
+</dependency>
+```
+
+MicroProfile 3.2
+```xml
+<!-- MicroProfile 3.2 -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-microProfile-3.2</artifactId>
 </dependency>
 ```
 
