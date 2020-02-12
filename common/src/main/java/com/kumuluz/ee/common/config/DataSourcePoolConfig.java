@@ -29,6 +29,7 @@ public class DataSourcePoolConfig {
     public static class Builder {
 
         private Boolean autoCommit = true;
+        private Boolean flushOnClose = false;
         private Long connectionTimeout = 30000L;
         private Long idleTimeout = 600000L;
 
@@ -37,6 +38,9 @@ public class DataSourcePoolConfig {
 
         @Deprecated
         private Integer minIdle;
+
+        private Integer initialSize = 0;
+        private Integer minSize = 0;
         private Integer maxSize = 10;
 
         @Deprecated
@@ -60,9 +64,15 @@ public class DataSourcePoolConfig {
         private String transactionIsolation;
         private Long validationTimeout = 5000L;
         private Long leakDetectionThreshold = 0L;
+        private Long idleValidationTimeout = 0L;
 
         public Builder autoCommit(Boolean autoCommit) {
             this.autoCommit = autoCommit;
+            return this;
+        }
+
+        public Builder flushOnClose(Boolean flushOnClose) {
+            this.flushOnClose = flushOnClose;
             return this;
         }
 
@@ -85,6 +95,16 @@ public class DataSourcePoolConfig {
         @Deprecated
         public Builder minIdle(Integer minIdle) {
             this.minIdle = minIdle;
+            return this;
+        }
+
+        public Builder initialSize(Integer initialSize) {
+            this.initialSize = initialSize;
+            return this;
+        }
+
+        public Builder minSize(Integer minSize) {
+            this.minSize = minSize;
             return this;
         }
 
@@ -149,14 +169,22 @@ public class DataSourcePoolConfig {
             return this;
         }
 
+        public Builder idleValidationTimeout (Long idleValidationTimeout ) {
+            this.idleValidationTimeout  = idleValidationTimeout ;
+            return this;
+        }
+
         public DataSourcePoolConfig build() {
 
             DataSourcePoolConfig dataSourcePoolConfig = new DataSourcePoolConfig();
             dataSourcePoolConfig.autoCommit = autoCommit;
+            dataSourcePoolConfig.flushOnClose = flushOnClose;
             dataSourcePoolConfig.connectionTimeout = connectionTimeout;
             dataSourcePoolConfig.idleTimeout = idleTimeout;
             dataSourcePoolConfig.maxLifetime = maxLifetime;
             dataSourcePoolConfig.minIdle = minIdle;
+            dataSourcePoolConfig.initialSize = initialSize;
+            dataSourcePoolConfig.minSize = minSize;
             dataSourcePoolConfig.maxSize = maxSize;
             dataSourcePoolConfig.name = name;
             dataSourcePoolConfig.initializationFailTimeout = initializationFailTimeout;
@@ -168,12 +196,14 @@ public class DataSourcePoolConfig {
             dataSourcePoolConfig.transactionIsolation = transactionIsolation;
             dataSourcePoolConfig.validationTimeout = validationTimeout;
             dataSourcePoolConfig.leakDetectionThreshold = leakDetectionThreshold;
+            dataSourcePoolConfig.idleValidationTimeout = idleValidationTimeout;
 
             return dataSourcePoolConfig;
         }
     }
 
     private Boolean autoCommit;
+    private Boolean flushOnClose;
     private Long connectionTimeout;
     private Long idleTimeout;
 
@@ -181,6 +211,9 @@ public class DataSourcePoolConfig {
 
     @Deprecated
     private Integer minIdle;
+
+    private Integer initialSize = 0;
+    private Integer minSize = 0;
     private Integer maxSize;
 
     @Deprecated
@@ -204,8 +237,13 @@ public class DataSourcePoolConfig {
     private String transactionIsolation;
     private Long validationTimeout;
     private Long leakDetectionThreshold;
+    private Long idleValidationTimeout;
 
     private DataSourcePoolConfig() {
+    }
+
+    public Boolean getFlushOnClose() {
+        return flushOnClose;
     }
 
     public Boolean getAutoCommit() {
@@ -227,6 +265,14 @@ public class DataSourcePoolConfig {
     @Deprecated
     public Integer getMinIdle() {
         return minIdle;
+    }
+
+    public Integer getInitialSize() {
+        return initialSize;
+    }
+
+    public Integer getMinSize() {
+        return minSize;
     }
 
     public Integer getMaxSize() {
@@ -277,5 +323,9 @@ public class DataSourcePoolConfig {
 
     public Long getLeakDetectionThreshold() {
         return leakDetectionThreshold;
+    }
+
+    public Long getIdleValidationTimeout() {
+        return idleValidationTimeout;
     }
 }

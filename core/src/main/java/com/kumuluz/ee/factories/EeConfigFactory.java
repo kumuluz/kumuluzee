@@ -169,10 +169,13 @@ public class EeConfigFactory {
                     DataSourcePoolConfig.Builder dspc = new DataSourcePoolConfig.Builder();
 
                     Optional<Boolean> autoCommit = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.auto-commit");
+                    Optional<Boolean> flushOnClose = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.flush-on-close");
                     Optional<Long> connectionTimeout = cfg.getLong("kumuluzee.datasources[" + i + "].pool.connection-timeout");
                     Optional<Long> idleTimeout = cfg.getLong("kumuluzee.datasources[" + i + "].pool.idle-timeout");
                     Optional<Long> maxLifetime = cfg.getLong("kumuluzee.datasources[" + i + "].pool.max-lifetime");
                     Optional<Integer> minIdle = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.min-idle");
+                    Optional<Integer> initialSize = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.initial-size");
+                    Optional<Integer> minSize = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.min-size");
                     Optional<Integer> maxSize = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.max-size");
                     Optional<String> poolName = cfg.get("kumuluzee.datasources[" + i + "].pool.name");
                     Optional<Long> initializationFailTimeout = cfg.getLong("kumuluzee.datasources[" + i + "].pool" +
@@ -186,12 +189,16 @@ public class EeConfigFactory {
                     Optional<String> transactionIsolation = cfg.get("kumuluzee.datasources[" + i + "].pool.transaction-isolation");
                     Optional<Long> validationTimeout = cfg.getLong("kumuluzee.datasources[" + i + "].pool.validation-timeout");
                     Optional<Long> leakDetectionThreshold = cfg.getLong("kumuluzee.datasources[" + i + "].pool.leak-detection-threshold");
+                    Optional<Long> idleValidationTimeout = cfg.getLong("kumuluzee.datasources[" + i + "].pool.idle-validation-timeout");
 
                     autoCommit.ifPresent(dspc::autoCommit);
+                    flushOnClose.ifPresent(dspc::flushOnClose);
                     connectionTimeout.ifPresent(dspc::connectionTimeout);
                     idleTimeout.ifPresent(dspc::idleTimeout);
                     maxLifetime.ifPresent(dspc::maxLifetime);
                     minIdle.ifPresent(dspc::minIdle);
+                    initialSize.ifPresent(dspc::initialSize);
+                    minSize.ifPresent(dspc::minSize);
                     maxSize.ifPresent(dspc::maxSize);
                     poolName.ifPresent(dspc::name);
                     initializationFailTimeout.ifPresent(dspc::initializationFailTimeout);
@@ -203,6 +210,7 @@ public class EeConfigFactory {
                     transactionIsolation.ifPresent(dspc::transactionIsolation);
                     validationTimeout.ifPresent(dspc::validationTimeout);
                     leakDetectionThreshold.ifPresent(dspc::leakDetectionThreshold);
+                    idleValidationTimeout.ifPresent(dspc::idleValidationTimeout);
 
                     dsc.pool(dspc);
                 }
@@ -248,10 +256,13 @@ public class EeConfigFactory {
                     DataSourcePoolConfig.Builder dspc = new DataSourcePoolConfig.Builder();
 
                     Optional<Boolean> autoCommit = cfg.getBoolean("kumuluzee.xa-datasources[" + i + "].pool.auto-commit");
+                    Optional<Boolean> flushOnClose = cfg.getBoolean("kumuluzee.xa-datasources[" + i + "].pool.flush-on-close");
                     Optional<Long> connectionTimeout = cfg.getLong("kumuluzee.xa-datasources[" + i + "].pool.connection-timeout");
                     Optional<Long> idleTimeout = cfg.getLong("kumuluzee.xa-datasources[" + i + "].pool.idle-timeout");
                     Optional<Long> maxLifetime = cfg.getLong("kumuluzee.xa-datasources[" + i + "].pool.max-lifetime");
                     Optional<Integer> minIdle = cfg.getInteger("kumuluzee.xa-datasources[" + i + "].pool.min-idle");
+                    Optional<Integer> initialSize = cfg.getInteger("kumuluzee.xa-datasources[" + i + "].pool.initial-size");
+                    Optional<Integer> minSize = cfg.getInteger("kumuluzee.xa-datasources[" + i + "].pool.min-size");
                     Optional<Integer> maxSize = cfg.getInteger("kumuluzee.xa-datasources[" + i + "].pool.max-size");
                     Optional<String> poolName = cfg.get("kumuluzee.xa-datasources[" + i + "].pool.name");
                     Optional<Long> initializationFailTimeout = cfg.getLong("kumuluzee.xa-datasources[" + i + "].pool" +
@@ -265,12 +276,16 @@ public class EeConfigFactory {
                     Optional<String> transactionIsolation = cfg.get("kumuluzee.xa-datasources[" + i + "].pool.transaction-isolation");
                     Optional<Long> validationTimeout = cfg.getLong("kumuluzee.xa-datasources[" + i + "].pool.validation-timeout");
                     Optional<Long> leakDetectionThreshold = cfg.getLong("kumuluzee.xa-datasources[" + i + "].pool.leak-detection-threshold");
+                    Optional<Long> idleValidationTimeout = cfg.getLong("kumuluzee.xa-datasources[" + i + "].pool.idle-validation-timeout");
 
                     autoCommit.ifPresent(dspc::autoCommit);
+                    flushOnClose.ifPresent(dspc::flushOnClose);
                     connectionTimeout.ifPresent(dspc::connectionTimeout);
                     idleTimeout.ifPresent(dspc::idleTimeout);
                     maxLifetime.ifPresent(dspc::maxLifetime);
                     minIdle.ifPresent(dspc::minIdle);
+                    initialSize.ifPresent(dspc::initialSize);
+                    minSize.ifPresent(dspc::minSize);
                     maxSize.ifPresent(dspc::maxSize);
                     poolName.ifPresent(dspc::name);
                     initializationFailTimeout.ifPresent(dspc::initializationFailTimeout);
@@ -282,6 +297,7 @@ public class EeConfigFactory {
                     transactionIsolation.ifPresent(dspc::transactionIsolation);
                     validationTimeout.ifPresent(dspc::validationTimeout);
                     leakDetectionThreshold.ifPresent(dspc::leakDetectionThreshold);
+                    idleValidationTimeout.ifPresent(dspc::idleValidationTimeout);
 
                     xdsc.pool(dspc);
                 }

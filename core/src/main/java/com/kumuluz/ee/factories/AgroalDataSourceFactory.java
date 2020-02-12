@@ -54,7 +54,7 @@ public class AgroalDataSourceFactory {
 
         setDatabaseCredentials(connectionFactoryConfig, dsc.getUsername(), dsc.getPassword());
 
-        setConnectionPoolConfiguration(poolConfig, connectionFactoryConfig, dsc.getPool());
+        setConnectionPoolConfiguration(poolConfig, connectionFactoryConfig, dsc.getPool(), !jtaPresent);
 
         dsc.getProps().forEach(connectionFactoryConfig::jdbcProperty);
 
@@ -82,7 +82,7 @@ public class AgroalDataSourceFactory {
 
         setDatabaseCredentials(connectionFactoryConfig, xdsc.getUsername(), xdsc.getPassword());
 
-        setConnectionPoolConfiguration(poolConfig, connectionFactoryConfig, xdsc.getPool());
+        setConnectionPoolConfiguration(poolConfig, connectionFactoryConfig, xdsc.getPool(), false);
 
         xdsc.getProps().forEach(connectionFactoryConfig::jdbcProperty);
 
@@ -103,8 +103,16 @@ public class AgroalDataSourceFactory {
         }
     }
 
-    private static void setConnectionPoolConfiguration(AgroalConnectionPoolConfigurationSupplier pool, AgroalConnectionFactoryConfigurationSupplier connectionFactoryConfig, DataSourcePoolConfig dscp) {
+    private static void setConnectionPoolConfiguration(AgroalConnectionPoolConfigurationSupplier pool,
+                                                       AgroalConnectionFactoryConfigurationSupplier connectionFactoryConfig,
+                                                       DataSourcePoolConfig dscp, boolean isHikariSelected) {
+
         Optional.ofNullable( dscp.getAutoCommit() ).ifPresent(connectionFactoryConfig::autoCommit);
+
+        Optional.ofNullable( dscp.getFlushOnClose() ).ifPresent(v -> {
+            warnMessageAgroalFeature("flushOnClose", isHikariSelected);
+            pool.flushOnClose(v);
+        });
 
         Optional.ofNullable( dscp.getConnectionTimeout() ).map(Duration::ofMillis).ifPresent(pool::acquisitionTimeout);
 
@@ -112,34 +120,49 @@ public class AgroalDataSourceFactory {
 
         Optional.ofNullable( dscp.getMaxLifetime() ).map(Duration::ofMillis).ifPresent(pool::maxLifetime);
 
+        Optional.ofNullable( dscp.getInitialSize() ).ifPresent(v -> {
+            warnMessageAgroalFeature("initialSize", isHikariSelected);
+            pool.initialSize(v);
+        });
+
+        Optional.ofNullable( dscp.getMinSize() ).ifPresent(v -> {
+            warnMessageAgroalFeature("minSize", isHikariSelected);
+            pool.minSize(v);
+        });
+
         Optional.ofNullable( dscp.getMaxSize() ).ifPresent(pool::maxSize);
 
         if (!StringUtils.isNullOrEmpty( dscp.getName() )) {
             // Unknown or non-existent configuration in Agroal
-            logMessageDepreciatedProperty("name");
+            warnMessageDepreciatedProperty("name");
         }
 
         // Unknown or non-existent configuration in Agroal
-        Optional.ofNullable( dscp.getInitializationFailTimeout() ).ifPresent((v) -> logMessageDepreciatedProperty("initializationFailTimeout") );
+        Optional.ofNullable( dscp.getInitializationFailTimeout() ).ifPresent(v -> warnMessageDepreciatedProperty("initializationFailTimeout") );
 
         // Unknown or non-existent configuration in Agroal
-        Optional.ofNullable( dscp.getIsolateInternalQueries() ).ifPresent((v) -> logMessageDepreciatedProperty("isolateInternalQueries") );
+        Optional.ofNullable( dscp.getIsolateInternalQueries() ).ifPresent(v -> warnMessageDepreciatedProperty("isolateInternalQueries") );
 
         // Unknown or non-existent configuration in Agroal
-        Optional.ofNullable( dscp.getAllowPoolSuspension() ).ifPresent((v) -> logMessageDepreciatedProperty("allowPoolSuspension") );
+        Optional.ofNullable( dscp.getAllowPoolSuspension() ).ifPresent(v -> warnMessageDepreciatedProperty("allowPoolSuspension") );
 
         // Unknown or non-existent configuration in Agroal
-        Optional.ofNullable( dscp.getReadOnly() ).ifPresent((v) -> logMessageDepreciatedProperty("readOnly") );
+        Optional.ofNullable( dscp.getReadOnly() ).ifPresent(v -> warnMessageDepreciatedProperty("readOnly") );
 
         // Unknown or non-existent configuration in Agroal
-        Optional.ofNullable( dscp.getRegisterMbeans() ).ifPresent((v) -> logMessageDepreciatedProperty("registerMbeans") );
+        Optional.ofNullable( dscp.getRegisterMbeans() ).ifPresent(v -> warnMessageDepreciatedProperty("registerMbeans") );
 
         Optional.ofNullable( dscp.getValidationTimeout() ).map(Duration::ofMillis).ifPresent(pool::validationTimeout);
 
         Optional.ofNullable( dscp.getLeakDetectionThreshold() ).map(Duration::ofMillis).ifPresent(pool::leakTimeout);
 
+        Optional.ofNullable( dscp.getIdleValidationTimeout() ).map(Duration::ofMillis).ifPresent(v -> {
+            warnMessageAgroalFeature("idleValidationTimeout", isHikariSelected);
+            pool.idleValidationTimeout(v);
+        });
+
         // Unknown or non-existent configuration in Agroal
-        Optional.ofNullable( dscp.getMinIdle() ).ifPresent((v) -> logMessageDepreciatedProperty("minIdle") );
+        Optional.ofNullable( dscp.getMinIdle() ).ifPresent(v -> warnMessageDepreciatedProperty("minIdle") );
 
         if (!StringUtils.isNullOrEmpty( dscp.getConnectionInitSql() )) {
             connectionFactoryConfig.initialSql(dscp.getConnectionInitSql());
@@ -163,7 +186,13 @@ public class AgroalDataSourceFactory {
         }
     }
 
-    private static void logMessageDepreciatedProperty(String propertyName) {
+    private static void warnMessageAgroalFeature(String propertyName, boolean isHikariSelected) {
+        if (isHikariSelected) {
+            log.log(Level.WARNING, "The property \"" + propertyName + "\" is exclusive to the Agroal Connection Pool, therefore it will not be recognized by HikariCP!");
+        }
+    }
+
+    private static void warnMessageDepreciatedProperty(String propertyName) {
         log.log(Level.WARNING, "Property \"" + propertyName + "\" is not supported by Agroal Connection Pool and will be removed soon!");
     }
 
