@@ -32,6 +32,7 @@ import java.sql.Statement;
  * @author Tilen Faganel
  * @since 2.3.0
  */
+@Deprecated
 public class XAStatementProxy implements InvocationHandler {
 
     private Statement statement;

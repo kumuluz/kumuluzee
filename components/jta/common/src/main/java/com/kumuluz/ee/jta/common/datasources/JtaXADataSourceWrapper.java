@@ -31,6 +31,7 @@ import java.sql.SQLException;
  * @author Tilen Faganel
  * @since 2.3.0
  */
+@Deprecated
 public class JtaXADataSourceWrapper extends NonJtaXADataSourceWrapper {
 
     public JtaXADataSourceWrapper(XADataSource xaDataSource) {

@@ -35,7 +35,7 @@ public class JtaTransactionServices implements TransactionServices {
     @Override
     public void registerSynchronization(Synchronization synchronizedObserver) {
         try {
-            JtaTransactionHolder.getInstance().getTransactionManager().getTransaction().registerSynchronization(synchronizedObserver);
+            JtaProvider.getInstance().getTransactionManager().getTransaction().registerSynchronization(synchronizedObserver);
         } catch (IllegalStateException | javax.transaction.RollbackException | SystemException e) {
             throw new RuntimeException(e);
         }
@@ -44,8 +44,8 @@ public class JtaTransactionServices implements TransactionServices {
     @Override
     public boolean isTransactionActive() {
         try {
-            int status = JtaTransactionHolder.getInstance().getTransactionManager().getStatus();
-            return JtaTransactionHolder.TRANSACTION_ACTIVE_STATUS.contains(status);
+            int status = JtaProvider.getInstance().getTransactionManager().getStatus();
+            return JtaProvider.TRANSACTION_ACTIVE_STATUS.contains(status);
         } catch (SystemException e) {
             throw new RuntimeException(e);
         }
@@ -53,7 +53,7 @@ public class JtaTransactionServices implements TransactionServices {
 
     @Override
     public UserTransaction getUserTransaction() {
-        return JtaTransactionHolder.getInstance().getUserTransaction();
+        return JtaProvider.getInstance().getUserTransaction();
     }
 
     @Override

@@ -43,11 +43,13 @@ import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
 import com.kumuluz.ee.configuration.ConfigurationSource;
 import com.kumuluz.ee.configuration.utils.ConfigurationImpl;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
+import com.kumuluz.ee.factories.AgroalDataSourceFactory;
 import com.kumuluz.ee.factories.EeConfigFactory;
 import com.kumuluz.ee.factories.JtaXADataSourceFactory;
 import com.kumuluz.ee.loaders.*;
 import com.kumuluz.ee.logs.impl.JavaUtilDefaultLogConfigurator;
 import com.zaxxer.hikari.HikariDataSource;
+import io.agroal.api.AgroalDataSource;
 
 import javax.sql.XADataSource;
 import java.util.*;
@@ -261,77 +263,17 @@ public class EeApplication {
             servletServer.initWebContext(collectScanLibraries(allExtensions));
 
             // Create and register datasources to the underlying server
-            if (eeConfig.getDatasources().size() > 0) {
+            boolean jtaPresent = eeRuntimeInternal.getEeComponents().stream().anyMatch(c -> c.getType().equals(EeComponentType.JTA));
 
-                for (DataSourceConfig dsc : eeConfig.getDatasources()) {
+            eeConfig.getDatasources().forEach(dsc -> {
+                AgroalDataSource ds = AgroalDataSourceFactory.createDataSource(dsc, jtaPresent);
+                servletServer.registerDataSource(ds, dsc.getJndiName());
+            });
 
-                    HikariDataSource ds = new HikariDataSource();
-                    ds.setJdbcUrl(dsc.getConnectionUrl());
-                    ds.setUsername(dsc.getUsername());
-                    ds.setPassword(dsc.getPassword());
-
-                    if (dsc.getDriverClass() != null && !dsc.getDriverClass().isEmpty())
-                        ds.setDriverClassName(dsc.getDriverClass());
-
-                    if (dsc.getDataSourceClass() != null && !dsc.getDataSourceClass().isEmpty()) {
-                        ds.setDataSourceClassName(dsc.getDataSourceClass());
-                    }
-
-                    DataSourcePoolConfig dscp = dsc.getPool();
-
-                    ds.setAutoCommit(dscp.getAutoCommit());
-                    ds.setConnectionTimeout(dscp.getConnectionTimeout());
-                    ds.setIdleTimeout(dscp.getIdleTimeout());
-                    ds.setMaxLifetime(dscp.getMaxLifetime());
-                    ds.setMaximumPoolSize(dscp.getMaxSize());
-                    ds.setPoolName(dscp.getName());
-                    ds.setInitializationFailTimeout(dscp.getInitializationFailTimeout());
-                    ds.setIsolateInternalQueries(dscp.getIsolateInternalQueries());
-                    ds.setAllowPoolSuspension(dscp.getAllowPoolSuspension());
-                    ds.setReadOnly(dscp.getReadOnly());
-                    ds.setRegisterMbeans(dscp.getRegisterMbeans());
-                    ds.setValidationTimeout(dscp.getValidationTimeout());
-                    ds.setLeakDetectionThreshold(dscp.getLeakDetectionThreshold());
-
-                    if (dscp.getMinIdle() != null) {
-                        ds.setMinimumIdle(dscp.getMinIdle());
-                    }
-
-                    if (dscp.getConnectionInitSql() != null) {
-                        ds.setConnectionInitSql(dscp.getConnectionInitSql());
-                    }
-
-                    if (dscp.getTransactionIsolation() != null) {
-                        ds.setTransactionIsolation(dscp.getTransactionIsolation());
-                    }
-
-                    dsc.getProps().forEach(ds::addDataSourceProperty);
-
-                    servletServer.registerDataSource(ds, dsc.getJndiName());
-                }
-            }
-
-            if (eeConfig.getXaDatasources().size() > 0) {
-
-                Boolean jtaPresent = eeRuntimeInternal.getEeComponents().stream().anyMatch(c -> c.getType().equals(EeComponentType.JTA));
-
-                for (XaDataSourceConfig xdsc : eeConfig.getXaDatasources()) {
-
-                    XADataSourceBuilder XADataSourceBuilder = new XADataSourceBuilder(xdsc);
-
-                    XADataSource xaDataSource = XADataSourceBuilder.constructXaDataSource();
-
-                    XADataSourceWrapper xaDataSourceWrapper;
-
-                    if (jtaPresent) {
-                        xaDataSourceWrapper = JtaXADataSourceFactory.buildJtaXADataSourceWrapper(xaDataSource);
-                    } else {
-                        xaDataSourceWrapper = new NonJtaXADataSourceWrapper(xaDataSource);
-                    }
-
-                    servletServer.registerDataSource(xaDataSourceWrapper, xdsc.getJndiName());
-                }
-            }
+            eeConfig.getXaDatasources().forEach(xdsc -> {
+                AgroalDataSource xds = AgroalDataSourceFactory.createXaDataSource(xdsc, jtaPresent);
+                servletServer.registerDataSource(xds, xdsc.getJndiName());
+            });
 
             // Add the server info headers
             if (eeConfig.getServer().getShowServerInfo()) {

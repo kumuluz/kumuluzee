@@ -29,24 +29,50 @@ public class DataSourcePoolConfig {
     public static class Builder {
 
         private Boolean autoCommit = true;
+        private Boolean flushOnClose = false;
         private Long connectionTimeout = 30000L;
         private Long idleTimeout = 600000L;
+
+        @Deprecated
         private Long maxLifetime = 1800000L;
+
+        @Deprecated
         private Integer minIdle;
+
+        private Integer initialSize = 0;
+        private Integer minSize = 0;
         private Integer maxSize = 10;
+
+        @Deprecated
         private String name;
+
+        @Deprecated
         private Long initializationFailTimeout = 1L;
+
+        @Deprecated
         private Boolean isolateInternalQueries = false;
+
+        @Deprecated
         private Boolean allowPoolSuspension = false;
+
+        @Deprecated
         private Boolean readOnly = false;
+
+        @Deprecated
         private Boolean registerMbeans = false;
         private String connectionInitSql;
         private String transactionIsolation;
         private Long validationTimeout = 5000L;
         private Long leakDetectionThreshold = 0L;
+        private Long idleValidationTimeout = 0L;
 
         public Builder autoCommit(Boolean autoCommit) {
             this.autoCommit = autoCommit;
+            return this;
+        }
+
+        public Builder flushOnClose(Boolean flushOnClose) {
+            this.flushOnClose = flushOnClose;
             return this;
         }
 
@@ -60,13 +86,25 @@ public class DataSourcePoolConfig {
             return this;
         }
 
+        @Deprecated
         public Builder maxLifetime(Long maxLifetime) {
             this.maxLifetime = maxLifetime;
             return this;
         }
 
+        @Deprecated
         public Builder minIdle(Integer minIdle) {
             this.minIdle = minIdle;
+            return this;
+        }
+
+        public Builder initialSize(Integer initialSize) {
+            this.initialSize = initialSize;
+            return this;
+        }
+
+        public Builder minSize(Integer minSize) {
+            this.minSize = minSize;
             return this;
         }
 
@@ -75,31 +113,37 @@ public class DataSourcePoolConfig {
             return this;
         }
 
+        @Deprecated
         public Builder name(String name) {
             this.name = name;
             return this;
         }
 
+        @Deprecated
         public Builder initializationFailTimeout(Long initializationFailTimeout) {
             this.initializationFailTimeout = initializationFailTimeout;
             return this;
         }
 
+        @Deprecated
         public Builder isolateInternalQueries(Boolean isolateInternalQueries) {
             this.isolateInternalQueries = isolateInternalQueries;
             return this;
         }
 
+        @Deprecated
         public Builder allowPoolSuspension(Boolean allowPoolSuspension) {
             this.allowPoolSuspension = allowPoolSuspension;
             return this;
         }
 
+        @Deprecated
         public Builder readOnly(Boolean readOnly) {
             this.readOnly = readOnly;
             return this;
         }
 
+        @Deprecated
         public Builder registerMbeans(Boolean registerMbeans) {
             this.registerMbeans = registerMbeans;
             return this;
@@ -125,14 +169,22 @@ public class DataSourcePoolConfig {
             return this;
         }
 
+        public Builder idleValidationTimeout (Long idleValidationTimeout ) {
+            this.idleValidationTimeout  = idleValidationTimeout ;
+            return this;
+        }
+
         public DataSourcePoolConfig build() {
 
             DataSourcePoolConfig dataSourcePoolConfig = new DataSourcePoolConfig();
             dataSourcePoolConfig.autoCommit = autoCommit;
+            dataSourcePoolConfig.flushOnClose = flushOnClose;
             dataSourcePoolConfig.connectionTimeout = connectionTimeout;
             dataSourcePoolConfig.idleTimeout = idleTimeout;
             dataSourcePoolConfig.maxLifetime = maxLifetime;
             dataSourcePoolConfig.minIdle = minIdle;
+            dataSourcePoolConfig.initialSize = initialSize;
+            dataSourcePoolConfig.minSize = minSize;
             dataSourcePoolConfig.maxSize = maxSize;
             dataSourcePoolConfig.name = name;
             dataSourcePoolConfig.initializationFailTimeout = initializationFailTimeout;
@@ -144,29 +196,54 @@ public class DataSourcePoolConfig {
             dataSourcePoolConfig.transactionIsolation = transactionIsolation;
             dataSourcePoolConfig.validationTimeout = validationTimeout;
             dataSourcePoolConfig.leakDetectionThreshold = leakDetectionThreshold;
+            dataSourcePoolConfig.idleValidationTimeout = idleValidationTimeout;
 
             return dataSourcePoolConfig;
         }
     }
 
     private Boolean autoCommit;
+    private Boolean flushOnClose;
     private Long connectionTimeout;
     private Long idleTimeout;
+
     private Long maxLifetime;
+
+    @Deprecated
     private Integer minIdle;
+
+    private Integer initialSize = 0;
+    private Integer minSize = 0;
     private Integer maxSize;
+
+    @Deprecated
     private String name;
+
+    @Deprecated
     private Long initializationFailTimeout;
+
+    @Deprecated
     private Boolean isolateInternalQueries;
+
+    @Deprecated
     private Boolean allowPoolSuspension;
+
+    @Deprecated
     private Boolean readOnly;
+
+    @Deprecated
     private Boolean registerMbeans;
     private String connectionInitSql;
     private String transactionIsolation;
     private Long validationTimeout;
     private Long leakDetectionThreshold;
+    private Long idleValidationTimeout;
 
     private DataSourcePoolConfig() {
+    }
+
+    public Boolean getFlushOnClose() {
+        return flushOnClose;
     }
 
     public Boolean getAutoCommit() {
@@ -185,34 +262,49 @@ public class DataSourcePoolConfig {
         return maxLifetime;
     }
 
+    @Deprecated
     public Integer getMinIdle() {
         return minIdle;
+    }
+
+    public Integer getInitialSize() {
+        return initialSize;
+    }
+
+    public Integer getMinSize() {
+        return minSize;
     }
 
     public Integer getMaxSize() {
         return maxSize;
     }
 
+    @Deprecated
     public String getName() {
         return name;
     }
 
+    @Deprecated
     public Long getInitializationFailTimeout() {
         return initializationFailTimeout;
     }
 
+    @Deprecated
     public Boolean getIsolateInternalQueries() {
         return isolateInternalQueries;
     }
 
+    @Deprecated
     public Boolean getAllowPoolSuspension() {
         return allowPoolSuspension;
     }
 
+    @Deprecated
     public Boolean getReadOnly() {
         return readOnly;
     }
 
+    @Deprecated
     public Boolean getRegisterMbeans() {
         return registerMbeans;
     }
@@ -231,5 +323,9 @@ public class DataSourcePoolConfig {
 
     public Long getLeakDetectionThreshold() {
         return leakDetectionThreshold;
+    }
+
+    public Long getIdleValidationTimeout() {
+        return idleValidationTimeout;
     }
 }

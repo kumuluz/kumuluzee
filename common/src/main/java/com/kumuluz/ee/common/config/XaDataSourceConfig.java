@@ -37,6 +37,8 @@ public class XaDataSourceConfig {
         private String username;
         private String password;
 
+        private DataSourcePoolConfig.Builder pool = new DataSourcePoolConfig.Builder();
+
         private Map<String, String> props = new HashMap<>();
 
         public Builder jndiName(String jndiName) {
@@ -59,6 +61,11 @@ public class XaDataSourceConfig {
             return this;
         }
 
+        public Builder pool(DataSourcePoolConfig.Builder pool) {
+            this.pool = pool;
+            return this;
+        }
+
         public Builder prop(String key, String value) {
             this.props.put(key, value);
             return this;
@@ -72,6 +79,8 @@ public class XaDataSourceConfig {
             xaDataSourceConfig.username = username;
             xaDataSourceConfig.password = password;
 
+            xaDataSourceConfig.pool = pool.build();
+
             xaDataSourceConfig.props = Collections.unmodifiableMap(props);
 
             return xaDataSourceConfig;
@@ -82,6 +91,8 @@ public class XaDataSourceConfig {
     private String xaDatasourceClass;
     private String username;
     private String password;
+
+    private DataSourcePoolConfig pool;
 
     private Map<String, String> props;
 
@@ -102,6 +113,10 @@ public class XaDataSourceConfig {
 
     public String getPassword() {
         return password;
+    }
+
+    public DataSourcePoolConfig getPool() {
+        return pool;
     }
 
     public Map<String, String> getProps() {

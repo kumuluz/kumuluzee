@@ -20,7 +20,7 @@
 */
 package com.kumuluz.ee.jta.common.datasources;
 
-import com.kumuluz.ee.jta.common.JtaTransactionHolder;
+import com.kumuluz.ee.jta.common.JtaProvider;
 import com.kumuluz.ee.jta.common.utils.TxUtils;
 
 import javax.sql.XAConnection;
@@ -40,6 +40,7 @@ import java.util.logging.Logger;
  * @author Tilen Faganel
  * @since 2.3.0
  */
+@Deprecated
 public class JtaXAConnectionWrapper implements Connection {
 
     private Logger log = Logger.getLogger(JtaXAConnectionWrapper.class.getSimpleName());
@@ -597,7 +598,7 @@ public class JtaXAConnectionWrapper implements Connection {
         try {
 
             if (transactionManager == null) {
-                transactionManager = JtaTransactionHolder.getInstance().getTransactionManager();
+                transactionManager = JtaProvider.getInstance().getTransactionManager();
             }
 
             if (TxUtils.isActive(transactionManager)) {

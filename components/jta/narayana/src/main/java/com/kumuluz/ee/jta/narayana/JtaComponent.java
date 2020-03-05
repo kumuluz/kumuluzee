@@ -28,8 +28,7 @@ import com.kumuluz.ee.common.config.EeConfig;
 import com.kumuluz.ee.common.dependencies.EeComponentDef;
 import com.kumuluz.ee.common.dependencies.EeComponentType;
 import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
-import com.kumuluz.ee.jta.common.JtaTransactionHolder;
-import com.kumuluz.ee.jta.common.TransactionAcquirer;
+import com.kumuluz.ee.jta.common.JtaProvider;
 
 import javax.naming.NamingException;
 import java.util.logging.Level;
@@ -46,12 +45,8 @@ public class JtaComponent implements Component {
 
     @Override
     public void init(KumuluzServerWrapper server, EeConfig eeConfig) {
-        TransactionAcquirer transactionAcquirer = new NarayanaTransactionAcquirer();
-
-        JtaTransactionHolder.getInstance().setTransactionAcquirer(transactionAcquirer);
-
         if (server.getServer() instanceof ServletServer) {
-            ((ServletServer) server.getServer()).registerTransactionManager(transactionAcquirer.getUserTransaction());
+            ((ServletServer) server.getServer()).registerTransactionManager(JtaProvider.getInstance().getUserTransaction());
         }
     }
 
