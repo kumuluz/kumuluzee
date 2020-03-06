@@ -399,11 +399,6 @@ public class EeConfigFactory {
                                 ds.getPool().getIdleTimeout() == null ||
                                 ds.getPool().getMaxLifetime() == null ||
                                 ds.getPool().getMaxSize() == null ||
-                                ds.getPool().getInitializationFailTimeout() == null ||
-                                ds.getPool().getIsolateInternalQueries() == null ||
-                                ds.getPool().getAllowPoolSuspension() == null ||
-                                ds.getPool().getReadOnly() == null ||
-                                ds.getPool().getRegisterMbeans() == null ||
                                 ds.getPool().getValidationTimeout() == null ||
                                 ds.getPool().getLeakDetectionThreshold() == null)));
     }

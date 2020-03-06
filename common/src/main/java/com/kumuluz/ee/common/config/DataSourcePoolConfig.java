@@ -33,7 +33,6 @@ public class DataSourcePoolConfig {
         private Long connectionTimeout = 30000L;
         private Long idleTimeout = 600000L;
 
-        @Deprecated
         private Long maxLifetime = 1800000L;
 
         @Deprecated
@@ -47,19 +46,19 @@ public class DataSourcePoolConfig {
         private String name;
 
         @Deprecated
-        private Long initializationFailTimeout = 1L;
+        private Long initializationFailTimeout;
 
         @Deprecated
-        private Boolean isolateInternalQueries = false;
+        private Boolean isolateInternalQueries;
 
         @Deprecated
-        private Boolean allowPoolSuspension = false;
+        private Boolean allowPoolSuspension;
 
         @Deprecated
-        private Boolean readOnly = false;
+        private Boolean readOnly;
 
         @Deprecated
-        private Boolean registerMbeans = false;
+        private Boolean registerMbeans;
         private String connectionInitSql;
         private String transactionIsolation;
         private Long validationTimeout = 5000L;
@@ -86,7 +85,6 @@ public class DataSourcePoolConfig {
             return this;
         }
 
-        @Deprecated
         public Builder maxLifetime(Long maxLifetime) {
             this.maxLifetime = maxLifetime;
             return this;
