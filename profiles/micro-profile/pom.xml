@@ -22,7 +22,7 @@
     <dependencies>
         <dependency>
             <groupId>com.kumuluz.ee</groupId>
-            <artifactId>kumuluzee-microProfile-3.2</artifactId>
+            <artifactId>kumuluzee-microProfile-3.3</artifactId>
         </dependency>
     </dependencies>
 
