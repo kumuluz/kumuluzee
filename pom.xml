@@ -62,7 +62,7 @@
         <classmate.version>1.5.0</classmate.version>
         <javassist.version>3.24.1-GA</javassist.version>
         <agroal.version>1.7</agroal.version>
-        <yaml.version>1.18</yaml.version>
+        <yaml.version>1.26</yaml.version>
         <junit.version>4.12</junit.version>
         <maven.plugin.api.version>3.6.0</maven.plugin.api.version>
         <maven-plugin-annotations.version>3.6.0</maven-plugin-annotations.version>

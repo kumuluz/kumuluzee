@@ -93,6 +93,26 @@ public class EeApplication {
 
     private void initialize() {
 
+        // Loading the logs extension and set up logging bridges before any actual logging is done
+        Optional<LogsExtension> logsExtensionOptional = LogsExtensionLoader.loadExtension();
+
+        LogsExtension logsExtension = null;
+        if (logsExtensionOptional.isPresent()) {
+
+            logsExtension = logsExtensionOptional.get();
+
+            Optional<Class<? extends LogManager>> logManager = logsExtension.getJavaUtilLogManagerClass();
+            Optional<Handler> logHandler = logsExtension.getJavaUtilLogHandler();
+
+            if (logManager.isPresent()) {
+                System.setProperty("java.util.logging.manager", logManager.get().getName());
+            } else {
+                logHandler.ifPresent(JavaUtilDefaultLogConfigurator::initSoleHandler);
+            }
+        } else {
+            JavaUtilDefaultLogConfigurator.init();
+        }
+
         // Initialize the configuration
         ConfigurationImpl configImpl = new ConfigurationImpl();
 
@@ -107,25 +127,12 @@ public class EeApplication {
 
         EeConfig.initialize(this.eeConfig);
 
-        // Loading the logs extension and set up logging bridges before any actual logging is done
-        Optional<LogsExtension> logsExtensionOptional = LogsExtensionLoader.loadExtension();
-
-        if (logsExtensionOptional.isPresent()) {
-
-            LogsExtension logsExtension = logsExtensionOptional.get();
-
-            Optional<Class<? extends LogManager>> logManager = logsExtension.getJavaUtilLogManagerClass();
-            Optional<Handler> logHandler = logsExtension.getJavaUtilLogHandler();
-
-            if (logManager.isPresent()) {
-
-                System.setProperty("java.util.logging.manager", logManager.get().getName());
-            } else logHandler.ifPresent(JavaUtilDefaultLogConfigurator::initSoleHandler);
-
+        // We first set java.util.logging.manager by extension detection and only load the extension
+        // after configuration sources have been initialized. This is because the property must be set
+        // before any calls are made to LogManager or Logger. Some of the external configuration libraries
+        // can and do in fact call the methods so this reorder is necessary.
+        if (logsExtension!=null) {
             logsExtension.load();
-        } else {
-
-            JavaUtilDefaultLogConfigurator.init();
         }
 
         // Create the main class logger
@@ -135,7 +142,6 @@ public class EeApplication {
         configImpl.postInit();
 
         for (ConfigurationSource configurationSource : configImpl.getConfigurationSources()) {
-
             log.info("Initialized configuration source: " + configurationSource.getClass().getSimpleName());
         }
 
