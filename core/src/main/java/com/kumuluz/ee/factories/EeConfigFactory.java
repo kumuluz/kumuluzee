@@ -186,6 +186,7 @@ public class EeConfigFactory {
                     Optional<Boolean> readOnly = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.read-only");
                     Optional<Boolean> registerMbeans = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.register-mbeans");
                     Optional<String> connectionInitSql = cfg.get("kumuluzee.datasources[" + i + "].pool.connection-init-sql");
+                    Optional<String> connectionValidSql = cfg.get("kumuluzee.datasources[" + i + "].pool.connection-valid-sql");
                     Optional<String> transactionIsolation = cfg.get("kumuluzee.datasources[" + i + "].pool.transaction-isolation");
                     Optional<Long> validationTimeout = cfg.getLong("kumuluzee.datasources[" + i + "].pool.validation-timeout");
                     Optional<Long> leakDetectionThreshold = cfg.getLong("kumuluzee.datasources[" + i + "].pool.leak-detection-threshold");
@@ -207,6 +208,7 @@ public class EeConfigFactory {
                     readOnly.ifPresent(dspc::readOnly);
                     registerMbeans.ifPresent(dspc::registerMbeans);
                     connectionInitSql.ifPresent(dspc::connectionInitSql);
+                    connectionValidSql.ifPresent(dspc::connectionValidSql);
                     transactionIsolation.ifPresent(dspc::transactionIsolation);
                     validationTimeout.ifPresent(dspc::validationTimeout);
                     leakDetectionThreshold.ifPresent(dspc::leakDetectionThreshold);

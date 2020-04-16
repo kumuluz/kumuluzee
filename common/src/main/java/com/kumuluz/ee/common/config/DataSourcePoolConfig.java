@@ -60,6 +60,7 @@ public class DataSourcePoolConfig {
         @Deprecated
         private Boolean registerMbeans;
         private String connectionInitSql;
+        private String connectionValidSql;
         private String transactionIsolation;
         private Long validationTimeout = 5000L;
         private Long leakDetectionThreshold = 0L;
@@ -152,6 +153,11 @@ public class DataSourcePoolConfig {
             return this;
         }
 
+        public Builder connectionValidSql(String connectionValidSql) {
+            this.connectionValidSql = connectionValidSql;
+            return this;
+        }
+
         public Builder transactionIsolation(String transactionIsolation) {
             this.transactionIsolation = transactionIsolation;
             return this;
@@ -191,6 +197,7 @@ public class DataSourcePoolConfig {
             dataSourcePoolConfig.readOnly = readOnly;
             dataSourcePoolConfig.registerMbeans = registerMbeans;
             dataSourcePoolConfig.connectionInitSql = connectionInitSql;
+            dataSourcePoolConfig.connectionValidSql = connectionValidSql;
             dataSourcePoolConfig.transactionIsolation = transactionIsolation;
             dataSourcePoolConfig.validationTimeout = validationTimeout;
             dataSourcePoolConfig.leakDetectionThreshold = leakDetectionThreshold;
@@ -232,6 +239,7 @@ public class DataSourcePoolConfig {
     @Deprecated
     private Boolean registerMbeans;
     private String connectionInitSql;
+    private String connectionValidSql;
     private String transactionIsolation;
     private Long validationTimeout;
     private Long leakDetectionThreshold;
@@ -309,6 +317,10 @@ public class DataSourcePoolConfig {
 
     public String getConnectionInitSql() {
         return connectionInitSql;
+    }
+
+    public String getConnectionValidSql() {
+        return connectionValidSql;
     }
 
     public String getTransactionIsolation() {

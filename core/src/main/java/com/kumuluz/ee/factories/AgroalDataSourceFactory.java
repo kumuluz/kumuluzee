@@ -8,6 +8,7 @@ import com.kumuluz.ee.common.utils.StringUtils;
 import com.kumuluz.ee.jta.common.JtaProvider;
 import io.agroal.api.AgroalDataSource;
 import io.agroal.api.configuration.AgroalConnectionFactoryConfiguration.TransactionIsolation;
+import io.agroal.api.configuration.AgroalConnectionPoolConfiguration;
 import io.agroal.api.configuration.AgroalDataSourceConfiguration.DataSourceImplementation;
 import io.agroal.api.configuration.supplier.AgroalConnectionFactoryConfigurationSupplier;
 import io.agroal.api.configuration.supplier.AgroalConnectionPoolConfigurationSupplier;
@@ -15,7 +16,9 @@ import io.agroal.api.configuration.supplier.AgroalDataSourceConfigurationSupplie
 import io.agroal.api.security.NamePrincipal;
 import io.agroal.api.security.SimplePassword;
 
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -163,6 +166,25 @@ public class AgroalDataSourceFactory {
 
         // Unknown or non-existent configuration in Agroal
         Optional.ofNullable( dscp.getMinIdle() ).ifPresent(v -> warnMessageDepreciatedProperty("minIdle") );
+
+        if (dscp.getConnectionValidSql() != null) {
+            String validationQuery = dscp.getConnectionValidSql();
+            pool.connectionValidator(new AgroalConnectionPoolConfiguration.ConnectionValidator() {
+
+                @Override
+                public boolean isValid(Connection connection) {
+                    try (Statement stmt = connection.createStatement()) {
+                        stmt.execute(validationQuery);
+                        return true;
+                    } catch (Exception e) {
+                        log.log(Level.WARNING, "Connection validation failed", e);
+                    }
+                    return false;
+                }
+            });
+        } else {
+            pool.connectionValidator(AgroalConnectionPoolConfiguration.ConnectionValidator.defaultValidator());
+        }
 
         if (!StringUtils.isNullOrEmpty( dscp.getConnectionInitSql() )) {
             connectionFactoryConfig.initialSql(dscp.getConnectionInitSql());
