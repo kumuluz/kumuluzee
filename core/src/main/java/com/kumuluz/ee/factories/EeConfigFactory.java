@@ -17,10 +17,20 @@
  *  out of or in connection with the software or the use or other dealings in the
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
-*/
+ */
 package com.kumuluz.ee.factories;
 
-import com.kumuluz.ee.common.config.*;
+import com.kumuluz.ee.common.config.DataSourceConfig;
+import com.kumuluz.ee.common.config.DataSourcePoolConfig;
+import com.kumuluz.ee.common.config.DevConfig;
+import com.kumuluz.ee.common.config.EeConfig;
+import com.kumuluz.ee.common.config.EnvConfig;
+import com.kumuluz.ee.common.config.GzipConfig;
+import com.kumuluz.ee.common.config.MailServiceConfig;
+import com.kumuluz.ee.common.config.MailSessionConfig;
+import com.kumuluz.ee.common.config.ServerConfig;
+import com.kumuluz.ee.common.config.ServerConnectorConfig;
+import com.kumuluz.ee.common.config.XaDataSourceConfig;
 import com.kumuluz.ee.common.utils.EnvUtils;
 import com.kumuluz.ee.common.utils.StringUtils;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
@@ -94,6 +104,11 @@ public class EeConfigFactory {
         serverBuilder.http(httpBuilder);
         serverBuilder.https(httpsBuilder);
 
+        GzipConfig.Builder gzipBuilder =
+                createGzipConfigBuilder("kumuluzee.server.gzip");
+
+        serverBuilder.gzip(gzipBuilder);
+
         eeConfigBuilder.server(serverBuilder);
 
         Optional<List<String>> envCfgOpt = cfg.getMapKeys("kumuluzee.env");
@@ -121,21 +136,7 @@ public class EeConfigFactory {
             webappDir.ifPresent(devBuilder::webappDir);
             runningTests.ifPresent(devBuilder::runningTests);
 
-            Optional<Integer> scanLibrariesListSize = cfg.getListSize("kumuluzee.dev.scan-libraries");
-
-            if (scanLibrariesListSize.isPresent()) {
-                List<String> scanLibraries = new ArrayList<>();
-
-                for (int i = 0; i < scanLibrariesListSize.get(); i++) {
-                    Optional<String> lib = cfg.get("kumuluzee.dev.scan-libraries[" + i + "]");
-
-                    lib.ifPresent(scanLibraries::add);
-                }
-
-                if (scanLibraries.size() > 0) {
-                    devBuilder.scanLibraries(Collections.unmodifiableList(scanLibraries));
-                }
-            }
+            getConfigList("kumuluzee.dev.scan-libraries").ifPresent(devBuilder::scanLibraries);
 
             eeConfigBuilder.dev(devBuilder);
         }
@@ -480,5 +481,54 @@ public class EeConfigFactory {
         timeout.ifPresent(mailServiceBuilder::timeout);
 
         return mailServiceBuilder;
+    }
+
+    private static GzipConfig.Builder createGzipConfigBuilder(String prefix) {
+
+        ConfigurationUtil cfg = ConfigurationUtil.getInstance();
+
+        GzipConfig.Builder gzipBuilder = new GzipConfig.Builder();
+
+        Optional<Boolean> enabled = cfg.getBoolean(prefix + ".enabled");
+        Optional<Integer> minGzipSize = cfg.getInteger(prefix + ".min-gzip-size");
+        Optional<List<String>> includedMethods = getConfigList(prefix + ".included-methods");
+        Optional<List<String>> includedMimeTypes = getConfigList(prefix + ".included-mime-types");
+        Optional<List<String>> excludedMimeTypes = getConfigList(prefix + ".excluded-mime-types");
+        Optional<List<String>> excludedAgentPatterns = getConfigList(prefix + ".excluded-agent-patterns");
+        Optional<List<String>> excludedPaths = getConfigList(prefix + ".excluded-paths");
+        Optional<List<String>> includedPaths = getConfigList(prefix + ".included-paths");
+
+        enabled.ifPresent(gzipBuilder::enabled);
+        minGzipSize.ifPresent(gzipBuilder::minGzipSize);
+        includedMethods.ifPresent(gzipBuilder::includedMethods);
+        includedMimeTypes.ifPresent(gzipBuilder::includedMimeTypes);
+        excludedMimeTypes.ifPresent(gzipBuilder::excludedMimeTypes);
+        excludedAgentPatterns.ifPresent(gzipBuilder::excludedAgentPatterns);
+        excludedPaths.ifPresent(gzipBuilder::excludedPaths);
+        includedPaths.ifPresent(gzipBuilder::includedPaths);
+
+        return gzipBuilder;
+    }
+
+    private static Optional<List<String>> getConfigList(String key) {
+        ConfigurationUtil cfg = ConfigurationUtil.getInstance();
+
+        Optional<Integer> listSize = cfg.getListSize(key);
+
+        if (listSize.isPresent()) {
+            List<String> list = new ArrayList<>();
+
+            for (int i = 0; i < listSize.get(); i++) {
+                Optional<String> item = cfg.get(key + "[" + i + "]");
+
+                item.ifPresent(list::add);
+            }
+
+            if (list.size() > 0) {
+                return Optional.of(Collections.unmodifiableList(list));
+            }
+        }
+
+        return Optional.empty();
     }
 }
