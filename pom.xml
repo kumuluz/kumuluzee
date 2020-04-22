@@ -74,7 +74,7 @@
         <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
         <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
 
-        <jetty.version>9.4.15.v20190215</jetty.version>
+        <jetty.version>9.4.28.v20200408</jetty.version>
         <uel.version>3.0.0</uel.version>
         <weld.version>3.1.1.Final</weld.version>
         <hibernate.validator.version>6.0.16.Final</hibernate.validator.version>
@@ -109,6 +109,12 @@
             <id>tfaga</id>
             <email>tilen.faganel@me.com</email>
             <url>https://github.com/TFaga</url>
+        </developer>
+        <developer>
+            <name>Jan Meznaric</name>
+            <id>jmezna</id>
+            <email>jan.meznaric@gmail.com</email>
+            <url>https://github.com/jmezna</url>
         </developer>
     </developers>
 
