@@ -41,6 +41,8 @@ public class ServerConfig {
         private ServerConnectorConfig.Builder http = new ServerConnectorConfig.Builder();
         private ServerConnectorConfig.Builder https;
 
+        private GzipConfig.Builder gzip;
+
         public Builder baseUrl(String baseUrl) {
             this.baseUrl = baseUrl;
             return this;
@@ -86,6 +88,11 @@ public class ServerConfig {
             return this;
         }
 
+        public Builder gzip(GzipConfig.Builder gzip) {
+            this.gzip = gzip;
+            return this;
+        }
+
         public Builder showServerInfo(Boolean showServerInfo) {
             this.showServerInfo = showServerInfo;
             return this;
@@ -112,6 +119,8 @@ public class ServerConfig {
             serverConfig.http = http.build();
             if (https != null) serverConfig.https = https.build();
 
+            if (gzip != null) serverConfig.gzip = gzip.build();
+
             return serverConfig;
         }
     }
@@ -128,6 +137,8 @@ public class ServerConfig {
 
     private ServerConnectorConfig http;
     private ServerConnectorConfig https;
+
+    private GzipConfig gzip;
 
     private ServerConfig() {
     }
@@ -174,5 +185,9 @@ public class ServerConfig {
 
     public ServerConnectorConfig getHttps() {
         return https;
+    }
+
+    public GzipConfig getGzip() {
+        return gzip;
     }
 }
