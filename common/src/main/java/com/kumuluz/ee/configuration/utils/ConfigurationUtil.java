@@ -150,6 +150,24 @@ public class ConfigurationUtil {
         }
     }
 
+    public Optional<List<String>> getList(String key) {
+
+        Optional<Integer> listSize = getListSize(key);
+
+        if (!listSize.isPresent()) {
+            return Optional.empty();
+        }
+
+        List<String> list = new ArrayList<>();
+        for (int i = 0; i < listSize.get(); i++) {
+            Optional<String> value = get(key + "[" + i + "]");
+            value.ifPresent(list::add);
+        }
+
+        return Optional.of(list);
+
+    }
+
     public void set(String key, String value) {
         config.getConfigurationSources().get(0).set(key, value);
     }
