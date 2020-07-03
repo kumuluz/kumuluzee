@@ -1,0 +1,4 @@
+com.kumuluz.ee.configuration.sources.EnvironmentConfigurationSource
+com.kumuluz.ee.configuration.sources.FileConfigurationSource
+com.kumuluz.ee.configuration.sources.SystemPropertyConfigurationSource
+

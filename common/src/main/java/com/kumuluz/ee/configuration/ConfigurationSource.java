@@ -66,4 +66,6 @@ public interface ConfigurationSource {
     default Integer getOrdinal() {
         return getInteger(CONFIG_ORDINAL).orElse(100);
     }
+
+    default void postInit() {}
 }
