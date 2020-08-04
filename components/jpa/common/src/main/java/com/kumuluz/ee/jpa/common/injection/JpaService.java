@@ -20,6 +20,7 @@
 */
 package com.kumuluz.ee.jpa.common.injection;
 
+import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
 import com.kumuluz.ee.jpa.common.PersistenceUnitHolder;
 import com.kumuluz.ee.jpa.common.PersistenceWrapper;
 import com.kumuluz.ee.jpa.common.exceptions.NoDefaultPersistenceUnit;
@@ -32,6 +33,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
+import java.util.Optional;
+import java.util.logging.Logger;
 
 /**
  * @author Tilen Faganel
@@ -39,6 +42,8 @@ import javax.persistence.PersistenceUnit;
  */
 @Priority(1)
 public class JpaService implements JpaInjectionServices {
+
+    private Logger log = Logger.getLogger(JpaService.class.getSimpleName());;
 
     @Override
     public ResourceReferenceFactory<EntityManager> registerPersistenceContextInjectionPoint
@@ -59,10 +64,40 @@ public class JpaService implements JpaInjectionServices {
             }
         }
 
-        PersistenceWrapper wrapper = holder.getEntityManagerFactory(unitName);
+        //If database is unreachable, by default, framework will fail-early and not initialize due to unhandled exception.
+        //Error can be ignored with config override per PU, however EntityManager for that connection will be null.
+        boolean continueOnError = false;
+        ConfigurationUtil cfg = ConfigurationUtil.getInstance();
+        Optional<Integer> puSizeOpt = cfg.getListSize("kumuluzee.persistence-units");
 
-        return new PersistenceContextResourceFactory(unitName, wrapper.getEntityManagerFactory(),
+        if (puSizeOpt.isPresent()) {
+            for (int i = 0; i < puSizeOpt.get(); i++) {
+                Optional<String> puName = cfg.get("kumuluzee.persistence-units[" + i + "].name");
+                if (puName.isPresent() && puName.get().equals(unitName)) {
+                    Optional<Boolean> continueOnErrorCfg = cfg.getBoolean("kumuluzee.persistence-units[" + i + "].continue-on-error");
+                    if (continueOnErrorCfg.isPresent() && continueOnErrorCfg.get()!=null) {
+                        continueOnError = continueOnErrorCfg.get();
+                    }
+                    break;
+                }
+            }
+        }
+
+        try {
+            PersistenceWrapper wrapper = holder.getEntityManagerFactory(unitName);
+
+            return new PersistenceContextResourceFactory(unitName, wrapper.getEntityManagerFactory(),
                 wrapper.getTransactionType(), pc.synchronization());
+        }
+        catch (Exception e) {
+            if (!continueOnError) {
+                log.severe("EntityManager for pu "+unitName+" failed to initialize. KumuluzEE initialization failed.");
+                throw e;
+            }
+        }
+
+        log.warning("EntityManager for pu "+unitName+" failed to initialize. KumuluzEE will continue the startup regardless due to config override.");
+        return null;
     }
 
     @Override
