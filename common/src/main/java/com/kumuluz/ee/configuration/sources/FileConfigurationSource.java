@@ -418,7 +418,7 @@ public class FileConfigurationSource implements ConfigurationSource {
 
             if (inputStream != null) {
 
-                logDeferrer.defer(l -> l.info("Loading configuration from .properties file: " + propertiesFileName));
+                logDeferrer.defer(l -> l.info("Loading configuration from .properties file: " + fileName));
 
                 properties = new Properties();
                 properties.load(inputStream);

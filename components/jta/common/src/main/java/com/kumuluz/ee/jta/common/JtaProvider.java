@@ -20,56 +20,49 @@
 */
 package com.kumuluz.ee.jta.common;
 
+import com.kumuluz.ee.common.exceptions.KumuluzServerException;
+import io.agroal.api.transaction.TransactionIntegration;
+
 import javax.transaction.Status;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.UserTransaction;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
+import java.util.ServiceLoader;
 
 /**
  * @author Marcos Koch Salvador
  * @since 2.3.0
  */
-public class JtaTransactionHolder {
+public abstract class JtaProvider {
 
     public static final List<Integer> TRANSACTION_ACTIVE_STATUS = Arrays.asList(
             Status.STATUS_ACTIVE, Status.STATUS_COMMITTING, Status.STATUS_MARKED_ROLLBACK, Status.STATUS_PREPARED,
             Status.STATUS_PREPARING, Status.STATUS_ROLLING_BACK
     );
 
+    private static JtaProvider instance;
 
-    private static final JtaTransactionHolder INSTANCE = new JtaTransactionHolder();
-    private TransactionAcquirer transactionAcquirer;
+    public static JtaProvider getInstance() {
+        if (instance == null) {
+            Iterator<JtaProvider> it = ServiceLoader.load(JtaProvider.class).iterator();
 
-    private JtaTransactionHolder() {
+            if (!it.hasNext()) {
+                throw new KumuluzServerException("No JTA components were found");
+            }
+
+            instance = it.next();
+        }
+        return instance;
     }
 
-    public static JtaTransactionHolder getInstance() {
-        return INSTANCE;
-    }
+    public abstract UserTransaction getUserTransaction();
 
-    public void setTransactionAcquirer(TransactionAcquirer transactionAcquirer) {
-        this.transactionAcquirer = transactionAcquirer;
-    }
+    public abstract TransactionManager getTransactionManager();
 
-    private void validateTransactionAcquirer() {
-        Objects.requireNonNull(transactionAcquirer, "TransactionAcquirer not found!");
-    }
+    public abstract TransactionSynchronizationRegistry getTransactionSynchronizationRegistry();
 
-    public TransactionManager getTransactionManager() {
-        validateTransactionAcquirer();
-        return transactionAcquirer.getTransactionManager();
-    }
-
-    public UserTransaction getUserTransaction() {
-        validateTransactionAcquirer();
-        return transactionAcquirer.getUserTransaction();
-    }
-
-    public TransactionSynchronizationRegistry getTransactionSynchronizationRegistry() {
-        validateTransactionAcquirer();
-        return transactionAcquirer.getTransactionSynchronizationRegistry();
-    }
+    public abstract TransactionIntegration getTransactionIntegration();
 }

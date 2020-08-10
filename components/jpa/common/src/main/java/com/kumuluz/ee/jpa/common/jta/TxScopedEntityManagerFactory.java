@@ -21,7 +21,7 @@
 package com.kumuluz.ee.jpa.common.jta;
 
 import com.kumuluz.ee.jpa.common.injection.EntityManagerWrapper;
-import com.kumuluz.ee.jta.common.JtaTransactionHolder;
+import com.kumuluz.ee.jta.common.JtaProvider;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -37,10 +37,10 @@ public class TxScopedEntityManagerFactory {
 
     public static EntityManagerWrapper buildEntityManagerWrapper(String unitName, EntityManagerFactory emf, SynchronizationType sync) {
 
-        JtaTransactionHolder jtaHolder = JtaTransactionHolder.getInstance();
+        JtaProvider jtaProvider = JtaProvider.getInstance();
 
-        TransactionManager transactionManager = jtaHolder.getTransactionManager();
-        TransactionSynchronizationRegistry transactionSynchronizationRegistry = jtaHolder.getTransactionSynchronizationRegistry();
+        TransactionManager transactionManager = jtaProvider.getTransactionManager();
+        TransactionSynchronizationRegistry transactionSynchronizationRegistry = jtaProvider.getTransactionSynchronizationRegistry();
 
         NonTxEntityManagerHolder emHolder = new NonTxEntityManagerHolder();
 

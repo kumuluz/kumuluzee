@@ -31,6 +31,7 @@ public class ServerConfig {
         private String baseUrl;
         private String contextPath = "/";
         private Boolean dirBrowsing = false;
+        private Boolean etags = false;
         private Integer minThreads = 5;
         private Integer maxThreads = 100;
         private Boolean forceHttps = false;
@@ -39,6 +40,8 @@ public class ServerConfig {
 
         private ServerConnectorConfig.Builder http = new ServerConnectorConfig.Builder();
         private ServerConnectorConfig.Builder https;
+
+        private GzipConfig.Builder gzip;
 
         public Builder baseUrl(String baseUrl) {
             this.baseUrl = baseUrl;
@@ -52,6 +55,11 @@ public class ServerConfig {
 
         public Builder dirBrowsing(Boolean dirBrowsing) {
             this.dirBrowsing = dirBrowsing;
+            return this;
+        }
+
+        public Builder etags(Boolean etags) {
+            this.etags = etags;
             return this;
         }
 
@@ -80,6 +88,11 @@ public class ServerConfig {
             return this;
         }
 
+        public Builder gzip(GzipConfig.Builder gzip) {
+            this.gzip = gzip;
+            return this;
+        }
+
         public Builder showServerInfo(Boolean showServerInfo) {
             this.showServerInfo = showServerInfo;
             return this;
@@ -96,6 +109,7 @@ public class ServerConfig {
             serverConfig.baseUrl = baseUrl;
             serverConfig.contextPath = contextPath;
             serverConfig.dirBrowsing = dirBrowsing;
+            serverConfig.etags = etags;
             serverConfig.minThreads = minThreads;
             serverConfig.maxThreads = maxThreads;
             serverConfig.forceHttps = forceHttps;
@@ -105,6 +119,8 @@ public class ServerConfig {
             serverConfig.http = http.build();
             if (https != null) serverConfig.https = https.build();
 
+            if (gzip != null) serverConfig.gzip = gzip.build();
+
             return serverConfig;
         }
     }
@@ -112,6 +128,7 @@ public class ServerConfig {
     private String baseUrl;
     private String contextPath;
     private Boolean dirBrowsing;
+    private Boolean etags;
     private Integer minThreads;
     private Integer maxThreads;
     private Boolean forceHttps;
@@ -120,6 +137,8 @@ public class ServerConfig {
 
     private ServerConnectorConfig http;
     private ServerConnectorConfig https;
+
+    private GzipConfig gzip;
 
     private ServerConfig() {
     }
@@ -134,6 +153,10 @@ public class ServerConfig {
 
     public Boolean getDirBrowsing() {
         return dirBrowsing;
+    }
+
+    public Boolean getEtags() {
+        return etags;
     }
 
     public Integer getMinThreads() {
@@ -162,5 +185,9 @@ public class ServerConfig {
 
     public ServerConnectorConfig getHttps() {
         return https;
+    }
+
+    public GzipConfig getGzip() {
+        return gzip;
     }
 }

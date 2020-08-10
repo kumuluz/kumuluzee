@@ -5,7 +5,7 @@
     <parent>
         <artifactId>kumuluzee</artifactId>
         <groupId>com.kumuluz.ee</groupId>
-        <version>3.5.0-SNAPSHOT</version>
+        <version>3.11.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -31,8 +31,18 @@
         </dependency>
 
         <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
+            <groupId>io.agroal</groupId>
+            <artifactId>agroal-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.agroal</groupId>
+            <artifactId>agroal-hikari</artifactId>
+            <version>${agroal.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.agroal</groupId>
+            <artifactId>agroal-pool</artifactId>
+            <version>${agroal.version}</version>
         </dependency>
         <dependency>
             <groupId>org.yaml</groupId>

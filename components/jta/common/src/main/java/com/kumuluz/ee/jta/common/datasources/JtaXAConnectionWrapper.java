@@ -20,7 +20,7 @@
 */
 package com.kumuluz.ee.jta.common.datasources;
 
-import com.kumuluz.ee.jta.common.JtaTransactionHolder;
+import com.kumuluz.ee.jta.common.JtaProvider;
 import com.kumuluz.ee.jta.common.utils.TxUtils;
 
 import javax.sql.XAConnection;
@@ -40,6 +40,7 @@ import java.util.logging.Logger;
  * @author Tilen Faganel
  * @since 2.3.0
  */
+@Deprecated
 public class JtaXAConnectionWrapper implements Connection {
 
     private Logger log = Logger.getLogger(JtaXAConnectionWrapper.class.getSimpleName());
@@ -48,13 +49,15 @@ public class JtaXAConnectionWrapper implements Connection {
     private Boolean isEnlistedInJTA = false;
     private Boolean closeAfterTransactionEnd = false;
 
+    private XAConnection parentConnection;
     private Connection xaConnection;
     private XAResource xaResource;
 
     private TransactionManager transactionManager;
 
     public JtaXAConnectionWrapper(XAConnection xaConnection) throws SQLException {
-        xaResource = xaConnection.getXAResource();
+        this.xaResource = xaConnection.getXAResource();
+        this.parentConnection = xaConnection;
         this.xaConnection = xaConnection.getConnection();
     }
 
@@ -147,11 +150,7 @@ public class JtaXAConnectionWrapper implements Connection {
             return;
         }
 
-        if (xaConnection != null) {
-
-            xaConnection.close();
-            xaConnection = null;
-        }
+        closeConnections(this);
     }
 
     @Override
@@ -599,7 +598,7 @@ public class JtaXAConnectionWrapper implements Connection {
         try {
 
             if (transactionManager == null) {
-                transactionManager = JtaTransactionHolder.getInstance().getTransactionManager();
+                transactionManager = JtaProvider.getInstance().getTransactionManager();
             }
 
             if (TxUtils.isActive(transactionManager)) {
@@ -621,8 +620,7 @@ public class JtaXAConnectionWrapper implements Connection {
                         if (jtaXaConnectionWrapper.closeAfterTransactionEnd && jtaXaConnectionWrapper.xaConnection != null) {
 
                             try {
-                                jtaXaConnectionWrapper.xaConnection.close();
-                                jtaXaConnectionWrapper.xaConnection = null;
+                                closeConnections(jtaXaConnectionWrapper);
                             } catch (SQLException e) {
 
                                 log.severe("There was an error closing the connection after transaction complete");
@@ -635,6 +633,17 @@ public class JtaXAConnectionWrapper implements Connection {
             }
         } catch (SystemException | RollbackException e) {
             throw new SQLException(e);
+        }
+    }
+
+    private static void closeConnections(JtaXAConnectionWrapper jtaXaConnectionWrapper) throws SQLException {
+        if (jtaXaConnectionWrapper.xaConnection != null) {
+            jtaXaConnectionWrapper.xaConnection.close();
+            jtaXaConnectionWrapper.xaConnection = null;
+        }
+        if (jtaXaConnectionWrapper.parentConnection != null) {
+            jtaXaConnectionWrapper.parentConnection.close();
+            jtaXaConnectionWrapper.parentConnection = null;
         }
     }
 }

@@ -12,7 +12,7 @@ KumuluzEE has been designed to use the standard Java/JavaEE/JakartaEE/EE4J techn
 
 KumuluzEE provides full support for **Java**, including Java SE 9/10/11 and higher versions and Java EE 8. In addition to Java, KumuluzEE supports several programming languages, including **Node.js** and **Go**. Support for additional languages will be added soon. For these languages, KumuluzEE also provides support for service configuration and discovery. 
 
-KumuluzEE is Eclipse MicroProfile compliant and provides support for MicroProfile 1.0, 1.1, 1.2, 1.3, 1.4, 2.0 and 2.1. Support for version 2.2 is coming soon. KumuluzEE implements MicroProfile Config 1.3, MicroProfile Health 1.0, MicroProfile Fault Tolerance 1.1, MicroProfile Metrics 1.1, MicroProfile JWT Authentication 1.1, MicroProfile Rest Client 1.1, MicroProfile OpenAPI 1.0.1 and MicroProfile Open Tracing 1.2.1 APIs.
+KumuluzEE is Eclipse MicroProfile compliant and provides support for MicroProfile 1.0, 1.1, 1.2, 1.3, 1.4, 2.0, 2.1, 3.0, 3.1, 3.2 and 3.3. KumuluzEE implements MicroProfile Config 1.4, MicroProfile Health 2.2, MicroProfile Fault Tolerance 2.1, MicroProfile Metrics 2.3, MicroProfile JWT Authentication 1.1, MicroProfile Rest Client 1.3, MicroProfile OpenAPI 1.1 and MicroProfile Open Tracing 1.3 APIs.
 
 ## Getting started
 
@@ -64,7 +64,7 @@ Currently the following components are supported with more being added over time
 
 KumuluzEE provides additional features, which are described on the [project Wiki]( https://github.com/kumuluz/kumuluzee/wiki), particularly:
 - [Configuration framework](https://github.com/kumuluz/kumuluzee/wiki/Configuration) for easy and efficient configuration of microservices from various sources, such as environment variables, configuration files (yaml), properties, etc.
-- [TLS/SSL support](https://github.com/kumuluz/kumuluzee/wiki/TLS-SSL-support) for configuring TLS/SSL.
+- [TLS/SSL support](https://github.com/kumuluz/kumuluzee/wiki/TLS-SSL-support) for configuring TLS/SSL, including support for **HTTP/2**.
 
 KumuluzEE also provides support for [**Uber JARs**](https://github.com/kumuluz/kumuluzee/wiki/Uber-JAR-support). With the KumuluzEE Maven plugin, you can pack and run each microservice as a single, self-contained Uber-JAR. Details are described later in this document.
 
@@ -91,7 +91,10 @@ The following projects are available with more planned soon:
 - [KumuluzEE gRPC](https://github.com/kumuluz/kumuluzee-grpc) (Native support for gRPC based services)
 - [KumuluzEE GraphQL](https://github.com/kumuluz/kumuluzee-graphql) (Native support for GraphQL)
 - [KumuluzEE Ethereum](https://github.com/kumuluz/kumuluzee-ethereum) (For Ethereum-enabled blockchain microservices)
-- **_new_** [KumuluzEE AMQP](https://github.com/kumuluz/kumuluzee-amqp) (Support for Advanced Message Queueing Protocol)
+- [KumuluzEE AMQP](https://github.com/kumuluz/kumuluzee-amqp) (Support for Advanced Message Queueing Protocol)
+- **_new_** [KumuluzEE Feature Flags](https://github.com/kumuluz/kumuluzee-feature-flags) (Support for development with feature flags.)
+- **_new_** [KumuluzEE JCache](https://github.com/kumuluz/kumuluzee-jcache) (Support for caching using JCache annotations.)
+- **_new_** [KumuluzEE Version](https://github.com/kumuluz/kumuluzee-version) (Support for exposing version details of microservice.)
 
 
 ## MicroProfile
@@ -104,16 +107,20 @@ KumuluzEE is Eclipse MicroProfile compliant and provides support for:
 - MicroProfile 1.4
 - MicroProfile 2.0
 - MicroProfile 2.1
+- MicroProfile 3.0
+- MicroProfile 3.1
+- MicroProfile 3.2
+- MicroProfile 3.3
 
 It implements the following MicroProfile APIs:
-- [MicroProfile Config 1.3](https://github.com/kumuluz/kumuluzee-config-mp)
-- [MicroProfile Health Check 1.0](https://github.com/kumuluz/kumuluzee-health)
-- [MicroProfile Fault Tolerance 1.1](https://github.com/kumuluz/kumuluzee-fault-tolerance)
-- [MicroProfile Metrics 1.1](https://github.com/kumuluz/kumuluzee-metrics)
-- [MicroProfile JWT Authentication 1.1](https://github.com/kumuluz/kumuluzee-jwt-auth)
-- [MicroProfile Rest Client 1.1](https://github.com/kumuluz/kumuluzee-rest-client)
-- [MicroProfile OpenAPI 1.0.1](https://github.com/kumuluz/kumuluzee-openapi-mp)
-- [MicroProfile Open Tracing 1.2.1](https://github.com/kumuluz/kumuluzee-opentracing)
+- [MicroProfile Config](https://github.com/kumuluz/kumuluzee-config-mp)
+- [MicroProfile Health Check](https://github.com/kumuluz/kumuluzee-health)
+- [MicroProfile Fault Tolerance](https://github.com/kumuluz/kumuluzee-fault-tolerance)
+- [MicroProfile Metrics](https://github.com/kumuluz/kumuluzee-metrics)
+- [MicroProfile JWT Authentication](https://github.com/kumuluz/kumuluzee-jwt-auth)
+- [MicroProfile Rest Client](https://github.com/kumuluz/kumuluzee-rest-client)
+- [MicroProfile OpenAPI](https://github.com/kumuluz/kumuluzee-openapi-mp)
+- [MicroProfile Open Tracing](https://github.com/kumuluz/kumuluzee-opentracing)
 
 ## Usage
 
@@ -198,6 +205,42 @@ MicroProfile 2.1
 <dependency>
     <groupId>com.kumuluz.ee</groupId>
     <artifactId>kumuluzee-microProfile-2.1</artifactId>
+</dependency>
+```
+
+MicroProfile 3.0
+```xml
+<!-- MicroProfile 3.0 -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-microProfile-3.0</artifactId>
+</dependency>
+```
+
+MicroProfile 3.1
+```xml
+<!-- MicroProfile 3.1 -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-microProfile-3.1</artifactId>
+</dependency>
+```
+
+MicroProfile 3.2
+```xml
+<!-- MicroProfile 3.2 -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-microProfile-3.2</artifactId>
+</dependency>
+```
+
+MicroProfile 3.3
+```xml
+<!-- MicroProfile 3.3 -->
+<dependency>
+    <groupId>com.kumuluz.ee</groupId>
+    <artifactId>kumuluzee-microProfile-3.3</artifactId>
 </dependency>
 ```
 

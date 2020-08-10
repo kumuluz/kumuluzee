@@ -43,11 +43,13 @@ import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
 import com.kumuluz.ee.configuration.ConfigurationSource;
 import com.kumuluz.ee.configuration.utils.ConfigurationImpl;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
+import com.kumuluz.ee.factories.AgroalDataSourceFactory;
 import com.kumuluz.ee.factories.EeConfigFactory;
 import com.kumuluz.ee.factories.JtaXADataSourceFactory;
 import com.kumuluz.ee.loaders.*;
 import com.kumuluz.ee.logs.impl.JavaUtilDefaultLogConfigurator;
 import com.zaxxer.hikari.HikariDataSource;
+import io.agroal.api.AgroalDataSource;
 
 import javax.sql.XADataSource;
 import java.util.*;
@@ -91,6 +93,26 @@ public class EeApplication {
 
     private void initialize() {
 
+        // Loading the logs extension and set up logging bridges before any actual logging is done
+        Optional<LogsExtension> logsExtensionOptional = LogsExtensionLoader.loadExtension();
+
+        LogsExtension logsExtension = null;
+        if (logsExtensionOptional.isPresent()) {
+
+            logsExtension = logsExtensionOptional.get();
+
+            Optional<Class<? extends LogManager>> logManager = logsExtension.getJavaUtilLogManagerClass();
+            Optional<Handler> logHandler = logsExtension.getJavaUtilLogHandler();
+
+            if (logManager.isPresent()) {
+                System.setProperty("java.util.logging.manager", logManager.get().getName());
+            } else {
+                logHandler.ifPresent(JavaUtilDefaultLogConfigurator::initSoleHandler);
+            }
+        } else {
+            JavaUtilDefaultLogConfigurator.init();
+        }
+
         // Initialize the configuration
         ConfigurationImpl configImpl = new ConfigurationImpl();
 
@@ -105,25 +127,12 @@ public class EeApplication {
 
         EeConfig.initialize(this.eeConfig);
 
-        // Loading the logs extension and set up logging bridges before any actual logging is done
-        Optional<LogsExtension> logsExtensionOptional = LogsExtensionLoader.loadExtension();
-
-        if (logsExtensionOptional.isPresent()) {
-
-            LogsExtension logsExtension = logsExtensionOptional.get();
-
-            Optional<Class<? extends LogManager>> logManager = logsExtension.getJavaUtilLogManagerClass();
-            Optional<Handler> logHandler = logsExtension.getJavaUtilLogHandler();
-
-            if (logManager.isPresent()) {
-
-                System.setProperty("java.util.logging.manager", logManager.get().getName());
-            } else logHandler.ifPresent(JavaUtilDefaultLogConfigurator::initSoleHandler);
-
+        // We first set java.util.logging.manager by extension detection and only load the extension
+        // after configuration sources have been initialized. This is because the property must be set
+        // before any calls are made to LogManager or Logger. Some of the external configuration libraries
+        // can and do in fact call the methods so this reorder is necessary.
+        if (logsExtension!=null) {
             logsExtension.load();
-        } else {
-
-            JavaUtilDefaultLogConfigurator.init();
         }
 
         // Create the main class logger
@@ -133,7 +142,6 @@ public class EeApplication {
         configImpl.postInit();
 
         for (ConfigurationSource configurationSource : configImpl.getConfigurationSources()) {
-
             log.info("Initialized configuration source: " + configurationSource.getClass().getSimpleName());
         }
 
@@ -261,77 +269,17 @@ public class EeApplication {
             servletServer.initWebContext(collectScanLibraries(allExtensions));
 
             // Create and register datasources to the underlying server
-            if (eeConfig.getDatasources().size() > 0) {
+            boolean jtaPresent = eeRuntimeInternal.getEeComponents().stream().anyMatch(c -> c.getType().equals(EeComponentType.JTA));
 
-                for (DataSourceConfig dsc : eeConfig.getDatasources()) {
+            eeConfig.getDatasources().forEach(dsc -> {
+                AgroalDataSource ds = AgroalDataSourceFactory.createDataSource(dsc, jtaPresent);
+                servletServer.registerDataSource(ds, dsc.getJndiName());
+            });
 
-                    HikariDataSource ds = new HikariDataSource();
-                    ds.setJdbcUrl(dsc.getConnectionUrl());
-                    ds.setUsername(dsc.getUsername());
-                    ds.setPassword(dsc.getPassword());
-
-                    if (dsc.getDriverClass() != null && !dsc.getDriverClass().isEmpty())
-                        ds.setDriverClassName(dsc.getDriverClass());
-
-                    if (dsc.getDataSourceClass() != null && !dsc.getDataSourceClass().isEmpty()) {
-                        ds.setDataSourceClassName(dsc.getDataSourceClass());
-                    }
-
-                    DataSourcePoolConfig dscp = dsc.getPool();
-
-                    ds.setAutoCommit(dscp.getAutoCommit());
-                    ds.setConnectionTimeout(dscp.getConnectionTimeout());
-                    ds.setIdleTimeout(dscp.getIdleTimeout());
-                    ds.setMaxLifetime(dscp.getMaxLifetime());
-                    ds.setMaximumPoolSize(dscp.getMaxSize());
-                    ds.setPoolName(dscp.getName());
-                    ds.setInitializationFailTimeout(dscp.getInitializationFailTimeout());
-                    ds.setIsolateInternalQueries(dscp.getIsolateInternalQueries());
-                    ds.setAllowPoolSuspension(dscp.getAllowPoolSuspension());
-                    ds.setReadOnly(dscp.getReadOnly());
-                    ds.setRegisterMbeans(dscp.getRegisterMbeans());
-                    ds.setValidationTimeout(dscp.getValidationTimeout());
-                    ds.setLeakDetectionThreshold(dscp.getLeakDetectionThreshold());
-
-                    if (dscp.getMinIdle() != null) {
-                        ds.setMinimumIdle(dscp.getMinIdle());
-                    }
-
-                    if (dscp.getConnectionInitSql() != null) {
-                        ds.setConnectionInitSql(dscp.getConnectionInitSql());
-                    }
-
-                    if (dscp.getTransactionIsolation() != null) {
-                        ds.setTransactionIsolation(dscp.getTransactionIsolation());
-                    }
-
-                    dsc.getProps().forEach(ds::addDataSourceProperty);
-
-                    servletServer.registerDataSource(ds, dsc.getJndiName());
-                }
-            }
-
-            if (eeConfig.getXaDatasources().size() > 0) {
-
-                Boolean jtaPresent = eeRuntimeInternal.getEeComponents().stream().anyMatch(c -> c.getType().equals(EeComponentType.JTA));
-
-                for (XaDataSourceConfig xdsc : eeConfig.getXaDatasources()) {
-
-                    XADataSourceBuilder XADataSourceBuilder = new XADataSourceBuilder(xdsc);
-
-                    XADataSource xaDataSource = XADataSourceBuilder.constructXaDataSource();
-
-                    XADataSourceWrapper xaDataSourceWrapper;
-
-                    if (jtaPresent) {
-                        xaDataSourceWrapper = JtaXADataSourceFactory.buildJtaXADataSourceWrapper(xaDataSource);
-                    } else {
-                        xaDataSourceWrapper = new NonJtaXADataSourceWrapper(xaDataSource);
-                    }
-
-                    servletServer.registerDataSource(xaDataSourceWrapper, xdsc.getJndiName());
-                }
-            }
+            eeConfig.getXaDatasources().forEach(xdsc -> {
+                AgroalDataSource xds = AgroalDataSourceFactory.createXaDataSource(xdsc, jtaPresent);
+                servletServer.registerDataSource(xds, xdsc.getJndiName());
+            });
 
             // Add the server info headers
             if (eeConfig.getServer().getShowServerInfo()) {

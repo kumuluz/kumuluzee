@@ -14,13 +14,13 @@ cache:
   directories:
   - $HOME/.m2
 
-install: mvn clean install -DskipTests=true -V -U
-script: mvn test -Dkumuluzee.plugin.test.skip=true
+install: mvn -q clean install -DskipTests=true -V -U
+script: mvn -q test -Dkumuluzee.plugin.test.skip=true
 
 after_success:
 # Deploy to OSSHR
 - if [[ $TRAVIS_PULL_REQUEST == "false" && ($TRAVIS_BRANCH == "master" || $TRAVIS_TAG) ]]; then
-    openssl aes-256-cbc -K $encrypted_047edc09e660_key -iv $encrypted_047edc09e660_iv -in gpg.tar.gz.enc -out gpg.tar.gz -d;
+    openssl aes-256-cbc -K $encrypted_2d0b19d1e06d_key -iv $encrypted_2d0b19d1e06d_iv -in gpg.tar.gz.enc -out gpg.tar.gz -d;
     tar xvf gpg.tar.gz;
     mvn source:jar javadoc:jar deploy -Pdeploy -DskipTests=true --settings ./settings.xml;
   fi

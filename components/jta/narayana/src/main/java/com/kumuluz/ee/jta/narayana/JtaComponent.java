@@ -26,10 +26,10 @@ import com.kumuluz.ee.common.Component;
 import com.kumuluz.ee.common.ServletServer;
 import com.kumuluz.ee.common.config.EeConfig;
 import com.kumuluz.ee.common.dependencies.EeComponentDef;
+import com.kumuluz.ee.common.dependencies.EeComponentDependency;
 import com.kumuluz.ee.common.dependencies.EeComponentType;
 import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
-import com.kumuluz.ee.jta.common.JtaTransactionHolder;
-import com.kumuluz.ee.jta.common.TransactionAcquirer;
+import com.kumuluz.ee.jta.common.JtaProvider;
 
 import javax.naming.NamingException;
 import java.util.logging.Level;
@@ -40,18 +40,15 @@ import java.util.logging.Logger;
  * @since 2.3.0
  */
 @EeComponentDef(name = "Narayana JTA", type = EeComponentType.JTA)
+@EeComponentDependency(value = EeComponentType.CDI)
 public class JtaComponent implements Component {
 
     private Logger log = Logger.getLogger(JtaComponent.class.getSimpleName());
 
     @Override
     public void init(KumuluzServerWrapper server, EeConfig eeConfig) {
-        TransactionAcquirer transactionAcquirer = new NarayanaTransactionAcquirer();
-
-        JtaTransactionHolder.getInstance().setTransactionAcquirer(transactionAcquirer);
-
         if (server.getServer() instanceof ServletServer) {
-            ((ServletServer) server.getServer()).registerTransactionManager(transactionAcquirer.getUserTransaction());
+            ((ServletServer) server.getServer()).registerTransactionManager(JtaProvider.getInstance().getUserTransaction());
         }
     }
 

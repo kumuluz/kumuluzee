@@ -5,7 +5,7 @@
     <parent>
         <artifactId>kumuluzee-jta</artifactId>
         <groupId>com.kumuluz.ee</groupId>
-        <version>3.5.0-SNAPSHOT</version>
+        <version>3.11.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -27,6 +27,12 @@
         <dependency>
             <groupId>javax.resource</groupId>
             <artifactId>javax.resource-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.weld.module</groupId>
+            <artifactId>weld-jta</artifactId>
+            <version>${weld.version}</version>
         </dependency>
 
         <dependency>

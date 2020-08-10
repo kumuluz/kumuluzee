@@ -17,10 +17,20 @@
  *  out of or in connection with the software or the use or other dealings in the
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
-*/
+ */
 package com.kumuluz.ee.factories;
 
-import com.kumuluz.ee.common.config.*;
+import com.kumuluz.ee.common.config.DataSourceConfig;
+import com.kumuluz.ee.common.config.DataSourcePoolConfig;
+import com.kumuluz.ee.common.config.DevConfig;
+import com.kumuluz.ee.common.config.EeConfig;
+import com.kumuluz.ee.common.config.EnvConfig;
+import com.kumuluz.ee.common.config.GzipConfig;
+import com.kumuluz.ee.common.config.MailServiceConfig;
+import com.kumuluz.ee.common.config.MailSessionConfig;
+import com.kumuluz.ee.common.config.ServerConfig;
+import com.kumuluz.ee.common.config.ServerConnectorConfig;
+import com.kumuluz.ee.common.config.XaDataSourceConfig;
 import com.kumuluz.ee.common.utils.EnvUtils;
 import com.kumuluz.ee.common.utils.StringUtils;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
@@ -63,6 +73,7 @@ public class EeConfigFactory {
             Optional<String> baseUrl = cfg.get("kumuluzee.server.base-url");
             Optional<String> contextPath = cfg.get("kumuluzee.server.context-path");
             Optional<Boolean> dirBrowsing = cfg.getBoolean("kumuluzee.server.dir-browsing");
+            Optional<Boolean> etags = cfg.getBoolean("kumuluzee.server.etags");
             Optional<Integer> minThreads = cfg.getInteger("kumuluzee.server.min-threads");
             Optional<Integer> maxThreads = cfg.getInteger("kumuluzee.server.max-threads");
             Optional<Boolean> forceHttps = cfg.getBoolean("kumuluzee.server.force-https");
@@ -72,6 +83,7 @@ public class EeConfigFactory {
             baseUrl.ifPresent(serverBuilder::baseUrl);
             contextPath.ifPresent(serverBuilder::contextPath);
             dirBrowsing.ifPresent(serverBuilder::dirBrowsing);
+            etags.ifPresent(serverBuilder::etags);
             minThreads.ifPresent(serverBuilder::minThreads);
             maxThreads.ifPresent(serverBuilder::maxThreads);
             forceHttps.ifPresent(serverBuilder::forceHttps);
@@ -91,6 +103,11 @@ public class EeConfigFactory {
 
         serverBuilder.http(httpBuilder);
         serverBuilder.https(httpsBuilder);
+
+        GzipConfig.Builder gzipBuilder =
+                createGzipConfigBuilder("kumuluzee.server.gzip");
+
+        serverBuilder.gzip(gzipBuilder);
 
         eeConfigBuilder.server(serverBuilder);
 
@@ -119,21 +136,7 @@ public class EeConfigFactory {
             webappDir.ifPresent(devBuilder::webappDir);
             runningTests.ifPresent(devBuilder::runningTests);
 
-            Optional<Integer> scanLibrariesListSize = cfg.getListSize("kumuluzee.dev.scan-libraries");
-
-            if (scanLibrariesListSize.isPresent()) {
-                List<String> scanLibraries = new ArrayList<>();
-
-                for (int i = 0; i < scanLibrariesListSize.get(); i++) {
-                    Optional<String> lib = cfg.get("kumuluzee.dev.scan-libraries[" + i + "]");
-
-                    lib.ifPresent(scanLibraries::add);
-                }
-
-                if (scanLibraries.size() > 0) {
-                    devBuilder.scanLibraries(Collections.unmodifiableList(scanLibraries));
-                }
-            }
+            getConfigList("kumuluzee.dev.scan-libraries").ifPresent(devBuilder::scanLibraries);
 
             eeConfigBuilder.dev(devBuilder);
         }
@@ -167,10 +170,13 @@ public class EeConfigFactory {
                     DataSourcePoolConfig.Builder dspc = new DataSourcePoolConfig.Builder();
 
                     Optional<Boolean> autoCommit = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.auto-commit");
+                    Optional<Boolean> flushOnClose = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.flush-on-close");
                     Optional<Long> connectionTimeout = cfg.getLong("kumuluzee.datasources[" + i + "].pool.connection-timeout");
                     Optional<Long> idleTimeout = cfg.getLong("kumuluzee.datasources[" + i + "].pool.idle-timeout");
                     Optional<Long> maxLifetime = cfg.getLong("kumuluzee.datasources[" + i + "].pool.max-lifetime");
                     Optional<Integer> minIdle = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.min-idle");
+                    Optional<Integer> initialSize = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.initial-size");
+                    Optional<Integer> minSize = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.min-size");
                     Optional<Integer> maxSize = cfg.getInteger("kumuluzee.datasources[" + i + "].pool.max-size");
                     Optional<String> poolName = cfg.get("kumuluzee.datasources[" + i + "].pool.name");
                     Optional<Long> initializationFailTimeout = cfg.getLong("kumuluzee.datasources[" + i + "].pool" +
@@ -181,15 +187,20 @@ public class EeConfigFactory {
                     Optional<Boolean> readOnly = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.read-only");
                     Optional<Boolean> registerMbeans = cfg.getBoolean("kumuluzee.datasources[" + i + "].pool.register-mbeans");
                     Optional<String> connectionInitSql = cfg.get("kumuluzee.datasources[" + i + "].pool.connection-init-sql");
+                    Optional<String> connectionValidSql = cfg.get("kumuluzee.datasources[" + i + "].pool.connection-valid-sql");
                     Optional<String> transactionIsolation = cfg.get("kumuluzee.datasources[" + i + "].pool.transaction-isolation");
                     Optional<Long> validationTimeout = cfg.getLong("kumuluzee.datasources[" + i + "].pool.validation-timeout");
                     Optional<Long> leakDetectionThreshold = cfg.getLong("kumuluzee.datasources[" + i + "].pool.leak-detection-threshold");
+                    Optional<Long> idleValidationTimeout = cfg.getLong("kumuluzee.datasources[" + i + "].pool.idle-validation-timeout");
 
                     autoCommit.ifPresent(dspc::autoCommit);
+                    flushOnClose.ifPresent(dspc::flushOnClose);
                     connectionTimeout.ifPresent(dspc::connectionTimeout);
                     idleTimeout.ifPresent(dspc::idleTimeout);
                     maxLifetime.ifPresent(dspc::maxLifetime);
                     minIdle.ifPresent(dspc::minIdle);
+                    initialSize.ifPresent(dspc::initialSize);
+                    minSize.ifPresent(dspc::minSize);
                     maxSize.ifPresent(dspc::maxSize);
                     poolName.ifPresent(dspc::name);
                     initializationFailTimeout.ifPresent(dspc::initializationFailTimeout);
@@ -198,9 +209,11 @@ public class EeConfigFactory {
                     readOnly.ifPresent(dspc::readOnly);
                     registerMbeans.ifPresent(dspc::registerMbeans);
                     connectionInitSql.ifPresent(dspc::connectionInitSql);
+                    connectionValidSql.ifPresent(dspc::connectionValidSql);
                     transactionIsolation.ifPresent(dspc::transactionIsolation);
                     validationTimeout.ifPresent(dspc::validationTimeout);
                     leakDetectionThreshold.ifPresent(dspc::leakDetectionThreshold);
+                    idleValidationTimeout.ifPresent(dspc::idleValidationTimeout);
 
                     dsc.pool(dspc);
                 }
@@ -238,6 +251,59 @@ public class EeConfigFactory {
                 xaDatasourceClass.ifPresent(xdsc::xaDatasourceClass);
                 user.ifPresent(xdsc::username);
                 pass.ifPresent(xdsc::password);
+
+                Optional<List<String>> pool = cfg.getMapKeys("kumuluzee.xa-datasources[" + i + "].pool");
+
+                if (pool.isPresent()) {
+
+                    DataSourcePoolConfig.Builder dspc = new DataSourcePoolConfig.Builder();
+
+                    Optional<Boolean> autoCommit = cfg.getBoolean("kumuluzee.xa-datasources[" + i + "].pool.auto-commit");
+                    Optional<Boolean> flushOnClose = cfg.getBoolean("kumuluzee.xa-datasources[" + i + "].pool.flush-on-close");
+                    Optional<Long> connectionTimeout = cfg.getLong("kumuluzee.xa-datasources[" + i + "].pool.connection-timeout");
+                    Optional<Long> idleTimeout = cfg.getLong("kumuluzee.xa-datasources[" + i + "].pool.idle-timeout");
+                    Optional<Long> maxLifetime = cfg.getLong("kumuluzee.xa-datasources[" + i + "].pool.max-lifetime");
+                    Optional<Integer> minIdle = cfg.getInteger("kumuluzee.xa-datasources[" + i + "].pool.min-idle");
+                    Optional<Integer> initialSize = cfg.getInteger("kumuluzee.xa-datasources[" + i + "].pool.initial-size");
+                    Optional<Integer> minSize = cfg.getInteger("kumuluzee.xa-datasources[" + i + "].pool.min-size");
+                    Optional<Integer> maxSize = cfg.getInteger("kumuluzee.xa-datasources[" + i + "].pool.max-size");
+                    Optional<String> poolName = cfg.get("kumuluzee.xa-datasources[" + i + "].pool.name");
+                    Optional<Long> initializationFailTimeout = cfg.getLong("kumuluzee.xa-datasources[" + i + "].pool" +
+                            ".initialization-fail-timeout");
+                    Optional<Boolean> isolateInternalQueries = cfg.getBoolean("kumuluzee.xa-datasources[" + i + "].pool" +
+                            ".isolate-internal-queries");
+                    Optional<Boolean> allowPoolSuspension = cfg.getBoolean("kumuluzee.xa-datasources[" + i + "].pool.allow-pool-suspension");
+                    Optional<Boolean> readOnly = cfg.getBoolean("kumuluzee.xa-datasources[" + i + "].pool.read-only");
+                    Optional<Boolean> registerMbeans = cfg.getBoolean("kumuluzee.xa-datasources[" + i + "].pool.register-mbeans");
+                    Optional<String> connectionInitSql = cfg.get("kumuluzee.xa-datasources[" + i + "].pool.connection-init-sql");
+                    Optional<String> transactionIsolation = cfg.get("kumuluzee.xa-datasources[" + i + "].pool.transaction-isolation");
+                    Optional<Long> validationTimeout = cfg.getLong("kumuluzee.xa-datasources[" + i + "].pool.validation-timeout");
+                    Optional<Long> leakDetectionThreshold = cfg.getLong("kumuluzee.xa-datasources[" + i + "].pool.leak-detection-threshold");
+                    Optional<Long> idleValidationTimeout = cfg.getLong("kumuluzee.xa-datasources[" + i + "].pool.idle-validation-timeout");
+
+                    autoCommit.ifPresent(dspc::autoCommit);
+                    flushOnClose.ifPresent(dspc::flushOnClose);
+                    connectionTimeout.ifPresent(dspc::connectionTimeout);
+                    idleTimeout.ifPresent(dspc::idleTimeout);
+                    maxLifetime.ifPresent(dspc::maxLifetime);
+                    minIdle.ifPresent(dspc::minIdle);
+                    initialSize.ifPresent(dspc::initialSize);
+                    minSize.ifPresent(dspc::minSize);
+                    maxSize.ifPresent(dspc::maxSize);
+                    poolName.ifPresent(dspc::name);
+                    initializationFailTimeout.ifPresent(dspc::initializationFailTimeout);
+                    isolateInternalQueries.ifPresent(dspc::isolateInternalQueries);
+                    allowPoolSuspension.ifPresent(dspc::allowPoolSuspension);
+                    readOnly.ifPresent(dspc::readOnly);
+                    registerMbeans.ifPresent(dspc::registerMbeans);
+                    connectionInitSql.ifPresent(dspc::connectionInitSql);
+                    transactionIsolation.ifPresent(dspc::transactionIsolation);
+                    validationTimeout.ifPresent(dspc::validationTimeout);
+                    leakDetectionThreshold.ifPresent(dspc::leakDetectionThreshold);
+                    idleValidationTimeout.ifPresent(dspc::idleValidationTimeout);
+
+                    xdsc.pool(dspc);
+                }
 
                 Optional<List<String>> props = cfg.getMapKeys("kumuluzee.xa-datasources[" + i + "].props");
 
@@ -336,11 +402,6 @@ public class EeConfigFactory {
                                 ds.getPool().getIdleTimeout() == null ||
                                 ds.getPool().getMaxLifetime() == null ||
                                 ds.getPool().getMaxSize() == null ||
-                                ds.getPool().getInitializationFailTimeout() == null ||
-                                ds.getPool().getIsolateInternalQueries() == null ||
-                                ds.getPool().getAllowPoolSuspension() == null ||
-                                ds.getPool().getReadOnly() == null ||
-                                ds.getPool().getRegisterMbeans() == null ||
                                 ds.getPool().getValidationTimeout() == null ||
                                 ds.getPool().getLeakDetectionThreshold() == null)));
     }
@@ -420,5 +481,54 @@ public class EeConfigFactory {
         timeout.ifPresent(mailServiceBuilder::timeout);
 
         return mailServiceBuilder;
+    }
+
+    private static GzipConfig.Builder createGzipConfigBuilder(String prefix) {
+
+        ConfigurationUtil cfg = ConfigurationUtil.getInstance();
+
+        GzipConfig.Builder gzipBuilder = new GzipConfig.Builder();
+
+        Optional<Boolean> enabled = cfg.getBoolean(prefix + ".enabled");
+        Optional<Integer> minGzipSize = cfg.getInteger(prefix + ".min-gzip-size");
+        Optional<List<String>> includedMethods = getConfigList(prefix + ".included-methods");
+        Optional<List<String>> includedMimeTypes = getConfigList(prefix + ".included-mime-types");
+        Optional<List<String>> excludedMimeTypes = getConfigList(prefix + ".excluded-mime-types");
+        Optional<List<String>> excludedAgentPatterns = getConfigList(prefix + ".excluded-agent-patterns");
+        Optional<List<String>> excludedPaths = getConfigList(prefix + ".excluded-paths");
+        Optional<List<String>> includedPaths = getConfigList(prefix + ".included-paths");
+
+        enabled.ifPresent(gzipBuilder::enabled);
+        minGzipSize.ifPresent(gzipBuilder::minGzipSize);
+        includedMethods.ifPresent(gzipBuilder::includedMethods);
+        includedMimeTypes.ifPresent(gzipBuilder::includedMimeTypes);
+        excludedMimeTypes.ifPresent(gzipBuilder::excludedMimeTypes);
+        excludedAgentPatterns.ifPresent(gzipBuilder::excludedAgentPatterns);
+        excludedPaths.ifPresent(gzipBuilder::excludedPaths);
+        includedPaths.ifPresent(gzipBuilder::includedPaths);
+
+        return gzipBuilder;
+    }
+
+    private static Optional<List<String>> getConfigList(String key) {
+        ConfigurationUtil cfg = ConfigurationUtil.getInstance();
+
+        Optional<Integer> listSize = cfg.getListSize(key);
+
+        if (listSize.isPresent()) {
+            List<String> list = new ArrayList<>();
+
+            for (int i = 0; i < listSize.get(); i++) {
+                Optional<String> item = cfg.get(key + "[" + i + "]");
+
+                item.ifPresent(list::add);
+            }
+
+            if (list.size() > 0) {
+                return Optional.of(Collections.unmodifiableList(list));
+            }
+        }
+
+        return Optional.empty();
     }
 }

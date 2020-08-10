@@ -26,5 +26,6 @@ import javax.sql.DataSource;
  * @author Tilen Faganel
  * @since 2.3.0
  */
+@Deprecated
 public interface XADataSourceWrapper extends DataSource {
 }

@@ -23,7 +23,9 @@ package com.kumuluz.ee.jetty;
 import com.kumuluz.ee.common.ServletServer;
 import com.kumuluz.ee.common.attributes.ClasspathAttributes;
 import com.kumuluz.ee.common.config.EeConfig;
+import com.kumuluz.ee.common.config.GzipConfig;
 import com.kumuluz.ee.common.config.ServerConfig;
+import com.kumuluz.ee.common.config.ServerConnectorConfig;
 import com.kumuluz.ee.common.dependencies.EeComponentType;
 import com.kumuluz.ee.common.dependencies.ServerDef;
 import com.kumuluz.ee.common.exceptions.KumuluzServerException;
@@ -35,6 +37,7 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.SecuredRedirectHandler;
+import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
@@ -166,16 +169,52 @@ public class JettyServletServer implements ServletServer {
 
             appContext.setInitParameter(JettyAttributes.dirBrowsing, "false");
         }
+
+        if (Boolean.TRUE.equals(serverConfig.getEtags())) {
+            appContext.setInitParameter(JettyAttributes.etags, "true");
+        }
         log.info("Starting KumuluzEE with context root '" + serverConfig.getContextPath() + "'");
 
-        // Set the secured redirect handler in case the force https option is selected
-        if (serverConfig.getForceHttps()) {
+        GzipConfig gzipConfig = serverConfig.getGzip();
 
-            HandlerList handlers = new HandlerList();
-            handlers.setHandlers(new Handler[]
-                    {new SecuredRedirectHandler(), appContext});
+        if (serverConfig.getForceHttps() || (gzipConfig != null && gzipConfig.getEnabled())) {
 
-            server.setHandler(handlers);
+            final ArrayList<Handler> handlers = new ArrayList<>();
+
+            // Set the secured redirect handler in case the force https option is selected
+            if( serverConfig.getForceHttps()) {
+                handlers.add(new SecuredRedirectHandler());
+            }
+
+            // Set the gzip handler in case the use gzip option is selected
+            if(gzipConfig != null && gzipConfig.getEnabled()) {
+                GzipHandler gzipHandler = new GzipHandler();
+
+                if(gzipConfig.getMinGzipSize() != null)
+                    gzipHandler.setMinGzipSize(gzipConfig.getMinGzipSize());
+                if(gzipConfig.getIncludedMethods() != null)
+                    gzipHandler.setIncludedMethods(gzipConfig.getIncludedMethods().toArray(new String[0]));
+                if(gzipConfig.getIncludedMimeTypes() != null)
+                    gzipHandler.setIncludedMimeTypes(gzipConfig.getIncludedMimeTypes().toArray(new String[0]));
+                if(gzipConfig.getExcludedMimeTypes() != null)
+                    gzipHandler.setExcludedMimeTypes(gzipConfig.getExcludedMimeTypes().toArray(new String[0]));
+                if(gzipConfig.getExcludedAgentPatterns() != null)
+                    gzipHandler.setExcludedAgentPatterns(gzipConfig.getExcludedAgentPatterns().toArray(new String[0]));
+                if(gzipConfig.getExcludedPaths() != null)
+                    gzipHandler.setExcludedPaths(gzipConfig.getExcludedPaths().toArray(new String[0]));
+                if(gzipConfig.getIncludedPaths() != null)
+                    gzipHandler.setIncludedPaths(gzipConfig.getIncludedPaths().toArray(new String[0]));
+
+                gzipHandler.setHandler(appContext);
+                handlers.add(gzipHandler);
+            } else {
+                handlers.add(appContext);
+            }
+
+            HandlerList handlerList = new HandlerList();
+            handlerList.setHandlers(handlers.toArray(new Handler[0]));
+
+            server.setHandler(handlerList);
         } else {
 
             server.setHandler(appContext);

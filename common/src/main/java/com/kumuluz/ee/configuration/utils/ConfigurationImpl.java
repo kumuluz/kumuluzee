@@ -20,16 +20,13 @@
  */
 package com.kumuluz.ee.configuration.utils;
 
-import com.kumuluz.ee.configuration.ConfigurationDecoder;
-import com.kumuluz.ee.configuration.ConfigurationSource;
-import com.kumuluz.ee.configuration.sources.EnvironmentConfigurationSource;
-import com.kumuluz.ee.configuration.sources.FileConfigurationSource;
-import com.kumuluz.ee.configuration.sources.SystemPropertyConfigurationSource;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.logging.Logger;
+
+import com.kumuluz.ee.configuration.ConfigurationDecoder;
+import com.kumuluz.ee.configuration.ConfigurationSource;
 
 /**
  * @author Tilen Faganel
@@ -42,49 +39,33 @@ public class ConfigurationImpl {
     private List<ConfigurationSource> configurationSources;
     private ConfigurationDecoder configurationDecoder;
 
-    private EnvironmentConfigurationSource environmentConfigurationSource;
-    private SystemPropertyConfigurationSource systemPropertyConfigurationSource;
-    private FileConfigurationSource fileConfigurationSource;
-
     public ConfigurationImpl() {
         init();
     }
 
     private void init() {
-
-        environmentConfigurationSource = new EnvironmentConfigurationSource();
-        systemPropertyConfigurationSource = new SystemPropertyConfigurationSource();
-        fileConfigurationSource = new FileConfigurationSource();
-
         // specify sources
         configurationSources = new ArrayList<>();
-        configurationSources.add(environmentConfigurationSource);
-        configurationSources.add(systemPropertyConfigurationSource);
-        configurationSources.add(fileConfigurationSource);
+
+        ServiceLoader.load(ConfigurationSource.class).forEach(configurationSources::add);
 
         dispatcher = new ConfigurationDispatcher();
 
-        // initialise sources
-        for (ConfigurationSource configurationSource : configurationSources) {
-
-            configurationSource.init(dispatcher);
-        }
+        configurationSources.forEach(configurationSource -> configurationSource.init(dispatcher));
 
         // initialise configuration decoder
         List<ConfigurationDecoder> configurationDecoders = new ArrayList<>();
         ServiceLoader.load(ConfigurationDecoder.class).forEach(configurationDecoders::add);
         if (configurationDecoders.size() > 1) {
             throw new IllegalStateException(
-                    "There is more than one service provider defined for the ConfigurationDecoder interface.");
+                "There is more than one service provider defined for the ConfigurationDecoder interface.");
         } else if (configurationDecoders.size() == 1) {
             configurationDecoder = configurationDecoders.get(0);
         }
     }
 
     public void postInit() {
-
-        fileConfigurationSource.postInit();
-
+        configurationSources.forEach(ConfigurationSource::postInit);
         utilLogger = Logger.getLogger(ConfigurationUtil.class.getName());
     }
 

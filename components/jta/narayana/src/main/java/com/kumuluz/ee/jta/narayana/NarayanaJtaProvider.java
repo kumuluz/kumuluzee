@@ -22,7 +22,9 @@ package com.kumuluz.ee.jta.narayana;
 
 import com.arjuna.ats.jta.common.JTAEnvironmentBean;
 import com.arjuna.ats.jta.common.jtaPropertyManager;
-import com.kumuluz.ee.jta.common.TransactionAcquirer;
+import com.kumuluz.ee.jta.common.JtaProvider;
+import io.agroal.api.transaction.TransactionIntegration;
+import io.agroal.narayana.NarayanaTransactionIntegration;
 
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
@@ -32,12 +34,14 @@ import javax.transaction.UserTransaction;
  * @author Marcos Koch Salvador
  * @since 2.3.0
  */
-public class NarayanaTransactionAcquirer implements TransactionAcquirer {
+public class NarayanaJtaProvider extends JtaProvider {
 
     private JTAEnvironmentBean jtaEnvironment;
+    private TransactionIntegration txIntegration;
 
-    public NarayanaTransactionAcquirer() {
+    public NarayanaJtaProvider() {
         jtaEnvironment = jtaPropertyManager.getJTAEnvironmentBean();
+        txIntegration = new NarayanaTransactionIntegration(jtaEnvironment.getTransactionManager(), jtaEnvironment.getTransactionSynchronizationRegistry());
     }
 
     @Override
@@ -54,4 +58,10 @@ public class NarayanaTransactionAcquirer implements TransactionAcquirer {
     public TransactionSynchronizationRegistry getTransactionSynchronizationRegistry() {
         return jtaEnvironment.getTransactionSynchronizationRegistry();
     }
+
+    @Override
+    public TransactionIntegration getTransactionIntegration() {
+        return txIntegration;
+    }
+
 }
