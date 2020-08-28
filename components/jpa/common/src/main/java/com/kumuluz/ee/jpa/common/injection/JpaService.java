@@ -43,7 +43,7 @@ import java.util.logging.Logger;
 @Priority(1)
 public class JpaService implements JpaInjectionServices {
 
-    private static final Logger log = Logger.getLogger(JpaService.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(JpaService.class.getSimpleName());
 
     @Override
     public ResourceReferenceFactory<EntityManager> registerPersistenceContextInjectionPoint
@@ -91,12 +91,12 @@ public class JpaService implements JpaInjectionServices {
         }
         catch (Exception e) {
             if (!continueOnError) {
-                log.severe("EntityManager for pu "+unitName+" failed to initialize. KumuluzEE initialization failed.");
+                LOG.severe("EntityManager for pu "+unitName+" failed to initialize. KumuluzEE initialization failed.");
                 throw e;
             }
         }
 
-        log.warning("EntityManager for pu "+unitName+" failed to initialize. KumuluzEE will continue the startup regardless due to config override.");
+        LOG.warning("EntityManager for pu "+unitName+" failed to initialize. KumuluzEE will continue the startup regardless due to config override.");
         return null;
     }
 
