@@ -43,7 +43,7 @@ import java.util.logging.Logger;
 @Priority(1)
 public class JpaService implements JpaInjectionServices {
 
-    private Logger log = Logger.getLogger(JpaService.class.getSimpleName());;
+    private static final Logger log = Logger.getLogger(JpaService.class.getSimpleName());
 
     @Override
     public ResourceReferenceFactory<EntityManager> registerPersistenceContextInjectionPoint
