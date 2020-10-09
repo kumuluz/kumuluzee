@@ -42,7 +42,7 @@ public class AgroalDataSourceFactory {
         if (!jtaPresent) {
             dataSourceConfig.dataSourceImplementation(DataSourceImplementation.HIKARI);
         } else {
-            poolConfig.transactionIntegration( JtaProvider.getInstance().getTransactionIntegration() );
+            poolConfig.transactionIntegration( JtaProvider.getInstance().getTransactionIntegration(dsc.getJndiName()) );
         }
 
         if (!StringUtils.isNullOrEmpty( dsc.getDriverClass() )) {
@@ -76,7 +76,7 @@ public class AgroalDataSourceFactory {
         AgroalConnectionFactoryConfigurationSupplier connectionFactoryConfig = poolConfig.connectionFactoryConfiguration();
 
         if (jtaPresent) {
-            poolConfig.transactionIntegration( JtaProvider.getInstance().getTransactionIntegration() );
+            poolConfig.transactionIntegration( JtaProvider.getInstance().getTransactionIntegration(xdsc.getJndiName()) );
         }
 
         if (!StringUtils.isNullOrEmpty( xdsc.getXaDatasourceClass() )) {

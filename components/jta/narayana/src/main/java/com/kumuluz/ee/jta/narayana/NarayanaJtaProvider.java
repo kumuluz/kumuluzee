@@ -26,9 +26,7 @@ import com.kumuluz.ee.jta.common.JtaProvider;
 import io.agroal.api.transaction.TransactionIntegration;
 import io.agroal.narayana.NarayanaTransactionIntegration;
 
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
-import javax.transaction.UserTransaction;
+import javax.transaction.*;
 
 /**
  * @author Marcos Koch Salvador
@@ -36,12 +34,10 @@ import javax.transaction.UserTransaction;
  */
 public class NarayanaJtaProvider extends JtaProvider {
 
-    private JTAEnvironmentBean jtaEnvironment;
-    private TransactionIntegration txIntegration;
+    private final JTAEnvironmentBean jtaEnvironment;
 
     public NarayanaJtaProvider() {
         jtaEnvironment = jtaPropertyManager.getJTAEnvironmentBean();
-        txIntegration = new NarayanaTransactionIntegration(jtaEnvironment.getTransactionManager(), jtaEnvironment.getTransactionSynchronizationRegistry());
     }
 
     @Override
@@ -60,8 +56,9 @@ public class NarayanaJtaProvider extends JtaProvider {
     }
 
     @Override
-    public TransactionIntegration getTransactionIntegration() {
-        return txIntegration;
+    public TransactionIntegration getTransactionIntegration(String jndiName) {
+        return new NarayanaTransactionIntegration(getTransactionManager(), getTransactionSynchronizationRegistry(),
+                jndiName);
     }
 
 }
