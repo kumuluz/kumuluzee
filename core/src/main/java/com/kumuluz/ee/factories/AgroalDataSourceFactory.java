@@ -20,9 +20,11 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * @author Marcos Koch Salvador
@@ -196,14 +198,25 @@ public class AgroalDataSourceFactory {
     private static void setJdbcTransactionIsolation(AgroalConnectionFactoryConfigurationSupplier connectionFactory, String transactionIsolation) {
         if (!StringUtils.isNullOrEmpty( transactionIsolation )) {
 
+            boolean found = false;
+
             for (TransactionIsolation isolation : TransactionIsolation.values()) {
 
                 final String isolationName = "TRANSACTION_" + isolation.name();
 
-                if (isolationName.equals(isolation)) {
+                if (isolationName.equalsIgnoreCase(transactionIsolation)) {
                     connectionFactory.jdbcTransactionIsolation(isolation);
+                    found = true;
                     break;
                 }
+            }
+
+            if (!found) {
+                log.warning("Could not find transaction isolation level with name: " + transactionIsolation +
+                        ", possible values: " + Arrays.stream(TransactionIsolation.values())
+                        .map(Enum::name)
+                        .map(n -> "TRANSACTION_" + n)
+                        .collect(Collectors.joining(", ")));
             }
         }
     }
