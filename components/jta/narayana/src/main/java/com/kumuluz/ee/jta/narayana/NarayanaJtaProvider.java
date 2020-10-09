@@ -27,6 +27,8 @@ import io.agroal.api.transaction.TransactionIntegration;
 import io.agroal.narayana.NarayanaTransactionIntegration;
 
 import javax.transaction.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Marcos Koch Salvador
@@ -35,9 +37,11 @@ import javax.transaction.*;
 public class NarayanaJtaProvider extends JtaProvider {
 
     private final JTAEnvironmentBean jtaEnvironment;
+    private final Map<String, NarayanaTransactionIntegration> transactionIntegrations;
 
     public NarayanaJtaProvider() {
         jtaEnvironment = jtaPropertyManager.getJTAEnvironmentBean();
+        transactionIntegrations = new HashMap<>();
     }
 
     @Override
@@ -57,8 +61,13 @@ public class NarayanaJtaProvider extends JtaProvider {
 
     @Override
     public TransactionIntegration getTransactionIntegration(String jndiName) {
-        return new NarayanaTransactionIntegration(getTransactionManager(), getTransactionSynchronizationRegistry(),
-                jndiName);
+
+        if (!transactionIntegrations.containsKey(jndiName)) {
+            transactionIntegrations.put(jndiName, new NarayanaTransactionIntegration(getTransactionManager(),
+                    getTransactionSynchronizationRegistry(), jndiName));
+        }
+
+        return transactionIntegrations.get(jndiName);
     }
 
 }
