@@ -86,7 +86,7 @@
         <eclipselink.version>2.7.7</eclipselink.version>
         <mojarra.version>2.4.0</mojarra.version>
         <jsonp-impl.version>1.1.4</jsonp-impl.version>
-        <yasson.version>1.0.3</yasson.version>
+        <yasson.version>1.0.8</yasson.version>
         <narayana.version>5.9.4.Final</narayana.version>
         <jboss-transaction-spi.version>7.6.0.Final</jboss-transaction-spi.version>
         <javamail-ri.version>1.6.2</javamail-ri.version>
