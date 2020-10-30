@@ -21,7 +21,7 @@
 
     <properties>
         <version.kumuluzee-config-mp>1.4.0</version.kumuluzee-config-mp>
-        <version.kumuluzee-fault-tolerance>2.1.0</version.kumuluzee-fault-tolerance>
+        <version.kumuluzee-fault-tolerance>2.1.1</version.kumuluzee-fault-tolerance>
         <version.kumuluzee-health>2.2.0</version.kumuluzee-health>
         <version.kumuluzee-metrics>2.3.0</version.kumuluzee-metrics>
         <version.kumuluzee-jwt-auth>1.1.3</version.kumuluzee-jwt-auth>
@@ -95,6 +95,12 @@
             <groupId>com.kumuluz.ee.rest-client</groupId>
             <artifactId>kumuluzee-rest-client</artifactId>
             <version>${version.kumuluzee-rest-client}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
+                    <artifactId>microprofile-fault-tolerance-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
