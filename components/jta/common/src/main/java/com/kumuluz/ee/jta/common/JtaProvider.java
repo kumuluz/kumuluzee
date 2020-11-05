@@ -64,5 +64,5 @@ public abstract class JtaProvider {
 
     public abstract TransactionSynchronizationRegistry getTransactionSynchronizationRegistry();
 
-    public abstract TransactionIntegration getTransactionIntegration();
+    public abstract TransactionIntegration getTransactionIntegration(String jndiName);
 }
