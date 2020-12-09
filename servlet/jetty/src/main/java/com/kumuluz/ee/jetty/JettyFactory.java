@@ -50,9 +50,9 @@ import java.util.stream.Collectors;
  */
 public class JettyFactory {
 
-    private Logger log = Logger.getLogger(JettyFactory.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(JettyFactory.class.getSimpleName());
 
-    private ServerConfig serverConfig;
+    private final ServerConfig serverConfig;
 
     public JettyFactory(ServerConfig serverConfig) {
 
@@ -79,7 +79,7 @@ public class JettyFactory {
         threadPool.setMinThreads(serverConfig.getMinThreads());
         threadPool.setMaxThreads(serverConfig.getMaxThreads());
 
-        log.info("Starting KumuluzEE on Jetty with " + serverConfig.getMinThreads() + " minimum " +
+        LOG.info("Starting KumuluzEE on Jetty with " + serverConfig.getMinThreads() + " minimum " +
                 "and " + serverConfig.getMaxThreads() + " maximum threads");
 
         return threadPool;
@@ -167,7 +167,7 @@ public class JettyFactory {
 
             HttpConnectionFactory http = new HttpConnectionFactory(httpsConfiguration);
 
-            SslContextFactory sslContextFactory = new SslContextFactory();
+            SslContextFactory sslContextFactory = new SslContextFactory.Server();
             sslContextFactory.setKeyStorePath(httpsConfig.getKeystorePath());
             sslContextFactory.setKeyStorePassword(httpsConfig.getKeystorePassword());
 
@@ -223,9 +223,9 @@ public class JettyFactory {
                         String.format("%d [%s]", connector.getPort(), String.join(", ", connector.getProtocols())))
                 .collect(Collectors.joining(", "));
 
-        log.info(String.format("Starting KumuluzEE on port(s): %s", ports));
+        LOG.info(String.format("Starting KumuluzEE on port(s): %s", ports));
 
-        return connectors.toArray(new ServerConnector[connectors.size()]);
+        return connectors.toArray(new ServerConnector[0]);
     }
 
     private Configuration.ClassList createClassList() {
