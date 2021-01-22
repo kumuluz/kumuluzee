@@ -84,7 +84,8 @@ public abstract class AbstractPackageMojo extends AbstractCopyDependenciesMojo {
 
             Path pluginJarFile = Paths.get(pluginJarURI);
 
-            FileSystem pluginJarFs = FileSystems.newFileSystem(pluginJarFile, null);
+            // explicit cast to ClassLoader null is required for Java 15 compilation
+            FileSystem pluginJarFs = FileSystems.newFileSystem(pluginJarFile, (ClassLoader) null);
 
             Path loaderJarFile = pluginJarFs.getPath(LOADER_JAR);
             Path tmpJar = Files.createTempFile(TEMP_DIR_NAME_PREFIX, ".tmp");
