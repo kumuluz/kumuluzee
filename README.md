@@ -1,5 +1,5 @@
 # KumuluzEE
-[![Build Status](https://img.shields.io/travis/kumuluz/kumuluzee/master.svg?style=flat)](https://travis-ci.org/kumuluz/kumuluzee)
+![KumuluzEE CI](https://github.com/kumuluz/kumuluzee/workflows/KumuluzEE%20CI/badge.svg)
 
 > Lightweight open-source framework for developing microservices using standard Java/JavaEE/JakartaEE/EE4J technologies, extending them with Node.js, Go and other languages, and migrating to cloud-native architecture.
 
