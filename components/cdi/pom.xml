@@ -14,7 +14,9 @@
     <description>KumuluzEE CDI component</description>
 
     <modules>
+    	<module>common</module>
         <module>weld</module>
+    	<module>weld-se</module>
     </modules>
 
     <artifactId>kumuluzee-cdi</artifactId>
