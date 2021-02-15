@@ -21,13 +21,7 @@
 package com.kumuluz.ee;
 
 import com.kumuluz.ee.common.*;
-import com.kumuluz.ee.common.config.DataSourceConfig;
-import com.kumuluz.ee.common.config.DataSourcePoolConfig;
 import com.kumuluz.ee.common.config.EeConfig;
-import com.kumuluz.ee.common.config.XaDataSourceConfig;
-import com.kumuluz.ee.common.datasources.NonJtaXADataSourceWrapper;
-import com.kumuluz.ee.common.datasources.XADataSourceBuilder;
-import com.kumuluz.ee.common.datasources.XADataSourceWrapper;
 import com.kumuluz.ee.common.dependencies.*;
 import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 import com.kumuluz.ee.common.filters.PoweredByFilter;
@@ -45,13 +39,10 @@ import com.kumuluz.ee.configuration.utils.ConfigurationImpl;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
 import com.kumuluz.ee.factories.AgroalDataSourceFactory;
 import com.kumuluz.ee.factories.EeConfigFactory;
-import com.kumuluz.ee.factories.JtaXADataSourceFactory;
 import com.kumuluz.ee.loaders.*;
 import com.kumuluz.ee.logs.impl.JavaUtilDefaultLogConfigurator;
-import com.zaxxer.hikari.HikariDataSource;
 import io.agroal.api.AgroalDataSource;
 
-import javax.sql.XADataSource;
 import java.util.*;
 import java.util.logging.Handler;
 import java.util.logging.LogManager;
@@ -117,6 +108,9 @@ public class EeApplication {
         ConfigurationImpl configImpl = new ConfigurationImpl();
 
         ConfigurationUtil.initialize(configImpl);
+
+        // we need to order config sources here in order to ensure correct initialisation of EeConfig
+        configImpl.getConfigurationSources().sort(Comparator.comparingInt(ConfigurationSource::getOrdinal).reversed());
 
         if (this.eeConfig == null) {
             this.eeConfig = EeConfigFactory.buildEeConfig();
@@ -239,6 +233,7 @@ public class EeApplication {
             }
         }
 
+        // sort the configuration sources again since new sources could be added by extensions
         configImpl.getConfigurationSources().sort(Comparator.comparingInt(ConfigurationSource::getOrdinal).reversed());
 
         log.info("Config extensions initialized");
