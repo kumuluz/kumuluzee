@@ -25,7 +25,6 @@ import com.kumuluz.ee.common.config.EeConfig;
 import com.kumuluz.ee.common.dependencies.EeComponentDef;
 import com.kumuluz.ee.common.dependencies.EeComponentType;
 import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
-import com.kumuluz.ee.jpa.common.PersistenceUnitHolder;
 
 import java.util.logging.Logger;
 
@@ -36,7 +35,7 @@ import java.util.logging.Logger;
 @EeComponentDef(name = "Hibernate", type = EeComponentType.JPA)
 public class JpaComponent implements Component {
 
-    private Logger log = Logger.getLogger(JpaComponent.class.getSimpleName());
+    private final Logger log = Logger.getLogger(JpaComponent.class.getSimpleName());
 
     @Override
     public void init(KumuluzServerWrapper server, EeConfig eeConfig) {
