@@ -42,6 +42,7 @@ import org.eclipse.jetty.server.handler.SecuredRedirectHandler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.servlet.listener.ELContextCleaner;
 import org.eclipse.jetty.webapp.*;
 
 import javax.naming.NamingException;
@@ -52,6 +53,7 @@ import javax.sql.DataSource;
 import javax.transaction.UserTransaction;
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
@@ -182,6 +184,11 @@ public class JettyServletServer implements ServletServer {
         if (Boolean.TRUE.equals(serverConfig.getEtags())) {
             appContext.setInitParameter(JettyAttributes.etags, "true");
         }
+
+        // Since ELContextCleaner cannot perform reflective access to BeanELResolver it logs a warning before container
+        // shutdown. Because Jetty is running in embedded mode, this purge is not necessary and the warning is irrelevant.
+        Logger.getLogger(ELContextCleaner.class.getName()).setLevel(Level.SEVERE);
+
         log.info("Starting KumuluzEE with context root '" + serverConfig.getContextPath() + "'");
 
         GzipConfig gzipConfig = serverConfig.getGzip();
