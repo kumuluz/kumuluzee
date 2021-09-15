@@ -25,8 +25,8 @@ import javax.annotation.processing.Filer;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 import java.io.*;
+import java.nio.file.NoSuchFileException;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author gpor89
@@ -34,27 +34,29 @@ import java.util.stream.Collectors;
  */
 public class AnnotationProcessorUtil {
 
-    private static void readOldFile(Set<String> content, Reader reader) throws IOException {
-        try (BufferedReader bufferedReader = new BufferedReader(reader)) {
-            String line = bufferedReader.readLine();
-            while (line != null) {
-                content.add(line);
-                line = bufferedReader.readLine();
-            }
-        }
-    }
-
     public static void writeFile(Set<String> content, String resourceName, Filer filer) throws IOException {
         FileObject file = readOldFile(content, resourceName, filer);
         if (file != null) {
             try {
                 writeFile(content, resourceName, file, filer);
                 return;
-            } catch (IllegalStateException e) {
-                e.printStackTrace();
+            } catch (IllegalStateException ignored) {
             }
         }
         writeFile(content, resourceName, null, filer);
+    }
+
+    private static void writeFile(Set<String> content, String resourceName, FileObject overrideFile, Filer filer) throws IOException {
+        FileObject file = overrideFile;
+        if (file == null) {
+            file = filer.createResource(StandardLocation.CLASS_OUTPUT, "", resourceName);
+        }
+        try (Writer writer = file.openWriter()) {
+            for (String serviceClassName : content) {
+                writer.write(serviceClassName);
+                writer.write(System.lineSeparator());
+            }
+        }
     }
 
     private static FileObject readOldFile(Set<String> content, String resourceName, Filer filer) throws IOException {
@@ -62,9 +64,9 @@ public class AnnotationProcessorUtil {
         try {
             final FileObject resource = filer.getResource(StandardLocation.CLASS_OUTPUT, "", resourceName);
             reader = resource.openReader(true);
-            AnnotationProcessorUtil.readOldFile(content, reader);
+            readOldFile(content, reader);
             return resource;
-        } catch (FileNotFoundException e) {
+        } catch (NoSuchFileException | FileNotFoundException e) {
             // close reader, return null
         } finally {
             if (reader != null) {
@@ -74,21 +76,12 @@ public class AnnotationProcessorUtil {
         return null;
     }
 
-    private static void writeFile(Set<String> content, String resourceName, FileObject overrideFile, Filer filer) throws IOException {
-        FileObject file = overrideFile;
-        if (file != null) {
-            //check if file content equals required content
-            final Set<String> fileContent = new BufferedReader(new InputStreamReader(file.openInputStream())).lines().collect(Collectors.toSet());
-
-            if (content.containsAll(fileContent) && fileContent.containsAll(content)) {
-                return;
-            }
-        }
-        file = filer.createResource(StandardLocation.CLASS_OUTPUT, "", resourceName);
-        try (Writer writer = file.openWriter()) {
-            for (String serviceClassName : content) {
-                writer.write(serviceClassName);
-                writer.write(System.lineSeparator());
+    private static void readOldFile(Set<String> content, Reader reader) throws IOException {
+        try (BufferedReader bufferedReader = new BufferedReader(reader)) {
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                content.add(line);
+                line = bufferedReader.readLine();
             }
         }
     }

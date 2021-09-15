@@ -143,14 +143,6 @@ public class GzipConfig {
         this.excludedMimeTypes = excludedMimeTypes;
     }
 
-    public List<String> getExcludedAgentPatterns() {
-        return excludedAgentPatterns;
-    }
-
-    public void setExcludedAgentPatterns(List<String> excludedAgentPatterns) {
-        this.excludedAgentPatterns = excludedAgentPatterns;
-    }
-
     public List<String> getExcludedPaths() {
         return excludedPaths;
     }

@@ -25,14 +25,16 @@ import com.kumuluz.ee.common.attributes.ClasspathAttributes;
 import com.kumuluz.ee.common.config.EeConfig;
 import com.kumuluz.ee.common.config.GzipConfig;
 import com.kumuluz.ee.common.config.ServerConfig;
-import com.kumuluz.ee.common.config.ServerConnectorConfig;
 import com.kumuluz.ee.common.dependencies.EeComponentType;
 import com.kumuluz.ee.common.dependencies.ServerDef;
 import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 import com.kumuluz.ee.common.servlet.ServletWrapper;
 import com.kumuluz.ee.common.utils.ResourceUtils;
+import org.eclipse.jetty.annotations.AnnotationConfiguration;
 import org.eclipse.jetty.plus.jndi.Resource;
 import org.eclipse.jetty.plus.jndi.Transaction;
+import org.eclipse.jetty.plus.webapp.EnvConfiguration;
+import org.eclipse.jetty.plus.webapp.PlusConfiguration;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
@@ -40,7 +42,8 @@ import org.eclipse.jetty.server.handler.SecuredRedirectHandler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.webapp.WebAppContext;
+import org.eclipse.jetty.servlet.listener.ELContextCleaner;
+import org.eclipse.jetty.webapp.*;
 
 import javax.naming.NamingException;
 import javax.servlet.DispatcherType;
@@ -48,7 +51,9 @@ import javax.servlet.Filter;
 import javax.servlet.Servlet;
 import javax.sql.DataSource;
 import javax.transaction.UserTransaction;
+import java.io.IOException;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
@@ -59,7 +64,7 @@ import java.util.regex.Pattern;
 @ServerDef(value = "Jetty", provides = {EeComponentType.SERVLET})
 public class JettyServletServer implements ServletServer {
 
-    private Logger log = Logger.getLogger(JettyServletServer.class.getSimpleName());
+    private final Logger log = Logger.getLogger(JettyServletServer.class.getSimpleName());
 
     private Server server;
 
@@ -126,15 +131,21 @@ public class JettyServletServer implements ServletServer {
 
         appContext = new WebAppContext();
 
+        appContext.setConfigurationClasses(createConfigurations());
+
+        try {
+            appContext.setClassLoader(getClass().getClassLoader());
+        } catch (Exception e) {
+            throw new IllegalStateException("Unable to set custom classloader for Jetty", e);
+        }
+
         if (ResourceUtils.isRunningInJar()) {
             appContext.setAttribute(JettyAttributes.jarPattern, ClasspathAttributes.jar);
 
-            appContext.setExtraClasspath(JettyJarClasspathUtil.getExtraClasspath(scanLibraries));
-
             try {
-                appContext.setClassLoader(getClass().getClassLoader());
-            } catch (Exception e) {
-                throw new IllegalStateException("Unable to set custom classloader for Jetty", e);
+                appContext.setExtraClasspath(JettyJarClasspathUtil.getExtraClasspath(scanLibraries));
+            } catch (IOException e) {
+                throw new IllegalStateException("Unable to set extra classpath for Jetty", e);
             }
         } else {
             StringBuilder explodedClasspath = new StringBuilder(ClasspathAttributes.exploded);
@@ -151,7 +162,7 @@ public class JettyServletServer implements ServletServer {
                 }
             }
 
-            log.fine("Using classpath scanning regex: " + explodedClasspath.toString());
+            log.fine("Using classpath scanning regex: " + explodedClasspath);
             appContext.setAttribute(JettyAttributes.jarPattern, explodedClasspath.toString());
         }
 
@@ -173,6 +184,11 @@ public class JettyServletServer implements ServletServer {
         if (Boolean.TRUE.equals(serverConfig.getEtags())) {
             appContext.setInitParameter(JettyAttributes.etags, "true");
         }
+
+        // Since ELContextCleaner cannot perform reflective access to BeanELResolver it logs a warning before container
+        // shutdown. Because Jetty is running in embedded mode, this purge is not necessary and the warning is irrelevant.
+        Logger.getLogger(ELContextCleaner.class.getName()).setLevel(Level.SEVERE);
+
         log.info("Starting KumuluzEE with context root '" + serverConfig.getContextPath() + "'");
 
         GzipConfig gzipConfig = serverConfig.getGzip();
@@ -198,8 +214,6 @@ public class JettyServletServer implements ServletServer {
                     gzipHandler.setIncludedMimeTypes(gzipConfig.getIncludedMimeTypes().toArray(new String[0]));
                 if(gzipConfig.getExcludedMimeTypes() != null)
                     gzipHandler.setExcludedMimeTypes(gzipConfig.getExcludedMimeTypes().toArray(new String[0]));
-                if(gzipConfig.getExcludedAgentPatterns() != null)
-                    gzipHandler.setExcludedAgentPatterns(gzipConfig.getExcludedAgentPatterns().toArray(new String[0]));
                 if(gzipConfig.getExcludedPaths() != null)
                     gzipHandler.setExcludedPaths(gzipConfig.getExcludedPaths().toArray(new String[0]));
                 if(gzipConfig.getIncludedPaths() != null)
@@ -366,5 +380,22 @@ public class JettyServletServer implements ServletServer {
     private JettyFactory createJettyFactory() {
 
         return new JettyFactory(serverConfig);
+    }
+
+    private List<String> createConfigurations() {
+
+        List<String> configurations = new ArrayList<>();
+
+        configurations.add(WebAppConfiguration.class.getName());
+        configurations.add(AnnotationConfiguration.class.getName());
+        configurations.add(WebInfConfiguration.class.getName());
+        configurations.add(WebXmlConfiguration.class.getName());
+        configurations.add(MetaInfConfiguration.class.getName());
+        configurations.add(FragmentConfiguration.class.getName());
+        configurations.add(JettyWebXmlConfiguration.class.getName());
+        configurations.add(EnvConfiguration.class.getName());
+        configurations.add(PlusConfiguration.class.getName());
+
+        return configurations;
     }
 }

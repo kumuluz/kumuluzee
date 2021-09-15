@@ -24,20 +24,14 @@ import com.kumuluz.ee.common.config.ServerConfig;
 import com.kumuluz.ee.common.config.ServerConnectorConfig;
 import com.kumuluz.ee.common.utils.StringUtils;
 import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
-import org.eclipse.jetty.annotations.AnnotationConfiguration;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.http2.HTTP2Cipher;
 import org.eclipse.jetty.http2.server.HTTP2CServerConnectionFactory;
 import org.eclipse.jetty.http2.server.HTTP2ServerConnectionFactory;
-import org.eclipse.jetty.plus.webapp.EnvConfiguration;
-import org.eclipse.jetty.plus.webapp.PlusConfiguration;
 import org.eclipse.jetty.server.*;
-import org.eclipse.jetty.util.log.JavaUtilLog;
-import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
-import org.eclipse.jetty.webapp.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,11 +55,8 @@ public class JettyFactory {
 
     public Server create() {
 
-        Log.setLog(new JavaUtilLog());
-
         Server server = new Server(createThreadPool());
 
-        server.addBean(createClassList());
         server.setStopAtShutdown(true);
         server.setConnectors(createConnectors(server));
 
@@ -167,7 +158,7 @@ public class JettyFactory {
 
             HttpConnectionFactory http = new HttpConnectionFactory(httpsConfiguration);
 
-            SslContextFactory sslContextFactory = new SslContextFactory.Server();
+            SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
             sslContextFactory.setKeyStorePath(httpsConfig.getKeystorePath());
             sslContextFactory.setKeyStorePassword(httpsConfig.getKeystorePassword());
 
@@ -226,21 +217,5 @@ public class JettyFactory {
         LOG.info(String.format("Starting KumuluzEE on port(s): %s", ports));
 
         return connectors.toArray(new ServerConnector[0]);
-    }
-
-    private Configuration.ClassList createClassList() {
-
-        Configuration.ClassList classList = new Configuration.ClassList(new String[0]);
-
-        classList.add(AnnotationConfiguration.class.getName());
-        classList.add(WebInfConfiguration.class.getName());
-        classList.add(WebXmlConfiguration.class.getName());
-        classList.add(MetaInfConfiguration.class.getName());
-        classList.add(FragmentConfiguration.class.getName());
-        classList.add(JettyWebXmlConfiguration.class.getName());
-        classList.add(EnvConfiguration.class.getName());
-        classList.add(PlusConfiguration.class.getName());
-
-        return classList;
     }
 }

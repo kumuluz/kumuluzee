@@ -17,33 +17,26 @@
  *  out of or in connection with the software or the use or other dealings in the
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
-*/
-package com.kumuluz.ee.jpa.hibernate;
+ */
+package com.kumuluz.ee.jaxrs;
 
-import com.kumuluz.ee.common.Component;
-import com.kumuluz.ee.common.config.EeConfig;
-import com.kumuluz.ee.common.dependencies.EeComponentDef;
-import com.kumuluz.ee.common.dependencies.EeComponentType;
-import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
+import org.glassfish.jersey.client.spi.Connector;
+import org.glassfish.jersey.client.spi.ConnectorProvider;
+import org.glassfish.jersey.jetty.connector.Jetty10Connector;
 
-import java.util.logging.Logger;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.core.Configuration;
 
 /**
- * @author Tilen Faganel
- * @since 2.1.0
+ * Jersey connection provider for Jetty 10.
+ *
+ * @author Urban Malc
+ * @since 4.0.0
  */
-@EeComponentDef(name = "Hibernate", type = EeComponentType.JPA)
-public class JpaComponent implements Component {
-
-    private final Logger log = Logger.getLogger(JpaComponent.class.getSimpleName());
+public class Jetty10ConnectorProvider implements ConnectorProvider {
 
     @Override
-    public void init(KumuluzServerWrapper server, EeConfig eeConfig) {
-    }
-
-    @Override
-    public void load() {
-
-        log.info("Initiating Hibernate");
+    public Connector getConnector(Client client, Configuration runtimeConfig) {
+        return new Jetty10Connector(client, runtimeConfig);
     }
 }
