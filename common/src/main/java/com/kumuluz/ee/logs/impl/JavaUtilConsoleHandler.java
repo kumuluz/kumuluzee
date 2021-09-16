@@ -6,7 +6,7 @@ import java.util.logging.*;
 public class JavaUtilConsoleHandler extends StreamHandler {
 
     /**
-     * Create a <tt>JavaUtilConsoleHandler</tt> for <tt>System.out</tt>.
+     * Create a {@link JavaUtilConsoleHandler} for {@link System#out}.
      */
     public JavaUtilConsoleHandler() {
 
@@ -21,10 +21,10 @@ public class JavaUtilConsoleHandler extends StreamHandler {
     }
 
     /**
-     * Publish a <tt>LogRecord</tt>.
+     * Publish a {@link LogRecord}.
      * <p>
-     * The logging request was made initially to a <tt>Logger</tt> object,
-     * which initialized the <tt>LogRecord</tt> and forwarded it here.
+     * The logging request was made initially to a {@link Logger} object,
+     * which initialized the {@link LogRecord} and forwarded it here.
      * <p>
      * @param  record  description of the log event. A null record is
      *                 silently ignored and is not published
@@ -37,9 +37,9 @@ public class JavaUtilConsoleHandler extends StreamHandler {
     }
 
     /**
-     * Override <tt>StreamHandler.close</tt> to do a flush but not
+     * Override {@link StreamHandler#close} to do a flush but not
      * to close the output stream.  That is, we do <b>not</b>
-     * close <tt>System.out</tt>.
+     * close {@link System#out}.
      */
     @Override
     public void close() {
