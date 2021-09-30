@@ -63,9 +63,9 @@
         <agroal.version>1.9</agroal.version>
         <yaml.version>1.27</yaml.version>
         <junit.version>4.13.1</junit.version>
-        <maven.plugin.api.version>3.6.3</maven.plugin.api.version>
-        <maven-plugin-annotations.version>3.6.0</maven-plugin-annotations.version>
-        <mojo-executor.version>2.3.1</mojo-executor.version>
+        <maven.plugin.api.version>3.8.2</maven.plugin.api.version>
+        <maven-plugin-annotations.version>3.6.1</maven-plugin-annotations.version>
+        <mojo-executor.version>2.3.2</mojo-executor.version>
 
         <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
         <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
