@@ -20,9 +20,10 @@
  */
 package com.kumuluz.ee.maven.plugin;
 
-import org.apache.maven.artifact.Artifact;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +33,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
-import java.util.List;
 import java.util.jar.JarFile;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
@@ -155,6 +155,14 @@ public abstract class AbstractPackageMojo extends AbstractCopyDependenciesMojo {
     }
 
     private void packageJar() throws MojoExecutionException {
+
+        // Execute maven-jar-plugin in a separate execution environment, in order not to pollute the current project with
+        // attached artifact. Attached artifact will replace the current main artifact after rename, but reference in
+        // project.getAttachedArtifacts() cannot be removed after it's been added by maven-jar-plugin.
+        MavenProject projectClone = new MavenProject(project);
+        MavenSession sessionClone = session.clone();
+        sessionClone.setCurrentProject(projectClone);
+
         executeMojo(
                 plugin(
                         groupId("org.apache.maven.plugins"),
@@ -173,7 +181,7 @@ public abstract class AbstractPackageMojo extends AbstractCopyDependenciesMojo {
                                 )
                         )
                 ),
-                executionEnvironment(project, session, buildPluginManager)
+                executionEnvironment(projectClone, sessionClone, buildPluginManager)
         );
     }
 
@@ -199,14 +207,6 @@ public abstract class AbstractPackageMojo extends AbstractCopyDependenciesMojo {
                         sourcePath2.resolveSibling(finalName + ".jar"),
                         StandardCopyOption.REPLACE_EXISTING
                 );
-            }
-
-            List<Artifact> artifacts = project.getAttachedArtifacts();
-            for (Artifact artifact : project.getAttachedArtifacts()) {
-                if (artifact.hasClassifier() && artifact.getClassifier().equals("uber")) {
-                    artifacts.remove(artifact);
-                    break;
-                }
             }
         } catch (IOException e) {
             throw new MojoExecutionException("Unable to rename the final build artifact.");
