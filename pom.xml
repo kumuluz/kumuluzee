@@ -35,7 +35,7 @@
 
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <activation.version>1.1.1</activation.version>
-        <jaxws-tools.version>2.3.4</jaxws-tools.version>
+        <jaxws-tools.version>2.3.5</jaxws-tools.version>
 
         <annotations.version>1.3.5</annotations.version>
         <inject.version>1.0.3</inject.version>
@@ -80,7 +80,7 @@
         <hibernate.validator.version>6.2.0.Final</hibernate.validator.version>
         <jersey.version>2.34</jersey.version>
         <jackson.version>2.12.0</jackson.version>
-        <metro.version>2.4.1</metro.version>
+        <metro.version>2.4.6</metro.version>
         <cxf.version>3.4.4</cxf.version>
         <hibernate.version>5.5.7.Final</hibernate.version>
         <eclipselink.version>2.7.8</eclipselink.version>
