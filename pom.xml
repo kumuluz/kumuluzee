@@ -83,7 +83,7 @@
         <metro.version>2.4.6</metro.version>
         <cxf.version>3.4.4</cxf.version>
         <hibernate.version>5.5.7.Final</hibernate.version>
-        <eclipselink.version>2.7.8</eclipselink.version>
+        <eclipselink.version>2.7.9</eclipselink.version>
         <mojarra.version>2.3.16</mojarra.version>
         <jsonp-impl.version>1.1.4</jsonp-impl.version>
         <yasson.version>1.0.8</yasson.version>
