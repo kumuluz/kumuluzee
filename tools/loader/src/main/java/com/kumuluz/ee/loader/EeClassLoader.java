@@ -41,6 +41,7 @@ import java.util.jar.JarFile;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.zip.ZipFile;
 
 /**
  * @author Benjamin Kastelic
@@ -111,7 +112,8 @@ public class EeClassLoader extends ClassLoader {
         File mainJarFile = new File(mainJarURLString);
 
         try {
-            jarFileInfo = new JarFileInfo(new JarFile(mainJarFile), mainJarFile.getName(), null, protectionDomain, null);
+            jarFileInfo = new JarFileInfo(new JarFile(mainJarFile, true, ZipFile.OPEN_READ, JarFile.runtimeVersion()),
+                    mainJarFile.getName(), null, protectionDomain, null);
 
             debug(String.format("Loading from main JAR: '%s' PROTOCOL: '%s'", mainJarURLString, protocol));
         } catch (IOException e) {
@@ -272,7 +274,8 @@ public class EeClassLoader extends ClassLoader {
                                 ? new CodeSource(url, csParent.getCodeSigners())
                                 : new CodeSource(url, certParent);
                         ProtectionDomain pdChild = new ProtectionDomain(csChild, pdParent.getPermissions(), pdParent.getClassLoader(), pdParent.getPrincipals());
-                        loadJar(new JarFileInfo(new JarFile(tempFile), jarEntryInfo.getName(), jarFileInfo, pdChild, tempFile));
+                        loadJar(new JarFileInfo(new JarFile(tempFile, true, ZipFile.OPEN_READ, JarFile.runtimeVersion()),
+                                jarEntryInfo.getName(), jarFileInfo, pdChild, tempFile));
                     } catch (IOException e) {
                         throw new RuntimeException(String.format("Cannot load jar entries from jar %s", je.getName().toLowerCase()), e);
                     } catch (EeClassLoaderException e) {

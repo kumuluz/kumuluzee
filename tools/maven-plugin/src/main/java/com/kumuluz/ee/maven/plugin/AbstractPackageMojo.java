@@ -34,6 +34,7 @@ import java.nio.file.*;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
 import java.util.jar.JarFile;
+import java.util.zip.ZipFile;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
 
@@ -92,7 +93,7 @@ public abstract class AbstractPackageMojo extends AbstractCopyDependenciesMojo {
 
             Files.copy(loaderJarFile, tmpJar, StandardCopyOption.REPLACE_EXISTING);
 
-            JarFile loaderJar = new JarFile(tmpJar.toFile());
+            JarFile loaderJar = new JarFile(tmpJar.toFile(), true, ZipFile.OPEN_READ, JarFile.runtimeVersion());
 
             loaderJar.stream().parallel()
                     .filter(loaderJarEntry -> loaderJarEntry.getName().toLowerCase().endsWith(CLASS_SUFFIX))
