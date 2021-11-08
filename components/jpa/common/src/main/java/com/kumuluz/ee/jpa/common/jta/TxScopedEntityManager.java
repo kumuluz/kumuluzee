@@ -22,6 +22,8 @@ package com.kumuluz.ee.jpa.common.jta;
 
 import com.kumuluz.ee.jta.common.utils.TxUtils;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.spi.CDI;
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
@@ -40,14 +42,16 @@ import java.util.Map;
 public class TxScopedEntityManager implements EntityManager {
 
     private String unitName;
+    private PersistenceUnitNameResolver persistenceUnitNameResolver;
     private EntityManagerFactory emf;
     private SynchronizationType sync;
     private TransactionManager transactionManager;
     private TransactionSynchronizationRegistry transactionSynchronizationRegistry;
     private NonTxEntityManagerHolder nonTxEmHolder;
 
-    public TxScopedEntityManager(String unitName, EntityManagerFactory emf, SynchronizationType sync, TransactionManager transactionManager, TransactionSynchronizationRegistry transactionSynchronizationRegistry, NonTxEntityManagerHolder nonTxEmHolder) {
+    public TxScopedEntityManager(String unitName, PersistenceUnitNameResolver persistenceUnitNameResolver, EntityManagerFactory emf, SynchronizationType sync, TransactionManager transactionManager, TransactionSynchronizationRegistry transactionSynchronizationRegistry, NonTxEntityManagerHolder nonTxEmHolder) {
         this.unitName = unitName;
+        this.persistenceUnitNameResolver = persistenceUnitNameResolver;
         this.emf = emf;
         this.sync = sync;
         this.transactionManager = transactionManager;
@@ -460,6 +464,9 @@ public class TxScopedEntityManager implements EntityManager {
         EntityManager em;
 
         if (TxUtils.isActive(transactionManager)) {
+
+            String unitName = persistenceUnitNameResolver
+                    .resolve(this.unitName, TransactionalAddonContext.current().orElse(null));
 
             em = (EntityManager) transactionSynchronizationRegistry.getResource(unitName);
 

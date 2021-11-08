@@ -44,7 +44,9 @@ public class TxScopedEntityManagerFactory {
 
         NonTxEntityManagerHolder emHolder = new NonTxEntityManagerHolder();
 
-        EntityManager em = new TxScopedEntityManager(unitName, emf, sync, transactionManager, transactionSynchronizationRegistry, emHolder);
+        PersistenceUnitNameResolver persistenceUnitNameResolver = PersistenceUnitNameResolverProvider.getInstance();
+
+        EntityManager em = new TxScopedEntityManager(unitName, persistenceUnitNameResolver, emf, sync, transactionManager, transactionSynchronizationRegistry, emHolder);
 
         return new TxScopedEntityManagerWrapper(em, emHolder);
     }

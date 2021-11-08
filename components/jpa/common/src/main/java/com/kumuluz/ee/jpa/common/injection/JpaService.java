@@ -24,6 +24,8 @@ import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
 import com.kumuluz.ee.jpa.common.PersistenceUnitHolder;
 import com.kumuluz.ee.jpa.common.PersistenceWrapper;
 import com.kumuluz.ee.jpa.common.exceptions.NoDefaultPersistenceUnit;
+import com.kumuluz.ee.jpa.common.jta.PersistenceUnitNameResolver;
+import com.kumuluz.ee.jpa.common.jta.PersistenceUnitNameResolverProvider;
 import org.jboss.weld.injection.spi.JpaInjectionServices;
 import org.jboss.weld.injection.spi.ResourceReferenceFactory;
 
@@ -63,6 +65,9 @@ public class JpaService implements JpaInjectionServices {
                 throw new NoDefaultPersistenceUnit();
             }
         }
+
+        // resolve unit name without transactional context
+        unitName = PersistenceUnitNameResolverProvider.getInstance().resolve(unitName, null);
 
         //If database is unreachable, by default, framework will fail-early and not initialize due to unhandled exception.
         //Error can be ignored with config override per PU, however EntityManager for that connection will be null.
@@ -117,6 +122,9 @@ public class JpaService implements JpaInjectionServices {
                 throw new NoDefaultPersistenceUnit();
             }
         }
+
+        // resolve unit name without transactional context
+        unitName = PersistenceUnitNameResolverProvider.getInstance().resolve(unitName, null);
 
         PersistenceWrapper wrapper = holder.getEntityManagerFactory(unitName);
 
