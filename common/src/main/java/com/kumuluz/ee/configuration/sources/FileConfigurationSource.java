@@ -122,10 +122,10 @@ public class FileConfigurationSource implements ConfigurationSource {
 
                 file.close();
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             logDeferrer.defer(l ->
-                    l.info("Couldn't successfully process the YAML configuration file." +
-                            "All your properties may not be correctly loaded"));
+                    l.info("Couldn't successfully process the YAML configuration file. " +
+                            "All your properties may not be correctly loaded."));
         }
 
         // parse properties file
@@ -425,7 +425,7 @@ public class FileConfigurationSource implements ConfigurationSource {
 
                 inputStream.close();
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             logDeferrer.defer(l -> l.info("Properties file: " + fileName + " not found."));
         }
     }
