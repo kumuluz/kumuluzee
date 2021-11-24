@@ -436,7 +436,7 @@ public class EeApplication {
                         !Arrays.asList(dep.implementations()).contains(depCompName)) {
 
                     String msg = "EE component optional implementation dependency unfulfilled. The EE component " +
-                            cmp.getType().getName() + "implemented by " + cmp.getName() + " requires " + dep.value()
+                            cmp.getType().getName() + " implemented by " + cmp.getName() + " requires " + dep.value()
                             .getName() +
                             " implemented by one of the following implementations: " +
                             Arrays.toString(dep.implementations()) + ". Please make sure you use one of the " +
@@ -542,7 +542,7 @@ public class EeApplication {
                 if (depCompName == null) {
 
                     String msg = "EE extension implementation dependency unfulfilled. The EE extension group " +
-                            ext.getGroup() + "implemented by " + ext.getName() + " requires " + dep.value().getName() +
+                            ext.getGroup() + " implemented by " + ext.getName() + " requires " + dep.value().getName() +
                             " implemented by one of the following implementations: " +
                             Arrays.toString(dep.implementations()) + ". Please make sure you use one of the " +
                             "implementations required by this component.";
@@ -589,7 +589,7 @@ public class EeApplication {
                         !Arrays.asList(dep.implementations()).contains(depCompName)) {
 
                     String msg = "EE extension optional implementation dependency unfulfilled. The EE extension group " +
-                            ext.getGroup() + "implemented by " + ext.getName() + " requires component " +
+                            ext.getGroup() + " implemented by " + ext.getName() + " requires component " +
                             dep.value().getName() + " implemented by one of the following implementations: " +
                             Arrays.toString(dep.implementations()) + ". Please make sure you use one of the " +
                             "component implementations required by this component.";
