@@ -105,16 +105,10 @@
 
     <developers>
         <developer>
-            <name>Tilen Faganel</name>
-            <id>tfaga</id>
-            <email>tilen.faganel@me.com</email>
-            <url>https://github.com/TFaga</url>
-        </developer>
-        <developer>
-            <name>Jan Meznaric</name>
-            <id>jmezna</id>
-            <email>jan.meznaric@gmail.com</email>
-            <url>https://github.com/jmezna</url>
+            <name>KumuluzEE Development Team</name>
+            <id>kumuluz</id>
+            <email>info@kumuluz.com</email>
+            <url>https://github.com/kumuluz</url>
         </developer>
     </developers>
 
