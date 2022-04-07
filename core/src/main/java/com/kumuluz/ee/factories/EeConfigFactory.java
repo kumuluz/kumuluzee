@@ -33,6 +33,7 @@ import com.kumuluz.ee.common.config.ServerConnectorConfig;
 import com.kumuluz.ee.common.config.XaDataSourceConfig;
 import com.kumuluz.ee.common.utils.EnvUtils;
 import com.kumuluz.ee.common.utils.StringUtils;
+import com.kumuluz.ee.configuration.enums.PortEnvironmentVariables;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
 
 import java.util.ArrayList;
@@ -47,8 +48,6 @@ import java.util.stream.Stream;
  * @since 2.4.0
  */
 public class EeConfigFactory {
-
-    private static final String PORT_ENV = "PORT";
 
     public static EeConfig buildEeConfig() {
 
@@ -95,7 +94,9 @@ public class EeConfigFactory {
                 createServerConnectorConfigBuilder("kumuluzee.server.http",
                         ServerConnectorConfig.DEFAULT_HTTP_PORT);
 
-        EnvUtils.getEnvAsInteger(PORT_ENV, httpBuilder::port);
+        PortEnvironmentVariables.stream().forEach(portEnvVar ->
+            EnvUtils.getEnvAsInteger(portEnvVar, httpBuilder::port)
+        );
 
         ServerConnectorConfig.Builder httpsBuilder =
                 createServerConnectorConfigBuilder("kumuluzee.server.https",
