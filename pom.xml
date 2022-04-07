@@ -73,8 +73,8 @@
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-dependency-plugin.version>3.1.2</maven-dependency-plugin.version>
 
-        <jetty.version>10.0.6</jetty.version>
-        <slf4j.version>2.0.0-alpha1</slf4j.version><!-- the same as used by Jetty -->
+        <jetty.version>10.0.9</jetty.version>
+        <slf4j.version>2.0.0-alpha6</slf4j.version> <!-- the same as used by Jetty -->
         <uel.version>3.0.3</uel.version>
         <weld.version>3.1.8.Final</weld.version>
         <hibernate.validator.version>6.2.0.Final</hibernate.validator.version>
@@ -83,7 +83,7 @@
         <metro.version>2.4.6</metro.version>
         <cxf.version>3.4.4</cxf.version>
         <hibernate.version>5.5.7.Final</hibernate.version>
-        <eclipselink.version>2.7.9</eclipselink.version>
+        <eclipselink.version>2.7.10</eclipselink.version>
         <mojarra.version>2.3.16</mojarra.version>
         <jsonp-impl.version>1.1.4</jsonp-impl.version>
         <yasson.version>1.0.8</yasson.version>
