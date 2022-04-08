@@ -20,26 +20,11 @@
  */
 package com.kumuluz.ee.factories;
 
-import com.kumuluz.ee.common.config.DataSourceConfig;
-import com.kumuluz.ee.common.config.DataSourcePoolConfig;
-import com.kumuluz.ee.common.config.DevConfig;
-import com.kumuluz.ee.common.config.EeConfig;
-import com.kumuluz.ee.common.config.EnvConfig;
-import com.kumuluz.ee.common.config.GzipConfig;
-import com.kumuluz.ee.common.config.MailServiceConfig;
-import com.kumuluz.ee.common.config.MailSessionConfig;
-import com.kumuluz.ee.common.config.ServerConfig;
-import com.kumuluz.ee.common.config.ServerConnectorConfig;
-import com.kumuluz.ee.common.config.XaDataSourceConfig;
-import com.kumuluz.ee.common.utils.EnvUtils;
+import com.kumuluz.ee.common.config.*;
 import com.kumuluz.ee.common.utils.StringUtils;
-import com.kumuluz.ee.configuration.enums.PortEnvironmentVariables;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -48,6 +33,12 @@ import java.util.stream.Stream;
  * @since 2.4.0
  */
 public class EeConfigFactory {
+
+    // ordered by priority, first entry has the highest priority
+    private static final List<String> PORT_ENVIRONMENT_VARIABLE_NAMES = List.of(
+            "PORT",
+            "FUNCTIONS_CUSTOMHANDLER_PORT"
+    );
 
     public static EeConfig buildEeConfig() {
 
@@ -94,9 +85,13 @@ public class EeConfigFactory {
                 createServerConnectorConfigBuilder("kumuluzee.server.http",
                         ServerConnectorConfig.DEFAULT_HTTP_PORT);
 
-        PortEnvironmentVariables.stream().forEach(portEnvVar ->
-            EnvUtils.getEnvAsInteger(portEnvVar, httpBuilder::port)
-        );
+        PORT_ENVIRONMENT_VARIABLE_NAMES.stream()
+                .map(System::getenv)
+                .filter(Objects::nonNull)
+                .filter(s -> !s.isEmpty())
+                .map(Integer::parseInt)
+                .findFirst()
+                .ifPresent(httpBuilder::port);
 
         ServerConnectorConfig.Builder httpsBuilder =
                 createServerConnectorConfigBuilder("kumuluzee.server.https",
