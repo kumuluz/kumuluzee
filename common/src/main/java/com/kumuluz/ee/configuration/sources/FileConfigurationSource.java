@@ -151,7 +151,9 @@ public class FileConfigurationSource implements ConfigurationSource {
 
             Object value = getValue(key);
 
-            return (value == null) ? Optional.empty() : Optional.of(value.toString());
+            return (value == null || value instanceof Map || value instanceof List)
+                    ? Optional.empty()
+                    : Optional.of(value.toString());
 
             // get value from .properties configuration
         } else if (properties != null) {
