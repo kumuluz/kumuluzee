@@ -112,6 +112,15 @@ public class EeApplication {
         // we need to order config sources here in order to ensure correct initialisation of EeConfig
         configImpl.getConfigurationSources().sort(Comparator.comparingInt(ConfigurationSource::getOrdinal).reversed());
 
+        // initialize config profiles
+        String[] configurationProfiles = ConfigurationUtil.getInstance().get("kumuluzee.config.profile")
+                .or(() -> ConfigurationUtil.getInstance().get("mp.config.profile"))
+                .map(s -> s.split(","))
+                .orElse(new String[0]);
+
+        Arrays.stream(configurationProfiles)
+                .forEach(profile -> configImpl.getConfigurationSources().forEach(cs -> cs.initProfile(profile)));
+
         if (this.eeConfig == null) {
             this.eeConfig = EeConfigFactory.buildEeConfig();
         } else if (!EeConfigFactory.isEeConfigValid(this.eeConfig)) {

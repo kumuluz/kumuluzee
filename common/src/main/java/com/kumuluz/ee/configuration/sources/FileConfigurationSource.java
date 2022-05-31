@@ -40,15 +40,22 @@ import java.util.stream.Collectors;
  */
 public class FileConfigurationSource implements ConfigurationSource {
 
+    private enum Mode {
+        YAML,
+        PROPERTIES
+    }
+
     private Logger log;
     private LogDeferrer<Logger> logDeferrer;
 
     private String ymlFileName;
     private String yamlFileName;
     private String propertiesFileName;
-    private String microProfilePropertiesFileName;
-    private Map<String, Object> config;
-    private Properties properties;
+    private final String microProfilePropertiesFileName;
+    private final List<Map<String, Object>> yamlConfigs = new ArrayList<>();
+    private final List<Properties> properties = new ArrayList<>();
+
+    private Mode mode;
 
     public FileConfigurationSource() {
 
@@ -61,7 +68,7 @@ public class FileConfigurationSource implements ConfigurationSource {
 
         if (configurationFileName != null && !configurationFileName.isEmpty()) {
             this.ymlFileName = configurationFileName;
-            this.yamlFileName = configurationFileName;
+            this.yamlFileName = null;
             this.propertiesFileName = configurationFileName;
         }
 
@@ -79,67 +86,52 @@ public class FileConfigurationSource implements ConfigurationSource {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void init(ConfigurationDispatcher configurationDispatcher) {
 
         // read yaml file to Map<String, Object>
-        InputStream file;
-        Yaml yaml = new Yaml();
-        try {
-            file = getClass().getClassLoader().getResourceAsStream(ymlFileName);
+        Map<String, Object> yamlConfig = loadYamlFile(this.ymlFileName, this.yamlFileName);
 
-            if (file == null) {
-                file = getClass().getClassLoader().getResourceAsStream(yamlFileName);
+        if (yamlConfig != null) {
+            this.yamlConfigs.add(yamlConfig);
+            this.mode = Mode.YAML;
+        } else {
+            // parse properties file
+            Properties p = loadProperties(propertiesFileName);
+            if (p == null) {
+                p = loadProperties(microProfilePropertiesFileName);
             }
 
-            if (file == null) {
-                try {
-                    file = Files.newInputStream(Paths.get(ymlFileName));
-                } catch (IOException ignored) {
-                }
-            }
-
-            if (file == null) {
-                try {
-                    file = Files.newInputStream(Paths.get(yamlFileName));
-                } catch (IOException ignored) {
-                }
-            }
-
-            if (file != null) {
-
-                logDeferrer.defer(l -> l.info("Loading configuration from YAML file."));
-
-                Object yamlParsed = yaml.load(file);
-
-                if (yamlParsed instanceof Map) {
-                    config = (Map<String, Object>) yamlParsed;
-                } else {
-
-                    logDeferrer.defer(l -> l.info("Configuration YAML is malformed as it contains an array at the " +
-                            "root level. Skipping."));
-                }
-
-                file.close();
-            }
-        } catch (Exception e) {
-            logDeferrer.defer(l ->
-                    l.info("Couldn't successfully process the YAML configuration file. " +
-                            "All your properties may not be correctly loaded."));
-        }
-
-        // parse properties file
-        if (config == null) {
-            loadProperties(propertiesFileName);
-            if (properties == null) {
-                loadProperties(microProfilePropertiesFileName);
+            if (p != null) {
+                this.properties.add(p);
+                this.mode = Mode.PROPERTIES;
             }
         }
 
-        if (config != null || properties != null) {
+        if (!yamlConfigs.isEmpty() || !properties.isEmpty()) {
             logDeferrer.defer(l -> l.info("Configuration successfully read."));
         } else {
-            logDeferrer.defer(l -> l.info("Unable to load configuration from file. No configuration files were found."));
+            logDeferrer.defer(l -> l.info("Unable to load configuration from file. " +
+                    "No configuration files were found."));
+        }
+    }
+
+    @Override
+    public void initProfile(String profileName) {
+
+        if (mode == Mode.YAML) {
+
+            Map<String, Object> yamlConfig = loadYamlFile("config-" + profileName + ".yml", "config-" + profileName + ".yaml");
+            if (yamlConfig != null) {
+                this.yamlConfigs.add(0, yamlConfig);
+            }
+        } else if (mode == Mode.PROPERTIES) {
+            Properties p = loadProperties("config-" + profileName + ".properties");
+            if (p == null) {
+                p = loadProperties("META-INF/microprofile-config-" + profileName + ".properties");
+            }
+            if (p != null) {
+                this.properties.add(0, p);
+            }
         }
     }
 
@@ -147,21 +139,30 @@ public class FileConfigurationSource implements ConfigurationSource {
     public Optional<String> get(String key) {
 
         // get key value from yaml configuration
-        if (config != null) {
+        if (mode == Mode.YAML) {
 
-            Object value = getValue(key);
+            Object value;
+            for (var config : this.yamlConfigs) {
+                value = getYamlValue(key, config);
 
-            return (value == null || value instanceof Map || value instanceof List)
-                    ? Optional.empty()
-                    : Optional.of(value.toString());
+                if (value != null && !(value instanceof Map) && !(value instanceof List)) {
+                    return Optional.of(value.toString());
+                }
+            }
+
+            return Optional.empty();
 
             // get value from .properties configuration
-        } else if (properties != null) {
+        } else if (mode == Mode.PROPERTIES) {
 
-            String value = properties.getProperty(key);
-            if (value != null) {
-                return Optional.of(value);
+            for (Properties properties : this.properties) {
+                String value = properties.getProperty(key);
+                if (value != null) {
+                    return Optional.of(value);
+                }
             }
+
+            return Optional.empty();
         }
 
         return Optional.empty();
@@ -247,15 +248,25 @@ public class FileConfigurationSource implements ConfigurationSource {
     @Override
     public Optional<Integer> getListSize(String key) {
 
-        if (config != null) {
+        if (mode == Mode.YAML) {
 
-            Object value = getValue(key);
+            for (var config : this.yamlConfigs) {
+                Object value = getYamlValue(key, config);
 
-            if (value instanceof List) {
-                return Optional.of(((List) value).size());
+                if (value instanceof List) {
+                    return Optional.of(((List<?>) value).size());
+                }
             }
-        } else if (properties != null) {
-            return ConfigurationSourceUtils.getListSize(key, properties.stringPropertyNames());
+
+            return Optional.empty();
+
+        } else if (mode == Mode.PROPERTIES) {
+
+            for (Properties properties : this.properties) {
+                return ConfigurationSourceUtils.getListSize(key, properties.stringPropertyNames());
+            }
+
+            return Optional.empty();
         }
 
         return Optional.empty();
@@ -266,22 +277,29 @@ public class FileConfigurationSource implements ConfigurationSource {
     @SuppressWarnings("unchecked")
     public Optional<List<String>> getMapKeys(String key) {
 
-        if (config != null) {
-            Object o = (key.equals("")) ? config : getValue(key);
-            Map<String, Object> map = null;
+        if (mode == Mode.YAML) {
 
-            if (o instanceof Map) {
-                map = (Map<String, Object>) o;
+            for (var config : this.yamlConfigs) {
+                Object o = (key.equals("")) ? yamlConfigs : getYamlValue(key, config);
+                Map<String, Object> map = null;
+
+                if (o instanceof Map) {
+                    map = (Map<String, Object>) o;
+                }
+
+                if (map == null || map.isEmpty()) {
+                    return Optional.empty();
+                }
+
+                return Optional.of(new ArrayList<>(map.keySet()));
             }
 
-            if (map == null || map.isEmpty()) {
-                return Optional.empty();
+            return Optional.empty();
+
+        } else if (mode == Mode.PROPERTIES) {
+            for (Properties properties : this.properties) {
+                return ConfigurationSourceUtils.getMapKeys(key, properties.stringPropertyNames());
             }
-
-            return Optional.of(new ArrayList<>(map.keySet()));
-
-        } else if (properties != null) {
-            return ConfigurationSourceUtils.getMapKeys(key, properties.stringPropertyNames());
         }
 
         return Optional.empty();
@@ -337,11 +355,10 @@ public class FileConfigurationSource implements ConfigurationSource {
      * @param key configuration key
      * @return Value for given key.
      */
-    private Object getValue(String key) {
+    private Object getYamlValue(String key, Object value) {
 
         // iterate over configuration tree
         String[] splittedKeys = key.split("\\.");
-        Object value = config;
 
         for (int i = 0; i < splittedKeys.length; i++) {
 
@@ -373,26 +390,26 @@ public class FileConfigurationSource implements ConfigurationSource {
                 splittedKey = splittedKey.substring(0, openingBracket);
 
                 if (value instanceof Map) {
-                    value = ((Map) value).get(splittedKey);
+                    value = ((Map<?, ?>) value).get(splittedKey);
                 } else {
                     return null;
                 }
 
                 if (value instanceof List) {
-                    value = (arrayIndex < ((List) value).size()) ? ((List) value).get(arrayIndex) : null;
+                    value = (arrayIndex < ((List<?>) value).size()) ? ((List<?>) value).get(arrayIndex) : null;
                 }
 
             } else {
                 if (value instanceof Map) {
 
-                    Object tmpValue = ((Map) value).get(splittedKey);
+                    Object tmpValue = ((Map<?, ?>) value).get(splittedKey);
 
                     if (tmpValue == null && i != splittedKeys.length - 1) {
 
                         String postfixKey = Arrays.stream(splittedKeys).skip(i)
                                 .collect(Collectors.joining("."));
 
-                        return ((Map) value).get(postfixKey);
+                        return ((Map<?, ?>) value).get(postfixKey);
                     } else {
 
                         value = tmpValue;
@@ -406,10 +423,69 @@ public class FileConfigurationSource implements ConfigurationSource {
         return value;
     }
 
-    private void loadProperties(String fileName) {
+    private Map<String, Object> loadYamlFile(String fileNameYml, String fileNameYaml) {
 
+        InputStream file = null;
+        Yaml yaml = new Yaml();
         try {
-            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
+            file = getClass().getClassLoader().getResourceAsStream(fileNameYml);
+
+            if (file == null && fileNameYaml != null) {
+                file = getClass().getClassLoader().getResourceAsStream(fileNameYaml);
+            }
+
+            if (file == null) {
+                try {
+                    file = Files.newInputStream(Paths.get(fileNameYml));
+                } catch (IOException ignored) {
+                }
+            }
+
+            if (file == null && fileNameYaml != null) {
+                try {
+                    file = Files.newInputStream(Paths.get(fileNameYaml));
+                } catch (IOException ignored) {
+                }
+            }
+
+            if (file != null) {
+
+                logDeferrer.defer(l -> l.info("Loading configuration from YAML file."));
+
+                Object yamlParsed = yaml.load(file);
+
+                if (yamlParsed instanceof Map) {
+                    //noinspection unchecked
+                    return (Map<String, Object>) yamlParsed;
+                } else {
+
+                    logDeferrer.defer(l -> l.info("Configuration YAML is malformed as it contains an array at the " +
+                            "root level. Skipping."));
+                }
+            }
+
+            return null;
+        } catch (Exception e) {
+            logDeferrer.defer(l ->
+                    l.info("Couldn't successfully process the YAML configuration file. " +
+                            "All your properties may not be correctly loaded."));
+
+            return null;
+        } finally {
+            if (file != null) {
+                try {
+                    file.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
+    }
+
+    private Properties loadProperties(String fileName) {
+
+        InputStream inputStream = null;
+        try {
+            inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
 
             if (inputStream == null) {
                 try {
@@ -422,13 +498,21 @@ public class FileConfigurationSource implements ConfigurationSource {
 
                 logDeferrer.defer(l -> l.info("Loading configuration from .properties file: " + fileName));
 
-                properties = new Properties();
-                properties.load(inputStream);
-
-                inputStream.close();
+                Properties p = new Properties();
+                p.load(inputStream);
+                return p;
             }
         } catch (Exception e) {
             logDeferrer.defer(l -> l.info("Properties file: " + fileName + " not found."));
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException ignored) {
+                }
+            }
         }
+
+        return null;
     }
 }

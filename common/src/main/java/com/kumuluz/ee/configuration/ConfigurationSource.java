@@ -68,4 +68,6 @@ public interface ConfigurationSource {
     }
 
     default void postInit() {}
+
+    default void initProfile(String profileName) {}
 }
