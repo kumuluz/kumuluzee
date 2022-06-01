@@ -203,7 +203,7 @@ public class FileConfigurationSource implements ConfigurationSource {
         if (mode == Mode.YAML) {
 
             for (var config : this.yamlConfigs) {
-                Object o = (key.equals("")) ? yamlConfigs : getYamlValue(key, config);
+                Object o = (key.equals("")) ? config : getYamlValue(key, config);
                 Map<String, Object> map = null;
 
                 if (o instanceof Map) {
