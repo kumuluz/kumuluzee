@@ -52,87 +52,10 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
     }
 
     @Override
-    public Optional<Boolean> getBoolean(String key) {
-
-        Optional<String> value = get(key);
-
-        return value.map(Boolean::valueOf);
-    }
-
-    @Override
-    public Optional<Integer> getInteger(String key) {
-
-        Optional<String> value = get(key);
-
-        if (value.isPresent()) {
-
-            try {
-                return Optional.of(Integer.valueOf(value.get()));
-            } catch (NumberFormatException e) {
-                return Optional.empty();
-            }
-        } else {
-            return Optional.empty();
-        }
-    }
-
-    @Override
-    public Optional<Long> getLong(String key) {
-
-        Optional<String> value = get(key);
-
-        if (value.isPresent()) {
-
-            try {
-                return Optional.of(Long.valueOf(value.get()));
-            } catch (NumberFormatException e) {
-                return Optional.empty();
-            }
-        } else {
-            return Optional.empty();
-        }
-    }
-
-    @Override
-    public Optional<Double> getDouble(String key) {
-
-        Optional<String> value = get(key);
-
-        if (value.isPresent()) {
-
-            try {
-                return Optional.of(Double.valueOf(value.get()));
-            } catch (NumberFormatException e) {
-                return Optional.empty();
-            }
-        } else {
-            return Optional.empty();
-        }
-    }
-
-    @Override
-    public Optional<Float> getFloat(String key) {
-
-        Optional<String> value = get(key);
-
-        if (value.isPresent()) {
-
-            try {
-                return Optional.of(Float.valueOf(value.get()));
-            } catch (NumberFormatException e) {
-                return Optional.empty();
-            }
-
-        } else {
-            return Optional.empty();
-        }
-    }
-
-    @Override
     public Optional<Integer> getListSize(String key) {
 
         for (String possibleKeyName : getPossibleEnvNames(key)) {
-            Integer maxIndex = -1;
+            int maxIndex = -1;
 
             for (String envName : System.getenv().keySet()) {
 
@@ -146,7 +69,7 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
                     }
 
                     try {
-                        Integer idx = Integer.parseInt(envName.substring(openingIndex, closingIndex));
+                        int idx = Integer.parseInt(envName.substring(openingIndex, closingIndex));
                         maxIndex = Math.max(maxIndex, idx);
                     } catch (NumberFormatException ignored) {
                     }
@@ -178,7 +101,7 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
                     }
 
                     try {
-                        Integer idx = Integer.parseInt(envName.substring(openingIndex, closingIndex));
+                        int idx = Integer.parseInt(envName.substring(openingIndex, closingIndex));
                         maxIndex = Math.max(maxIndex, idx);
                     } catch (NumberFormatException ignored) {
                     }

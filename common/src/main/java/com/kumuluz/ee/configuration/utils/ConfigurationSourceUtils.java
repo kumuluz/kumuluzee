@@ -31,7 +31,7 @@ public class ConfigurationSourceUtils {
 
     public static Optional<Integer> getListSize(String key, Collection<String> allKeys) {
 
-        Integer maxIndex = -1;
+        int maxIndex = -1;
 
         for (String propertyKey : allKeys) {
 
@@ -41,7 +41,7 @@ public class ConfigurationSourceUtils {
                 int closingIndex = propertyKey.indexOf("]", openingIndex + 1);
 
                 try {
-                    Integer idx = Integer.parseInt(propertyKey.substring(openingIndex, closingIndex));
+                    int idx = Integer.parseInt(propertyKey.substring(openingIndex, closingIndex));
                     maxIndex = Math.max(maxIndex, idx);
                 } catch (NumberFormatException ignored) {
                 }

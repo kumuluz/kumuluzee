@@ -63,7 +63,34 @@ public class ConfigurationUtil {
     }
 
     public Optional<String> get(String key) {
-        return get(key, new HashSet<>());
+
+        for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
+
+            Optional<String> value = configurationSource.get(key);
+
+            if (value.isPresent()) {
+
+                return Optional.of(ConfigurationInterpolationUtil.interpolateString(
+                        ConfigurationDecoderUtils.decodeConfigValueIfEncoded(key, value.get()), this::get));
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    public Optional<String> getRaw(String key) {
+
+        for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
+
+            Optional<String> value = configurationSource.get(key);
+
+            if (value.isPresent()) {
+
+                return value;
+            }
+        }
+
+        return Optional.empty();
     }
 
     public Optional<Boolean> getBoolean(String key) {
@@ -285,52 +312,5 @@ public class ConfigurationUtil {
 
     public ConfigurationDecoder getConfigurationDecoder() {
         return config.getConfigurationDecoder();
-    }
-
-    //// Private methods
-
-    private Optional<String> get(String key, Set<String> processingKeys) {
-
-        for (ConfigurationSource configurationSource : config.getConfigurationSources()) {
-
-            Optional<String> value = configurationSource.get(key);
-
-            if (value.isPresent()) {
-
-                return Optional.of(interpolateString(
-                        key, ConfigurationDecoderUtils.decodeConfigValueIfEncoded(key, value.get()), processingKeys));
-            }
-        }
-
-        return Optional.empty();
-    }
-
-    private String interpolateString(String key, String s, Set<String> processingKeys) {
-
-        if (processingKeys.contains(key)) {
-
-            if (config.isUtilLoggerAvailable()) {
-
-                config.getUtilLogger().warning("Detected cycle when interpolating configuration key: " + key);
-            }
-
-            return "";
-        }
-
-        processingKeys.add(key);
-
-        int startIndex;
-        while ((startIndex = s.indexOf("${")) >= 0) {
-
-            int endIndex = s.indexOf("}", startIndex + 2);
-            String newKey = s.substring(startIndex + 2, endIndex);
-
-            String replacement = get(newKey, processingKeys).orElse("");
-            processingKeys.remove(newKey);
-
-            s = s.substring(0, startIndex) + replacement + s.substring(endIndex + 1);
-        }
-
-        return s;
     }
 }
