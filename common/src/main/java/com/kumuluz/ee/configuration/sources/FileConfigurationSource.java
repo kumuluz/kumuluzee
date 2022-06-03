@@ -173,23 +173,39 @@ public class FileConfigurationSource implements ConfigurationSource {
 
         if (mode == Mode.YAML) {
 
+            Integer maxSize = null;
+
             for (var config : this.yamlConfigs) {
                 Object value = getYamlValue(key, config);
 
                 if (value instanceof List) {
-                    return Optional.of(((List<?>) value).size());
+                    if (maxSize == null) {
+                        maxSize = ((List<?>) value).size();
+                    } else {
+                        maxSize = Math.max(((List<?>) value).size(), maxSize);
+                    }
                 }
             }
 
-            return Optional.empty();
+            return Optional.ofNullable(maxSize);
 
         } else if (mode == Mode.PROPERTIES) {
 
+            Integer maxSize = null;
+
             for (Properties properties : this.properties) {
-                return ConfigurationSourceUtils.getListSize(key, properties.stringPropertyNames());
+                Optional<Integer> propertyListSize = ConfigurationSourceUtils.getListSize(key, properties.stringPropertyNames());
+
+                if (propertyListSize.isPresent()) {
+                    if (maxSize == null) {
+                        maxSize = propertyListSize.get();
+                    } else {
+                        maxSize = Math.max(propertyListSize.get(), maxSize);
+                    }
+                }
             }
 
-            return Optional.empty();
+            return Optional.ofNullable(maxSize);
         }
 
         return Optional.empty();
@@ -202,6 +218,9 @@ public class FileConfigurationSource implements ConfigurationSource {
 
         if (mode == Mode.YAML) {
 
+            boolean found = false;
+            Set<String> mergedKeys = new HashSet<>();
+
             for (var config : this.yamlConfigs) {
                 Object o = (key.equals("")) ? config : getYamlValue(key, config);
                 Map<String, Object> map = null;
@@ -210,18 +229,37 @@ public class FileConfigurationSource implements ConfigurationSource {
                     map = (Map<String, Object>) o;
                 }
 
-                if (map == null || map.isEmpty()) {
-                    return Optional.empty();
+                if (map != null && !map.isEmpty()) {
+                    found = true;
+                    mergedKeys.addAll(map.keySet());
                 }
-
-                return Optional.of(new ArrayList<>(map.keySet()));
             }
 
-            return Optional.empty();
+            if (found) {
+                return Optional.of(new ArrayList<>(mergedKeys));
+            } else {
+                return Optional.empty();
+            }
 
         } else if (mode == Mode.PROPERTIES) {
+
+            boolean found = false;
+            Set<String> mergedKeys = new HashSet<>();
+
             for (Properties properties : this.properties) {
-                return ConfigurationSourceUtils.getMapKeys(key, properties.stringPropertyNames());
+                Optional<List<String>> propertyMapKeys = ConfigurationSourceUtils.getMapKeys(key,
+                        properties.stringPropertyNames());
+
+                if (propertyMapKeys.isPresent()) {
+                    found = true;
+                    mergedKeys.addAll(propertyMapKeys.get());
+                }
+            }
+
+            if (found) {
+                return Optional.of(new ArrayList<>(mergedKeys));
+            } else {
+                return Optional.empty();
             }
         }
 
