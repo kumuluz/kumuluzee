@@ -56,7 +56,7 @@
         <resource.version>1.7.4</resource.version>
         <javamail.version>1.6.7</javamail.version>
 
-        <jandex.version>2.2.2.Final</jandex.version>
+        <jandex.version>2.4.2.Final</jandex.version>
         <jboss-logging.version>3.3.2.Final</jboss-logging.version>
         <classmate.version>1.5.1</classmate.version>
         <javassist.version>3.27.0-GA</javassist.version>
