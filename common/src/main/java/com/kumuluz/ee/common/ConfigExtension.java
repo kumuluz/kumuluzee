@@ -35,7 +35,9 @@ public interface ConfigExtension extends Extension {
      * @deprecated Use {@link #getConfigurationSources()} instead.
      */
     @Deprecated
-    ConfigurationSource getConfigurationSource();
+    default ConfigurationSource getConfigurationSource() {
+        return null;
+    }
 
     default List<ConfigurationSource> getConfigurationSources() {
         return Collections.emptyList();

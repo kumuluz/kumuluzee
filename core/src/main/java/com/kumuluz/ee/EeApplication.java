@@ -227,6 +227,7 @@ public class EeApplication {
                 List<ConfigurationSource> sources = extension.getExtension().getConfigurationSources();
 
                 if (sources == null || sources.size() == 0) {
+                    //noinspection deprecation
                     sources = Collections.singletonList(extension.getExtension().getConfigurationSource());
                 }
 
