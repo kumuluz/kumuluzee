@@ -1,22 +1,22 @@
 # KumuluzEE
 ![KumuluzEE CI](https://github.com/kumuluz/kumuluzee/workflows/KumuluzEE%20CI/badge.svg)
 
-> Lightweight open-source framework for developing microservices using standard Java/JavaEE/JakartaEE/EE4J technologies, extending them with Node.js, Go and other languages, and migrating to cloud-native architecture.
+> Lightweight open-source framework for developing microservices using standard Java/JakartaEE technologies, extending them with Node.js, Go and other languages, and migrating to cloud-native architecture.
 
-KumuluzEE is a lightweight framework for developing microservices using standard Java/JavaEE/JakartaEE/EE4J technologies, extending them with Node.js, Go and other languages, and migrating existing applications to microservices and cloud-native architecture. KumuluzEE packages microservices as standalone JARs. KumuluzEE microservices are lightweight and optimized for size and start-up time.
-They fit perfectly with Docker containers. KumuluzEE microservices are fully compatible with Kubernetes. 
+KumuluzEE is a lightweight framework for developing microservices using standard Java/JakartaEE technologies, extending them with Node.js, Go and other languages, and migrating existing applications to microservices and cloud-native architecture. KumuluzEE packages microservices as standalone JARs. KumuluzEE microservices are lightweight and optimized for size and start-up time.
+They fit perfectly with Docker containers. KumuluzEE microservices are fully compatible with Kubernetes and enable Kubernetes-native development. KumuluzEE will also provide support for Serverless Functions on Azure, AWS and Google. 
 
 KumuluzEE also provides extensions for developing common patterns in cloud-native architectures, including configuration, logging, discovery, fault tolerance with circuit-breakers, metrics, security, event streaming and more.
 
-KumuluzEE has been designed to use the standard Java/JavaEE/JakartaEE/EE4J technologies and APIs with optional extensions for easier development of cloud-native microservices. Therefore, it is particularly suitable for existing enterprise Java developers, who would like to leverage their skills, but progressively move from monolithic to microservice design patterns.
+KumuluzEE has been designed to use the standard Java/JakartaEE technologies and APIs with optional extensions for easier development of cloud-native microservices. Therefore, it is particularly suitable for existing enterprise Java developers, who would like to leverage their skills, but progressively move from monolithic to microservice design patterns.
 
-KumuluzEE provides full support for **Java**, including Java SE 9/10/11 and higher versions and Java EE 8. In addition to Java, KumuluzEE supports several programming languages, including **Node.js** and **Go**. Support for additional languages will be added soon. For these languages, KumuluzEE also provides support for service configuration and discovery. 
+KumuluzEE provides full support for **Java** latest versions (check each release for specific information). In addition to Java, KumuluzEE supports several programming languages, including **Node.js** and **Go**. Support for additional languages will be added soon. For these languages, KumuluzEE also provides support for service configuration and discovery. 
 
-KumuluzEE is Eclipse MicroProfile compliant and provides support for MicroProfile 1.0, 1.1, 1.2, 1.3, 1.4, 2.0, 2.1, 3.0, 3.1, 3.2 and 3.3. KumuluzEE implements MicroProfile Config 1.4, MicroProfile Health 2.2, MicroProfile Fault Tolerance 2.1, MicroProfile Metrics 2.3, MicroProfile JWT Authentication 1.1, MicroProfile Rest Client 1.3, MicroProfile OpenAPI 1.1 and MicroProfile Open Tracing 1.3 APIs.
+KumuluzEE is Eclipse MicroProfile compliant and provides support for MicroProfile 1.0, 1.1, 1.2, 1.3, 1.4, 2.0, 2.1, 3.0, 3.1, 3.2 and 3.3. Support for 4.x and 5.x is coming soon. KumuluzEE provides support for all MicroProfile specifications, including MicroProfile Config, MicroProfile Health, MicroProfile Fault Tolerance, MicroProfile Metrics, MicroProfile JWT Authentication, MicroProfile Rest Client, MicroProfile OpenAPI and MicroProfile Open Tracing APIs.
 
 ## Getting started
 
-If you already know how to use Java/JavaEE/JakartaEE/EE4J, then you already know how to use KumuluzEE. It is simple and straightforward. 
+If you already know how to use Java/JakartaEE, then you already know how to use KumuluzEE. It is simple and straightforward. 
 
 See the [getting started](https://github.com/kumuluz/KumuluzEE/wiki/Getting-started) wiki section to create your first light-weight standalone Java microservice in 5 minutes. 
 
@@ -27,38 +27,40 @@ Refer to [samples](https://github.com/kumuluz/kumuluzee-samples) for more exampl
 ## Features
 
 Primary features:
-
+- Lightweight, cloud-native Java microservices with full support for Docker, Kubernetes and Serverless (coming soon).
+- Support for all major cloud-native patterns, minimal footprint, quick start-up time, perfect for scaling in the cloud.
 - No need for a traditional application server. Run your app anywhere Java runs as well as in PaaS
-and Docker-like environments
+and Docker-like environments.
 - Allows you to develop microservices using standard Java technologies and extend them with Node.js, Go and other languages.
 - Allows you to gradually migrate existing Java applications to microservices and cloud-native architecture.
-- Complete control over what Java/JavaEE/JakartaEE/EE4J components and its implementations are included. Only include what you need and make your app lightweight.
+- Complete control over what Java/JakartaEE components and its implementations are included. Only include what you need and make your app lightweight.
 - Minimal to no configuration settings up the base server. Develop like any other Java application.
 - Quick startup time, low resource consumption and stateless scalability accelerates development.
 - Extend your microservices with common cloud-native patterns, such as config, discovery, logging, fault tolerance, circuit-breakers, etc. KumuluzEE provides all the building blocks.
 
-KumuluzEE provides support for various Java/JavaEE/JakartaEE/EE4J APIs and components. The goal is to support as many Java components as possible (contributions welcome). 
+KumuluzEE provides support for various Java/JakartaEE APIs and components. The goal is to support as many Java components as possible (contributions welcome). 
 
-## Java/JavaEE/JakartaEE/EE4J components
+## Java/JavaEE/JakartaEE components
 
 Currently the following components are supported with more being added over time:
 
-- Servlet 3.1 (Jetty)
-- CDI 2.0 (RI Weld)
-- JAX-RS 2.1. (RI Jersey)
-- JSON-P 1.1 (RI JSONP)
-- JSON-B 1.0 (RI Yasson)
-- JSP 2.3 (Jetty Apache Jasper)
-- JPA 2.2 (RI EclipseLink)
-- JPA 2.2 (RI Hibernate)
-- EL 3.0 (RI UEL)
-- JAX-WS 2.3 (RI Metro)
-- JAX-WS 2.3 (Apache CXF)
-- JSF 2.3 (RI Mojarra)
-- WebSocket 1.1 (Jetty)
-- Bean Validation 2.0 (RI Hibernate validator)
-- JTA 1.3 (Narayana)
-- Java Mail 1.6 (RI JavaMail)
+- Servlet (Jetty)
+- CDI (RI Weld)
+- JAX-RS (RI Jersey)
+- JSON-P (RI JSONP)
+- JSON-B (RI Yasson)
+- JSP (Jetty Apache Jasper)
+- JPA (RI EclipseLink)
+- JPA (RI Hibernate)
+- EL (RI UEL)
+- JAX-WS (RI Metro)
+- JAX-WS (Apache CXF)
+- JSF (RI Mojarra)
+- WebSocket (Jetty)
+- Bean Validation (RI Hibernate validator)
+- JTA (Narayana)
+- Java Mail (RI JavaMail)
+Please check each specific KumuluzEE version for specific versions of these components. 
 
 ## Additional features
 
@@ -92,9 +94,9 @@ The following projects are available with more planned soon:
 - [KumuluzEE GraphQL](https://github.com/kumuluz/kumuluzee-graphql) (Native support for GraphQL)
 - [KumuluzEE Ethereum](https://github.com/kumuluz/kumuluzee-ethereum) (For Ethereum-enabled blockchain microservices)
 - [KumuluzEE AMQP](https://github.com/kumuluz/kumuluzee-amqp) (Support for Advanced Message Queueing Protocol)
-- **_new_** [KumuluzEE Feature Flags](https://github.com/kumuluz/kumuluzee-feature-flags) (Support for development with feature flags.)
-- **_new_** [KumuluzEE JCache](https://github.com/kumuluz/kumuluzee-jcache) (Support for caching using JCache annotations.)
-- **_new_** [KumuluzEE Version](https://github.com/kumuluz/kumuluzee-version) (Support for exposing version details of microservice.)
+- [KumuluzEE Feature Flags](https://github.com/kumuluz/kumuluzee-feature-flags) (Support for development with feature flags.)
+- [KumuluzEE JCache](https://github.com/kumuluz/kumuluzee-jcache) (Support for caching using JCache annotations.)
+- [KumuluzEE Version](https://github.com/kumuluz/kumuluzee-version) (Support for exposing version details of microservice.)
 
 
 ## MicroProfile
