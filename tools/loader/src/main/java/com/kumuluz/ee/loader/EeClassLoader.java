@@ -173,7 +173,7 @@ public class EeClassLoader extends ClassLoader {
         File tmpFile = null;
         try {
             if (jarEntry.isDirectory()) {
-                tmpFile = new File(tempDir + File.separator + jarEntry);
+                tmpFile = new File(tempDir, jarEntry);
                 tmpFile.mkdirs();
                 tmpFile.deleteOnExit();
                 chmod777(tmpFile);
@@ -184,13 +184,17 @@ public class EeClassLoader extends ClassLoader {
                 int lastPathIndex = jarEntry.getName().lastIndexOf("/");
                 if (lastPathIndex > -1) {
                     String dirPath = jarEntry.getName().substring(0, lastPathIndex);
-                    tempDir = new File(tempDir.getPath() + File.separator + dirPath);
+                    tempDir = new File(tempDir.getPath(), dirPath);
                     tempDir.mkdirs();
                     tempDir.deleteOnExit();
                     chmod777(tempDir);
                     fileName = fileName.substring(lastPathIndex + 1);
                 }
-                tmpFile = new File(tempDir + File.separator + fileName);
+                final File zipEntryFile = new File(tempDir, fileName);
+                if (!zipEntryFile.toPath().normalize().startsWith(tempDir.toPath().normalize())) {
+                    throw new IOException("Bad zip entry");
+                }
+                tmpFile = zipEntryFile;
                 tmpFile.deleteOnExit();
                 chmod777(tmpFile); // Unix - allow temp file deletion by any user
                 BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(tmpFile));
