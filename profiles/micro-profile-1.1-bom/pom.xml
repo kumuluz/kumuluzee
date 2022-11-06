@@ -5,25 +5,32 @@
     <parent>
         <artifactId>kumuluzee-profiles</artifactId>
         <groupId>com.kumuluz.ee</groupId>
-        <version>4.2.0-SNAPSHOT</version>
+        <version>3.11.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <name>KumuluzEE MicroProfile</name>
+    <name>KumuluzEE MicroProfile 1.1 BOM</name>
     <description>
-        KumuluzEE MicroProfile which includes and tracks the latest community based specification found at
+        KumuluzEE MicroProfile 1.1 which includes and tracks the version 1.1 community based specification found at
         https://microprofile.io, which focuses on technologies best-suited to build modern Java based cloud
         applications that follow the microservice architecture. The main KumuluzEE profile includes the reference
         implementations of the profile/specification.
     </description>
 
-    <artifactId>kumuluzee-microProfile</artifactId>
+    <artifactId>kumuluzee-microProfile-1.1-bom</artifactId>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.kumuluz.ee</groupId>
-            <artifactId>kumuluzee-microProfile-3.3</artifactId>
-        </dependency>
-    </dependencies>
+    <properties>
+        <version.kumuluzee-config-mp>1.1.1</version.kumuluzee-config-mp>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.kumuluz.ee.config</groupId>
+                <artifactId>kumuluzee-config-mp</artifactId>
+                <version>${version.kumuluzee-config-mp}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>

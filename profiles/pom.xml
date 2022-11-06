@@ -17,18 +17,30 @@
     </description>
     <modules>
         <module>micro-profile</module>
+        <module>micro-profile-bom</module>
         <module>micro-profile-1.0</module>
         <module>micro-profile-1.1</module>
+        <module>micro-profile-1.1-bom</module>
         <module>micro-profile-1.2</module>
+        <module>micro-profile-1.2-bom</module>
         <module>micro-profile-1.3</module>
+        <module>micro-profile-1.3-bom</module>
         <module>micro-profile-1.4</module>
+        <module>micro-profile-1.4-bom</module>
         <module>micro-profile-2.0</module>
+        <module>micro-profile-2.0-bom</module>
         <module>micro-profile-2.1</module>
+        <module>micro-profile-2.1-bom</module>
         <module>micro-profile-2.2</module>
+        <module>micro-profile-2.2-bom</module>
         <module>micro-profile-3.0</module>
+        <module>micro-profile-3.0-bom</module>
         <module>micro-profile-3.1</module>
+        <module>micro-profile-3.1-bom</module>
         <module>micro-profile-3.2</module>
+        <module>micro-profile-3.2-bom</module>
         <module>micro-profile-3.3</module>
+        <module>micro-profile-3.3-bom</module>
     </modules>
 
     <artifactId>kumuluzee-profiles</artifactId>

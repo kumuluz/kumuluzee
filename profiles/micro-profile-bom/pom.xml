@@ -5,11 +5,11 @@
     <parent>
         <artifactId>kumuluzee-profiles</artifactId>
         <groupId>com.kumuluz.ee</groupId>
-        <version>4.2.0-SNAPSHOT</version>
+        <version>3.11.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <name>KumuluzEE MicroProfile</name>
+    <name>KumuluzEE MicroProfile BOM</name>
     <description>
         KumuluzEE MicroProfile which includes and tracks the latest community based specification found at
         https://microprofile.io, which focuses on technologies best-suited to build modern Java based cloud
@@ -17,13 +17,18 @@
         implementations of the profile/specification.
     </description>
 
-    <artifactId>kumuluzee-microProfile</artifactId>
+    <artifactId>kumuluzee-microProfile-bom</artifactId>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.kumuluz.ee</groupId>
-            <artifactId>kumuluzee-microProfile-3.3</artifactId>
-        </dependency>
-    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.kumuluz.ee</groupId>
+                <artifactId>kumuluzee-microProfile-3.3-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>
