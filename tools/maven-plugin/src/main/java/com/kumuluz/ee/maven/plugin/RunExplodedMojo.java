@@ -42,6 +42,7 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
         requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
         requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME
 )
+@Execute(phase = LifecyclePhase.PACKAGE)
 public class RunExplodedMojo extends AbstractCopyDependenciesMojo {
 
     @Override
@@ -55,14 +56,15 @@ public class RunExplodedMojo extends AbstractCopyDependenciesMojo {
                 plugin(
                         groupId("org.codehaus.mojo"),
                         artifactId("exec-maven-plugin"),
-                        version("1.6.0")
+                        version("3.1.0")
                 ),
-                goal("java"),
+                goal("exec"),
                 configuration(
-                        element(name("mainClass"), "com.kumuluz.ee.EeApplication"),
+                        element(name("executable"), "java"),
                         element(name("arguments"),
-                                element(name("argument"), "-classpath"),
-                                element(name("argument"), String.format(CLASSPATH_FORMAT, File.separator, File.pathSeparator)))
+                                element(name("argument"), "-cp"),
+                                element(name("argument"), String.format(CLASSPATH_FORMAT, File.separator, File.pathSeparator)),
+                                element(name("argument"), "com.kumuluz.ee.EeApplication"))
                 ),
                 executionEnvironment(project, session, buildPluginManager)
         );
