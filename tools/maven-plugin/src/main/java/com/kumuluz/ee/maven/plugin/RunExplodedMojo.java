@@ -20,8 +20,6 @@
 */
 package com.kumuluz.ee.maven.plugin;
 
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.project.MavenProject;
@@ -45,10 +43,10 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
 @Execute(phase = LifecyclePhase.PACKAGE)
 public class RunExplodedMojo extends AbstractCopyDependenciesMojo {
 
+    private static final String CLASSPATH_FORMAT = "target%1$sclasses%2$starget%1$sdependency%1$s*";
+
     @Override
     public void execute() throws MojoExecutionException {
-
-        final String CLASSPATH_FORMAT = "target%1$sclasses%2$starget%1$sdependency%1$s*";
 
         copyDependencies();
 
@@ -60,7 +58,8 @@ public class RunExplodedMojo extends AbstractCopyDependenciesMojo {
                 ),
                 goal("exec"),
                 configuration(
-                        element(name("executable"), "java"),
+                        element(name("executable"), javaCmd()),
+                        element(name("inheritIo"), "true"),
                         element(name("arguments"),
                                 element(name("argument"), "-cp"),
                                 element(name("argument"), String.format(CLASSPATH_FORMAT, File.separator, File.pathSeparator)),
@@ -69,4 +68,35 @@ public class RunExplodedMojo extends AbstractCopyDependenciesMojo {
                 executionEnvironment(project, session, buildPluginManager)
         );
     }
-}
+
+    public static String javaCmd() {
+        File javaCmd = fileForEnv("JAVACMD");
+
+        if (javaCmd != null) {
+            return javaCmd.getAbsolutePath();
+        }
+
+        File javaHome = fileForEnv("JAVA_HOME");
+        if (javaHome != null) {
+
+            String[] paths = {"jre/sh/java", "bin/java", "bin/java.exe"};
+
+            for( String path : paths ) {
+                File f = new File(javaHome, path);
+                if (f.isFile() && f.canExecute()) {
+                    return f.getAbsolutePath();
+                }
+            }
+        }
+        return "java";
+    }
+
+    private static File fileForEnv(String env) {
+        String s = System.getenv(env);
+        if (s == null || s.isEmpty()) {
+            return null;
+                } else {
+            return new File(s);
+                }
+        }
+    }
