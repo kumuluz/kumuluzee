@@ -2,23 +2,23 @@ package com.kumuluz.ee.jaxws.cxf.processor;
 
 import com.kumuluz.ee.jaxws.cxf.impl.NoWsContextAnnotatedEndpointBean;
 import com.kumuluz.ee.jaxws.cxf.impl.WsContextAnnotatedEndpointBean;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class JaxWsAnnotationProcessorUtilTest {
+class JaxWsAnnotationProcessorUtilTest {
 
-    private JaxWsAnnotationProcessorUtil instance = JaxWsAnnotationProcessorUtil.getInstance();
+    private final JaxWsAnnotationProcessorUtil instance = JaxWsAnnotationProcessorUtil.getInstance();
 
     @Test
-    public void shouldReturnDefaultWsInfo() {
+    void shouldReturnDefaultWsInfo() {
 
         String className = NoWsContextAnnotatedEndpointBean.class.getName();
         Class<?> clazz = NoWsContextAnnotatedEndpointBean.class;
@@ -30,22 +30,27 @@ public class JaxWsAnnotationProcessorUtilTest {
         String expectedUrl = "/" + className;
 
         //check implementation class
-        assertEquals("Ws endpoint returned wrong implementation value", clazz, instance.getEndpointList().get(0).getImplementationClass());
+        assertEquals(clazz, instance.getEndpointList().get(0).getImplementationClass(),
+                "Ws endpoint returned wrong implementation value");
 
         //assert @WsContext
-        assertEquals("Ws endpoint without defined contextRoot returned wrong value", expectedContextRoot, instance.getContextRoot());
+        assertEquals(expectedContextRoot, instance.getContextRoot(),
+                "Ws endpoint without defined contextRoot returned wrong value");
         assertFalse(instance.getEndpointList().isEmpty());
-        assertEquals("Ws endpoint without defined url returned wrong value", expectedUrl, instance.getEndpointList().get(0).getUrl());
+        assertEquals(expectedUrl, instance.getEndpointList().get(0).getUrl(),
+                "Ws endpoint without defined url returned wrong value");
 
         //assert @Webservice
-        assertNull("Ws endpoint without defined wsdlLocation returned wrong value", instance.getEndpointList().get(0).wsdlLocation());
-        assertNull("Ws endpoint without defined wsdlLocation returned wrong value", instance.getEndpointList().get(0).portName());
-        assertNull("Ws endpoint without defined wsdlLocation returned wrong value", instance.getEndpointList().get(0).serviceName());
-
+        assertNull(instance.getEndpointList().get(0).wsdlLocation(),
+                "Ws endpoint without defined wsdlLocation returned wrong value");
+        assertNull(instance.getEndpointList().get(0).portName(),
+                "Ws endpoint without defined wsdlLocation returned wrong value");
+        assertNull(instance.getEndpointList().get(0).serviceName(),
+                "Ws endpoint without defined wsdlLocation returned wrong value");
     }
 
     @Test
-    public void shouldReturnConfiguredWsInfo() {
+    void shouldReturnConfiguredWsInfo() {
 
         String className = WsContextAnnotatedEndpointBean.class.getName();
         Class<?> clazz = WsContextAnnotatedEndpointBean.class;
@@ -55,21 +60,23 @@ public class JaxWsAnnotationProcessorUtilTest {
 
 
         //check implementation class
-        assertEquals("Ws endpoint returned wrong implementation value", clazz, instance.getEndpointList().get(0).getImplementationClass());
+        assertEquals(clazz, instance.getEndpointList().get(0).getImplementationClass(),
+                "Ws endpoint returned wrong implementation value");
 
         //assert @WsContext
-        assertEquals("Ws endpoint without defined contextRoot returned wrong value", WsContextAnnotatedEndpointBean.CTX_ROOT, instance.getContextRoot());
+        assertEquals(WsContextAnnotatedEndpointBean.CTX_ROOT, instance.getContextRoot(),
+                "Ws endpoint without defined contextRoot returned wrong value");
         assertFalse(instance.getEndpointList().isEmpty());
-        assertEquals("Ws endpoint without defined url returned wrong value", WsContextAnnotatedEndpointBean.URL_PATTERN, instance.getEndpointList().get(0)
-                .getUrl());
+        assertEquals(WsContextAnnotatedEndpointBean.URL_PATTERN, instance.getEndpointList().get(0).getUrl(),
+                "Ws endpoint without defined url returned wrong value");
 
         //assert @Webservice
-        assertEquals("Ws endpoint without defined wsdlLocation returned wrong value", WsContextAnnotatedEndpointBean.WSDL_URL, instance.getEndpointList()
-                .get(0).wsdlLocation());
-        assertEquals("Ws endpoint without defined wsdlLocation returned wrong value", WsContextAnnotatedEndpointBean.PORT, instance.getEndpointList()
-                .get(0).portName());
-        assertEquals("Ws endpoint without defined wsdlLocation returned wrong value", WsContextAnnotatedEndpointBean.SERVICE, instance.getEndpointList()
-                .get(0).serviceName());
+        assertEquals(WsContextAnnotatedEndpointBean.WSDL_URL, instance.getEndpointList().get(0).wsdlLocation(),
+                "Ws endpoint without defined wsdlLocation returned wrong value");
+        assertEquals(WsContextAnnotatedEndpointBean.PORT, instance.getEndpointList().get(0).portName(),
+                "Ws endpoint without defined wsdlLocation returned wrong value");
+        assertEquals(WsContextAnnotatedEndpointBean.SERVICE, instance.getEndpointList().get(0).serviceName(),
+                "Ws endpoint without defined wsdlLocation returned wrong value");
     }
 
     //helper method
@@ -80,7 +87,7 @@ public class JaxWsAnnotationProcessorUtilTest {
             throw new RuntimeException("Service file not found.");
         }
 
-        try (PrintWriter out = new PrintWriter(new File(URLDecoder.decode(url.getFile(), "UTF-8")))) {
+        try (PrintWriter out = new PrintWriter(URLDecoder.decode(url.getFile(), StandardCharsets.UTF_8))) {
             Stream.of(endpoints).forEach(out::print);
             out.flush();
         } catch (IOException fe) {

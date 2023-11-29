@@ -1,6 +1,7 @@
 package com.kumuluz.ee.jpa.common.injection;
 
-import javax.persistence.EntityManager;
+
+import jakarta.persistence.EntityManager;
 
 /**
  * @author Tilen Faganel

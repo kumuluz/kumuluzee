@@ -1,8 +1,7 @@
 package com.kumuluz.ee.jaxws.cxf.impl;
 
 import com.kumuluz.ee.jaxws.cxf.annotations.WsContext;
-
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 @WsContext(contextRoot = WsContextAnnotatedEndpointBean.CTX_ROOT, urlPattern = WsContextAnnotatedEndpointBean.URL_PATTERN)
 @WebService(wsdlLocation = WsContextAnnotatedEndpointBean.WSDL_URL, portName = WsContextAnnotatedEndpointBean.PORT, serviceName =

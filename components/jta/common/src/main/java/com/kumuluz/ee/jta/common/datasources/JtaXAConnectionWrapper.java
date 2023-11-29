@@ -17,17 +17,17 @@
  *  out of or in connection with the software or the use or other dealings in the
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
-*/
+ */
 package com.kumuluz.ee.jta.common.datasources;
 
 import com.kumuluz.ee.jta.common.JtaProvider;
 import com.kumuluz.ee.jta.common.utils.TxUtils;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.Synchronization;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.TransactionManager;
 
 import javax.sql.XAConnection;
-import javax.transaction.RollbackException;
-import javax.transaction.Synchronization;
-import javax.transaction.SystemException;
-import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAResource;
 import java.sql.*;
 import java.util.Collections;

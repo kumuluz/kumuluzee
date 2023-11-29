@@ -20,11 +20,8 @@
 */
 package com.kumuluz.ee.maven.plugin;
 
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.*;
-import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 
@@ -55,7 +52,7 @@ public class RunExplodedMojo extends AbstractCopyDependenciesMojo {
                 plugin(
                         groupId("org.codehaus.mojo"),
                         artifactId("exec-maven-plugin"),
-                        version("1.6.0")
+                        version("3.1.0")
                 ),
                 goal("java"),
                 configuration(

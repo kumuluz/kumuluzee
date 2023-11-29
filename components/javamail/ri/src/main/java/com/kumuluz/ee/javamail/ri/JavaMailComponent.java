@@ -7,8 +7,8 @@ import com.kumuluz.ee.common.config.MailSessionConfig;
 import com.kumuluz.ee.common.dependencies.EeComponentDef;
 import com.kumuluz.ee.common.dependencies.EeComponentType;
 import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
+import jakarta.mail.Session;
 
-import javax.mail.Session;
 import java.util.logging.Logger;
 
 /**

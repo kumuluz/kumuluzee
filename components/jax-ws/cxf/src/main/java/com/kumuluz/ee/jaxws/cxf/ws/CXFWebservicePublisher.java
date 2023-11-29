@@ -20,19 +20,19 @@
  */
 package com.kumuluz.ee.jaxws.cxf.ws;
 
+import jakarta.annotation.Resource;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.xml.ws.WebServiceContext;
 import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.cxf.jaxws.handler.AnnotationHandlerChainBuilder;
 import org.apache.cxf.service.invoker.Invoker;
 
-import javax.annotation.Resource;
-import javax.enterprise.inject.spi.CDI;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NameAlreadyBoundException;
 import javax.naming.NamingException;
-import javax.xml.ws.WebServiceContext;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Logger;
@@ -131,7 +131,8 @@ public class CXFWebservicePublisher {
         //pojo instance
         try {
             return clazz.getConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
             throw new RuntimeException("Unable to instantiate bean from " + clazz, e);
         }
 

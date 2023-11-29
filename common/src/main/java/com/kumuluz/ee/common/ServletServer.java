@@ -21,12 +21,12 @@
 package com.kumuluz.ee.common;
 
 import com.kumuluz.ee.common.servlet.ServletWrapper;
+import jakarta.servlet.DispatcherType;
+import jakarta.servlet.Filter;
+import jakarta.servlet.Servlet;
+import jakarta.transaction.UserTransaction;
 
-import javax.servlet.DispatcherType;
-import javax.servlet.Filter;
-import javax.servlet.Servlet;
 import javax.sql.DataSource;
-import javax.transaction.UserTransaction;
 import java.util.*;
 
 /**

@@ -20,6 +20,7 @@
  */
 package com.kumuluz.ee.jaxws.cxf.ws;
 
+import jakarta.xml.ws.WebServiceContext;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxws.JAXWSMethodInvoker;
 import org.apache.cxf.jaxws.context.WebServiceContextImpl;
@@ -31,7 +32,6 @@ import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.service.invoker.MethodDispatcher;
 import org.apache.cxf.service.model.BindingOperationInfo;
 
-import javax.xml.ws.WebServiceContext;
 import java.lang.reflect.Method;
 import java.util.List;
 

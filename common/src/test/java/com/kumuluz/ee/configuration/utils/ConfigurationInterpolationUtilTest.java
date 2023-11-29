@@ -1,12 +1,12 @@
 package com.kumuluz.ee.configuration.utils;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests for {@link ConfigurationInterpolationUtil}. More tests of interpolation (expressions) are in
@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
  * @author Urban Malc
  * @since 4.1.0
  */
-public class ConfigurationInterpolationUtilTest {
+class ConfigurationInterpolationUtilTest {
 
     private static final String TEST_VALUE = "TEST_VALUE";
 
@@ -37,7 +37,7 @@ public class ConfigurationInterpolationUtilTest {
     }
 
     @Test
-    public void noInterpolationTest() {
+    void noInterpolationTest() {
 
         assertEquals("test", ConfigurationInterpolationUtil.interpolateString("test", this::emptyResolver));
         assertEquals("", ConfigurationInterpolationUtil.interpolateString("", this::emptyResolver));
@@ -52,7 +52,7 @@ public class ConfigurationInterpolationUtilTest {
     }
 
     @Test
-    public void simpleInterpolationTest() {
+    void simpleInterpolationTest() {
 
         assertEquals(TEST_VALUE, ConfigurationInterpolationUtil.interpolateString("${replaceme}", this::testValueResolver));
         assertEquals("abc" + TEST_VALUE, ConfigurationInterpolationUtil.interpolateString("abc${replaceme}", this::testValueResolver));
@@ -63,7 +63,7 @@ public class ConfigurationInterpolationUtilTest {
     }
 
     @Test
-    public void nestedInterpolationTest() {
+    void nestedInterpolationTest() {
 
         assertEquals("i1", ConfigurationInterpolationUtil.interpolateString("${${i1}}", this::identityResolver));
         assertEquals("i1i2", ConfigurationInterpolationUtil.interpolateString("${i1${i2}}", this::identityResolver));
@@ -77,7 +77,7 @@ public class ConfigurationInterpolationUtilTest {
     }
 
     @Test
-    public void defaultValueInterpolationTest() {
+    void defaultValueInterpolationTest() {
 
         assertEquals("defaultValue", ConfigurationInterpolationUtil.interpolateString("${test:defaultValue}", this::emptyResolver));
         assertEquals("defaultValue", ConfigurationInterpolationUtil.interpolateString("${:defaultValue}", this::emptyResolver));
@@ -90,7 +90,7 @@ public class ConfigurationInterpolationUtilTest {
     }
 
     @Test
-    public void defaultValueAndNestedInterpolationTest() {
+    void defaultValueAndNestedInterpolationTest() {
 
         assertEquals("defaultValue", ConfigurationInterpolationUtil.interpolateString("${first:${second:defaultValue}}", this::emptyResolver));
         assertEquals("secondValue", ConfigurationInterpolationUtil.interpolateString("${first:${second:defaultValue}}",

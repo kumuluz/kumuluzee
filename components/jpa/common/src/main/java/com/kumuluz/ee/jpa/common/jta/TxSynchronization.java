@@ -20,8 +20,9 @@
 */
 package com.kumuluz.ee.jpa.common.jta;
 
-import javax.persistence.EntityManager;
-import javax.transaction.Synchronization;
+
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Synchronization;
 
 /**
  * @author Tilen Faganel

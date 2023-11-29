@@ -23,10 +23,10 @@ package com.kumuluz.ee.jaxws.cxf;
 import com.kumuluz.ee.jaxws.cxf.processor.JaxWsAnnotationProcessorUtil;
 import com.kumuluz.ee.jaxws.cxf.ws.CXFWebservicePublisher;
 import com.kumuluz.ee.jaxws.cxf.ws.Endpoint;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
 import org.apache.cxf.transport.servlet.CXFNonSpringServlet;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
 import java.util.List;
 
 /**

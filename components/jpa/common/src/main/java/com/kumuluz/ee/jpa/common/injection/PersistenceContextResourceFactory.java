@@ -22,12 +22,11 @@ package com.kumuluz.ee.jpa.common.injection;
 
 import com.kumuluz.ee.jpa.common.TransactionType;
 import com.kumuluz.ee.jpa.common.jta.TxScopedEntityManagerFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.SynchronizationType;
 import org.jboss.weld.injection.spi.ResourceReference;
 import org.jboss.weld.injection.spi.ResourceReferenceFactory;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.SynchronizationType;
 
 /**
  * @author Tilen Faganel

@@ -87,7 +87,7 @@ public class JettyFactory {
             throw new IllegalStateException("Both the HTTP and HTTPS connectors can not be disabled. Please enable at least one.");
         }
 
-        if (serverConfig.getForceHttps() && (httpsConfig == null || !Boolean.TRUE.equals(httpsConfig.getEnabled()))) {
+        if (Boolean.TRUE.equals(serverConfig.getForceHttps()) && (httpsConfig == null || !Boolean.TRUE.equals(httpsConfig.getEnabled()))) {
             throw new IllegalStateException("You must enable the HTTPS connector in order to force redirects to it (`kumuluzee.server" +
                     ".https.enabled` must be true).");
         }
@@ -108,29 +108,12 @@ public class JettyFactory {
                         httpsConfig.getPort() == null ? ServerConnectorConfig.DEFAULT_HTTPS_PORT : httpsConfig.getPort());
             }
 
-            ServerConnector httpConnector;
-
-            HttpConnectionFactory http = new HttpConnectionFactory(httpConfiguration);
-
-            if (httpConfig.getHttp2()) {
-
-                HTTP2CServerConnectionFactory http2c = new HTTP2CServerConnectionFactory(httpConfiguration);
-
-                httpConnector = new ServerConnector(server, http, http2c);
-            } else {
-
-                httpConnector = new ServerConnector(server, http);
-            }
-
-            httpConnector.setPort(httpConfig.getPort() == null ? ServerConnectorConfig.DEFAULT_HTTP_PORT : httpConfig.getPort());
-            httpConnector.setHost(httpConfig.getAddress());
-
-            httpConnector.setIdleTimeout(httpConfig.getIdleTimeout());
+            ServerConnector httpConnector = getServerConnector(server, httpConfiguration, httpConfig);
 
             connectors.add(httpConnector);
         }
 
-        if (httpsConfig != null && httpsConfig.getEnabled() != null && httpsConfig.getEnabled()) {
+        if (httpsConfig != null && httpsConfig.getEnabled() != null && Boolean.TRUE.equals(httpsConfig.getEnabled())) {
 
             if (StringUtils.isNullOrEmpty(httpsConfig.getKeystorePath())) {
                 throw new IllegalStateException("Cannot create SSL connector; keystore path not specified.");
@@ -181,7 +164,7 @@ public class JettyFactory {
                 sslContextFactory.setIncludeCipherSuites(httpsConfig.getSslCiphers().toArray(new String[0]));
             }
 
-            if (httpsConfig.getHttp2()) {
+            if (Boolean.TRUE.equals(httpsConfig.getHttp2())) {
 
                 sslContextFactory.setCipherComparator(HTTP2Cipher.COMPARATOR);
                 sslContextFactory.setUseCipherSuitesOrder(true);
@@ -217,5 +200,27 @@ public class JettyFactory {
         LOG.info(String.format("Starting KumuluzEE on port(s): %s", ports));
 
         return connectors.toArray(new ServerConnector[0]);
+    }
+
+    private static ServerConnector getServerConnector(Server server, HttpConfiguration httpConfiguration, ServerConnectorConfig httpConfig) {
+        ServerConnector httpConnector;
+
+        HttpConnectionFactory http = new HttpConnectionFactory(httpConfiguration);
+
+        if (httpConfig.getHttp2()) {
+
+            HTTP2CServerConnectionFactory http2c = new HTTP2CServerConnectionFactory(httpConfiguration);
+
+            httpConnector = new ServerConnector(server, http, http2c);
+        } else {
+
+            httpConnector = new ServerConnector(server, http);
+        }
+
+        httpConnector.setPort(httpConfig.getPort() == null ? ServerConnectorConfig.DEFAULT_HTTP_PORT : httpConfig.getPort());
+        httpConnector.setHost(httpConfig.getAddress());
+
+        httpConnector.setIdleTimeout(httpConfig.getIdleTimeout());
+        return httpConnector;
     }
 }

@@ -23,7 +23,7 @@ package com.kumuluz.ee.jpa.eclipselink;
 import com.kumuluz.ee.jta.common.JtaProvider;
 import org.eclipse.persistence.transaction.JTATransactionController;
 
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 
 /**
  * @author Marcos Koch Salvador

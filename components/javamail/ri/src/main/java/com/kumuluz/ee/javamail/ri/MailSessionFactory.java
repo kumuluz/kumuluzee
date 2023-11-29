@@ -2,8 +2,8 @@ package com.kumuluz.ee.javamail.ri;
 
 import com.kumuluz.ee.common.config.MailServiceConfig;
 import com.kumuluz.ee.common.config.MailSessionConfig;
+import jakarta.mail.Session;
 
-import javax.mail.Session;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;

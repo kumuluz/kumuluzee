@@ -17,15 +17,15 @@
  *  out of or in connection with the software or the use or other dealings in the
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
-*/
+ */
 package com.kumuluz.ee.jta.common.utils;
 
 import com.kumuluz.ee.jta.common.JtaProvider;
 import com.kumuluz.ee.jta.common.exceptions.CannotRetrieveTxException;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionManager;
 
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
 
 /**
  * @author Tilen Faganel

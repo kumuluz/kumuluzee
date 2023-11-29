@@ -22,8 +22,8 @@ package com.kumuluz.ee.jaxws.cxf.processor;
 
 import com.kumuluz.ee.jaxws.cxf.annotations.WsContext;
 import com.kumuluz.ee.jaxws.cxf.ws.Endpoint;
+import jakarta.jws.WebService;
 
-import javax.jws.WebService;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;

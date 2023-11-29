@@ -21,9 +21,9 @@
 package com.kumuluz.ee.jpa.common;
 
 import com.kumuluz.ee.jpa.common.utils.PersistenceUtils;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;

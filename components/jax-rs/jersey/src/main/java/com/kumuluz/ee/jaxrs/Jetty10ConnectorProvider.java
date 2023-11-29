@@ -20,12 +20,11 @@
  */
 package com.kumuluz.ee.jaxrs;
 
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.core.Configuration;
 import org.glassfish.jersey.client.spi.Connector;
 import org.glassfish.jersey.client.spi.ConnectorProvider;
 import org.glassfish.jersey.jetty.connector.Jetty10Connector;
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.Configuration;
 
 /**
  * Jersey connection provider for Jetty 10.

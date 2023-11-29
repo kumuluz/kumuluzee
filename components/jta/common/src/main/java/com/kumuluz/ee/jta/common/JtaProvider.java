@@ -22,11 +22,11 @@ package com.kumuluz.ee.jta.common;
 
 import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 import io.agroal.api.transaction.TransactionIntegration;
+import jakarta.transaction.Status;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.UserTransaction;
 
-import javax.transaction.Status;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
-import javax.transaction.UserTransaction;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;

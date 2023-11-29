@@ -5,7 +5,7 @@
     <parent>
         <artifactId>kumuluzee-json-p</artifactId>
         <groupId>com.kumuluz.ee</groupId>
-        <version>4.2.0-SNAPSHOT</version>
+        <version>5.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -22,7 +22,7 @@
 
         <dependency>
             <groupId>org.glassfish</groupId>
-            <artifactId>javax.json</artifactId>
+            <artifactId>jakarta.json</artifactId>
             <version>${jsonp-impl.version}</version>
         </dependency>
 
@@ -37,11 +37,11 @@
                 </exclusion>
                 <exclusion>
                     <groupId>org.glassfish</groupId>
-                    <artifactId>javax.json</artifactId>
+                    <artifactId>jakarta.json</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>javax.ws.rs</groupId>
-                    <artifactId>javax.ws.rs-api</artifactId>
+                    <groupId>jakarta.ws.rs</groupId>
+                    <artifactId>jakarta.ws.rs-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

@@ -22,9 +22,9 @@ package com.kumuluz.ee.jaxws.cxf.ws;
 
 import org.w3c.dom.Element;
 
-import javax.xml.ws.EndpointReference;
-import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.EndpointReference;
+import jakarta.xml.ws.WebServiceContext;
+import jakarta.xml.ws.handler.MessageContext;
 import java.io.Serializable;
 import java.security.Principal;
 

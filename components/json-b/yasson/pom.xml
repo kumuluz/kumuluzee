@@ -5,7 +5,7 @@
     <parent>
         <artifactId>kumuluzee-json-b</artifactId>
         <groupId>com.kumuluz.ee</groupId>
-        <version>4.2.0-SNAPSHOT</version>
+        <version>5.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -26,11 +26,11 @@
             <version>${yasson.version}</version>
             <exclusions>
                 <exclusion>
-                    <groupId>javax.json</groupId>
-                    <artifactId>javax.json-api</artifactId>
+                    <groupId>jakarta.json</groupId>
+                    <artifactId>jakarta.json-api</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>javax.enterprise</groupId>
+                    <groupId>jakarta.enterprise</groupId>
                     <artifactId>cdi-api</artifactId>
                 </exclusion>
             </exclusions>
@@ -47,15 +47,15 @@
                 </exclusion>
                 <exclusion>
                     <groupId>org.glassfish</groupId>
-                    <artifactId>javax.json</artifactId>
+                    <artifactId>jakarta.json</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.eclipse</groupId>
                     <artifactId>yasson</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>javax.json.bind</groupId>
-                    <artifactId>javax.json.bind-api</artifactId>
+                    <groupId>jakarta.json.bind</groupId>
+                    <artifactId>jakarta.json.bind-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

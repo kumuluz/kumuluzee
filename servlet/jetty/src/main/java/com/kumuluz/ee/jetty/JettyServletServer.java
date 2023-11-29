@@ -17,7 +17,7 @@
  *  out of or in connection with the software or the use or other dealings in the
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
-*/
+ */
 package com.kumuluz.ee.jetty;
 
 import com.kumuluz.ee.common.ServletServer;
@@ -30,6 +30,10 @@ import com.kumuluz.ee.common.dependencies.ServerDef;
 import com.kumuluz.ee.common.exceptions.KumuluzServerException;
 import com.kumuluz.ee.common.servlet.ServletWrapper;
 import com.kumuluz.ee.common.utils.ResourceUtils;
+import jakarta.servlet.DispatcherType;
+import jakarta.servlet.Filter;
+import jakarta.servlet.Servlet;
+import jakarta.transaction.UserTransaction;
 import org.eclipse.jetty.annotations.AnnotationConfiguration;
 import org.eclipse.jetty.plus.jndi.Resource;
 import org.eclipse.jetty.plus.jndi.Transaction;
@@ -46,11 +50,7 @@ import org.eclipse.jetty.servlet.listener.ELContextCleaner;
 import org.eclipse.jetty.webapp.*;
 
 import javax.naming.NamingException;
-import javax.servlet.DispatcherType;
-import javax.servlet.Filter;
-import javax.servlet.Servlet;
 import javax.sql.DataSource;
-import javax.transaction.UserTransaction;
 import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
@@ -198,25 +198,27 @@ public class JettyServletServer implements ServletServer {
             final ArrayList<Handler> handlers = new ArrayList<>();
 
             // Set the secured redirect handler in case the force https option is selected
-            if( serverConfig.getForceHttps()) {
+            if (Boolean.TRUE.equals(serverConfig.getForceHttps())) {
                 handlers.add(new SecuredRedirectHandler());
+
+                server.setHandler(new SecuredRedirectHandler());
             }
 
             // Set the gzip handler in case the use gzip option is selected
-            if(gzipConfig != null && gzipConfig.getEnabled()) {
+            if (gzipConfig != null && gzipConfig.getEnabled()) {
                 GzipHandler gzipHandler = new GzipHandler();
 
-                if(gzipConfig.getMinGzipSize() != null)
+                if (gzipConfig.getMinGzipSize() != null)
                     gzipHandler.setMinGzipSize(gzipConfig.getMinGzipSize());
-                if(gzipConfig.getIncludedMethods() != null)
+                if (gzipConfig.getIncludedMethods() != null)
                     gzipHandler.setIncludedMethods(gzipConfig.getIncludedMethods().toArray(new String[0]));
-                if(gzipConfig.getIncludedMimeTypes() != null)
+                if (gzipConfig.getIncludedMimeTypes() != null)
                     gzipHandler.setIncludedMimeTypes(gzipConfig.getIncludedMimeTypes().toArray(new String[0]));
-                if(gzipConfig.getExcludedMimeTypes() != null)
+                if (gzipConfig.getExcludedMimeTypes() != null)
                     gzipHandler.setExcludedMimeTypes(gzipConfig.getExcludedMimeTypes().toArray(new String[0]));
-                if(gzipConfig.getExcludedPaths() != null)
+                if (gzipConfig.getExcludedPaths() != null)
                     gzipHandler.setExcludedPaths(gzipConfig.getExcludedPaths().toArray(new String[0]));
-                if(gzipConfig.getIncludedPaths() != null)
+                if (gzipConfig.getIncludedPaths() != null)
                     gzipHandler.setIncludedPaths(gzipConfig.getIncludedPaths().toArray(new String[0]));
 
                 gzipHandler.setHandler(appContext);
@@ -230,7 +232,6 @@ public class JettyServletServer implements ServletServer {
 
             server.setHandler(handlerList);
         } else {
-
             server.setHandler(appContext);
         }
     }

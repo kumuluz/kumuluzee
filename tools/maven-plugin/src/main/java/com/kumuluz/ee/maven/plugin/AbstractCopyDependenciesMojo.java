@@ -46,6 +46,7 @@ public abstract class AbstractCopyDependenciesMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${session}", readonly = true, required = true)
     protected MavenSession session;
+
     @Component
     protected BuildPluginManager buildPluginManager;
     @Parameter

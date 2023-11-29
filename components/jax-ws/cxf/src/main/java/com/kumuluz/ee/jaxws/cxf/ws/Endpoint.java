@@ -20,7 +20,7 @@
  */
 package com.kumuluz.ee.jaxws.cxf.ws;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 /**
  * @author gpor89

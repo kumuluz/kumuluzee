@@ -17,12 +17,11 @@
  *  out of or in connection with the software or the use or other dealings in the
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
-*/
+ */
 package com.kumuluz.ee.jpa.common.injection;
 
+import jakarta.persistence.EntityManagerFactory;
 import org.jboss.weld.injection.spi.ResourceReference;
-
-import javax.persistence.EntityManagerFactory;
 
 /**
  * @author Tilen Faganel

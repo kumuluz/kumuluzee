@@ -17,11 +17,12 @@
  *  out of or in connection with the software or the use or other dealings in the
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
-*/
+ */
 package com.kumuluz.ee.jpa.eclipselink;
 
 import org.eclipse.persistence.platform.server.ServerPlatformBase;
 import org.eclipse.persistence.sessions.DatabaseSession;
+import org.eclipse.persistence.sessions.ExternalTransactionController;
 
 /**
  * @author Marcos Koch Salvador
@@ -34,7 +35,7 @@ public class KumuluzPlatform extends ServerPlatformBase {
     }
 
     @Override
-    public Class<?> getExternalTransactionControllerClass() {
+    public Class<? extends ExternalTransactionController> getExternalTransactionControllerClass() {
         return KumuluzTransactionController.class;
     }
 

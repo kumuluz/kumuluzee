@@ -37,7 +37,7 @@ import java.util.logging.Logger;
 @EeComponentDependency(value = EeComponentType.SERVLET)
 public class JaxRsComponent implements Component {
 
-    private Logger log = Logger.getLogger(JaxRsComponent.class.getSimpleName());
+    private final Logger log = Logger.getLogger(JaxRsComponent.class.getSimpleName());
 
     @Override
     public void init(KumuluzServerWrapper server, EeConfig eeConfig) {
@@ -45,7 +45,6 @@ public class JaxRsComponent implements Component {
 
     @Override
     public void load() {
-
         log.info("Initiating Jersey");
     }
 }

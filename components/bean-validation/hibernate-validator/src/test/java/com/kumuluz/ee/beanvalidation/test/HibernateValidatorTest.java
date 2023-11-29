@@ -22,14 +22,15 @@ package com.kumuluz.ee.beanvalidation.test;
 
 import com.kumuluz.ee.beanvalidation.test.beans.Project;
 import com.kumuluz.ee.beanvalidation.test.beans.User;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Set;
@@ -41,14 +42,14 @@ public class HibernateValidatorTest {
 
     private static Validator validator;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
     }
 
     @Test
-    public void testCorrectEntities() {
+    void testCorrectEntities() {
 
         Project p1 = new Project();
         p1.setName("Test project");
@@ -70,12 +71,12 @@ public class HibernateValidatorTest {
         Set<ConstraintViolation<User>> constraintViolations =
                 validator.validate(u1);
 
-        Assert.assertNotNull(constraintViolations);
-        Assert.assertEquals(0, constraintViolations.size());
+        Assertions.assertNotNull(constraintViolations);
+        Assertions.assertEquals(0, constraintViolations.size());
     }
 
     @Test
-    public void testWrongEntities() {
+    void testWrongEntities() {
 
         Project p1 = new Project();
         p1.setName("T");
@@ -96,7 +97,7 @@ public class HibernateValidatorTest {
         Set<ConstraintViolation<User>> constraintViolations =
                 validator.validate(u1);
 
-        Assert.assertNotNull(constraintViolations);
-        Assert.assertEquals(4, constraintViolations.size());
+        Assertions.assertNotNull(constraintViolations);
+        Assertions.assertEquals(4, constraintViolations.size());
     }
 }

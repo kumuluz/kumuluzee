@@ -21,9 +21,8 @@
 package com.kumuluz.ee.runtime.cdi.producers;
 
 import com.kumuluz.ee.common.runtime.EeRuntime;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
 
 /**
  * @author Tilen Faganel

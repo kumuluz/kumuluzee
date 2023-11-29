@@ -20,11 +20,12 @@
  */
 package com.kumuluz.ee.jaxws.cxf.processor;
 
+import jakarta.jws.WebService;
+
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
-import javax.jws.WebService;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;

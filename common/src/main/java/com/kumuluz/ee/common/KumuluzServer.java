@@ -17,15 +17,10 @@
  *  out of or in connection with the software or the use or other dealings in the
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
-*/
+ */
 package com.kumuluz.ee.common;
 
 import com.kumuluz.ee.common.config.ServerConfig;
-
-import java.util.EventListener;
-import java.util.Map;
-
-import javax.servlet.Servlet;
 
 /**
  * @author Tilen Faganel

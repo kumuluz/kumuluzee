@@ -17,13 +17,12 @@
  *  out of or in connection with the software or the use or other dealings in the
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
-*/
+ */
 package com.kumuluz.ee.jpa.common.jta;
 
 import com.kumuluz.ee.jpa.common.injection.EntityManagerWrapper;
-import com.kumuluz.ee.jpa.common.jta.NonTxEntityManagerHolder;
+import jakarta.persistence.EntityManager;
 
-import javax.persistence.EntityManager;
 
 /**
  * @author Tilen Faganel

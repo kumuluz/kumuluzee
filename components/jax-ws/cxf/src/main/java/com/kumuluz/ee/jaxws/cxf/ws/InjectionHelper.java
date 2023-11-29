@@ -20,8 +20,9 @@
  */
 package com.kumuluz.ee.jaxws.cxf.ws;
 
-import javax.annotation.Resource;
-import javax.xml.ws.WebServiceContext;
+import jakarta.annotation.Resource;
+import jakarta.xml.ws.WebServiceContext;
+
 import java.lang.reflect.Field;
 
 /**

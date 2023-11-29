@@ -20,7 +20,8 @@
 */
 package com.kumuluz.ee.jpa.common.jta;
 
-import javax.persistence.EntityManager;
+
+import jakarta.persistence.EntityManager;
 
 /**
  * @author Tilen Faganel

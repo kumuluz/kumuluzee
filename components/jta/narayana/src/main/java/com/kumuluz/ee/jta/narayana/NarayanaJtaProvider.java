@@ -17,7 +17,7 @@
  *  out of or in connection with the software or the use or other dealings in the
  *  software. See the License for the specific language governing permissions and
  *  limitations under the License.
-*/
+ */
 package com.kumuluz.ee.jta.narayana;
 
 import com.arjuna.ats.jta.common.JTAEnvironmentBean;
@@ -25,8 +25,10 @@ import com.arjuna.ats.jta.common.jtaPropertyManager;
 import com.kumuluz.ee.jta.common.JtaProvider;
 import io.agroal.api.transaction.TransactionIntegration;
 import io.agroal.narayana.NarayanaTransactionIntegration;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.UserTransaction;
 
-import javax.transaction.*;
 import java.util.HashMap;
 import java.util.Map;
 

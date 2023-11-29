@@ -20,13 +20,9 @@
 */
 package com.kumuluz.ee.maven.plugin;
 
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
 
@@ -59,7 +55,7 @@ public class RunJarMojo extends AbstractPackageMojo {
                 plugin(
                         groupId("org.codehaus.mojo"),
                         artifactId("exec-maven-plugin"),
-                        version("1.6.0")
+                        version("3.1.0")
                 ),
                 goal("exec"),
                 configuration(

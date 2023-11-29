@@ -1,9 +1,10 @@
 package com.kumuluz.ee.jaxws.cxf.ws;
 
 import com.kumuluz.ee.jaxws.cxf.impl.WebServiceContextBean;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 public class KumuluzWebServiceContextTest {
 
@@ -18,8 +19,8 @@ public class KumuluzWebServiceContextTest {
         one.join();
         two.join();
 
-        assertTrue("Thread 1 context not properly propagated", one.isSuccessful());
-        assertTrue("Thread 2 context not properly propagated", two.isSuccessful());
+        assertTrue(one.isSuccessful(), "Thread 1 context not properly propagated");
+        assertTrue(two.isSuccessful(), "Thread 2 context not properly propagated");
     }
 
     public static class WsThread extends Thread {
@@ -41,6 +42,4 @@ public class KumuluzWebServiceContextTest {
             return successful;
         }
     }
-
-
 }

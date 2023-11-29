@@ -20,7 +20,8 @@
 */
 package com.kumuluz.ee.jpa.common.jta;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+
 import java.util.*;
 
 /**

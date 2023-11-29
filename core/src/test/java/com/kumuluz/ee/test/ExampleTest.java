@@ -20,17 +20,17 @@
 */
 package com.kumuluz.ee.test;
 
-import org.junit.Assert;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Tilen Faganel
  */
-public class ExampleTest {
+class ExampleTest {
 
     @Test
-    public void testAddition() {
-
-        Assert.assertEquals(1 + 2, 3);
+    void testAddition() {
+        Assertions.assertEquals(3, 1+2);
     }
 }

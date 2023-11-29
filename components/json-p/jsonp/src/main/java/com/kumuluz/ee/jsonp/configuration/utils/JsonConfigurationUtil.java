@@ -21,8 +21,8 @@
 package com.kumuluz.ee.jsonp.configuration.utils;
 
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
+import jakarta.json.*;
 
-import javax.json.*;
 import java.util.Optional;
 
 /**

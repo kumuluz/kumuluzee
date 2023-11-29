@@ -1,14 +1,13 @@
 package com.kumuluz.ee.jaxws.cxf.impl;
 
+import jakarta.xml.ws.EndpointReference;
+import jakarta.xml.ws.WebServiceContext;
+import jakarta.xml.ws.handler.MessageContext;
 import org.apache.cxf.jaxws.handler.logical.LogicalMessageContextImpl;
 import org.apache.cxf.message.MessageImpl;
 import org.w3c.dom.Element;
 
-import javax.xml.ws.EndpointReference;
-import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.handler.MessageContext;
 import java.security.Principal;
-
 
 public class WebServiceContextBean implements WebServiceContext {
 
