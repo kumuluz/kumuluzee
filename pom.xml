@@ -29,8 +29,8 @@
     <url>https://ee.kumuluz.com</url>
 
     <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <jakarta-xml-bind-api.version>4.0.1</jakarta-xml-bind-api.version>

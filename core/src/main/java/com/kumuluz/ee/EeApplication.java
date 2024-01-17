@@ -47,6 +47,7 @@ import java.util.*;
 import java.util.logging.Handler;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * @author Tilen Faganel
@@ -65,6 +66,7 @@ public class EeApplication {
         initialize();
     }
 
+    @SuppressWarnings("unused")
     public EeApplication(EeConfig eeConfig) {
 
         this.eeConfig = eeConfig;
@@ -72,11 +74,12 @@ public class EeApplication {
         initialize();
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
 
-        EeApplication app = new EeApplication();
+        new EeApplication();
     }
 
+    @SuppressWarnings("unused")
     public KumuluzServer getServer() {
         return this.server.getServer();
     }
@@ -186,24 +189,24 @@ public class EeApplication {
 
         List<EeRuntimeComponent> eeRuntimeComponents = eeComponents.stream()
                 .map(e -> new EeRuntimeComponent(e.getType(), e.getName()))
-                .toList();
+                .collect(Collectors.toList());
 
-        List<EeRuntimeComponent> serverEeRuntimeComponents = new ArrayList<>(Arrays.stream(server.getProvidedEeComponents())
+        List<EeRuntimeComponent> serverEeRuntimeComponents = Arrays.stream(server.getProvidedEeComponents())
                 .map(c -> new EeRuntimeComponent(c, server.getName()))
-                .toList());
+                .collect(Collectors.toList());
 
         serverEeRuntimeComponents.addAll(eeRuntimeComponents);
 
         eeRuntimeInternal.setEeComponents(serverEeRuntimeComponents);
 
-        List<EeRuntimeExtension> eeRuntimeExtensions = new ArrayList<>(eeExtensions.stream()
-                .map(e -> new EeRuntimeExtension(e.getGroup(), e.getName())).toList());
+        List<EeRuntimeExtension> eeRuntimeExtensions = eeExtensions.stream()
+                .map(e -> new EeRuntimeExtension(e.getGroup(), e.getName())).collect(Collectors.toList());
 
         eeRuntimeExtensions.addAll(eeConfigExtensions.stream()
-                .map(e -> new EeRuntimeExtension(e.getGroup(), e.getName())).toList());
+                .map(e -> new EeRuntimeExtension(e.getGroup(), e.getName())).collect(Collectors.toList()));
 
         eeRuntimeExtensions.addAll(eeLogsExtensions.stream()
-                .map(e -> new EeRuntimeExtension(e.getGroup(), e.getName())).toList());
+                .map(e -> new EeRuntimeExtension(e.getGroup(), e.getName())).collect(Collectors.toList()));
 
         eeRuntimeInternal.setEeExtensions(eeRuntimeExtensions);
 
@@ -258,15 +261,17 @@ public class EeApplication {
         server.getServer().initServer();
 
         // Depending on the server type, initiate server specific functionality
-        if (server.getServer() instanceof ServletServer servletServer) {
+        if (server.getServer() instanceof ServletServer) {
+
+            ServletServer servletServer = (ServletServer) server.getServer();
 
             List<Extension> allExtensions = new ArrayList<>();
             allExtensions.addAll(eeExtensions.stream().map(ExtensionWrapper::getExtension)
-                    .toList());
+                    .collect(Collectors.toList()));
             allExtensions.addAll(eeConfigExtensions.stream().map(ExtensionWrapper::getExtension)
-                    .toList());
+                    .collect(Collectors.toList()));
             allExtensions.addAll(eeLogsExtensions.stream().map(ExtensionWrapper::getExtension)
-                    .toList());
+                    .collect(Collectors.toList()));
             servletServer.initWebContext(collectScanLibraries(allExtensions));
 
             // Create and register datasources to the underlying server

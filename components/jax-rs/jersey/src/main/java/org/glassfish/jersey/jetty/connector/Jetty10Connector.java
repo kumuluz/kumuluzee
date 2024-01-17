@@ -40,7 +40,7 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.ClientRequest;
 import org.glassfish.jersey.client.ClientResponse;
-import org.glassfish.jersey.client.internal.LocalizationMessages;
+import org.glassfish.jersey.client.innate.ClientProxy;
 import org.glassfish.jersey.client.spi.AsyncConnectorCallback;
 import org.glassfish.jersey.client.spi.Connector;
 import org.glassfish.jersey.internal.util.collection.ByteBufferInputStream;
@@ -79,8 +79,10 @@ import java.util.logging.Logger;
  * <li>{@link ClientProperties#PROXY_USERNAME}</li>
  * <li>{@link ClientProperties#PROXY_PASSWORD}</li>
  * <li>{@link ClientProperties#PROXY_PASSWORD}</li>
+ * <li>{@link JettyClientProperties#DISABLE_COOKIES}</li>*
+ * <li>{@link JettyClientProperties#ENABLE_SSL_HOSTNAME_VERIFICATION}</li>
  * <li>{@link JettyClientProperties#PREEMPTIVE_BASIC_AUTHENTICATION}</li>
- * <li>{@link JettyClientProperties#DISABLE_COOKIES}</li>
+ * <li>{@link JettyClientProperties#SYNC_LISTENER_RESPONSE_MAX_SIZE}</li>
  * </ul>
  * <p/>
  * This transport supports both synchronous and asynchronous processing of client requests.
@@ -156,18 +158,22 @@ public class Jetty10Connector implements Connector {
 
         Boolean enableHostnameVerification = (Boolean) config.getProperties()
                 .get(JettyClientProperties.ENABLE_SSL_HOSTNAME_VERIFICATION);
-        if (enableHostnameVerification != null && enableHostnameVerification) {
-            client.getSslContextFactory().setEndpointIdentificationAlgorithm("https");
+        if (enableHostnameVerification != null) {
+            final String verificationAlgorithm = enableHostnameVerification ? "HTTPS" : null;
+            client.getSslContextFactory().setEndpointIdentificationAlgorithm(verificationAlgorithm);
+        }
+        if (jaxrsClient.getHostnameVerifier() != null) {
+            client.getSslContextFactory().setHostnameVerifier(jaxrsClient.getHostnameVerifier());
         }
 
         final Object connectTimeout = config.getProperties().get(ClientProperties.CONNECT_TIMEOUT);
-        if (connectTimeout instanceof Integer cTimeout && cTimeout > 0) {
-            client.setConnectTimeout(cTimeout);
+        if (connectTimeout instanceof Integer && (Integer) connectTimeout > 0) {
+            client.setConnectTimeout((Integer) connectTimeout);
         }
         final Object threadPoolSize = config.getProperties().get(ClientProperties.ASYNC_THREADPOOL_SIZE);
-        if (threadPoolSize instanceof Integer tPoolSize && tPoolSize > 0) {
+        if (threadPoolSize instanceof Integer && (Integer) threadPoolSize > 0) {
             final String name = HttpClient.class.getSimpleName() + "@" + hashCode();
-            final QueuedThreadPool threadPool = new QueuedThreadPool(tPoolSize);
+            final QueuedThreadPool threadPool = new QueuedThreadPool((Integer) threadPoolSize);
             threadPool.setName(name);
             client.setExecutor(threadPool);
         }
@@ -176,23 +182,21 @@ public class Jetty10Connector implements Connector {
 
         final AuthenticationStore auth = client.getAuthenticationStore();
         final Object basicAuthProvider = config.getProperty(JettyClientProperties.PREEMPTIVE_BASIC_AUTHENTICATION);
-        if (basicAuthProvider instanceof BasicAuthentication baseAuth) {
-            auth.addAuthentication(baseAuth);
+        if ((basicAuthProvider instanceof BasicAuthentication)) {
+            auth.addAuthentication((BasicAuthentication) basicAuthProvider);
         }
 
-        final Object proxyUri = config.getProperties().get(ClientProperties.PROXY_URI);
-        if (proxyUri != null) {
-            final URI u = getProxyUri(proxyUri);
+        final Optional<ClientProxy> proxy = ClientProxy.proxyFromConfiguration(config);
+        proxy.ifPresent(clientProxy -> {
             final ProxyConfiguration proxyConfig = client.getProxyConfiguration();
-            proxyConfig.getProxies().add(new HttpProxy(u.getHost(), u.getPort()));
+            final URI u = clientProxy.uri();
+            proxyConfig.addProxy(new HttpProxy(u.getHost(), u.getPort()));
 
-            final Object proxyUsername = config.getProperties().get(ClientProperties.PROXY_USERNAME);
-            if (proxyUsername != null) {
-                final Object proxyPassword = config.getProperties().get(ClientProperties.PROXY_PASSWORD);
+            if (clientProxy.userName() != null) {
                 auth.addAuthentication(new BasicAuthentication(u, "<<ANY_REALM>>",
-                        String.valueOf(proxyUsername), String.valueOf(proxyPassword)));
+                        clientProxy.userName(), clientProxy.password()));
             }
-        }
+        });
 
         if (disableCookies) {
             client.setCookieStore(new HttpCookieStore.Empty());
@@ -200,9 +204,9 @@ public class Jetty10Connector implements Connector {
 
         final Object slResponseMaxSize = configuration.getProperties()
                 .get(JettyClientProperties.SYNC_LISTENER_RESPONSE_MAX_SIZE);
-        if (slResponseMaxSize instanceof Integer slResponseMaxSizeC
-                && slResponseMaxSizeC > 0) {
-            this.syncListenerResponseMaxSize = Optional.of(slResponseMaxSizeC);
+        if (slResponseMaxSize instanceof Integer
+                && (Integer) slResponseMaxSize > 0) {
+            this.syncListenerResponseMaxSize = Optional.of((Integer) slResponseMaxSize);
         } else {
             this.syncListenerResponseMaxSize = Optional.empty();
         }
@@ -213,17 +217,6 @@ public class Jetty10Connector implements Connector {
             throw new ProcessingException("Failed to start the client.", e);
         }
         this.cookieStore = client.getCookieStore();
-    }
-
-    @SuppressWarnings("ChainOfInstanceofChecks")
-    private static URI getProxyUri(final Object proxy) {
-        if (proxy instanceof URI uriProxy) {
-            return uriProxy;
-        } else if (proxy instanceof String stringProxy) {
-            return URI.create(stringProxy);
-        } else {
-            throw new ProcessingException(LocalizationMessages.WRONG_PROXY_URI_TYPE(ClientProperties.PROXY_URI));
-        }
     }
 
     /**
@@ -257,7 +250,7 @@ public class Jetty10Connector implements Connector {
 
         try {
             final ContentResponse jettyResponse;
-            if (!syncListenerResponseMaxSize.isPresent()) {
+            if (syncListenerResponseMaxSize.isEmpty()) {
                 jettyResponse = jettyRequest.send();
             } else {
                 final FutureResponseListener listener
@@ -317,10 +310,16 @@ public class Jetty10Connector implements Connector {
         request.method(clientRequest.getMethod());
 
         request.followRedirects(clientRequest.resolveProperty(ClientProperties.FOLLOW_REDIRECTS, true));
-        final Object readTimeout = clientRequest.resolveProperty(ClientProperties.READ_TIMEOUT, -1);
-        if (readTimeout instanceof Integer rTimeout && rTimeout > 0) {
-            request.timeout(rTimeout, TimeUnit.MILLISECONDS);
+        final Integer readTimeout = clientRequest.resolveProperty(ClientProperties.READ_TIMEOUT, -1);
+        if (readTimeout != null && readTimeout > 0) {
+            request.timeout(readTimeout, TimeUnit.MILLISECONDS);
         }
+
+        final Integer totalTimeout = clientRequest.resolveProperty(JettyClientProperties.TOTAL_TIMEOUT, -1);
+        if (totalTimeout != null && totalTimeout > 0) {
+            request.timeout(totalTimeout, TimeUnit.MILLISECONDS);
+        }
+
         return request;
     }
 
@@ -394,9 +393,9 @@ public class Jetty10Connector implements Connector {
             final CompletableFuture<ClientResponse> responseFuture =
                     new CompletableFuture<ClientResponse>().whenComplete(
                             (clientResponse, throwable) -> {
-                                if (throwable instanceof CancellationException throwable1) {
+                                if (throwable instanceof CancellationException) {
                                     // take care of future cancellation
-                                    jettyRequest.abort(throwable1);
+                                    jettyRequest.abort(throwable);
 
                                 }
                             });
